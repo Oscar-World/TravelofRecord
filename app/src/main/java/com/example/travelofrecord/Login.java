@@ -38,6 +38,8 @@ public class Login extends AppCompatActivity {
     String edit_id;
     String edit_pw;
 
+    String kakaoId;
+
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
@@ -112,37 +114,19 @@ public class Login extends AppCompatActivity {
                             } else {
                                 System.out.println("로그인 완료");
                                 Log.d(TAG, user.toString());
-                                {
-                                    Log.d(TAG, "사용자 정보 요청 성공" +
-                                            "\n회원번호: "+user.getId() +
-                                            "\n이메일: "+user.getKakaoAccount().getEmail());
-                                }
-                                Account user1 = user.getKakaoAccount();
-                                System.out.println("사용자 계정" + user1);
 
-                                getKakaoTest(user.getKakaoAccount().getEmail(),"1");
+                                Log.d(TAG, "사용자 정보 요청 성공" +
+                                        "\n회원번호: " + user.getId() +
+                                        "\n이메일: " + user.getKakaoAccount().getEmail());
 
-                                if(rp_code != null) {
+                                kakaoId = user.getKakaoAccount().getEmail();
 
-                                    if (rp_code.equals("NOID")) {
+//                                Account user1 = user.getKakaoAccount();
+//                                System.out.println("사용자 계정 : " + user1);
 
-                                        Intent i = new Intent(Login.this, Signup.class);
-                                        i.putExtra("kakao", user.getKakaoAccount().getEmail());
-                                        startActivity(i);
-//                                        finish();
+                                getKakaoTest(user.getKakaoAccount().getEmail(), "1");
 
-                                    } else if (rp_code.equals("NOPW")) {
-
-                                        Intent i = new Intent(Login.this, Home.class);
-                                        startActivity(i);
-
-                                        editor.putString("로그인",user.getKakaoAccount().getEmail());
-                                        editor.commit();
-
-                                        finish();
-
-                                    }
-                                }
+                                Log.d(TAG, "if 문 진입 전 : " + rp_code);
 
                             }
                             return null;
@@ -180,6 +164,8 @@ public class Login extends AppCompatActivity {
 
     }  // onStart()
 
+
+    // ▼ DB 로그인 정보 확인 ▼
     public void getLogin(String id, String pw) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<String> call = apiInterface.getLoginInfo(id,pw);
@@ -222,6 +208,7 @@ public class Login extends AppCompatActivity {
     }  // getLogin()
 
 
+    // ▼ DB 카카오 계정 로그인 기록 확인 ▼
     public void getKakaoTest(String id, String pw) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<String> call = apiInterface.getLoginInfo(id,pw);
@@ -233,6 +220,30 @@ public class Login extends AppCompatActivity {
 
                 Log.d(TAG, "onResponse: " + rp_code);
 
+                if (rp_code != null) {
+
+                    Log.d(TAG, "if 문 진입 후 : " + rp_code);
+
+                    if (rp_code.equals("NOID")) {
+
+                        Intent i = new Intent(Login.this, Signup.class);
+                        i.putExtra("kakao", kakaoId);
+                        startActivity(i);
+
+                    } else if (rp_code.equals("NOPW")) {
+
+                        Intent i = new Intent(Login.this, Home.class);
+                        startActivity(i);
+
+                        editor.putString("로그인", kakaoId);
+                        editor.commit();
+
+                        finish();
+
+                    }
+                }
+
+
             }
 
             @Override
@@ -241,7 +252,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-    }  // getLogin()
+    }  // getKakaoTest()
 
 
     public void setView() {
