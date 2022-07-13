@@ -139,7 +139,6 @@ public class Signup extends AppCompatActivity {
     PwinfoThread pwThread;
     NicknameinfoThread nicknameThread;
     SmsTimeThread smsTimeThread;
-    DBcallbackThread dbcallbackThread;
 
     boolean idStatus;
     boolean pwStatus;
@@ -209,10 +208,6 @@ public class Signup extends AppCompatActivity {
                     id_Error.setVisibility(View.VISIBLE);
                 } else {
                     idCheck(editable.toString());
-
-                    dbcallbackThread = new DBcallbackThread();
-                    dbcallbackThread.start();
-
                 }
 
             }
@@ -679,39 +674,6 @@ public class Signup extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-    // ▼ DB 콜백 대기 스레드 ▼
-    public class DBcallbackThread extends Thread {
-
-        public void run() {
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-
-                    if (idStatus&pwStatus&pwCheckStatus) {
-                        Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus + " 버튼 활성화!");
-                        nextBtn_1.setVisibility(View.VISIBLE);
-                        nextBlock_1.setVisibility(View.INVISIBLE);
-                    } else {
-                        Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus + " 버튼 비활성화!");
-                        nextBtn_1.setVisibility(View.INVISIBLE);
-                        nextBlock_1.setVisibility(View.VISIBLE);
-                    }
-
-                }
-            });
-
-        }
-
-    }
-
-
     // ▼ SMS 인증 남은 시간 스레드 ▼
     public class SmsTimeThread extends Thread {
 
@@ -723,6 +685,7 @@ public class Signup extends AppCompatActivity {
                 smsTime_sec = smsTime % 60;
                 Log.d(TAG, "남은 시간 : " + smsTime);
                 Log.d(TAG, "표시 : " + setTime);
+
                 if (smsTime_sec < 10) {
                     setTime = "남은시간 : 0" + smsTime_min + ":0" + smsTime_sec;
                 } else {
@@ -963,6 +926,16 @@ public class Signup extends AppCompatActivity {
                     idStatus = true;
                     Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus);
 
+                }
+
+                if (idStatus&pwStatus&pwCheckStatus) {
+                    Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus + " 버튼 활성화!");
+                    nextBtn_1.setVisibility(View.VISIBLE);
+                    nextBlock_1.setVisibility(View.INVISIBLE);
+                } else {
+                    Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus + " 버튼 비활성화!");
+                    nextBtn_1.setVisibility(View.INVISIBLE);
+                    nextBlock_1.setVisibility(View.VISIBLE);
                 }
 
             }
