@@ -2,6 +2,8 @@ package com.example.travelofrecord;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -99,41 +101,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                UserApiClient.getInstance().loginWithKakaoTalk(Login.this,(oAuthToken, error) -> {
-                    if (error != null) {
-                        Log.d(TAG, "로그인 실패", error);
-                    } else if (oAuthToken != null) {
-                        Log.d(TAG, "로그인 성공(토큰) : " + oAuthToken.getAccessToken());
-
-                        // 사용자의 가입 정보가 있으면 홈으로 이동
-                        // 사용자의 가입 정보가 없으면 회원가입 3페이지로 이동
-
-                        UserApiClient.getInstance().me((user, meError) -> {
-                            if (meError != null) {
-                                Log.d(TAG, "사용자 정보 요청 실패", meError);
-                            } else {
-                                System.out.println("로그인 완료");
-                                Log.d(TAG, user.toString());
-
-                                Log.d(TAG, "사용자 정보 요청 성공" +
-                                        "\n회원번호: " + user.getId() +
-                                        "\n이메일: " + user.getKakaoAccount().getEmail());
-
-                                kakaoId = user.getKakaoAccount().getEmail();
-
-//                                Account user1 = user.getKakaoAccount();
-//                                System.out.println("사용자 계정 : " + user1);
-
-                                getKakaoTest(user.getKakaoAccount().getEmail(), "1");
-
-                                Log.d(TAG, "if 문 진입 전 : " + rp_code);
-
-                            }
-                            return null;
-                        });
-                    }
-                    return null;
-                });
+                kakao_Dialog();
 
             }
         });
@@ -164,6 +132,107 @@ public class Login extends AppCompatActivity {
 
     }  // onStart()
 
+
+    public void kakao_Dialog() {
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(Login.this);
+        dlg.setTitle("로그인 방식을 선택하세요\n"); //제목
+        final String[] kakaoLogin_Array = new String[] {"카카오톡","카카오계정"};
+
+        dlg.setItems(kakaoLogin_Array, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (which == 0) { // 카카오톡 로그인
+
+                    UserApiClient.getInstance().loginWithKakaoTalk(Login.this,(oAuthToken, error) -> {
+                        if (error != null) {
+                            Log.d(TAG, "로그인 실패", error);
+                        } else if (oAuthToken != null) {
+                            Log.d(TAG, "로그인 성공(토큰) : " + oAuthToken.getAccessToken());
+
+                            UserApiClient.getInstance().me((user, meError) -> {
+                                if (meError != null) {
+                                    Log.d(TAG, "사용자 정보 요청 실패", meError);
+                                } else {
+                                    System.out.println("로그인 완료");
+                                    Log.d(TAG, user.toString());
+
+                                    Log.d(TAG, "사용자 정보 요청 성공" +
+                                                    "\n회원번호: " + user.getId() +
+                                                    "\n이메일: " + user.getKakaoAccount().getEmail()
+//                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
+                                    );
+
+                                    kakaoId = user.getKakaoAccount().getEmail();
+
+
+                                    Account user1 = user.getKakaoAccount();
+                                    System.out.println("사용자 계정 : " + user1);
+
+                                    getKakaoTest(user.getKakaoAccount().getEmail(), "1");
+
+                                    Log.d(TAG, "if 문 진입 전 : " + rp_code);
+
+                                }
+                                return null;
+                            });
+                        }
+                        return null;
+                    });
+
+                }
+                else if (which == 1) { // 카카오계정 로그인
+
+                    UserApiClient.getInstance().loginWithKakaoAccount(Login.this,(oAuthToken, error) -> {
+                        if (error != null) {
+                            Log.d(TAG, "로그인 실패", error);
+                        } else if (oAuthToken != null) {
+                            Log.d(TAG, "로그인 성공(토큰) : " + oAuthToken.getAccessToken());
+
+                            UserApiClient.getInstance().me((user, meError) -> {
+                                if (meError != null) {
+                                    Log.d(TAG, "사용자 정보 요청 실패", meError);
+                                } else {
+                                    System.out.println("로그인 완료");
+                                    Log.d(TAG, user.toString());
+
+                                    Log.d(TAG, "사용자 정보 요청 성공" +
+                                                    "\n회원번호: " + user.getId() +
+                                                    "\n이메일: " + user.getKakaoAccount().getEmail()
+//                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
+                                    );
+
+                                    kakaoId = user.getKakaoAccount().getEmail();
+
+
+                                    Account user1 = user.getKakaoAccount();
+                                    System.out.println("사용자 계정 : " + user1);
+
+                                    getKakaoTest(user.getKakaoAccount().getEmail(), "1");
+
+                                    Log.d(TAG, "if 문 진입 전 : " + rp_code);
+
+                                }
+                                return null;
+                            });
+                        }
+                        return null;
+                    });
+
+
+                }
+
+            }
+        });
+
+        dlg.setNegativeButton("취소",new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        dlg.show();
+
+    }
 
     // ▼ DB 로그인 정보 확인 ▼
     public void getLogin(String id, String pw) {
@@ -223,6 +292,9 @@ public class Login extends AppCompatActivity {
                 if (rp_code != null) {
 
                     Log.d(TAG, "if 문 진입 후 : " + rp_code);
+
+                    // 사용자의 가입 정보가 있으면 홈으로 이동
+                    // 사용자의 가입 정보가 없으면 회원가입 3페이지로 이동
 
                     if (rp_code.equals("NOID")) {
 

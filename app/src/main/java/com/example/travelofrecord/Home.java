@@ -172,7 +172,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                UserApiClient.getInstance().logout(error -> {
+                UserApiClient.getInstance().unlink(error -> {
                     if (error != null) {
                         Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
                     }else{
