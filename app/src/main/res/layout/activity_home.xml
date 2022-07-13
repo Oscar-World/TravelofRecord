@@ -14,6 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        android:background="#f6feff"
         >
 
         <ImageButton
@@ -91,6 +92,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -104,6 +106,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -117,6 +120,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -130,6 +134,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -143,6 +148,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -156,6 +162,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -169,6 +176,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -182,6 +190,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
+            android:padding="18dp"
             />
 
     </LinearLayout>
