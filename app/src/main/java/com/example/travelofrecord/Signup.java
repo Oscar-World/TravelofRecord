@@ -734,7 +734,7 @@ public class Signup extends AppCompatActivity {
 
 
     // ▼ 아이디 입력 안내 스레드 ▼
-    public class IdinfoThread extends Thread {
+    private class IdinfoThread extends Thread {
 
         public void run() {
 
