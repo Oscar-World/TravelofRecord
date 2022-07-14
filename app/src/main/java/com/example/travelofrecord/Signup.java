@@ -97,8 +97,6 @@ public class Signup extends AppCompatActivity {
 
     String iData;
 
-    Pattern id_Pattern;
-
     Pattern pattern_id;
     Matcher matcher_id;
 
@@ -524,7 +522,6 @@ public class Signup extends AppCompatActivity {
         backBtn_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                frameLayout_1.startAnimation(right_out);
                 finish();
             }
         });

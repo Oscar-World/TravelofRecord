@@ -33,6 +33,17 @@ public interface ApiInterface {
             @Query("nickname") String nickname
     );
 
+    @GET("mysql_PhoneCheck.php")
+    Call<String> getPhoneCheck (
+            @Query("phone") String nickname
+    );
+
+    @GET("mysql_NewPw.php")
+    Call<String> getNewPw (
+            @Query("id") String id,
+            @Query("pw") String pw
+    );
+
     @GET("mysql_Read.php")
     Call<User> getInfo (
             @Query("type") String type,

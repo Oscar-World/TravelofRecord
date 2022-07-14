@@ -5,13 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +51,7 @@ public class Find_UserInfo extends AppCompatActivity {
     Button findPw_checkBlock;
     Button findId_submitBtn;
     Button findPw_submitBtn;
+    Button findPw_submitBlock;
 
     TextView findId_sendText;
     TextView findId_smsTimeText;
@@ -53,6 +62,9 @@ public class Find_UserInfo extends AppCompatActivity {
     TextView findPw_smsTimeText;
     TextView findPw_smsErrorText;
     TextView findPw_smsTimeoutText;
+    TextView findPw_Ok;
+    TextView findPw_RuleError;
+    TextView findPw_pwInfoText;
 
     EditText findId_phone;
     EditText findId_checkNum;
@@ -73,8 +85,19 @@ public class Find_UserInfo extends AppCompatActivity {
     String user_email;
     String idCheckNum_value;
     String pwCheckNum_value;
+    String id_Code;
+    String pw_Code;
+    String phone_Code;
+    String pwRule;
+    String new_Pw;
 
+    Pattern pattern_pw;
+    Matcher matcher_pw;
 
+    Animation left_out;
+    Animation left_in;
+    Animation right_out;
+    Animation right_in;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +119,9 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 findInfoFrame.setVisibility(View.INVISIBLE);
+                findInfoFrame.startAnimation(left_out);
                 findIdFrame1.setVisibility(View.VISIBLE);
+                findIdFrame1.startAnimation(left_in);
             }
         });
 
@@ -104,7 +129,9 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 findInfoFrame.setVisibility(View.INVISIBLE);
+                findInfoFrame.startAnimation(left_out);
                 findPwFrame1.setVisibility(View.VISIBLE);
+                findPwFrame1.startAnimation(left_in);
             }
         });
 
@@ -153,8 +180,11 @@ public class Find_UserInfo extends AppCompatActivity {
                 if (idCheckNum_value.equals("7777")) {
 
                     findIdFrame1.setVisibility(View.INVISIBLE);
+                    findIdFrame1.startAnimation(left_out);
                     findIdFrame2.setVisibility(View.VISIBLE);
-                    //                findId_idText.setText();
+                    findIdFrame2.startAnimation(left_in);
+
+                    phoneCheck(user_phoneNum);
 
                 } else {
 
@@ -178,6 +208,7 @@ public class Find_UserInfo extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(Find_UserInfo.this,Login.class);
                 startActivity(i);
+                finish();
             }
         });
 
@@ -185,7 +216,9 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 findInfoFrame.setVisibility(View.VISIBLE);
+                findInfoFrame.startAnimation(right_in);
                 findIdFrame1.setVisibility(View.INVISIBLE);
+                findIdFrame1.startAnimation(right_out);
 
                 findId_phone.setText("");
                 findId_checkNum.setText("");
@@ -219,6 +252,7 @@ public class Find_UserInfo extends AppCompatActivity {
             }
         });
 
+
         findPw_checkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -230,8 +264,12 @@ public class Find_UserInfo extends AppCompatActivity {
 
                 if (pwCheckNum_value.equals("7777")) {
 
+                    idCheck(user_email);
+
                     findPwFrame1.setVisibility(View.INVISIBLE);
+                    findPwFrame1.startAnimation(left_out);
                     findPwFrame2.setVisibility(View.VISIBLE);
+                    findPwFrame2.startAnimation(left_in);
 
                 } else {
 
@@ -250,11 +288,45 @@ public class Find_UserInfo extends AppCompatActivity {
             }
         });
 
+
+        // 비밀번호 입력 이벤트 처리
+        findPw_newPw.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if (pwRuleCheck()) {
+
+                    findPw_Ok.setVisibility(View.VISIBLE);
+                    findPw_RuleError.setVisibility(View.INVISIBLE);
+                    findPw_submitBtn.setVisibility(View.VISIBLE);
+                    findPw_submitBlock.setVisibility(View.INVISIBLE);
+
+                } else {
+
+                    findPw_Ok.setVisibility(View.INVISIBLE);
+                    findPw_RuleError.setVisibility(View.VISIBLE);
+                    findPw_submitBtn.setVisibility(View.INVISIBLE);
+                    findPw_submitBlock.setVisibility(View.VISIBLE);
+
+                }
+
+            }
+        });
+
+
+
         findPw_submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Find_UserInfo.this,Login.class);
-                startActivity(i);
+
+                getNewPw(user_email,new_Pw);
+
             }
         });
 
@@ -262,7 +334,9 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 findInfoFrame.setVisibility(View.VISIBLE);
+                findInfoFrame.startAnimation(right_in);
                 findPwFrame1.setVisibility(View.INVISIBLE);
+                findPwFrame1.startAnimation(right_out);
 
                 findPw_email.setText("");
                 findPw_checkNum.setText("");
@@ -278,7 +352,7 @@ public class Find_UserInfo extends AppCompatActivity {
     public class SmsTimeThread extends Thread {
 
         public void run() {
-            smsTime = 10;
+            smsTime = 180;
 
             while (smsTime >= 0) {
                 smsTime_min = smsTime / 60;
@@ -348,6 +422,111 @@ public class Find_UserInfo extends AppCompatActivity {
     }
 
 
+    // ▼ 아이디 중복 검사 ▼
+    public void idCheck(String id) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.getIdCheck(id);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                id_Code = response.body().toString();
+                Log.d(TAG, "onResponse: " + id_Code);
+
+                if (!id_Code.equals("usingId")) {
+
+                    findPw_newPw.setVisibility(View.INVISIBLE);
+                    findPw_pwInfoText.setText("가입된 이메일 정보가 없습니다.");
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
+            }
+        });
+
+    }  // idCheck()
+
+
+    // ▼ PW 변경 ▼
+    public void getNewPw(String id, String pw) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.getNewPw(id,pw);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+                pw_Code = response.body().toString();
+
+                Log.d(TAG, "onResponse: " + pw_Code);
+
+                Intent i = new Intent(Find_UserInfo.this,Login.class);
+                startActivity(i);
+                finish();
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
+            }
+        });
+
+    }  // getNewPw()
+
+    // ▼ 휴대폰 번호 중복 검사 ▼
+    public void phoneCheck(String phone) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.getPhoneCheck(phone);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+                phone_Code = response.body().toString();
+                Log.d(TAG, "onResponse: " + phone_Code);
+
+                if (phone_Code.equals("NOID")) {
+
+                    Log.d(TAG, "onResponse: 가입 정보 없음" + phone_Code);
+
+                } else {
+
+                    Log.d(TAG, "onResponse: 가입 정보 있음" + phone_Code);
+
+                    findId_idText.setText(phone_Code);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+
+    } // phoneCheck()
+
+
+    // ▼ 비밀번호 정규식 점검 ▼
+    private boolean pwRuleCheck() {
+
+        pwRule = "^.*(?=^.{8,12}$)(\\w)(?=.*[!@#$%^&+=]).*$";
+        pattern_pw = Pattern.compile(pwRule);
+
+        new_Pw = findPw_newPw.getText().toString();
+        matcher_pw = pattern_pw.matcher(new_Pw);
+
+        if(!matcher_pw.find()) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 
 
 
@@ -374,6 +553,7 @@ public class Find_UserInfo extends AppCompatActivity {
         findPw_checkBlock = findViewById(R.id.findPw_checkBlock);
         findId_submitBtn = findViewById(R.id.findId_submitBtn);
         findPw_submitBtn = findViewById(R.id.findPw_submitBtn);
+        findPw_submitBlock = findViewById(R.id.findPw_submitBlock);
 
         findId_sendText = findViewById(R.id.findId_sendText);
         findId_smsTimeText = findViewById(R.id.findId_smsTimeText);
@@ -384,6 +564,9 @@ public class Find_UserInfo extends AppCompatActivity {
         findPw_smsTimeText = findViewById(R.id.findPw_timeText);
         findPw_smsErrorText = findViewById(R.id.findPw_errorText);
         findPw_smsTimeoutText = findViewById(R.id.findPw_timeoutText);
+        findPw_Ok = findViewById(R.id.findPw_Ok);
+        findPw_RuleError = findViewById(R.id.findPw_RuleError);
+        findPw_pwInfoText = findViewById(R.id.findPw_pwInfoText);
 
         findId_phone = findViewById(R.id.findId_phone);
         findId_checkNum = findViewById(R.id.findId_checkNum);
@@ -392,6 +575,11 @@ public class Find_UserInfo extends AppCompatActivity {
         findPw_newPw = findViewById(R.id.findPw_newPw);
 
         handler = new Handler();
+
+        left_out = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftout);
+        left_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftin);
+        right_out = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_rightout);
+        right_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_rightin);
 
     }
 
