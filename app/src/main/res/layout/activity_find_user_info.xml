@@ -569,6 +569,7 @@
             android:layout_height="wrap_content"
             android:ems="13"
             android:layout_gravity="center"
+            android:inputType="textPassword"
             android:visibility="visible"
             />
 

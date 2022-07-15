@@ -169,11 +169,7 @@ public class Login extends AppCompatActivity {
 
                                     kakaoId = user.getKakaoAccount().getEmail();
 
-
-                                    Account user1 = user.getKakaoAccount();
-                                    System.out.println("사용자 계정 : " + user1);
-
-                                    getKakaoTest(user.getKakaoAccount().getEmail(), "1");
+                                    getKakaoTest(kakaoId, "1");
 
                                     Log.d(TAG, "if 문 진입 전 : " + rp_code);
 
@@ -208,11 +204,7 @@ public class Login extends AppCompatActivity {
 
                                     kakaoId = user.getKakaoAccount().getEmail();
 
-
-                                    Account user1 = user.getKakaoAccount();
-                                    System.out.println("사용자 계정 : " + user1);
-
-                                    getKakaoTest(user.getKakaoAccount().getEmail(), "1");
+                                    getKakaoTest(kakaoId, "1");
 
                                     Log.d(TAG, "if 문 진입 전 : " + rp_code);
 
