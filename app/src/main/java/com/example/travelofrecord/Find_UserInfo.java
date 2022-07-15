@@ -325,7 +325,13 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                getNewPw(user_email,new_Pw);
+                if (id_Code.equals("usingId")) {
+                    getNewPw(user_email, new_Pw);
+                } else {
+                    Intent i = new Intent(Find_UserInfo.this,Login.class);
+                    startActivity(i);
+                    finish();
+                }
 
             }
         });
@@ -437,6 +443,8 @@ public class Find_UserInfo extends AppCompatActivity {
 
                     findPw_newPw.setVisibility(View.INVISIBLE);
                     findPw_pwInfoText.setText("가입된 이메일 정보가 없습니다.");
+                    findPw_submitBlock.setVisibility(View.INVISIBLE);
+                    findPw_submitBtn.setVisibility(View.VISIBLE);
 
                 }
             }

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Find_UserInfo">
+    tools:context=".Find_UserInfo"
+    android:scrollbars="vertical">
 
     <!--첫 페이지-->
     <FrameLayout
@@ -412,7 +413,7 @@
             android:layout_marginLeft="-58dp"
             android:hint="example@example.com"
             android:textSize="14dp"
-            android:maxLength="16"/>
+            android:maxLength="24"/>
 
         <Button
             android:id="@+id/findPw_sendBtn"

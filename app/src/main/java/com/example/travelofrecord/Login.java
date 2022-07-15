@@ -310,7 +310,6 @@ public class Login extends AppCompatActivity {
                     }
                 }
 
-
             }
 
             @Override

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "722946801846",
+    "project_id": "travel-of-record",
+    "storage_bucket": "travel-of-record.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722946801846:android:ce374e66f0c51f00ea6617",
+        "android_client_info": {
+          "package_name": "com.example.travelofrecord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "722946801846-dae5ornm4jmveb62d5j32im9b3djs8da.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.travelofrecord",
+            "certificate_hash": "b3dea0ee92d39d92e1f4f32e673267fae424823b"
+          }
+        },
+        {
+          "client_id": "722946801846-4un95ppjp3m74dn7htncnb4o94jdu6qj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqHNXTjASxfVQguLL-AlIcuPhaHRHBJ5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "722946801846-4un95ppjp3m74dn7htncnb4o94jdu6qj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
