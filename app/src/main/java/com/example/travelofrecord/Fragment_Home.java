@@ -10,10 +10,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class Fragment_Home extends Fragment {
 
     String TAG = "홈 프래그먼트";
+
+    private Button photo_Btn;
+    private Button map_Btn;
+    private Button photo_Block;
+    private Button map_Block;
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -29,7 +35,14 @@ public class Fragment_Home extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View v = inflater.inflate(R.layout.fragment_home, container, false);
+
+        photo_Btn = v.findViewById(R.id.homePhoto_Btn);
+        map_Btn = v.findViewById(R.id.homeMap_Btn);
+        photo_Block = v.findViewById(R.id.homePhoto_Block);
+        map_Block = v.findViewById(R.id.homeMap_Block);
+
+        return v;
     }
 
 
@@ -44,6 +57,35 @@ public class Fragment_Home extends Fragment {
     @Override public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
+
+
+
+        photo_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                photo_Btn.setVisibility(View.GONE);
+                photo_Block.setVisibility(View.VISIBLE);
+                map_Btn.setVisibility(View.VISIBLE);
+                map_Block.setVisibility(View.GONE);
+
+            }
+        });
+
+        map_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                map_Btn.setVisibility(View.GONE);
+                map_Block.setVisibility(View.VISIBLE);
+                photo_Btn.setVisibility(View.VISIBLE);
+                photo_Block.setVisibility(View.GONE);
+
+            }
+        });
+
+
+
     }
     @Override public void onResume() {
         Log.d(TAG, "onResume()");

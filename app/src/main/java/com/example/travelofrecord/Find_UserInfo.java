@@ -1,5 +1,6 @@
 package com.example.travelofrecord;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -18,6 +19,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
+
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -143,6 +152,45 @@ public class Find_UserInfo extends AppCompatActivity {
         });
 
 
+//        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+//
+//            @Override
+//            public void onVerificationCompleted(PhoneAuthCredential credential) { // 검증 성공
+//                // 이 콜백은 다음 2가지 상황에서 호출된다.
+//                // 1. 즉각적인 확인. 경우에 따라서, 확인 코드를 입력 & 전송할 필요 없이 전화 번호를 즉시 확인할 수 있다.
+//                // 2. 자동 검색. 일부 장치에서 구글플레이 서비스가 sms를 자동 탐지하여 사용자 작업 없이 확인을 수행할 수 있다.
+//                Log.d(TAG, "onVerificationCompleted:" + credential);
+//
+//                signInWithPhoneAuthCredential(credential);
+//            }
+//
+//            @Override
+//            public void onVerificationFailed(FirebaseException e) { // 검증 실패
+//                // 이 콜백은 전화번호 형식이 올바르지 않은 경우 호출된다.
+//                Log.w(TAG, "onVerificationFailed", e);
+//
+//                if (e instanceof FirebaseAuthInvalidCredentialsException) {
+//                    // 잘못된 요청
+//                } else if (e instanceof FirebaseTooManyRequestsException) {
+//                    // 해당 프로젝트의 sms 할당량 초과
+//                }
+//
+//                // 해당 에러를 UI로 표시해 줄 것.
+//            }
+//
+//            @Override
+//            public void onCodeSent(@NonNull String verificationId,
+//                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
+//                // 제공된 전화번호로 sms 인증 코드가 전송되었다. 사용자가 코드를 입력하면 자격 증명을 구성한다.
+//                Log.d(TAG, "onCodeSent:" + verificationId);
+//
+//                // 나중에 사용될 수 있도록 검증ID를 저장해놓고, 토큰은 다시 보낸다.
+//                mVerificationId = verificationId;
+//                mResendToken = token;
+//            }
+//        };
+
+
         // 아이디 찾기
         findId_sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +212,18 @@ public class Find_UserInfo extends AppCompatActivity {
                 findId_smsTimeoutText.setVisibility(View.INVISIBLE);
 
                 smsCheckNumber = 1;
+
+
+//                PhoneAuthOptions options =
+//                        PhoneAuthOptions.newBuilder(mAuth)
+//                                .setPhoneNumber(phoneNumber)       // 검증을 위한 핸드폰 번호
+//                                .setTimeout(60L, TimeUnit.SECONDS) // 제한 시간과 단위
+//                                .setActivity(this)                 // 콜백 바인딩용 액티비티
+//                                .setCallbacks(mCallbacks)          // 확인 상태 변경 콜백
+//                                .build();
+//                PhoneAuthProvider.verifyPhoneNumber(options);
+//                auth.setLanguageCode("fr");
+
 
             }
         });
@@ -348,8 +408,6 @@ public class Find_UserInfo extends AppCompatActivity {
                 findPw_checkNum.setText("");
             }
         });
-
-
 
     } // onStart()
 

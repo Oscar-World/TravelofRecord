@@ -1,6 +1,10 @@
 package com.example.travelofrecord;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -10,10 +14,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+
+import com.kakao.sdk.user.UserApiClient;
 
 public class Fragment_myProfile extends Fragment {
 
     String TAG = "내 프로필 프래그먼트";
+
+    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences_Kakao;
+    SharedPreferences.Editor editor;
+    SharedPreferences.Editor editor_Kakao;
+
+    private ImageButton logout_Btn;
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -29,7 +45,16 @@ public class Fragment_myProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_profile, container, false);
+        View v = inflater.inflate(R.layout.fragment_my_profile, container, false);
+
+        logout_Btn = v.findViewById(R.id.logout_Btn);
+
+        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
+        editor_Kakao = sharedPreferences_Kakao.edit();
+
+        return v;
     }
 
 
@@ -44,6 +69,34 @@ public class Fragment_myProfile extends Fragment {
     @Override public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
+
+        logout_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                UserApiClient.getInstance().unlink(error -> {
+                    if (error != null) {
+                        Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
+                    }else{
+                        Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
+                    }
+                    return null;
+                });
+
+                editor_Kakao.clear();
+                editor_Kakao.commit();
+
+                editor.clear();
+                editor.commit();
+
+                Intent i = new Intent(getActivity(),Start.class);
+                startActivity(i);
+
+                getActivity().finish();
+            }
+        });
+
+
     }
     @Override public void onResume() {
         Log.d(TAG, "onResume()");

@@ -7,60 +7,117 @@
     tools:context=".Home"
     android:background="#f2f3ff">
 
-    <FrameLayout
-        android:id="@+id/homeHead_Frame"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="9"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:background="#f6feff"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <ImageButton
-            android:id="@+id/delete_Btn"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:backgroundTint="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.045"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.038"
-            app:srcCompat="@android:drawable/ic_dialog_dialer" />
+<!--    <FrameLayout-->
+<!--        android:id="@+id/homeHead_Frame"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        android:background="#f6feff"-->
+<!--        android:visibility="visible"-->
+<!--        >-->
 
-        <Button
-            android:id="@+id/homePhoto_Btn"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="사진"
-            android:padding="10dp"
-            />
+<!--        <TextView-->
+<!--            android:id="@+id/homeTitle_Text"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="홈"-->
+<!--            android:textSize="28dp"-->
+<!--            android:layout_gravity="center|start"-->
+<!--            android:layout_marginLeft="15dp"-->
+<!--            />-->
 
-        <Button
-            android:id="@+id/homeMap_Btn"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="지도"
-            android:padding="10dp"
-            />
+<!--        <ImageButton-->
+<!--            android:id="@+id/logout_Btn"-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:backgroundTint="@android:color/transparent"-->
+<!--            android:scaleType="centerInside"-->
+<!--            android:layout_gravity="center|end"-->
+<!--            android:layout_marginRight="15dp"-->
+<!--            android:visibility="gone"-->
+<!--            app:srcCompat="@android:drawable/ic_dialog_dialer" />-->
 
-    </FrameLayout>
+<!--        <Button-->
+<!--            android:id="@+id/homePhoto_Btn"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginRight="35dp"-->
+<!--            android:text="사진"-->
+<!--            android:textColor="#64c9ff"-->
+<!--            android:backgroundTint="#f6feff"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/homePhoto_Block"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginRight="35dp"-->
+<!--            android:text="사진"-->
+<!--            android:backgroundTint="#64c9ff"-->
+<!--            android:visibility="visible"-->
+<!--            />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/homeMap_Btn"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginLeft="35dp"-->
+<!--            android:text="지도"-->
+<!--            android:textColor="#64c9ff"-->
+<!--            android:backgroundTint="#f6feff"-->
+<!--            android:visibility="visible"-->
+<!--            />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/homeMap_Block"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginLeft="35dp"-->
+<!--            android:text="지도"-->
+<!--            android:backgroundTint="#64c9ff"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/upload_Btn"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="완료"-->
+<!--            android:layout_gravity="center|end"-->
+<!--            android:layout_marginRight="15dp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:textSize="18dp"-->
+<!--            android:textColor="#64c9ff"-->
+<!--            android:background="#00ff0000"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+<!--    </FrameLayout>-->
 
     <FrameLayout
         android:id="@+id/homeBody_Frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="8"
         app:layout_constraintTop_toBottomOf="@+id/homeHead_Frame"
         app:layout_constraintBottom_toTopOf="@+id/homeFoot_Frame"
         app:layout_constraintRight_toRightOf="parent"
@@ -72,7 +129,8 @@
     <LinearLayout
         android:id="@+id/homeFoot_Frame"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -83,7 +141,7 @@
 
         <ImageButton
             android:id="@+id/home_Btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#f6feff"
@@ -97,7 +155,7 @@
 
         <ImageButton
             android:id="@+id/homefull_Btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#f6feff"
@@ -111,7 +169,7 @@
 
         <ImageButton
             android:id="@+id/heart_Btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#f6feff"
@@ -125,7 +183,7 @@
 
         <ImageButton
             android:id="@+id/heartfull_Btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#f6feff"
@@ -139,7 +197,7 @@
 
         <ImageButton
             android:id="@+id/add_Btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#f6feff"
@@ -153,7 +211,7 @@
 
         <ImageButton
             android:id="@+id/addfull_Btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#f6feff"
@@ -167,7 +225,7 @@
 
         <ImageButton
             android:id="@+id/myProfile_Btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#f6feff"
@@ -181,7 +239,7 @@
 
         <ImageButton
             android:id="@+id/myProfilefull_Btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#f6feff"
@@ -195,4 +253,6 @@
 
     </LinearLayout>
 
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

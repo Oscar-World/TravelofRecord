@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.kakao.sdk.user.UserApiClient;
 
@@ -21,6 +22,8 @@ import java.util.regex.Pattern;
 public class Home extends AppCompatActivity {
 
     String TAG = "홈 액티비티";
+
+    TextView title_Text;
 
     ImageButton home_Btn;
     ImageButton heart_Btn;
@@ -34,8 +37,11 @@ public class Home extends AppCompatActivity {
 
     Button photo_Btn;
     Button map_Btn;
+    Button photo_Block;
+    Button map_Block;
+    Button upload_Btn;
 
-    ImageButton back_Btn;
+    ImageButton logout_Btn;
 
     SharedPreferences sharedPreferences;
     SharedPreferences sharedPreferences_Kakao;
@@ -76,8 +82,6 @@ public class Home extends AppCompatActivity {
                 transaction.replace(R.id.homeBody_Frame,fragment_home);
                 transaction.commitAllowingStateLoss();
 
-                headFrame.setVisibility(View.VISIBLE);
-
                 home_Btn.setVisibility(View.GONE);
                 homeFull_Btn.setVisibility(View.VISIBLE);
 
@@ -88,6 +92,16 @@ public class Home extends AppCompatActivity {
                 heartFull_Btn.setVisibility(View.GONE);
                 addFull_Btn.setVisibility(View.GONE);
                 myProfileFull_Btn.setVisibility(View.GONE);
+
+//                photo_Btn.setVisibility(View.GONE);
+//                photo_Block.setVisibility(View.VISIBLE);
+//                map_Btn.setVisibility(View.VISIBLE);
+//                map_Block.setVisibility(View.GONE);
+//
+//                upload_Btn.setVisibility(View.GONE);
+//                logout_Btn.setVisibility(View.GONE);
+//
+//                title_Text.setText("홈");
 
             }
         });
@@ -101,8 +115,6 @@ public class Home extends AppCompatActivity {
                 transaction.replace(R.id.homeBody_Frame,fragment_heart);
                 transaction.commitAllowingStateLoss();
 
-                headFrame.setVisibility(View.VISIBLE);
-
                 heart_Btn.setVisibility(View.GONE);
                 heartFull_Btn.setVisibility(View.VISIBLE);
 
@@ -113,6 +125,16 @@ public class Home extends AppCompatActivity {
                 homeFull_Btn.setVisibility(View.GONE);
                 addFull_Btn.setVisibility(View.GONE);
                 myProfileFull_Btn.setVisibility(View.GONE);
+
+//                photo_Btn.setVisibility(View.GONE);
+//                photo_Block.setVisibility(View.VISIBLE);
+//                map_Btn.setVisibility(View.VISIBLE);
+//                map_Block.setVisibility(View.GONE);
+//
+//                upload_Btn.setVisibility(View.GONE);
+//                logout_Btn.setVisibility(View.GONE);
+//
+//                title_Text.setText("관심");
 
             }
         });
@@ -126,8 +148,6 @@ public class Home extends AppCompatActivity {
                 transaction.replace(R.id.homeBody_Frame,fragment_add);
                 transaction.commitAllowingStateLoss();
 
-                headFrame.setVisibility(View.INVISIBLE);
-
                 add_Btn.setVisibility(View.GONE);
                 addFull_Btn.setVisibility(View.VISIBLE);
 
@@ -138,6 +158,16 @@ public class Home extends AppCompatActivity {
                 homeFull_Btn.setVisibility(View.GONE);
                 heartFull_Btn.setVisibility(View.GONE);
                 myProfileFull_Btn.setVisibility(View.GONE);
+
+//                photo_Btn.setVisibility(View.GONE);
+//                photo_Block.setVisibility(View.GONE);
+//                map_Btn.setVisibility(View.GONE);
+//                map_Block.setVisibility(View.GONE);
+//
+//                upload_Btn.setVisibility(View.VISIBLE);
+//                logout_Btn.setVisibility(View.GONE);
+//
+//                title_Text.setText("기록");
 
             }
         });
@@ -151,8 +181,6 @@ public class Home extends AppCompatActivity {
                 transaction.replace(R.id.homeBody_Frame,fragment_myProfile);
                 transaction.commitAllowingStateLoss();
 
-                headFrame.setVisibility(View.INVISIBLE);
-
                 myProfile_Btn.setVisibility(View.GONE);
                 myProfileFull_Btn.setVisibility(View.VISIBLE);
 
@@ -164,41 +192,73 @@ public class Home extends AppCompatActivity {
                 heartFull_Btn.setVisibility(View.GONE);
                 addFull_Btn.setVisibility(View.GONE);
 
+//                photo_Btn.setVisibility(View.GONE);
+//                photo_Block.setVisibility(View.GONE);
+//                map_Btn.setVisibility(View.GONE);
+//                map_Block.setVisibility(View.GONE);
+//
+//                upload_Btn.setVisibility(View.GONE);
+//                logout_Btn.setVisibility(View.VISIBLE);
+//
+//                title_Text.setText("프로필");
+
             }
         });
 
-
-        back_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                UserApiClient.getInstance().unlink(error -> {
-                    if (error != null) {
-                        Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
-                    }else{
-                        Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
-                    }
-                    return null;
-                });
-
-                editor_Kakao.clear();
-                editor_Kakao.commit();
-
-                editor.clear();
-                editor.commit();
-
-                Intent i = new Intent(Home.this,Start.class);
-                startActivity(i);
-
-                finish();
-            }
-        });
+//        photo_Btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                photo_Btn.setVisibility(View.GONE);
+//                photo_Block.setVisibility(View.VISIBLE);
+//                map_Btn.setVisibility(View.VISIBLE);
+//                map_Block.setVisibility(View.GONE);
+//
+//            }
+//        });
+//
+//        map_Btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                map_Btn.setVisibility(View.GONE);
+//                map_Block.setVisibility(View.VISIBLE);
+//                photo_Btn.setVisibility(View.VISIBLE);
+//                photo_Block.setVisibility(View.GONE);
+//
+//            }
+//        });
+//
+//        logout_Btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                UserApiClient.getInstance().unlink(error -> {
+//                    if (error != null) {
+//                        Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
+//                    }else{
+//                        Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
+//                    }
+//                    return null;
+//                });
+//
+//                editor_Kakao.clear();
+//                editor_Kakao.commit();
+//
+//                editor.clear();
+//                editor.commit();
+//
+//                Intent i = new Intent(Home.this,Start.class);
+//                startActivity(i);
+//
+//                finish();
+//            }
+//        });
 
     }
 
     public void setView() {
 
-        back_Btn = findViewById(R.id.delete_Btn);
         home_Btn = findViewById(R.id.home_Btn);
         heart_Btn = findViewById(R.id.heart_Btn);
         add_Btn = findViewById(R.id.add_Btn);
@@ -209,8 +269,17 @@ public class Home extends AppCompatActivity {
         addFull_Btn = findViewById(R.id.addfull_Btn);
         myProfileFull_Btn = findViewById(R.id.myProfilefull_Btn);
 
-        photo_Btn = findViewById(R.id.homePhoto_Btn);
-        map_Btn = findViewById(R.id.homeMap_Btn);
+//        title_Text = findViewById(R.id.homeTitle_Text);
+//
+//        photo_Btn = findViewById(R.id.homePhoto_Btn);
+//        map_Btn = findViewById(R.id.homeMap_Btn);
+//        photo_Block = findViewById(R.id.homePhoto_Block);
+//        map_Block = findViewById(R.id.homeMap_Block);
+//        upload_Btn = findViewById(R.id.upload_Btn);
+//
+//        logout_Btn = findViewById(R.id.logout_Btn);
+//
+//        headFrame = findViewById(R.id.homeHead_Frame);
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -228,7 +297,7 @@ public class Home extends AppCompatActivity {
         transaction.add(R.id.homeBody_Frame,fragment_home);
         transaction.commitAllowingStateLoss();
 
-        headFrame = findViewById(R.id.homeHead_Frame);
+
 
     }
 
