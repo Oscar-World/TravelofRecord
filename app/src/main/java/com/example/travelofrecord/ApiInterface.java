@@ -19,7 +19,7 @@ public interface ApiInterface {
     );
 
     @GET("mysql_Login.php")
-    Call<String> getLoginInfo (
+    Call<User> getLoginInfo (
             @Query("id") String id,
             @Query("pw") String pw
     );
@@ -45,13 +45,19 @@ public interface ApiInterface {
             @Query("pw") String pw
     );
 
-    @GET("mysql_Read.php")
+//    @GET("mysql_GetUser.php")
+//    Call<User> getInfo (
+//            @Query("type") String type,
+//            @Query("id") String id,
+//            @Query("pw") String pw,
+//            @Query("phone") String phone,
+//            @Query("nickname") String nickname,
+//            @Query("image") String image
+//    );
+
+    @GET("mysql_GetUser.php")
     Call<User> getInfo (
-            @Query("type") String type,
-            @Query("id") String id,
-            @Query("pw") String pw,
-            @Query("phone") String phone,
-            @Query("nickname") String nickname
+            @Query("id") String id
     );
 
 

@@ -36,6 +36,15 @@ public class Login extends AppCompatActivity {
     Button signup_Btn;
     Button findInfo_Btn;
 
+    String user_type;
+    String user_id;
+    String user_pw;
+    String user_phone;
+    String user_nickname;
+    String user_image;
+    String no_id;
+    String no_pw;
+
     String rp_code;
     String edit_id;
     String edit_pw;
@@ -115,7 +124,7 @@ public class Login extends AppCompatActivity {
         google_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Log.d(TAG, "onResponse: " + no_id + " / " + no_pw);
             }
         });
 
@@ -232,31 +241,43 @@ public class Login extends AppCompatActivity {
     // ▼ DB 로그인 정보 확인 ▼
     public void getLogin(String id, String pw) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.getLoginInfo(id,pw);
-        call.enqueue(new Callback<String>() {
+        Call<User> call = apiInterface.getLoginInfo(id,pw);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
 
-                rp_code = response.body().toString();
+//                rp_code = response.body().toString();
+//                Log.d(TAG, "onResponse: " + rp_code);
 
-                Log.d(TAG, "onResponse: " + rp_code);
+                no_id = response.body().getNoid();
+                no_pw = response.body().getNopw();
 
-                if (rp_code.equals("NOID")) {
+                Log.d(TAG, "onResponse: " + no_id + " / " + no_pw);
+
+                if (no_id != null) {
 
                     Toast t = Toast.makeText(login_Btn.getContext(),"아이디 또는 비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
                     t.show();
 
-                } else if (rp_code.equals("NOPW")) {
+                } else if (no_pw != null) {
                     Toast t = Toast.makeText(login_Btn.getContext(),"아이디 또는 비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
                     t.show();
 
-                } else if (rp_code.equals("ok")) {
+                } else {
                     Toast t = Toast.makeText(login_Btn.getContext(),"환영합니다!",Toast.LENGTH_SHORT);
                     t.show();
 
+                    user_type = response.body().getType();
+                    user_id = response.body().getId();
+                    user_pw = response.body().getPw();
+                    user_phone = response.body().getPhone();
+                    user_nickname = response.body().getNickname();
+                    user_image = response.body().getImage();
+
+                    Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
+
                     editor.putString("로그인", edit_id);
                     editor.commit();
-
                     Intent i = new Intent(Login.this,Home.class);
                     startActivity(i);
                     finish();
@@ -264,7 +285,7 @@ public class Login extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
             }
         });
@@ -275,10 +296,10 @@ public class Login extends AppCompatActivity {
     // ▼ DB 카카오 계정 로그인 기록 확인 ▼
     public void getKakaoTest(String id, String pw) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.getLoginInfo(id,pw);
-        call.enqueue(new Callback<String>() {
+        Call<User> call = apiInterface.getLoginInfo(id,pw);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
 
                 rp_code = response.body().toString();
 
@@ -313,7 +334,7 @@ public class Login extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
             }
         });

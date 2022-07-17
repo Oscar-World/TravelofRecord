@@ -22,6 +22,15 @@ public class User {
     @Expose
     @SerializedName("nickname") private String nickname;
 
+    @Expose
+    @SerializedName("image") private String image;
+
+    @Expose
+    @SerializedName("noid") private String noid;
+
+    @Expose
+    @SerializedName("nopw") private String nopw;
+
     public String getType() {
         return type;
     }
@@ -37,6 +46,9 @@ public class User {
     public String getNickname() {
         return nickname;
     }
+    public String getImage() { return image; }
+    public String getNoid() { return noid; }
+    public String getNopw() { return nopw; }
 
     public void setType(String type) {
         this.type = type;
@@ -50,9 +62,11 @@ public class User {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    public  void setNickname(String nickname) {
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
-
+    public void setImage(String image) { this.image = image; }
+    public void setNoid(String noid) { this.noid = noid; }
+    public void setNopw(String nopw) { this.nopw = nopw; }
 
 }

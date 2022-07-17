@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.kakao.sdk.user.UserApiClient;
 
 public class Fragment_myProfile extends Fragment {
@@ -44,6 +46,13 @@ public class Fragment_myProfile extends Fragment {
     Button map_Btn;
     Button map_Block;
 
+    String user_type;
+    String user_id;
+    String user_pw;
+    String user_phone;
+    String user_nickname;
+    String user_image;
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -62,6 +71,11 @@ public class Fragment_myProfile extends Fragment {
         v = inflater.inflate(R.layout.fragment_my_profile, container, false);
 
         setView();
+
+        profile_nickname.setText(user_nickname);
+        Glide.with(getContext())
+                .load(Uri.parse(user_image))
+                .into(profile_image);
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -171,6 +185,9 @@ public class Fragment_myProfile extends Fragment {
         photo_Block = v.findViewById(R.id.myProfilePhoto_Block);
         map_Btn = v.findViewById(R.id.myProfileMap_Btn);
         map_Block = v.findViewById(R.id.myProfileMap_Block);
+
+        user_nickname = this.getArguments().getString("nickname");
+        user_image = this.getArguments().getString("image");
 
     }
 

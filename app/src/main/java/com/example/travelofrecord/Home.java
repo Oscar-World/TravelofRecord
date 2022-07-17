@@ -13,12 +13,17 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kakao.sdk.user.UserApiClient;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Home extends AppCompatActivity {
 
@@ -38,6 +43,7 @@ public class Home extends AppCompatActivity {
     SharedPreferences sharedPreferences_Kakao;
     SharedPreferences.Editor editor;
     SharedPreferences.Editor editor_Kakao;
+    String sharedInfo;
 
     FragmentManager fragmentManager;
     FragmentTransaction transaction;
@@ -46,6 +52,15 @@ public class Home extends AppCompatActivity {
     Fragment_add fragment_add;
     Fragment_myProfile fragment_myProfile;
 
+    Bundle bundle;
+
+    String user_type;
+    String user_id;
+    String user_pw;
+    String user_phone;
+    String user_nickname;
+    String user_image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +68,8 @@ public class Home extends AppCompatActivity {
         Log.d(TAG, "onCreate() 호출");
 
         setView();
+
+        getInfo(sharedInfo);
 
     }
 
@@ -136,6 +153,13 @@ public class Home extends AppCompatActivity {
 
                 fragmentManager = getSupportFragmentManager();
                 transaction = fragmentManager.beginTransaction();
+
+                bundle.putString("nickname",user_nickname);
+                bundle.putString("image",user_image);
+
+                fragment_myProfile.setArguments(bundle);
+
+                Log.d(TAG, "bundle : " + bundle);
                 transaction.replace(R.id.homeBody_Frame,fragment_myProfile);
                 transaction.commitAllowingStateLoss();
 
@@ -169,6 +193,8 @@ public class Home extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
+        sharedInfo = sharedPreferences.getString("로그인","");
+
         sharedPreferences_Kakao = getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
 
@@ -182,9 +208,44 @@ public class Home extends AppCompatActivity {
         transaction.add(R.id.homeBody_Frame,fragment_home);
         transaction.commitAllowingStateLoss();
 
-
+        bundle = new Bundle();
 
     }
+
+
+    public void getInfo(String id) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getInfo(id);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+
+                    user_type = response.body().getType();
+                    user_id = response.body().getId();
+                    user_pw = response.body().getPw();
+                    user_phone = response.body().getPhone();
+                    user_nickname = response.body().getNickname();
+                    user_image = response.body().getImage();
+
+                    Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
+
+                } else {
+                    Log.d(TAG, "onResponse: 리스폰스 실패");
+                }
+
+            }   // onResponse
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
+            }
+
+        });
+
+    }  // getSignup()
+
 
     @Override
     protected void onResume(){
