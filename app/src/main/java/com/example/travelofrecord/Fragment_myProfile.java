@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.kakao.sdk.user.UserApiClient;
 
@@ -23,12 +25,24 @@ public class Fragment_myProfile extends Fragment {
 
     String TAG = "내 프로필 프래그먼트";
 
+    View v;
+
     SharedPreferences sharedPreferences;
     SharedPreferences sharedPreferences_Kakao;
     SharedPreferences.Editor editor;
     SharedPreferences.Editor editor_Kakao;
 
     private ImageButton logout_Btn;
+
+    ImageView profile_image;
+
+    TextView profile_nickname;
+    TextView profile_memo;
+
+    Button photo_Btn;
+    Button photo_Block;
+    Button map_Btn;
+    Button map_Block;
 
 
     @Override public void onAttach(Context context) {
@@ -45,9 +59,9 @@ public class Fragment_myProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_my_profile, container, false);
+        v = inflater.inflate(R.layout.fragment_my_profile, container, false);
 
-        logout_Btn = v.findViewById(R.id.logout_Btn);
+        setView();
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -97,6 +111,31 @@ public class Fragment_myProfile extends Fragment {
         });
 
 
+        photo_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                photo_Btn.setVisibility(View.GONE);
+                photo_Block.setVisibility(View.VISIBLE);
+                map_Btn.setVisibility(View.VISIBLE);
+                map_Block.setVisibility(View.GONE);
+
+            }
+        });
+
+        map_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                map_Btn.setVisibility(View.GONE);
+                map_Block.setVisibility(View.VISIBLE);
+                photo_Btn.setVisibility(View.VISIBLE);
+                photo_Block.setVisibility(View.GONE);
+
+            }
+        });
+
+
     }
     @Override public void onResume() {
         Log.d(TAG, "onResume()");
@@ -117,6 +156,22 @@ public class Fragment_myProfile extends Fragment {
     @Override public void onDetach() {
         Log.d(TAG, "onDetach()");
         super.onDetach();
+    }
+
+    public void setView() {
+
+        logout_Btn = v.findViewById(R.id.logout_Btn);
+
+        profile_image = v.findViewById(R.id.myProfile_image);
+
+        profile_nickname = v.findViewById(R.id.myProfile_nickname);
+        profile_memo = v.findViewById(R.id.myProfile_memo);
+
+        photo_Btn = v.findViewById(R.id.myProfilePhoto_Btn);
+        photo_Block = v.findViewById(R.id.myProfilePhoto_Block);
+        map_Btn = v.findViewById(R.id.myProfileMap_Btn);
+        map_Block = v.findViewById(R.id.myProfileMap_Block);
+
     }
 
 }

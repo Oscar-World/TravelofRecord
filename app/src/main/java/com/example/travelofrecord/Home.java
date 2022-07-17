@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.kakao.sdk.user.UserApiClient;
 
 import java.util.regex.Matcher;
@@ -22,8 +23,6 @@ import java.util.regex.Pattern;
 public class Home extends AppCompatActivity {
 
     String TAG = "홈 액티비티";
-
-    TextView title_Text;
 
     ImageButton home_Btn;
     ImageButton heart_Btn;
@@ -34,14 +33,6 @@ public class Home extends AppCompatActivity {
     ImageButton heartFull_Btn;
     ImageButton addFull_Btn;
     ImageButton myProfileFull_Btn;
-
-    Button photo_Btn;
-    Button map_Btn;
-    Button photo_Block;
-    Button map_Block;
-    Button upload_Btn;
-
-    ImageButton logout_Btn;
 
     SharedPreferences sharedPreferences;
     SharedPreferences sharedPreferences_Kakao;
@@ -54,9 +45,6 @@ public class Home extends AppCompatActivity {
     Fragment_Heart fragment_heart;
     Fragment_add fragment_add;
     Fragment_myProfile fragment_myProfile;
-
-    FrameLayout headFrame;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,16 +81,6 @@ public class Home extends AppCompatActivity {
                 addFull_Btn.setVisibility(View.GONE);
                 myProfileFull_Btn.setVisibility(View.GONE);
 
-//                photo_Btn.setVisibility(View.GONE);
-//                photo_Block.setVisibility(View.VISIBLE);
-//                map_Btn.setVisibility(View.VISIBLE);
-//                map_Block.setVisibility(View.GONE);
-//
-//                upload_Btn.setVisibility(View.GONE);
-//                logout_Btn.setVisibility(View.GONE);
-//
-//                title_Text.setText("홈");
-
             }
         });
 
@@ -125,16 +103,6 @@ public class Home extends AppCompatActivity {
                 homeFull_Btn.setVisibility(View.GONE);
                 addFull_Btn.setVisibility(View.GONE);
                 myProfileFull_Btn.setVisibility(View.GONE);
-
-//                photo_Btn.setVisibility(View.GONE);
-//                photo_Block.setVisibility(View.VISIBLE);
-//                map_Btn.setVisibility(View.VISIBLE);
-//                map_Block.setVisibility(View.GONE);
-//
-//                upload_Btn.setVisibility(View.GONE);
-//                logout_Btn.setVisibility(View.GONE);
-//
-//                title_Text.setText("관심");
 
             }
         });
@@ -159,16 +127,6 @@ public class Home extends AppCompatActivity {
                 heartFull_Btn.setVisibility(View.GONE);
                 myProfileFull_Btn.setVisibility(View.GONE);
 
-//                photo_Btn.setVisibility(View.GONE);
-//                photo_Block.setVisibility(View.GONE);
-//                map_Btn.setVisibility(View.GONE);
-//                map_Block.setVisibility(View.GONE);
-//
-//                upload_Btn.setVisibility(View.VISIBLE);
-//                logout_Btn.setVisibility(View.GONE);
-//
-//                title_Text.setText("기록");
-
             }
         });
 
@@ -192,68 +150,8 @@ public class Home extends AppCompatActivity {
                 heartFull_Btn.setVisibility(View.GONE);
                 addFull_Btn.setVisibility(View.GONE);
 
-//                photo_Btn.setVisibility(View.GONE);
-//                photo_Block.setVisibility(View.GONE);
-//                map_Btn.setVisibility(View.GONE);
-//                map_Block.setVisibility(View.GONE);
-//
-//                upload_Btn.setVisibility(View.GONE);
-//                logout_Btn.setVisibility(View.VISIBLE);
-//
-//                title_Text.setText("프로필");
-
             }
         });
-
-//        photo_Btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                photo_Btn.setVisibility(View.GONE);
-//                photo_Block.setVisibility(View.VISIBLE);
-//                map_Btn.setVisibility(View.VISIBLE);
-//                map_Block.setVisibility(View.GONE);
-//
-//            }
-//        });
-//
-//        map_Btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                map_Btn.setVisibility(View.GONE);
-//                map_Block.setVisibility(View.VISIBLE);
-//                photo_Btn.setVisibility(View.VISIBLE);
-//                photo_Block.setVisibility(View.GONE);
-//
-//            }
-//        });
-//
-//        logout_Btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                UserApiClient.getInstance().unlink(error -> {
-//                    if (error != null) {
-//                        Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
-//                    }else{
-//                        Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
-//                    }
-//                    return null;
-//                });
-//
-//                editor_Kakao.clear();
-//                editor_Kakao.commit();
-//
-//                editor.clear();
-//                editor.commit();
-//
-//                Intent i = new Intent(Home.this,Start.class);
-//                startActivity(i);
-//
-//                finish();
-//            }
-//        });
 
     }
 
@@ -269,23 +167,10 @@ public class Home extends AppCompatActivity {
         addFull_Btn = findViewById(R.id.addfull_Btn);
         myProfileFull_Btn = findViewById(R.id.myProfilefull_Btn);
 
-//        title_Text = findViewById(R.id.homeTitle_Text);
-//
-//        photo_Btn = findViewById(R.id.homePhoto_Btn);
-//        map_Btn = findViewById(R.id.homeMap_Btn);
-//        photo_Block = findViewById(R.id.homePhoto_Block);
-//        map_Block = findViewById(R.id.homeMap_Block);
-//        upload_Btn = findViewById(R.id.upload_Btn);
-//
-//        logout_Btn = findViewById(R.id.logout_Btn);
-//
-//        headFrame = findViewById(R.id.homeHead_Frame);
-
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         sharedPreferences_Kakao = getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
-
 
         fragment_home = new Fragment_Home();
         fragment_heart = new Fragment_Heart();

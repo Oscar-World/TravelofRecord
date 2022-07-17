@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="9"
+        android:weightSum="7"
         >
 
         <FrameLayout
@@ -51,9 +51,99 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            android:layout_weight="8"
+            android:layout_weight="6"
             >
 
+
+            <ImageView
+                android:id="@+id/myProfile_image"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/user"
+                />
+
+            <TextView
+                android:id="@+id/myProfile_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="닉네임"
+                android:textSize="22dp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                />
+
+            <TextView
+                android:id="@+id/myProfile_memo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="메모"
+                android:textSize="18dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="#dddddd"
+                android:layout_marginTop="30dp"
+            />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:gravity="center"
+                >
+
+            <Button
+                android:id="@+id/myProfilePhoto_Btn"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:text="사진"
+                android:textColor="#64c9ff"
+                android:backgroundTint="#f6feff"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:id="@+id/myProfilePhoto_Block"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:text="사진"
+                android:backgroundTint="#64c9ff"
+                android:visibility="visible"
+                />
+
+            <Button
+                android:id="@+id/myProfileMap_Btn"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:text="지도"
+                android:textColor="#64c9ff"
+                android:backgroundTint="#f6feff"
+                android:visibility="visible"
+                />
+
+            <Button
+                android:id="@+id/myProfileMap_Block"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:text="지도"
+                android:backgroundTint="#64c9ff"
+                android:visibility="gone"
+                />
+
+            </LinearLayout>
 
 
         </LinearLayout>
@@ -62,4 +152,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

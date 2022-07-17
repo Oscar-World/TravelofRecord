@@ -14,7 +14,8 @@ public interface ApiInterface {
             @Query("id") String id,
             @Query("pw") String pw,
             @Query("phone") String phone,
-            @Query("nickname") String nickname
+            @Query("nickname") String nickname,
+            @Query("image") String image
     );
 
     @GET("mysql_Login.php")

@@ -1,5 +1,10 @@
 package com.example.travelofrecord;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -75,6 +81,8 @@ public class Signup extends AppCompatActivity {
     String edit_phone;
     String edit_phoneCheck;
     String edit_nickname;
+    String image;
+
 
     String idRule;
     String pwRule;
@@ -149,6 +157,9 @@ public class Signup extends AppCompatActivity {
     int smsTime_min;
     int smsTime_sec;
     int smsCheckNumber;
+
+    ActivityResultLauncher<Intent> launcher;
+    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -502,21 +513,23 @@ public class Signup extends AppCompatActivity {
                 edit_pwCheck = signup_pwCheck.getText().toString();
                 edit_phone = signup_phone.getText().toString();
                 edit_nickname = signup_nickname.getText().toString();
+                image = uri.toString();
 
                 if (iData != null) {
                     if (signupCheck2()) {
                         login_Type = "Kakao";
-                        getSignup(login_Type,iData,"",edit_phone,edit_nickname);
+                        getSignup(login_Type,iData,"",edit_phone,edit_nickname,image);
                     }
                 } else {
                     if (signupCheck()) {
                         login_Type = "Nature";
-                        getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname);
+                        getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,image);
                     }
                 }
 
             }
         });
+        
 
 
         // ▼ 1페이지 뒤로가기 버튼 ▼
@@ -623,34 +636,48 @@ public class Signup extends AppCompatActivity {
             }
         });
 
-//        private int GALLEY_CODE = 10;
-//
-//        // ▼ 프로필 사진 업로드 버튼 ▼
-//        photo_Btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                Intent intent = new Intent(Intent.ACTION_PICK);
-//                intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-//
-//               registerForActivityResult(intent,GALLEY_CODE);
-//
-//                Glide.with(photo_Btn)
-//                        .load(R.drawable.user)
-//                        .into(photo_Btn);
-//
-//            }
-//        });
+
+//        ▼ 프로필 사진 업로드 버튼 ▼
+        photo_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent();
+                i.setType("image/*");
+                i.setAction(Intent.ACTION_GET_CONTENT);
+                launcher.launch(i);
+
+            }
+        });
+
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+
+                     if (result.getResultCode() == RESULT_OK) {
+
+                         Intent intent = result.getData();
+                         uri = intent.getData();
+
+                         Log.d(TAG, "onActivityResult: " + result);
+                         Log.d(TAG, "onActivityResult: " + intent);
+                         Log.d(TAG, "onActivityResult: " + uri);
+
+                         Glide.with(getApplicationContext())
+                                 .load(uri)
+                                 .into(photo_Btn);
+
+                     }
+
+                    }
+        });
 
 
 
 
     } // onStart()
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     // ▼ 소셜 로그인으로 진입 시 안내 문구 다이얼로그 ▼
     public void infoDlg() {
@@ -848,9 +875,9 @@ public class Signup extends AppCompatActivity {
 
 
     // ▼ 3페이지 submit 시, 마지막 검사 ▼
-    public void getSignup(String type, String id, String pw, String phone, String nickname) {
+    public void getSignup(String type, String id, String pw, String phone, String nickname, String image) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.insertInfo(type,id,pw,phone,nickname);
+        Call<String> call = apiInterface.insertInfo(type,id,pw,phone,nickname,image);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
