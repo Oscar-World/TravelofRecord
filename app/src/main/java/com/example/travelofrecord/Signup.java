@@ -8,10 +8,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +36,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -160,6 +163,7 @@ public class Signup extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> launcher;
     Uri uri;
+    String imagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -518,12 +522,12 @@ public class Signup extends AppCompatActivity {
                 if (iData != null) {
                     if (signupCheck2()) {
                         login_Type = "Kakao";
-                        getSignup(login_Type,iData,"",edit_phone,edit_nickname,image);
+                        getSignup(login_Type,iData,"",edit_phone,edit_nickname,imagePath);
                     }
                 } else {
                     if (signupCheck()) {
                         login_Type = "Nature";
-                        getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,image);
+                        getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,imagePath);
                     }
                 }
 
@@ -668,15 +672,33 @@ public class Signup extends AppCompatActivity {
                                  .load(uri)
                                  .into(photo_Btn);
 
+                         imagePath = getRealPathFromUri(uri);
+
+                         Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + imagePath);
+
                      }
 
                     }
         });
 
 
+        File file = new File(imagePath);
 
 
     } // onStart()
+
+
+            //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
+    String getRealPathFromUri(Uri uri){
+        String[] proj= {MediaStore.Images.Media.DATA};
+        CursorLoader loader= new CursorLoader(this, uri, proj, null, null, null);
+        Cursor cursor= loader.loadInBackground();
+        int column_index= cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result= cursor.getString(column_index);
+        cursor.close();
+        return  result;
+    }
 
 
     // ▼ 소셜 로그인으로 진입 시 안내 문구 다이얼로그 ▼
@@ -703,7 +725,7 @@ public class Signup extends AppCompatActivity {
     public class SmsTimeThread extends Thread {
 
         public void run() {
-            smsTime = 10;
+            smsTime = 180;
 
             while (smsTime >= 0) {
                 smsTime_min = smsTime / 60;
