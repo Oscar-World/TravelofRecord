@@ -59,6 +59,7 @@ public class Home extends AppCompatActivity {
     String user_pw;
     String user_phone;
     String user_nickname;
+    String user_memo;
     String user_image;
 
     @Override
@@ -156,6 +157,7 @@ public class Home extends AppCompatActivity {
 
                 bundle.putString("nickname",user_nickname);
                 bundle.putString("image",user_image);
+                bundle.putString("memo",user_memo);
 
                 fragment_myProfile.setArguments(bundle);
 
@@ -227,9 +229,10 @@ public class Home extends AppCompatActivity {
                     user_pw = response.body().getPw();
                     user_phone = response.body().getPhone();
                     user_nickname = response.body().getNickname();
+                    user_memo = response.body().getMemo();
                     user_image = response.body().getImage();
 
-                    Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
+                    Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_memo + "\n" + user_image);
 
                 } else {
                     Log.d(TAG, "onResponse: 리스폰스 실패");
@@ -244,7 +247,7 @@ public class Home extends AppCompatActivity {
 
         });
 
-    }  // getSignup()
+    }  // getInfo()
 
 
     @Override

@@ -1,7 +1,11 @@
 package com.example.travelofrecord;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 
@@ -58,6 +62,18 @@ public interface ApiInterface {
     @GET("mysql_GetUser.php")
     Call<User> getInfo (
             @Query("id") String id
+    );
+
+    @GET("mysql_UpdateMemo.php")
+    Call<User> updateMemo (
+            @Query("nickname") String nickname,
+            @Query("memo") String memo
+    );
+
+    @Multipart
+    @POST("mysql_uploadFile.php")
+    Call<String> uploadFile(
+            @Part MultipartBody.Part uploaded_file
     );
 
 

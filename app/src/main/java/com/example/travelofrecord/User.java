@@ -23,6 +23,9 @@ public class User {
     @SerializedName("nickname") private String nickname;
 
     @Expose
+    @SerializedName("memo") private String memo;
+
+    @Expose
     @SerializedName("image") private String image;
 
     @Expose
@@ -46,6 +49,7 @@ public class User {
     public String getNickname() {
         return nickname;
     }
+    public String getMemo() { return memo; }
     public String getImage() { return image; }
     public String getNoid() { return noid; }
     public String getNopw() { return nopw; }
@@ -64,6 +68,9 @@ public class User {
     }
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
     public void setImage(String image) { this.image = image; }
     public void setNoid(String noid) { this.noid = noid; }

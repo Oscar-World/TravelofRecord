@@ -5,20 +5,27 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
 import androidx.loader.content.CursorLoader;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
@@ -40,6 +47,9 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -164,6 +174,9 @@ public class Signup extends AppCompatActivity {
     ActivityResultLauncher<Intent> launcher;
     Uri uri;
     String imagePath;
+    File profile_Imagefile;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -518,6 +531,10 @@ public class Signup extends AppCompatActivity {
                 edit_phone = signup_phone.getText().toString();
                 edit_nickname = signup_nickname.getText().toString();
                 image = uri.toString();
+                profile_Imagefile = new File(imagePath);
+
+
+                uploadFile();
 
                 if (iData != null) {
                     if (signupCheck2()) {
@@ -646,10 +663,17 @@ public class Signup extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent();
-                i.setType("image/*");
-                i.setAction(Intent.ACTION_GET_CONTENT);
-                launcher.launch(i);
+                if (ActivityCompat.checkSelfPermission(Signup.this,Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+
+                    Intent i = new Intent();
+                    i.setType("image/*");
+                    i.setAction(Intent.ACTION_PICK);
+                    launcher.launch(i);
+
+                } else {
+
+                }
 
             }
         });
@@ -682,10 +706,30 @@ public class Signup extends AppCompatActivity {
         });
 
 
-        File file = new File(imagePath);
+
 
 
     } // onStart()
+
+
+    // 파일 업로드
+    private void uploadFile(){
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), profile_Imagefile);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", edit_id, requestFile);
+        ApiInterface apiInterface=ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call=apiInterface.uploadFile(body);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.e(TAG, "성공 : " + response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e(TAG, "에러 : " + t.getMessage());
+            }
+        });
+    }
 
 
             //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
@@ -714,6 +758,10 @@ public class Signup extends AppCompatActivity {
         AlertDialog resetDlg = reset.create();
         resetDlg.show();
     }
+
+
+
+
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
