@@ -155,11 +155,11 @@ public class Home extends AppCompatActivity {
                 fragmentManager = getSupportFragmentManager();
                 transaction = fragmentManager.beginTransaction();
 
-                bundle.putString("nickname",user_nickname);
-                bundle.putString("image",user_image);
-                bundle.putString("memo",user_memo);
-
-                fragment_myProfile.setArguments(bundle);
+//                bundle.putString("nickname",user_nickname);
+//                bundle.putString("image",user_image);
+//                bundle.putString("memo",user_memo);
+//
+//                fragment_myProfile.setArguments(bundle);
 
                 Log.d(TAG, "bundle : " + bundle);
                 transaction.replace(R.id.homeBody_Frame,fragment_myProfile);

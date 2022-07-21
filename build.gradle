@@ -7,7 +7,6 @@ plugins {
     id 'com.android.application' version '7.1.2' apply false
     id 'com.android.library' version '7.1.2' apply false
 
-
     id 'com.google.gms.google-services' version '4.3.13' apply false
 
 }
@@ -17,6 +16,7 @@ task clean(type: Delete) {
 }
 
 // 안드로이드 스튜디오 fox 버전 이상 부터는 allprojects 사용 불가
+
 
 //allprojects {
 //    repositories {

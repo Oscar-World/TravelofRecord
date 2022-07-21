@@ -55,6 +55,9 @@ public class Fragment_myProfile extends Fragment {
     Button map_Block;
 
     Button profile_editBtn;
+    String edit_memo;
+
+    String sharedInfo;
 
     String user_type;
     String user_id;
@@ -64,7 +67,6 @@ public class Fragment_myProfile extends Fragment {
     String user_memo;
     String user_image;
 
-
     @Override public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach()");
@@ -72,6 +74,7 @@ public class Fragment_myProfile extends Fragment {
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
+
     }
 
 
@@ -83,21 +86,11 @@ public class Fragment_myProfile extends Fragment {
 
         setView();
 
+        getInfo(sharedInfo);
+
         Log.d(TAG, "닉네임 : " + user_nickname + "\n이미지 : " + user_image);
 
-        profile_nickname.setText(user_nickname);
-        Glide.with(getActivity().getApplicationContext())
-                .load(user_image)
-                .into(profile_image);
-
-        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
-        editor_Kakao = sharedPreferences_Kakao.edit();
-
         return v;
-
-
 
     }
 
@@ -114,7 +107,7 @@ public class Fragment_myProfile extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
-        if (user_memo == null) {
+        if (user_memo == null | "".equals(user_memo)) {
             profile_Edit.setVisibility(View.VISIBLE);
             profile_editBtn.setVisibility(View.VISIBLE);
             profile_memo.setVisibility(View.GONE);
@@ -124,7 +117,6 @@ public class Fragment_myProfile extends Fragment {
             profile_Edit.setVisibility(View.GONE);
             profile_editBtn.setVisibility(View.GONE);
         }
-
 
         logout_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,6 +157,7 @@ public class Fragment_myProfile extends Fragment {
             }
         });
 
+
         map_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,7 +187,9 @@ public class Fragment_myProfile extends Fragment {
             @Override
             public void onClick(View view) {
 
-                updateMemo(user_nickname,profile_Edit.getText().toString());
+                edit_memo = profile_Edit.getText().toString();
+
+                updateMemo(user_nickname,edit_memo);
 
             }
         });
@@ -203,6 +198,47 @@ public class Fragment_myProfile extends Fragment {
 
     }
 
+
+    public void getInfo(String id) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getInfo(id);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+
+                    user_type = response.body().getType();
+                    user_id = response.body().getId();
+                    user_pw = response.body().getPw();
+                    user_phone = response.body().getPhone();
+                    user_nickname = response.body().getNickname();
+                    user_memo = response.body().getMemo();
+                    user_image = response.body().getImage();
+
+                    Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_memo + "\n" + user_image);
+
+
+                    profile_nickname.setText(user_nickname);
+                    Glide.with(getActivity().getApplicationContext())
+                            .load(user_image)
+                            .into(profile_image);
+
+
+                } else {
+                    Log.d(TAG, "onResponse: 리스폰스 실패");
+                }
+
+            }   // onResponse
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
+            }
+
+        });
+
+    }  // getInfo()
 
 
     public void updateMemo(String nickname, String memo) {
@@ -218,10 +254,17 @@ public class Fragment_myProfile extends Fragment {
 
                     Log.d(TAG, "수정된 메모 : " + user_memo);
 
-                    profile_memo.setVisibility(View.VISIBLE);
-                    profile_memo.setText(profile_Edit.getText().toString());
-                    profile_Edit.setVisibility(View.GONE);
-                    profile_editBtn.setVisibility(View.GONE);
+
+                    if (user_memo == null | "".equals(user_memo)) {
+                        profile_Edit.setVisibility(View.VISIBLE);
+                        profile_editBtn.setVisibility(View.VISIBLE);
+                        profile_memo.setVisibility(View.GONE);
+                    } else {
+                        profile_memo.setVisibility(View.VISIBLE);
+                        profile_memo.setText(edit_memo);
+                        profile_Edit.setVisibility(View.GONE);
+                        profile_editBtn.setVisibility(View.GONE);
+                    }
 
 
                 } else {
@@ -278,9 +321,16 @@ public class Fragment_myProfile extends Fragment {
         map_Block = v.findViewById(R.id.myProfileMap_Block);
         profile_editBtn = v.findViewById(R.id.myProfile_editBtn);
 
-        user_nickname = this.getArguments().getString("nickname");
-        user_image = this.getArguments().getString("image");
-        user_memo = this.getArguments().getString("memo");
+//        user_nickname = this.getArguments().getString("nickname");
+//        user_image = this.getArguments().getString("image");
+//        user_memo = this.getArguments().getString("memo");
+
+        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
+        editor_Kakao = sharedPreferences_Kakao.edit();
+
+        sharedInfo = sharedPreferences.getString("로그인","");
 
     }
 
