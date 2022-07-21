@@ -301,24 +301,33 @@ public class Login extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
 
-                rp_code = response.body().toString();
+//                rp_code = response.body().toString();
+                no_id = response.body().getNoid();
+                no_pw = response.body().getNopw();
 
-                Log.d(TAG, "onResponse: " + rp_code);
+                Log.d(TAG, "카카오 - 아이디 조회 : " + no_id + " " + no_pw);
 
-                if (rp_code != null) {
-
-                    Log.d(TAG, "if 문 진입 후 : " + rp_code);
+                if (response.isSuccessful()) {
 
                     // 사용자의 가입 정보가 있으면 홈으로 이동
                     // 사용자의 가입 정보가 없으면 회원가입 3페이지로 이동
 
-                    if (rp_code.equals("NOID")) {
+                    if (no_id != null) {
 
                         Intent i = new Intent(Login.this, Signup.class);
                         i.putExtra("kakao", kakaoId);
                         startActivity(i);
 
-                    } else if (rp_code.equals("NOPW")) {
+                    } else {
+
+                        user_type = response.body().getType();
+                        user_id = response.body().getId();
+                        user_pw = response.body().getPw();
+                        user_phone = response.body().getPhone();
+                        user_nickname = response.body().getNickname();
+                        user_image = response.body().getImage();
+
+                        Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
 
                         Intent i = new Intent(Login.this, Home.class);
                         startActivity(i);
