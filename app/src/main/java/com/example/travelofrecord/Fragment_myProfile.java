@@ -107,16 +107,6 @@ public class Fragment_myProfile extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
-        if (user_memo == null | "".equals(user_memo)) {
-            profile_Edit.setVisibility(View.VISIBLE);
-            profile_editBtn.setVisibility(View.VISIBLE);
-            profile_memo.setVisibility(View.GONE);
-        } else {
-            profile_memo.setText(user_memo);
-            profile_memo.setVisibility(View.VISIBLE);
-            profile_Edit.setVisibility(View.GONE);
-            profile_editBtn.setVisibility(View.GONE);
-        }
 
         logout_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,6 +208,17 @@ public class Fragment_myProfile extends Fragment {
 
                     Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_memo + "\n" + user_image);
 
+
+                    if (user_memo == null | "".equals(user_memo)) {
+                        profile_Edit.setVisibility(View.VISIBLE);
+                        profile_editBtn.setVisibility(View.VISIBLE);
+                        profile_memo.setVisibility(View.GONE);
+                    } else {
+                        profile_memo.setText(user_memo);
+                        profile_memo.setVisibility(View.VISIBLE);
+                        profile_Edit.setVisibility(View.GONE);
+                        profile_editBtn.setVisibility(View.GONE);
+                    }
 
                     profile_nickname.setText(user_nickname);
                     Glide.with(getActivity().getApplicationContext())
