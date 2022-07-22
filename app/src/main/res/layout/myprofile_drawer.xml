@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/myProfile_drawer"
+    android:layout_width="280dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="end"
+    android:background="#ffffff"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="메뉴"
+        android:textSize="35dp"
+        android:layout_margin="15dp"
+        android:layout_gravity="start"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#dddddd"
+        />
+
+    <Button
+        android:id="@+id/logout_Btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#00ff0000"
+        android:stateListAnimator="@null"
+        android:text="로그아웃"
+        android:textStyle="bold"
+        android:textSize="18dp"
+        android:textColor="#64c9ff"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#dddddd"
+        />
+
+</LinearLayout>

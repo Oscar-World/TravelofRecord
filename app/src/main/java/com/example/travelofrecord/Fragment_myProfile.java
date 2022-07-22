@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -40,7 +41,8 @@ public class Fragment_myProfile extends Fragment {
     SharedPreferences.Editor editor;
     SharedPreferences.Editor editor_Kakao;
 
-    private ImageButton logout_Btn;
+    ImageButton drawer_Btn;
+    Button logout_Btn;
 
     ImageView profile_image;
 
@@ -66,6 +68,9 @@ public class Fragment_myProfile extends Fragment {
     String user_nickname;
     String user_memo;
     String user_image;
+
+    DrawerLayout drawerLayout;
+    View drawerView;
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -107,6 +112,12 @@ public class Fragment_myProfile extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
+        drawer_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.openDrawer(drawerView);
+            }
+        });
 
         logout_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -308,6 +319,7 @@ public class Fragment_myProfile extends Fragment {
 
     public void setView() {
 
+        drawer_Btn = v.findViewById(R.id.myProfile_drawerBtn);
         logout_Btn = v.findViewById(R.id.logout_Btn);
 
         profile_image = v.findViewById(R.id.myProfile_image);
@@ -332,6 +344,9 @@ public class Fragment_myProfile extends Fragment {
         editor_Kakao = sharedPreferences_Kakao.edit();
 
         sharedInfo = sharedPreferences.getString("로그인","");
+
+        drawerLayout = v.findViewById(R.id.myProfile_drawerLayout);
+        drawerView = v.findViewById(R.id.myProfile_drawer);
 
     }
 

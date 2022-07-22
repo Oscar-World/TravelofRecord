@@ -11,113 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_weight="9"
+        android:weightSum="10"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-<!--    <FrameLayout-->
-<!--        android:id="@+id/homeHead_Frame"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_weight="1"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        android:background="#f6feff"-->
-<!--        android:visibility="visible"-->
-<!--        >-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/homeTitle_Text"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="홈"-->
-<!--            android:textSize="28dp"-->
-<!--            android:layout_gravity="center|start"-->
-<!--            android:layout_marginLeft="15dp"-->
-<!--            />-->
-
-<!--        <ImageButton-->
-<!--            android:id="@+id/logout_Btn"-->
-<!--            android:layout_width="60dp"-->
-<!--            android:layout_height="60dp"-->
-<!--            android:backgroundTint="@android:color/transparent"-->
-<!--            android:scaleType="centerInside"-->
-<!--            android:layout_gravity="center|end"-->
-<!--            android:layout_marginRight="15dp"-->
-<!--            android:visibility="gone"-->
-<!--            app:srcCompat="@android:drawable/ic_dialog_dialer" />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/homePhoto_Btn"-->
-<!--            android:layout_width="70dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_marginRight="35dp"-->
-<!--            android:text="사진"-->
-<!--            android:textColor="#64c9ff"-->
-<!--            android:backgroundTint="#f6feff"-->
-<!--            android:visibility="gone"-->
-<!--            />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/homePhoto_Block"-->
-<!--            android:layout_width="70dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_marginRight="35dp"-->
-<!--            android:text="사진"-->
-<!--            android:backgroundTint="#64c9ff"-->
-<!--            android:visibility="visible"-->
-<!--            />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/homeMap_Btn"-->
-<!--            android:layout_width="70dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_marginLeft="35dp"-->
-<!--            android:text="지도"-->
-<!--            android:textColor="#64c9ff"-->
-<!--            android:backgroundTint="#f6feff"-->
-<!--            android:visibility="visible"-->
-<!--            />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/homeMap_Block"-->
-<!--            android:layout_width="70dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_marginLeft="35dp"-->
-<!--            android:text="지도"-->
-<!--            android:backgroundTint="#64c9ff"-->
-<!--            android:visibility="gone"-->
-<!--            />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/upload_Btn"-->
-<!--            android:layout_width="70dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="완료"-->
-<!--            android:layout_gravity="center|end"-->
-<!--            android:layout_marginRight="15dp"-->
-<!--            android:textStyle="bold"-->
-<!--            android:textSize="18dp"-->
-<!--            android:textColor="#64c9ff"-->
-<!--            android:background="#00ff0000"-->
-<!--            android:visibility="gone"-->
-<!--            />-->
-
-<!--    </FrameLayout>-->
-
     <FrameLayout
         android:id="@+id/homeBody_Frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8"
+        android:layout_weight="9"
         app:layout_constraintTop_toBottomOf="@+id/homeHead_Frame"
         app:layout_constraintBottom_toTopOf="@+id/homeFoot_Frame"
         app:layout_constraintRight_toRightOf="parent"
@@ -150,7 +55,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
-            android:padding="23dp"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -164,7 +69,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
-            android:padding="23dp"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -178,7 +83,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
-            android:padding="23dp"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -192,7 +97,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
-            android:padding="23dp"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -206,7 +111,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
-            android:padding="23dp"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -220,7 +125,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
-            android:padding="23dp"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -234,7 +139,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
-            android:padding="23dp"
+            android:padding="18dp"
             />
 
         <ImageButton
@@ -248,7 +153,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
-            android:padding="23dp"
+            android:padding="18dp"
             />
 
     </LinearLayout>
