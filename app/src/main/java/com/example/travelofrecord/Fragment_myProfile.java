@@ -1,18 +1,26 @@
 package com.example.travelofrecord;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.loader.content.CursorLoader;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +80,12 @@ public class Fragment_myProfile extends Fragment {
     DrawerLayout drawerLayout;
     View drawerView;
 
+    Uri uri;
+    String imagePath;
+
+    ActivityResultLauncher<Intent> launcher;
+
+
     @Override public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach()");
@@ -79,6 +93,35 @@ public class Fragment_myProfile extends Fragment {
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
+
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+
+                        if (result.getResultCode() == RESULT_OK) {
+
+                            Intent intent = result.getData();
+                            uri = intent.getData();
+
+                            Log.d(TAG, "onActivityResult: " + result);
+                            Log.d(TAG, "onActivityResult: " + intent);
+                            Log.d(TAG, "onActivityResult: " + uri);
+
+                            Glide.with(getActivity())
+                                    .load(uri)
+                                    .into(profile_image);
+
+                            imagePath = getRealPathFromUri(uri);
+
+                            updateImage(user_nickname,imagePath);
+
+                            Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + imagePath);
+
+                        }
+
+                    }
+                });
 
     }
 
@@ -92,8 +135,6 @@ public class Fragment_myProfile extends Fragment {
         setView();
 
         getInfo(sharedInfo);
-
-        Log.d(TAG, "닉네임 : " + user_nickname + "\n이미지 : " + user_image);
 
         return v;
 
@@ -195,8 +236,36 @@ public class Fragment_myProfile extends Fragment {
             }
         });
 
+        profile_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent();
+                i.setType("image/*");
+                i.setAction(Intent.ACTION_PICK);
+                launcher.launch(i);
+
+                Log.d(TAG, "DB로 전송할 데이터 : " + user_nickname + " " + imagePath);
 
 
+            }
+        });
+
+
+
+
+    }
+
+    //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
+    String getRealPathFromUri(Uri uri){
+        String[] proj= {MediaStore.Images.Media.DATA};
+        CursorLoader loader= new CursorLoader(getActivity(), uri, proj, null, null, null);
+        Cursor cursor= loader.loadInBackground();
+        int column_index= cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result= cursor.getString(column_index);
+        cursor.close();
+        return  result;
     }
 
 
@@ -292,7 +361,38 @@ public class Fragment_myProfile extends Fragment {
 
         });
 
-    }  // getInfo()
+    }  // updateMemo()
+
+
+
+    public void updateImage(String nickname, String image) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.updateImage(nickname,image);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+
+                    user_image = response.body().getImage();
+
+                    Log.d(TAG, "수정된 이미지 데이터 : " + user_image);
+
+                } else {
+                    Log.d(TAG, "onResponse: 리스폰스 실패");
+                }
+
+            }   // onResponse
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!!! " + t.getMessage());
+            }
+
+        });
+
+    }  // updateImage()
+
 
 
 

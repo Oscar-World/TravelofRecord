@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="메뉴"
-        android:textSize="35dp"
+        android:textSize="25dp"
         android:layout_margin="15dp"
         android:layout_gravity="start"
         />
@@ -31,8 +31,7 @@
         android:backgroundTint="#00ff0000"
         android:stateListAnimator="@null"
         android:text="로그아웃"
-        android:textStyle="bold"
-        android:textSize="18dp"
+        android:textSize="15dp"
         android:textColor="#64c9ff"
         />
     <View

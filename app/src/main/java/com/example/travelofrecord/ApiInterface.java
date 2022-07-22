@@ -70,6 +70,12 @@ public interface ApiInterface {
             @Query("memo") String memo
     );
 
+    @GET("mysql_UpdateImage.php")
+    Call<User> updateImage (
+            @Query("nickname") String nickname,
+            @Query("image") String image
+    );
+
     @Multipart
     @POST("mysql_uploadFile.php")
     Call<String> uploadFile(
