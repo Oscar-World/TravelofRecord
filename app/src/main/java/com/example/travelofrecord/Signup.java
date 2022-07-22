@@ -117,7 +117,8 @@ public class Signup extends AppCompatActivity {
     Animation appear;
     Animation disappear;
 
-    String iData;
+    String kakaoId;
+    String kakaoImage;
 
     Pattern pattern_id;
     Matcher matcher_id;
@@ -186,6 +187,32 @@ public class Signup extends AppCompatActivity {
 
         setView();
 
+
+        // ▼ 일반 회원가입 or 소셜 로그인 경로의 회원가입 구분 ▼
+        Intent i = getIntent();
+        kakaoId = i.getStringExtra("kakaoId");
+        kakaoImage = i.getStringExtra("kakaoImage");
+
+        if (kakaoId != null) {
+            Log.d(TAG, "인텐트 있음 : " + kakaoId);
+
+            backBtn_2.setVisibility(View.INVISIBLE);
+            frameLayout_1.setVisibility(View.INVISIBLE);
+            frameLayout_2.setVisibility(View.VISIBLE);
+
+            Glide.with(getApplicationContext())
+                    .load(kakaoImage)
+                    .into(photo_Btn);
+
+            imagePath = kakaoImage;
+
+            infoDlg();
+
+        } else {
+            Log.d(TAG, "인텐트 없음 : " + kakaoId);
+        }
+
+
     }
 
     @Override
@@ -198,23 +225,6 @@ public class Signup extends AppCompatActivity {
         pwStatus = false;
         pwCheckStatus = false;
         nicknameStatus = false;
-
-
-        // ▼ 일반 회원가입 or 소셜 로그인 경로의 회원가입 구분 ▼
-        Intent i = getIntent();
-        iData = i.getStringExtra("kakao");
-
-        if (iData != null) {
-            Log.d(TAG, "인텐트 있음 : " + iData);
-
-            backBtn_2.setVisibility(View.INVISIBLE);
-            frameLayout_1.setVisibility(View.INVISIBLE);
-            frameLayout_2.setVisibility(View.VISIBLE);
-            infoDlg();
-
-        } else {
-            Log.d(TAG, "인텐트 없음 : " + iData);
-        }
 
 
         // ▼ 아이디 텍스트 변경 시 이벤트 처리 ▼
@@ -530,16 +540,15 @@ public class Signup extends AppCompatActivity {
                 edit_pwCheck = signup_pwCheck.getText().toString();
                 edit_phone = signup_phone.getText().toString();
                 edit_nickname = signup_nickname.getText().toString();
-                image = uri.toString();
                 profile_Imagefile = new File(imagePath);
 
 
                 uploadFile();
 
-                if (iData != null) {
+                if (kakaoId != null) {
                     if (signupCheck2()) {
                         login_Type = "Kakao";
-                        getSignup(login_Type,iData,"",edit_phone,edit_nickname,imagePath);
+                        getSignup(login_Type,kakaoId,"",edit_phone,edit_nickname,imagePath);
                     }
                 } else {
                     if (signupCheck()) {

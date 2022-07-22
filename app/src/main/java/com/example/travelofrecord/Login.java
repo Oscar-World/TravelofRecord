@@ -50,6 +50,7 @@ public class Login extends AppCompatActivity {
     String edit_pw;
 
     String kakaoId;
+    String kakaoImage;
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -172,11 +173,12 @@ public class Login extends AppCompatActivity {
 
                                     Log.d(TAG, "사용자 정보 요청 성공" +
                                                     "\n회원번호: " + user.getId() +
-                                                    "\n이메일: " + user.getKakaoAccount().getEmail()
-//                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
+                                                    "\n이메일: " + user.getKakaoAccount().getEmail() +
+                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
                                     );
 
                                     kakaoId = user.getKakaoAccount().getEmail();
+                                    kakaoImage = user.getKakaoAccount().getProfile().getProfileImageUrl();
 
                                     getKakaoTest(kakaoId, "1");
 
@@ -207,11 +209,12 @@ public class Login extends AppCompatActivity {
 
                                     Log.d(TAG, "사용자 정보 요청 성공" +
                                                     "\n회원번호: " + user.getId() +
-                                                    "\n이메일: " + user.getKakaoAccount().getEmail()
-//                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
+                                                    "\n이메일: " + user.getKakaoAccount().getEmail() +
+                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
                                     );
 
                                     kakaoId = user.getKakaoAccount().getEmail();
+                                    kakaoImage = user.getKakaoAccount().getProfile().getProfileImageUrl();
 
                                     getKakaoTest(kakaoId, "1");
 
@@ -315,7 +318,8 @@ public class Login extends AppCompatActivity {
                     if (no_id != null) {
 
                         Intent i = new Intent(Login.this, Signup.class);
-                        i.putExtra("kakao", kakaoId);
+                        i.putExtra("kakaoId", kakaoId);
+                        i.putExtra("kakaoImage", kakaoImage);
                         startActivity(i);
 
                     } else {

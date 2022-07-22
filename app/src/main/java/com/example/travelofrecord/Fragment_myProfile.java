@@ -221,7 +221,7 @@ public class Fragment_myProfile extends Fragment {
                     }
 
                     profile_nickname.setText(user_nickname);
-                    Glide.with(getActivity().getApplicationContext())
+                    Glide.with(getActivity())
                             .load(user_image)
                             .into(profile_image);
 
