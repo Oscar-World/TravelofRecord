@@ -83,10 +83,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fragmentManager = getSupportFragmentManager();
-                transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.homeBody_Frame,fragment_home);
-                transaction.commitAllowingStateLoss();
+                fragmentChange(0);
 
                 home_Btn.setVisibility(View.GONE);
                 homeFull_Btn.setVisibility(View.VISIBLE);
@@ -106,10 +103,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fragmentManager = getSupportFragmentManager();
-                transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.homeBody_Frame,fragment_heart);
-                transaction.commitAllowingStateLoss();
+                fragmentChange(1);
 
                 heart_Btn.setVisibility(View.GONE);
                 heartFull_Btn.setVisibility(View.VISIBLE);
@@ -129,10 +123,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fragmentManager = getSupportFragmentManager();
-                transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.homeBody_Frame,fragment_add);
-                transaction.commitAllowingStateLoss();
+                fragmentChange(2);
 
                 add_Btn.setVisibility(View.GONE);
                 addFull_Btn.setVisibility(View.VISIBLE);
@@ -152,18 +143,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fragmentManager = getSupportFragmentManager();
-                transaction = fragmentManager.beginTransaction();
-
-//                bundle.putString("nickname",user_nickname);
-//                bundle.putString("image",user_image);
-//                bundle.putString("memo",user_memo);
-//
-//                fragment_myProfile.setArguments(bundle);
-
-                Log.d(TAG, "bundle : " + bundle);
-                transaction.replace(R.id.homeBody_Frame,fragment_myProfile);
-                transaction.commitAllowingStateLoss();
+                fragmentChange(3);
 
                 myProfile_Btn.setVisibility(View.GONE);
                 myProfileFull_Btn.setVisibility(View.VISIBLE);
@@ -215,6 +195,43 @@ public class Home extends AppCompatActivity {
     }
 
 
+    // 프래그먼트 이동
+    public void fragmentChange(int index) {
+
+        if (index == 0) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_home).commitAllowingStateLoss();
+        } else if (index == 1) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_heart).commitAllowingStateLoss();
+        } else if (index == 2) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_add).commitAllowingStateLoss();
+        } else if (index == 3) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_myProfile).commitAllowingStateLoss();
+        }
+
+    }
+
+
+    // 홈프래그먼트로 이동 + 번들 전달
+    public void goHomeFragment(Bundle bundle) {
+
+        fragment_home.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_home).commitAllowingStateLoss();
+
+        home_Btn.setVisibility(View.GONE);
+        homeFull_Btn.setVisibility(View.VISIBLE);
+
+        heart_Btn.setVisibility(View.VISIBLE);
+        add_Btn.setVisibility(View.VISIBLE);
+        myProfile_Btn.setVisibility(View.VISIBLE);
+
+        heartFull_Btn.setVisibility(View.GONE);
+        addFull_Btn.setVisibility(View.GONE);
+        myProfileFull_Btn.setVisibility(View.GONE);
+
+    }
+
+
+    // 서버에서 데이터 받아옴
     public void getInfo(String id) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<User> call = apiInterface.getInfo(id);

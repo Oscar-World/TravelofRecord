@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,14 +14,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 public class Fragment_Home extends Fragment {
 
     String TAG = "홈 프래그먼트";
+
+    View v;
 
     private Button photo_Btn;
     private Button map_Btn;
     private Button photo_Block;
     private Button map_Block;
+
+    RecyclerView recyclerView;
+
+    Context context = getActivity();
+    ArrayList<Home_PhotoItem> home_photoItems;
+    Home_Adapter adapter;
+
+    Bundle getData;
+    String image;
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -35,12 +51,9 @@ public class Fragment_Home extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_home, container, false);
+        v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        photo_Btn = v.findViewById(R.id.homePhoto_Btn);
-        map_Btn = v.findViewById(R.id.homeMap_Btn);
-        photo_Block = v.findViewById(R.id.homePhoto_Block);
-        map_Block = v.findViewById(R.id.homeMap_Block);
+        setView();
 
         return v;
     }
@@ -87,6 +100,31 @@ public class Fragment_Home extends Fragment {
 
 
     }
+
+
+    public void setView() {
+
+        photo_Btn = v.findViewById(R.id.homePhoto_Btn);
+        map_Btn = v.findViewById(R.id.homeMap_Btn);
+        photo_Block = v.findViewById(R.id.homePhoto_Block);
+        map_Block = v.findViewById(R.id.homeMap_Block);
+
+        recyclerView = v.findViewById(R.id.home_RecyclerView);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
+
+        getData = getArguments();
+
+        Log.d(TAG, "받은 번들 데이터 : " + getData);
+
+        if (getData != null) {
+            image = getData.getString("image");
+            Log.d(TAG, "받아서 변환시킨 번들 데이터 : " + image);
+        }
+
+
+    }
+
+
     @Override public void onResume() {
         Log.d(TAG, "onResume()");
         super.onResume();

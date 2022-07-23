@@ -94,7 +94,7 @@
                 android:layout_gravity="center"
                 android:hint="나를 소개해 주세요"
                 android:inputType="textPersonName"
-
+                android:visibility="gone"
                 android:textSize="17dp" />
                 <!--                android:maxLength=""-->
 
@@ -115,7 +115,7 @@
                     android:text="완료"
                     android:textSize="17dp"
                     android:backgroundTint="#64c9ff"
-                    android:layout_gravity="end"
+                    android:visibility="gone"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="-70dp"
                     />
