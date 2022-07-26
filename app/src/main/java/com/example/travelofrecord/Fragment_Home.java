@@ -1,6 +1,7 @@
 package com.example.travelofrecord;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -31,10 +32,12 @@ public class Fragment_Home extends Fragment {
 
     Context context = getActivity();
     ArrayList<Home_PhotoItem> home_photoItems;
+    int itemSize;
     Home_Adapter adapter;
 
     Bundle getData;
-    String image;
+//    String image;
+    Bitmap image;
 
 
     @Override public void onAttach(Context context) {
@@ -71,7 +74,24 @@ public class Fragment_Home extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
+        itemSize = home_photoItems.size();
+        Log.d(TAG, "아이템 사이즈 1 : " + itemSize);
 
+        if (getData != null) {
+
+            Home_PhotoItem item = new Home_PhotoItem(image);
+
+            Log.d(TAG, "아이템 사이즈 2 : " + itemSize);
+            Log.d(TAG, "아이템 : " + item);
+
+            home_photoItems.add(itemSize,item);
+
+            adapter.notifyDataSetChanged();
+
+            Log.d(TAG, "아이템 사이즈 2 : " + itemSize);
+            Log.d(TAG, "아이템 : " + item);
+
+        }
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,16 +129,25 @@ public class Fragment_Home extends Fragment {
         photo_Block = v.findViewById(R.id.homePhoto_Block);
         map_Block = v.findViewById(R.id.homeMap_Block);
 
+        home_photoItems = new ArrayList<>();
+        adapter = new Home_Adapter();
+
         recyclerView = v.findViewById(R.id.home_RecyclerView);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
+
+        adapter.setHome_photoItems(home_photoItems);
+
 
         getData = getArguments();
 
         Log.d(TAG, "받은 번들 데이터 : " + getData);
 
         if (getData != null) {
-            image = getData.getString("image");
+//            image = getData.getString("image");
+            image = getData.getParcelable("image");
             Log.d(TAG, "받아서 변환시킨 번들 데이터 : " + image);
+
         }
 
 

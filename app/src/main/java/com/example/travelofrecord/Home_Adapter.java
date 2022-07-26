@@ -57,8 +57,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     // 뷰와 데이터를 연결해줌
     public void setHome_photoItems(ArrayList<Home_PhotoItem> list) {
         Log.d(TAG, "setGameList() 호출됨");
+
         this.home_photoItems = list;
         Log.d(TAG, "어댑터 리스트 : " + home_photoItems);
+
         notifyDataSetChanged();
     }
 

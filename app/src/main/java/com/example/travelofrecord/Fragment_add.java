@@ -146,7 +146,8 @@ public class Fragment_add extends Fragment {
 
                 wroteContent = addWrote_Edit.getText().toString();
 
-                sendData.putString("image", image);
+//                sendData.putString("image", image);
+                sendData.putParcelable("image",imageBitmap);
 
                 homeActivity.goHomeFragment(sendData);
                 Log.d(TAG, "보낸 번들 데이터 : " + sendData);
