@@ -1,9 +1,11 @@
 package com.example.travelofrecord;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -20,6 +22,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +35,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Fragment_add extends Fragment {
 
@@ -56,6 +64,15 @@ public class Fragment_add extends Fragment {
 
     Fragment_Home fragment_home;
     Home homeActivity;
+
+    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences_Kakao;
+    SharedPreferences.Editor editor;
+    SharedPreferences.Editor editor_Kakao;
+    String sharedInfo;
+
+    BitmapConverter bitmapConverter;
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -84,11 +101,12 @@ public class Fragment_add extends Fragment {
                             Log.d(TAG, "bundle : " + getCamera);
                             Log.d(TAG, "bitmap : " + imageBitmap);
 
-                            image = imageBitmap.toString();
+//                            image = imageBitmap.toString();
+                            String imageString = bitmapConverter.BitmapToString(imageBitmap);
+                            byte[] imageByte = bitmapConverter.BitmapToByteArray(imageBitmap);
+                            Bitmap bitmap = bitmapConverter.StringToBitmap(imageString);
 
-                            Log.d(TAG, "imageBitmap 데이터: " + imageBitmap);
-                            Log.d(TAG, "image 데이터: " + image);
-
+                            Log.d(TAG, "imageBitmap 데이터: " + imageBitmap + "\nimageString 데이터 : " + imageString + "\nimageByte 데이터 : " + imageByte + "\n다시 변환시킨 bitmap 데이터 : " + bitmap);
 
                             Glide.with(getActivity())
                                     .load(imageBitmap)
@@ -98,7 +116,6 @@ public class Fragment_add extends Fragment {
 
                     }
                 });
-
 
     }
 
@@ -146,15 +163,15 @@ public class Fragment_add extends Fragment {
 
                 wroteContent = addWrote_Edit.getText().toString();
 
-//                sendData.putString("image", image);
-                sendData.putParcelable("image",imageBitmap);
+                Log.d(TAG, "서버로 보낼 데이터 :\n아이디-" + sharedInfo + "\n텍스트-" + wroteContent + "\n비트맵이미지-" + imageBitmap);
 
-                homeActivity.goHomeFragment(sendData);
-                Log.d(TAG, "보낸 번들 데이터 : " + sendData);
+                insertFeed(sharedInfo,wroteContent,imageBitmap);
 
             }
         });
 
+
+        limitText(addWrote_Edit);
 
 
 
@@ -191,6 +208,86 @@ public class Fragment_add extends Fragment {
 
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
+
+        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
+        editor_Kakao = sharedPreferences_Kakao.edit();
+
+        sharedInfo = sharedPreferences.getString("로그인","");
+
+        bitmapConverter = new BitmapConverter();
+
+    }
+
+
+    // 서버에서 데이터 받아옴
+    public void insertFeed(String id, String text, Bitmap image) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.insertFeed(id, text, image);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+
+                    String rpId = response.body().getId();
+                    String rpText = response.body().getTextContent();
+                    Bitmap rpImg = response.body().getBitmapImage();
+
+                    Log.d(TAG, "추가된 데이터 : " + rpId + "\n" + rpText + "\n" + rpImg);
+
+                    sendData.putParcelable("image",imageBitmap);
+
+                    homeActivity.goHomeFragment(sendData);
+                    Log.d(TAG, "보낸 번들 데이터 : " + sendData);
+
+
+                } else {
+                    Log.d(TAG, "onResponse: 리스폰스 실패");
+                }
+
+            }   // onResponse
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
+            }
+
+        });
+
+    }  // getInfo()
+
+
+    // EditText 라인 수 제한
+    public void limitText(EditText editText) {
+
+        editText.addTextChangedListener(new TextWatcher() {
+
+            String previousString = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                previousString = charSequence.toString();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if (editText.getLineCount() > 7) {
+
+                    editText.setText(previousString);
+                    editText.setSelection(editText.length());
+
+                }
+
+            }
+        });
 
     }
 

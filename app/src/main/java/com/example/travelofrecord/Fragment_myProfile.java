@@ -49,6 +49,8 @@ public class Fragment_myProfile extends Fragment {
     SharedPreferences.Editor editor;
     SharedPreferences.Editor editor_Kakao;
 
+    String sharedInfo;
+
     ImageButton drawer_Btn;
     Button logout_Btn;
 
@@ -66,8 +68,6 @@ public class Fragment_myProfile extends Fragment {
 
     Button profile_editBtn;
     String edit_memo;
-
-    String sharedInfo;
 
     String user_type;
     String user_id;

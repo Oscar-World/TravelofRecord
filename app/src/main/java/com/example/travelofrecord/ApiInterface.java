@@ -1,5 +1,7 @@
 package com.example.travelofrecord;
 
+import android.graphics.Bitmap;
+
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -81,6 +83,13 @@ public interface ApiInterface {
     Call<String> uploadFile(
             @Part MultipartBody.Part uploaded_file
     );
+
+    @GET("mysql_CreateFeed.php")
+    Call<User> insertFeed(
+            @Query("id") String id,
+            @Query("text") String text,
+            @Query("bitmapImage") Bitmap bitmapImage
+            );
 
 
     @GET("mysql_Update.php")
