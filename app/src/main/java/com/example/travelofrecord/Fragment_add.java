@@ -6,6 +6,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -16,9 +17,11 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.content.CursorLoader;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -34,7 +37,11 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,7 +59,7 @@ public class Fragment_add extends Fragment {
 
     File file;
 
-    String image;
+    String imagePath;
     String wroteContent;
 
     ActivityResultLauncher<Intent> launcher;
@@ -73,15 +80,20 @@ public class Fragment_add extends Fragment {
 
     BitmapConverter bitmapConverter;
 
+    Uri photoUri;
 
-    @Override public void onAttach(Context context) {
+
+    @Override
+    public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach()");
 
         homeActivity = (Home) getActivity();
 
     }
-    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
 
@@ -93,23 +105,39 @@ public class Fragment_add extends Fragment {
 
                         if (result.getResultCode() == RESULT_OK) {
 
-                            getCamera = result.getData().getExtras();
+//                            getCamera = result.getData().getExtras();
+//
+//                            imageBitmap = (Bitmap) getCamera.get("data");
+//
+//                            Log.d(TAG, "result : " + result);
+//                            Log.d(TAG, "bundle : " + getCamera);
+//                            Log.d(TAG, "bitmap : " + imageBitmap);
+//
+////                            image = imageBitmap.toString();
+//                            String imageString = bitmapConverter.BitmapToString(imageBitmap);
+//                            byte[] imageByte = bitmapConverter.BitmapToByteArray(imageBitmap);
+//                            Bitmap bitmap = bitmapConverter.StringToBitmap(imageString);
+//
+//                            Log.d(TAG, "imageBitmap 데이터: " + imageBitmap + "\nimageString 데이터 : " + imageString + "\nimageByte 데이터 : " + imageByte + "\n다시 변환시킨 bitmap 데이터 : " + bitmap);
+//                            Log.d(TAG, "이미지스트링의 길이 : " + imageString.length());
+//
+//
+//                            Uri uri = getImageUri(getActivity(),imageBitmap);
+//
+//                            Log.d(TAG, "uri 데이터 : " + uri);
+//
+//                            String realPath = getRealPathFromUri(photoUri);
+//
+//                            Log.d(TAG, "절대경로 : " + realPath);
 
-                            imageBitmap = (Bitmap) getCamera.get("data");
+//                            Intent i = result.getData();
 
-                            Log.d(TAG, "result : " + result);
-                            Log.d(TAG, "bundle : " + getCamera);
-                            Log.d(TAG, "bitmap : " + imageBitmap);
+                            Log.d(TAG, "경로! : " + photoUri);
+                            Log.d(TAG, "절대경로! : " + imagePath);
 
-//                            image = imageBitmap.toString();
-                            String imageString = bitmapConverter.BitmapToString(imageBitmap);
-                            byte[] imageByte = bitmapConverter.BitmapToByteArray(imageBitmap);
-                            Bitmap bitmap = bitmapConverter.StringToBitmap(imageString);
-
-                            Log.d(TAG, "imageBitmap 데이터: " + imageBitmap + "\nimageString 데이터 : " + imageString + "\nimageByte 데이터 : " + imageByte + "\n다시 변환시킨 bitmap 데이터 : " + bitmap);
 
                             Glide.with(getActivity())
-                                    .load(imageBitmap)
+                                    .load(imagePath)
                                     .into(addImage);
 
                         }
@@ -117,6 +145,45 @@ public class Fragment_add extends Fragment {
                     }
                 });
 
+    }
+
+
+    // ImageFile의 경로를 가져올 메서드 선언
+    private File createImageFile() throws IOException {
+        // 파일이름을 세팅 및 저장경로 세팅
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
+
+        imagePath = image.getAbsolutePath();
+
+        return image;
+    }
+
+
+    // 비트맵 > uri 변환 메서드 (기기 앨범에 사진 저장)
+    private Uri getImageUri(Context context, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    // uri 절대경로 리턴 메서드
+    String getRealPathFromUri(Uri uri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        CursorLoader loader = new CursorLoader(getActivity(), uri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result = cursor.getString(column_index);
+        cursor.close();
+        return result;
     }
 
 
@@ -131,15 +198,20 @@ public class Fragment_add extends Fragment {
     }
 
 
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated()");
     }
-    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated()");
     }
-    @Override public void onStart() {
+
+    @Override
+    public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
 
@@ -149,8 +221,21 @@ public class Fragment_add extends Fragment {
             public void onClick(View view) {
 
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                launcher.launch(i);
+
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+
+                }
+                if (photoFile != null) {
+
+                    photoUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getPackageName() + ".fileprovider", photoFile);
+                    i.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+
+                    launcher.launch(i);
+
+                }
 
 
             }
@@ -165,7 +250,7 @@ public class Fragment_add extends Fragment {
 
                 Log.d(TAG, "서버로 보낼 데이터 :\n아이디-" + sharedInfo + "\n텍스트-" + wroteContent + "\n비트맵이미지-" + imageBitmap);
 
-                insertFeed(sharedInfo,wroteContent,imageBitmap);
+                insertFeed(sharedInfo, wroteContent, imagePath);
 
             }
         });
@@ -174,25 +259,34 @@ public class Fragment_add extends Fragment {
         limitText(addWrote_Edit);
 
 
-
     }
-    @Override public void onResume() {
+
+    @Override
+    public void onResume() {
         Log.d(TAG, "onResume()");
         super.onResume();
     }
-    @Override public void onPause() {
+
+    @Override
+    public void onPause() {
         Log.d(TAG, "onPause()");
         super.onPause();
     }
-    @Override public void onStop() {
+
+    @Override
+    public void onStop() {
         Log.d(TAG, "onStop()");
         super.onStop();
     }
-    @Override public void onDestroyView() {
+
+    @Override
+    public void onDestroyView() {
         Log.d(TAG, "onDestroyView()");
         super.onDestroyView();
     }
-    @Override public void onDetach() {
+
+    @Override
+    public void onDetach() {
         Log.d(TAG, "onDetach()");
         super.onDetach();
 
@@ -214,7 +308,7 @@ public class Fragment_add extends Fragment {
         sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
 
-        sharedInfo = sharedPreferences.getString("로그인","");
+        sharedInfo = sharedPreferences.getString("로그인", "");
 
         bitmapConverter = new BitmapConverter();
 
@@ -222,7 +316,7 @@ public class Fragment_add extends Fragment {
 
 
     // 서버에서 데이터 받아옴
-    public void insertFeed(String id, String text, Bitmap image) {
+    public void insertFeed(String id, String text, String image) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<User> call = apiInterface.insertFeed(id, text, image);
         call.enqueue(new Callback<User>() {
@@ -233,15 +327,14 @@ public class Fragment_add extends Fragment {
 
                     String rpId = response.body().getId();
                     String rpText = response.body().getTextContent();
-                    Bitmap rpImg = response.body().getBitmapImage();
+                    String rpImg = response.body().getImage();
 
                     Log.d(TAG, "추가된 데이터 : " + rpId + "\n" + rpText + "\n" + rpImg);
 
-                    sendData.putParcelable("image",imageBitmap);
+                    sendData.putString("image", imagePath);
 
                     homeActivity.goHomeFragment(sendData);
                     Log.d(TAG, "보낸 번들 데이터 : " + sendData);
-
 
                 } else {
                     Log.d(TAG, "onResponse: 리스폰스 실패");

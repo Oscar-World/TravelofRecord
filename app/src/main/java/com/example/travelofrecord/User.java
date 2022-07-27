@@ -34,9 +34,6 @@ public class User {
     @SerializedName("image") private String image;
 
     @Expose
-    @SerializedName("bitmapImage") private Bitmap bitmapImage;
-
-    @Expose
     @SerializedName("noid") private String noid;
 
     @Expose
@@ -62,7 +59,6 @@ public class User {
     public String getMemo() { return memo; }
     public String getTextContent() { return text; }
     public String getImage() { return image; }
-    public Bitmap getBitmapImage() { return bitmapImage; }
     public String getNoid() { return noid; }
     public String getNopw() { return nopw; }
 
@@ -88,7 +84,6 @@ public class User {
         this.text = text;
     }
     public void setImage(String image) { this.image = image; }
-    public void setBitmapImage(Bitmap bitmapImage) { this.bitmapImage = bitmapImage; }
     public void setNoid(String noid) { this.noid = noid; }
     public void setNopw(String nopw) { this.nopw = nopw; }
 

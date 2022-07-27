@@ -88,7 +88,7 @@ public interface ApiInterface {
     Call<User> insertFeed(
             @Query("id") String id,
             @Query("text") String text,
-            @Query("bitmapImage") Bitmap bitmapImage
+            @Query("image") String image
             );
 
 

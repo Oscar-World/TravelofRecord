@@ -4,17 +4,17 @@ import android.graphics.Bitmap;
 
 public class Home_PhotoItem {
 
-    Bitmap home_Image;
+    String home_Image;
 
-    public Home_PhotoItem(Bitmap home_Image) {
+    public Home_PhotoItem(String home_Image) {
         this.home_Image = home_Image;
     }
 
-    public Bitmap getHomeImage() {
+    public String getHomeImage() {
         return home_Image;
     }
 
-    public void setHomeImage(Bitmap home_Image) {
+    public void setHomeImage(String home_Image) {
         this.home_Image = home_Image;
     }
 

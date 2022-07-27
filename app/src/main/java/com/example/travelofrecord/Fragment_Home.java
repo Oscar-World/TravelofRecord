@@ -36,8 +36,7 @@ public class Fragment_Home extends Fragment {
     Home_Adapter adapter;
 
     Bundle getData;
-//    String image;
-    Bitmap image;
+    String image;
 
 
     @Override public void onAttach(Context context) {
@@ -145,7 +144,7 @@ public class Fragment_Home extends Fragment {
 
         if (getData != null) {
 //            image = getData.getString("image");
-            image = getData.getParcelable("image");
+            image = getData.getString("image");
             Log.d(TAG, "받아서 변환시킨 번들 데이터 : " + image);
 
         }

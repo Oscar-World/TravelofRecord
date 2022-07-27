@@ -22,7 +22,6 @@
             android:name=".Find_UserInfo"
             android:exported="false"
             android:screenOrientation="portrait"
-
             />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -79,6 +78,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.travelofrecord.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
 
 </manifest>

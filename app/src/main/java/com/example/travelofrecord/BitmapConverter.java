@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 public class BitmapConverter {
 
     /*
-     * String형을 BitMap으로 변환시켜주는 함수
+     * String형을 BitMap으로 변환
      * */
     public static Bitmap StringToBitmap(String encodedString) {
         try {
