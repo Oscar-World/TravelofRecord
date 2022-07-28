@@ -148,7 +148,7 @@ public class Fragment_add extends Fragment {
     }
 
 
-    // ImageFile의 경로를 가져올 메서드 선언
+    // ImageFile 생성 후, 경로를 가져올 메서드 선언
     private File createImageFile() throws IOException {
         // 파일이름을 세팅 및 저장경로 세팅
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
