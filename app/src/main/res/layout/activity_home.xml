@@ -63,14 +63,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:backgroundTint="#f6feff"
-            android:stateListAnimator="@null"
-            android:src="@drawable/homefull"
             android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:visibility="visible"
+            android:backgroundTint="#f6feff"
             android:padding="18dp"
-            />
+            android:scaleType="fitCenter"
+            android:src="@drawable/homefull"
+            android:stateListAnimator="@null"
+            android:visibility="visible" />
 
         <ImageButton
             android:id="@+id/heart_Btn"

@@ -14,20 +14,20 @@ import retrofit2.http.Query;
 // 레트로핏 인터페이스
 public interface ApiInterface {
 
-    @GET("mysql_Create.php")
+    @GET("mysql_Insert.php")
     Call<String> insertInfo (
-            @Query("type") String type,
+            @Query("loginType") String loginType,
             @Query("id") String id,
-            @Query("pw") String pw,
+            @Query("password") String password,
             @Query("phone") String phone,
             @Query("nickname") String nickname,
-            @Query("image") String image
+            @Query("imagePath") String imagePath
     );
 
     @GET("mysql_Login.php")
     Call<User> getLoginInfo (
             @Query("id") String id,
-            @Query("pw") String pw
+            @Query("password") String password
     );
 
     @GET("mysql_IdCheck.php")
@@ -48,14 +48,14 @@ public interface ApiInterface {
     @GET("mysql_NewPw.php")
     Call<String> getNewPw (
             @Query("id") String id,
-            @Query("pw") String pw
+            @Query("password") String password
     );
 
 //    @GET("mysql_GetUser.php")
 //    Call<User> getInfo (
 //            @Query("type") String type,
 //            @Query("id") String id,
-//            @Query("pw") String pw,
+//            @Query("password") String password,
 //            @Query("phone") String phone,
 //            @Query("nickname") String nickname,
 //            @Query("image") String image
@@ -75,7 +75,7 @@ public interface ApiInterface {
     @GET("mysql_UpdateImage.php")
     Call<User> updateImage (
             @Query("nickname") String nickname,
-            @Query("image") String image
+            @Query("imagePath") String imagePath
     );
 
     @Multipart
@@ -88,24 +88,24 @@ public interface ApiInterface {
     Call<User> insertFeed(
             @Query("id") String id,
             @Query("text") String text,
-            @Query("image") String image
+            @Query("imagePath") String imagePath
             );
 
 
     @GET("mysql_Update.php")
     Call<User> updateInfo (
-            @Query("type") String type,
+            @Query("loginType") String loginType,
             @Query("id") String id,
-            @Query("pw") String pw,
+            @Query("password") String password,
             @Query("phone") String phone,
             @Query("nickname") String nickname
     );
 
     @GET("mysql_Delete.php")
     Call<User> deleteInfo (
-            @Query("type") String type,
+            @Query("loginType") String loginType,
             @Query("id") String id,
-            @Query("pw") String pw,
+            @Query("password") String password,
             @Query("phone") String phone,
             @Query("nickname") String nickname
     );

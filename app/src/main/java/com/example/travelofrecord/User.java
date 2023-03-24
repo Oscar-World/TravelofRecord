@@ -10,13 +10,13 @@ import com.google.gson.annotations.SerializedName;
 public class User {
 
     @Expose
-    @SerializedName("type") private String type;
+    @SerializedName("loginType") private String loginType;
 
     @Expose
     @SerializedName("id") private String id;
 
     @Expose
-    @SerializedName("pw") private String pw;
+    @SerializedName("password") private String password;
 
     @Expose
     @SerializedName("phone") private String phone;
@@ -31,7 +31,7 @@ public class User {
     @SerializedName("text") private String text;
 
     @Expose
-    @SerializedName("image") private String image;
+    @SerializedName("imagePath") private String imagePath;
 
     @Expose
     @SerializedName("noid") private String noid;
@@ -42,13 +42,13 @@ public class User {
 
 
     public String getType() {
-        return type;
+        return loginType;
     }
     public String getId() {
         return id;
     }
     public String getPw() {
-        return pw;
+        return password;
     }
     public String getPhone() {
         return phone;
@@ -58,18 +58,18 @@ public class User {
     }
     public String getMemo() { return memo; }
     public String getTextContent() { return text; }
-    public String getImage() { return image; }
+    public String getImage() { return imagePath; }
     public String getNoid() { return noid; }
     public String getNopw() { return nopw; }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setType(String loginType) {
+        this.loginType = loginType;
     }
     public void setId(String id) {
         this.id = id;
     }
-    public void setPw(String pw) {
-        this.pw = pw;
+    public void setPw(String password) {
+        this.password = password;
     }
     public void setPhone(String phone) {
         this.phone = phone;
@@ -83,7 +83,7 @@ public class User {
     public void setTextContent(String text) {
         this.text = text;
     }
-    public void setImage(String image) { this.image = image; }
+    public void setImage(String imagePath) { this.imagePath = imagePath; }
     public void setNoid(String noid) { this.noid = noid; }
     public void setNopw(String nopw) { this.nopw = nopw; }
 

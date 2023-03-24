@@ -137,7 +137,6 @@ public class Fragment_Home extends Fragment {
 
         adapter.setHome_photoItems(home_photoItems);
 
-
         getData = getArguments();
 
         Log.d(TAG, "받은 번들 데이터 : " + getData);

@@ -13,7 +13,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 // 레트로핏 클라이언트
 public class ApiClient {
 
-    private static final String BASE_URL = "http://15.165.251.83/";
+    private static final String BASE_URL = "http://3.34.246.77/";
     private static Retrofit retrofit;
 
     public static Retrofit getApiClient() {

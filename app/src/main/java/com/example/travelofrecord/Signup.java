@@ -238,7 +238,7 @@ public class Signup extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 Log.d(TAG, "afterTextChanged: " + editable.toString());
-
+                Log.d(TAG, "afterTextChanged: " + idRuleCheck2());
                 if (!idRuleCheck2()) {
                     id_Useable.setVisibility(View.INVISIBLE);
                     id_Using.setVisibility(View.INVISIBLE);
@@ -540,10 +540,10 @@ public class Signup extends AppCompatActivity {
                 edit_pwCheck = signup_pwCheck.getText().toString();
                 edit_phone = signup_phone.getText().toString();
                 edit_nickname = signup_nickname.getText().toString();
-                profile_Imagefile = new File(imagePath);
+//                profile_Imagefile = new File(imagePath);
 
 
-                uploadFile();
+//                uploadFile();
 
                 if (kakaoId != null) {
                     if (signupCheck2()) {
@@ -552,7 +552,7 @@ public class Signup extends AppCompatActivity {
                     }
                 } else {
                     if (signupCheck()) {
-                        login_Type = "Nature";
+                        login_Type = "Basic";
                         getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,imagePath);
                     }
                 }
@@ -721,24 +721,24 @@ public class Signup extends AppCompatActivity {
     } // onStart()
 
 
-    // 파일 업로드
-    private void uploadFile(){
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), profile_Imagefile);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", edit_id, requestFile);
-        ApiInterface apiInterface=ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call=apiInterface.uploadFile(body);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.e(TAG, "성공 : " + response.body());
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.e(TAG, "에러 : " + t.getMessage());
-            }
-        });
-    }
+//    // 파일 업로드
+//    private void uploadFile(){
+//        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), profile_Imagefile);
+//        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", edit_id, requestFile);
+//        ApiInterface apiInterface=ApiClient.getApiClient().create(ApiInterface.class);
+//        Call<String> call=apiInterface.uploadFile(body);
+//        call.enqueue(new Callback<String>() {
+//            @Override
+//            public void onResponse(Call<String> call, Response<String> response) {
+//                Log.e(TAG, "성공 : " + response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<String> call, Throwable t) {
+//                Log.e(TAG, "에러 : " + t.getMessage());
+//            }
+//        });
+//    }
 
 
             //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
@@ -954,9 +954,9 @@ public class Signup extends AppCompatActivity {
 
 
     // ▼ 3페이지 submit 시, 마지막 검사 ▼
-    public void getSignup(String type, String id, String pw, String phone, String nickname, String image) {
+    public void getSignup(String loginType, String id, String pw, String phone, String nickname, String image) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.insertInfo(type,id,pw,phone,nickname,image);
+        Call<String> call = apiInterface.insertInfo(loginType,id,pw,phone,nickname,image);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -1190,8 +1190,8 @@ public class Signup extends AppCompatActivity {
     // ▼ 아이디 정규식 점검 ▼
     private boolean idRuleCheck2() {
         idRule = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
-//        pattern_id = Pattern.compile(idRule);
-        pattern_id = Patterns.EMAIL_ADDRESS;
+        pattern_id = Pattern.compile(idRule);
+//        pattern_id = Patterns.EMAIL_ADDRESS;
 //        id_Pattern = Patterns.EMAIL_ADDRESS;
 
         edit_id = signup_id.getText().toString();
