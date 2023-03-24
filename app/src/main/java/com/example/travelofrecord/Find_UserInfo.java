@@ -556,11 +556,11 @@ public class Find_UserInfo extends AppCompatActivity {
 
                 if (phone_Code.equals("NOID")) {
 
-                    Log.d(TAG, "onResponse: 가입 정보 없음" + phone_Code);
+                    Log.d(TAG, "onResponse: 가입 정보 없음 " + phone_Code);
 
                 } else {
 
-                    Log.d(TAG, "onResponse: 가입 정보 있음" + phone_Code);
+                    Log.d(TAG, "onResponse: 가입 정보 있음 " + phone_Code);
 
                     findId_idText.setText(phone_Code);
 
