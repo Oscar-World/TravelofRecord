@@ -14,6 +14,7 @@ import retrofit2.http.Query;
 // 레트로핏 인터페이스
 public interface ApiInterface {
 
+    // 회원가입
     @GET("mysql_Insert.php")
     Call<String> insertInfo (
             @Query("loginType") String loginType,
@@ -24,27 +25,32 @@ public interface ApiInterface {
             @Query("imagePath") String imagePath
     );
 
+    // 로그인
     @GET("mysql_Login.php")
     Call<User> getLoginInfo (
             @Query("id") String id,
             @Query("password") String password
     );
 
+    // 아이디 중복 확인
     @GET("mysql_IdCheck.php")
     Call<String> getIdCheck (
             @Query("id") String id
     );
 
+    // 닉네임 중복 확인
     @GET("mysql_NicknameCheck.php")
     Call<String> getNicknameCheck (
             @Query("nickname") String nickname
     );
 
+    // 아이디 찾기 - 핸드폰 번호 확인
     @GET("mysql_PhoneCheck.php")
     Call<String> getPhoneCheck (
             @Query("phone") String nickname
     );
 
+    // 비밀번호 찾기 - 비밀번호 재설정
     @GET("mysql_NewPw.php")
     Call<String> getNewPw (
             @Query("id") String id,

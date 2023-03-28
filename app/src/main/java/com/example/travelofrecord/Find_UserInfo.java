@@ -266,8 +266,9 @@ public class Find_UserInfo extends AppCompatActivity {
         findId_submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Find_UserInfo.this,Login.class);
-                startActivity(i);
+
+//                Intent i = new Intent(Find_UserInfo.this,Login.class);
+//                startActivity(i);
                 finish();
             }
         });
@@ -385,11 +386,13 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                Log.d(TAG, "id_code: " + id_Code);
+
                 if (id_Code.equals("usingId")) {
                     getNewPw(user_email, new_Pw);
                 } else {
-                    Intent i = new Intent(Find_UserInfo.this,Login.class);
-                    startActivity(i);
+//                    Intent i = new Intent(Find_UserInfo.this,Login.class);
+//                    startActivity(i);
                     finish();
                 }
 
@@ -528,8 +531,11 @@ public class Find_UserInfo extends AppCompatActivity {
 
                 Log.d(TAG, "onResponse: " + pw_Code);
 
-                Intent i = new Intent(Find_UserInfo.this,Login.class);
-                startActivity(i);
+                Toast t = Toast.makeText(Find_UserInfo.this, "비밀번호 재설정 완료", Toast.LENGTH_SHORT);
+                t.show();
+
+//                Intent i = new Intent(Find_UserInfo.this,Login.class);
+//                startActivity(i);
                 finish();
 
             }

@@ -984,8 +984,8 @@ public class Signup extends AppCompatActivity {
 //                    editor.putString("로그인", edit_id);
 //                    editor.commit();
 
-                    Intent i = new Intent(Signup.this, Login.class);
-                    startActivity(i);
+//                    Intent i = new Intent(Signup.this, Login.class);
+//                    startActivity(i);
                     finish();
 
                 }

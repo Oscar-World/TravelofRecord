@@ -34,12 +34,7 @@ public class User {
     @SerializedName("imagePath") private String imagePath;
 
     @Expose
-    @SerializedName("noid") private String noid;
-
-    @Expose
-    @SerializedName("nopw") private String nopw;
-
-
+    @SerializedName("response") private String response;
 
     public String getType() {
         return loginType;
@@ -59,8 +54,7 @@ public class User {
     public String getMemo() { return memo; }
     public String getTextContent() { return text; }
     public String getImage() { return imagePath; }
-    public String getNoid() { return noid; }
-    public String getNopw() { return nopw; }
+    public String getResponse() { return response; }
 
     public void setType(String loginType) {
         this.loginType = loginType;
@@ -84,7 +78,6 @@ public class User {
         this.text = text;
     }
     public void setImage(String imagePath) { this.imagePath = imagePath; }
-    public void setNoid(String noid) { this.noid = noid; }
-    public void setNopw(String nopw) { this.nopw = nopw; }
+    public void setResponse(String response) { this.response = response; }
 
 }

@@ -74,6 +74,8 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                Log.d(TAG, "버튼 클릭");
+
                 edit_id = login_id.getText().toString();
                 edit_pw = login_pw.getText().toString();
 
@@ -249,20 +251,15 @@ public class Login extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
 
-//                rp_code = response.body().toString();
-//                Log.d(TAG, "onResponse: " + rp_code);
+                rp_code = response.body().getResponse();
+                Log.d(TAG, "응답 : " + rp_code);
 
-                no_id = response.body().getNoid();
-                no_pw = response.body().getNopw();
-
-                Log.d(TAG, "onResponse: " + no_id + " / " + no_pw);
-
-                if (no_id != null) {
+                if (rp_code.equals("noId")) {
 
                     Toast t = Toast.makeText(login_Btn.getContext(),"아이디 또는 비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
                     t.show();
 
-                } else if (no_pw != null) {
+                } else if (rp_code.equals("noPw")) {
                     Toast t = Toast.makeText(login_Btn.getContext(),"아이디 또는 비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
                     t.show();
 
@@ -277,13 +274,14 @@ public class Login extends AppCompatActivity {
                     user_nickname = response.body().getNickname();
                     user_image = response.body().getImage();
 
-                    Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
+                    Log.d(TAG, "서버에서 전달 받은 코드 - 타입 : " + user_type + "\n아이디 : " + user_id + "\n비번 : "
+                            + user_pw + "\n전화번호 : " + user_phone + "\n닉네임 : " + user_nickname + "\n이미지 : " + user_image);
 
-                    editor.putString("로그인", edit_id);
-                    editor.commit();
-                    Intent i = new Intent(Login.this,Home.class);
-                    startActivity(i);
-                    finish();
+//                    editor.putString("로그인", edit_id);
+//                    editor.commit();
+//                    Intent i = new Intent(Login.this,Home.class);
+//                    startActivity(i);
+//                    finish();
                 }
             }
 
@@ -304,18 +302,16 @@ public class Login extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
 
-//                rp_code = response.body().toString();
-                no_id = response.body().getNoid();
-                no_pw = response.body().getNopw();
+                rp_code = response.body().getResponse();
 
-                Log.d(TAG, "카카오 - 아이디 조회 : " + no_id + " " + no_pw);
+                Log.d(TAG, "카카오 - 아이디 조회 : " + rp_code);
 
                 if (response.isSuccessful()) {
 
                     // 사용자의 가입 정보가 있으면 홈으로 이동
                     // 사용자의 가입 정보가 없으면 회원가입 3페이지로 이동
 
-                    if (no_id != null) {
+                    if (rp_code.equals("noId")) {
 
                         Intent i = new Intent(Login.this, Signup.class);
                         i.putExtra("kakaoId", kakaoId);
