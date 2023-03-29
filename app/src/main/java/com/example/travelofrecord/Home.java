@@ -69,6 +69,7 @@ public class Home extends AppCompatActivity {
         Log.d(TAG, "onCreate() 호출");
 
         setView();
+        Log.d(TAG, "쉐어드 정보 : " + sharedInfo);
 
         getInfo(sharedInfo);
 

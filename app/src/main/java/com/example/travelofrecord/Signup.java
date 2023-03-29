@@ -671,9 +671,11 @@ public class Signup extends AppCompatActivity {
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Log.d(TAG, "onClick: 프로필 사진 버튼");
                 if (ActivityCompat.checkSelfPermission(Signup.this,Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.d(TAG, "퍼미션 허용");
 
                     Intent i = new Intent();
                     i.setType("image/*");
@@ -681,6 +683,12 @@ public class Signup extends AppCompatActivity {
                     launcher.launch(i);
 
                 } else {
+                    Log.d(TAG, "퍼미션 거부");
+
+                    Intent i = new Intent();
+                    i.setType("image/*");
+                    i.setAction(Intent.ACTION_PICK);
+                    launcher.launch(i);
 
                 }
 

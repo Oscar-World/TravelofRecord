@@ -67,7 +67,7 @@ public interface ApiInterface {
 //            @Query("image") String image
 //    );
 
-    @GET("mysql_GetUser.php")
+    @GET("mysql_GetInfo.php")
     Call<User> getInfo (
             @Query("id") String id
     );
