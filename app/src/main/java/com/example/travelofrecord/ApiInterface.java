@@ -67,21 +67,30 @@ public interface ApiInterface {
 //            @Query("image") String image
 //    );
 
+    // 회원 정보 가져오기 - 로그인 시, 홈 화면에 뿌려줌
     @GET("mysql_GetInfo.php")
     Call<User> getInfo (
             @Query("id") String id
     );
 
+    // 내 상태 메시지 수정하기
     @GET("mysql_UpdateMemo.php")
     Call<User> updateMemo (
             @Query("nickname") String nickname,
             @Query("memo") String memo
     );
 
+    // 내 프로필 사진 변경하기
     @GET("mysql_UpdateImage.php")
     Call<User> updateImage (
             @Query("nickname") String nickname,
             @Query("imagePath") String imagePath
+    );
+
+    // 회원 탈퇴
+    @GET("mysql_Delete.php")
+    Call<String> deleteUser (
+            @Query("id") String id
     );
 
     @Multipart

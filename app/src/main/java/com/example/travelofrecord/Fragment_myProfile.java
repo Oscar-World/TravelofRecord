@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kakao.sdk.user.UserApiClient;
@@ -53,6 +54,7 @@ public class Fragment_myProfile extends Fragment {
 
     ImageButton drawer_Btn;
     Button logout_Btn;
+    Button userQuit_Btn;
 
     ImageView profile_image;
 
@@ -132,6 +134,8 @@ public class Fragment_myProfile extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_my_profile, container, false);
 
+        Log.d(TAG, "onCreateView()");
+
         setView();
 
         getInfo(sharedInfo);
@@ -183,6 +187,15 @@ public class Fragment_myProfile extends Fragment {
                 startActivity(i);
 
                 getActivity().finish();
+            }
+        });
+
+        userQuit_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                deleteUser(user_id);
+
             }
         });
 
@@ -393,6 +406,59 @@ public class Fragment_myProfile extends Fragment {
 
     }  // updateImage()
 
+    public void deleteUser(String id) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.deleteUser(id);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+
+                    String rp_code = response.body();
+                    Log.d(TAG, "삭제 response : " + rp_code);
+
+                    if (rp_code.equals("Ok")) {
+                        Toast.makeText(getActivity().getApplicationContext(),"회원 탈퇴 완료",Toast.LENGTH_SHORT).show();
+
+
+                        UserApiClient.getInstance().unlink(error -> {
+                            if (error != null) {
+                                Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
+                            }else{
+                                Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
+                            }
+                            return null;
+                        });
+
+                        editor_Kakao.clear();
+                        editor_Kakao.commit();
+
+                        editor.clear();
+                        editor.commit();
+
+                        Intent i = new Intent(getActivity(),Start.class);
+                        startActivity(i);
+
+                        getActivity().finish();
+
+
+                    } else {
+                        Log.d(TAG, "onResponse: 회원 탈퇴 실패");
+                    }
+
+                } else {
+                    Log.d(TAG, "onResponse: 리스폰스 실패");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!!! " + t.getMessage());
+            }
+        });
+    }
+
 
 
 
@@ -421,6 +487,7 @@ public class Fragment_myProfile extends Fragment {
 
         drawer_Btn = v.findViewById(R.id.myProfile_drawerBtn);
         logout_Btn = v.findViewById(R.id.logout_Btn);
+        userQuit_Btn = v.findViewById(R.id.userQuit_Btn);
 
         profile_image = v.findViewById(R.id.myProfile_image);
 

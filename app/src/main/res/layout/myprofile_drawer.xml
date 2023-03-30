@@ -40,4 +40,22 @@
         android:background="#dddddd"
         />
 
+    <Button
+        android:id="@+id/userQuit_Btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#00ff0000"
+        android:stateListAnimator="@null"
+        android:text="회원 탈퇴"
+        android:textSize="15dp"
+        android:textColor="#ff5500"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#dddddd"
+        />
+
+
 </LinearLayout>
