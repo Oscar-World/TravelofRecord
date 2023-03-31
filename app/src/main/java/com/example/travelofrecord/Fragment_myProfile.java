@@ -115,6 +115,7 @@ public class Fragment_myProfile extends Fragment {
                                     .into(profile_image);
 
                             imagePath = getRealPathFromUri(uri);
+//                            user_image = getRealPathFromUri(uri);
 
                             updateImage(user_nickname,imagePath);
 
@@ -157,6 +158,7 @@ public class Fragment_myProfile extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
+        // 햄버거 버튼
         drawer_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -164,6 +166,7 @@ public class Fragment_myProfile extends Fragment {
             }
         });
 
+        // 로그아웃 버튼
         logout_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -190,6 +193,7 @@ public class Fragment_myProfile extends Fragment {
             }
         });
 
+        // 회원 탈퇴 버튼
         userQuit_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -200,6 +204,7 @@ public class Fragment_myProfile extends Fragment {
         });
 
 
+        // 피드 버튼
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,6 +218,7 @@ public class Fragment_myProfile extends Fragment {
         });
 
 
+        // 지도 버튼
         map_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -226,6 +232,7 @@ public class Fragment_myProfile extends Fragment {
         });
 
 
+        // 상태메시지 수정 (텍스트뷰)
         profile_memo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -238,6 +245,7 @@ public class Fragment_myProfile extends Fragment {
             }
         });
 
+        // 상태메시지 수정 버튼
         profile_editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,6 +257,7 @@ public class Fragment_myProfile extends Fragment {
             }
         });
 
+        // 프로필 사진 수정 버튼
         profile_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -282,6 +291,7 @@ public class Fragment_myProfile extends Fragment {
     }
 
 
+    // 회원 정보 가져오기
     public void getInfo(String id) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<User> call = apiInterface.getInfo(id);
@@ -335,6 +345,7 @@ public class Fragment_myProfile extends Fragment {
     }  // getInfo()
 
 
+    // 상태 메시지 변경
     public void updateMemo(String nickname, String memo) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<User> call = apiInterface.updateMemo(nickname,memo);
@@ -378,9 +389,13 @@ public class Fragment_myProfile extends Fragment {
 
 
 
+    // 프로필 사진 변경
     public void updateImage(String nickname, String image) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<User> call = apiInterface.updateImage(nickname,image);
+
+        Log.d(TAG, "서버로 보낸 데이터 : " + imagePath);
+
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -406,6 +421,8 @@ public class Fragment_myProfile extends Fragment {
 
     }  // updateImage()
 
+
+    // 회원 탈퇴
     public void deleteUser(String id) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<String> call = apiInterface.deleteUser(id);
@@ -457,7 +474,7 @@ public class Fragment_myProfile extends Fragment {
                 Log.d(TAG, "onFailure: 에러!!! " + t.getMessage());
             }
         });
-    }
+    }  // deleteUser()
 
 
 

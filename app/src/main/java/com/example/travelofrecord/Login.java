@@ -60,7 +60,7 @@ public class Login extends AppCompatActivity {
     SharedPreferences.Editor editor;
 
 
-    // 갤러리 접근 권한 팝업
+    // 갤러리 접근 권한
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,

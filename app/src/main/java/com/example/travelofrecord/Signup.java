@@ -705,9 +705,9 @@ public class Signup extends AppCompatActivity {
                          Intent intent = result.getData();
                          uri = intent.getData();
 
-                         Log.d(TAG, "onActivityResult: " + result);
-                         Log.d(TAG, "onActivityResult: " + intent);
-                         Log.d(TAG, "onActivityResult: " + uri);
+                         Log.d(TAG, "result : " + result);
+                         Log.d(TAG, "intent : " + intent);
+                         Log.d(TAG, "uri : " + uri);
 
                          Glide.with(getApplicationContext())
                                  .load(uri)
@@ -749,7 +749,7 @@ public class Signup extends AppCompatActivity {
 //    }
 
 
-            //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
+     //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
     String getRealPathFromUri(Uri uri){
         String[] proj= {MediaStore.Images.Media.DATA};
         CursorLoader loader= new CursorLoader(this, uri, proj, null, null, null);

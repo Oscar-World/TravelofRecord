@@ -31,7 +31,7 @@ public class Fragment_Home extends Fragment {
     RecyclerView recyclerView;
 
     Context context = getActivity();
-    ArrayList<Home_PhotoItem> home_photoItems;
+    ArrayList<Item_Post> itemPost;
     int itemSize;
     Home_Adapter adapter;
 
@@ -73,17 +73,17 @@ public class Fragment_Home extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
-        itemSize = home_photoItems.size();
+        itemSize = itemPost.size();
         Log.d(TAG, "아이템 사이즈 1 : " + itemSize);
 
         if (getData != null) {
 
-            Home_PhotoItem item = new Home_PhotoItem(image);
+            Item_Post item = new Item_Post(image);
 
             Log.d(TAG, "아이템 사이즈 2 : " + itemSize);
             Log.d(TAG, "아이템 : " + item);
 
-            home_photoItems.add(itemSize,item);
+            itemPost.add(itemSize,item);
 
             adapter.notifyDataSetChanged();
 
@@ -128,14 +128,14 @@ public class Fragment_Home extends Fragment {
         photo_Block = v.findViewById(R.id.homePhoto_Block);
         map_Block = v.findViewById(R.id.homeMap_Block);
 
-        home_photoItems = new ArrayList<>();
+        itemPost = new ArrayList<>();
         adapter = new Home_Adapter();
 
         recyclerView = v.findViewById(R.id.home_RecyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
 
-        adapter.setHome_photoItems(home_photoItems);
+        adapter.setItemPost(itemPost);
 
         getData = getArguments();
 

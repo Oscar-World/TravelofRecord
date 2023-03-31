@@ -18,7 +18,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
     String TAG = "홈 어댑터";
 
-    ArrayList<Home_PhotoItem> home_photoItems;
+    ArrayList<Item_Post> itemPost;
     Context context;
 
 
@@ -28,7 +28,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         context = parent.getContext();
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.home_photo, parent, false);
+        View view = inflater.inflate(R.layout.item_post, parent, false);
         Home_Adapter.ViewHolder viewHolder = new Home_Adapter.ViewHolder(view);
 
         return viewHolder;
@@ -39,7 +39,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull Home_Adapter.ViewHolder holder,int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
-        holder.onBind(home_photoItems.get(holder.getAdapterPosition()));
+        holder.onBind(itemPost.get(holder.getAdapterPosition()));
     }
 
 
@@ -47,19 +47,19 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount() 호출됨");
-        Log.d(TAG, "리스트 사이즈 : " + home_photoItems.size());
+        Log.d(TAG, "리스트 사이즈 : " + itemPost.size());
 
-        return home_photoItems.size();
+        return itemPost.size();
 
     }
 
 
     // 뷰와 데이터를 연결해줌
-    public void setHome_photoItems(ArrayList<Home_PhotoItem> list) {
+    public void setItemPost(ArrayList<Item_Post> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
-        this.home_photoItems = list;
-        Log.d(TAG, "어댑터 리스트 : " + home_photoItems);
+        this.itemPost = list;
+        Log.d(TAG, "어댑터 리스트 : " + itemPost);
 
         notifyDataSetChanged();
     }
@@ -70,23 +70,23 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     // 뷰홀더 생성
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView home_RecyclerViewImage;
+        ImageView post_ProfileImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            home_RecyclerViewImage = (ImageView) itemView.findViewById(R.id.home_RecyclerViewImage);
+            post_ProfileImage = (ImageView) itemView.findViewById(R.id.item_profileImage);
 
 
 
         }
 
-        void onBind(Home_PhotoItem item) {
+        void onBind(Item_Post item) {
             Log.d(TAG, "onBind() 호출됨");
 
             Glide.with(context)
-                    .load(item.getHomeImage())
-                    .into(home_RecyclerViewImage);
+                    .load(item.getProfileImage())
+                    .into(post_ProfileImage);
 
         }
 
