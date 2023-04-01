@@ -1,55 +1,72 @@
 package com.example.travelofrecord;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import android.os.Bundle;
-import android.util.Log;
+public class Post {
 
-public class Post extends AppCompatActivity {
+    @Expose
+    @SerializedName("nickname") private String nickname;
 
-    String TAG = "게시물 액티비티";
+    @Expose
+    @SerializedName("profileImage") private String profileImage;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post);
-        Log.d(TAG, "onCreate() 호출");
+    @Expose
+    @SerializedName("heart") private int heart;
+
+    @Expose
+    @SerializedName("location") private String location;
+
+    @Expose
+    @SerializedName("postImage") private String postImage;
+
+    @Expose
+    @SerializedName("writing") private String writing;
+
+    @Expose
+    @SerializedName("dateCreated") private String dateCreated;
+
+    @Expose
+    @SerializedName("response") private String response;
+
+    public String getNickname() {
+        return nickname;
     }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-        Log.d(TAG, "onStart() 호출");
+    public String getProfileImage() {
+        return profileImage;
     }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
+    public int getHeart() { return heart; }
+    public String getLocation() {
+        return location;
     }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
+    public String getPostImage() {
+        return postImage;
     }
+    public String getWriting() { return writing; }
+    public String getDateCreated() { return dateCreated; }
+    public String getResponse() { return response; }
 
-    @Override
-    protected void onStop(){
-        super.onStop();
-        Log.d(TAG, "onStop() 호출됨");
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
-
-    @Override
-    protected void onRestart(){
-        super.onRestart();
-        Log.d(TAG, "onRestart() 호출됨");
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
-
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        Log.d(TAG, "onDestroy() 호출됨");
+    public void setHeart(int heart) {
+        this.heart = heart;
     }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+    public void setPostImage(String postImage) {
+        this.postImage = postImage;
+    }
+    public void setWriting(String writing) {
+        this.writing = writing;
+    }
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+    public void setResponse(String response) { this.response = response; }
 
 }

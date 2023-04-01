@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -31,12 +32,19 @@ public class Fragment_Home extends Fragment {
     RecyclerView recyclerView;
 
     Context context = getActivity();
-    ArrayList<Item_Post> itemPost;
+    ArrayList<Item_Post> itemPost_ArrayList;
     int itemSize;
     Home_Adapter adapter;
 
     Bundle getData;
-    String image;
+
+    String nickname;
+    String profileImage;
+    int heart;
+    String location;
+    String postImage;
+    String writing;
+    String dateCreated;
 
 
     @Override public void onAttach(Context context) {
@@ -73,22 +81,22 @@ public class Fragment_Home extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
-        itemSize = itemPost.size();
+        itemSize = itemPost_ArrayList.size();
         Log.d(TAG, "아이템 사이즈 1 : " + itemSize);
 
         if (getData != null) {
 
-            Item_Post item = new Item_Post(image);
+            Item_Post item_post = new Item_Post(nickname,profileImage,heart,location,postImage,writing,dateCreated);
 
             Log.d(TAG, "아이템 사이즈 2 : " + itemSize);
-            Log.d(TAG, "아이템 : " + item);
+            Log.d(TAG, "아이템 : " + item_post);
 
-            itemPost.add(itemSize,item);
+            itemPost_ArrayList.add(itemSize,item_post);
 
             adapter.notifyDataSetChanged();
 
             Log.d(TAG, "아이템 사이즈 2 : " + itemSize);
-            Log.d(TAG, "아이템 : " + item);
+            Log.d(TAG, "아이템 : " + item_post);
 
         }
 
@@ -128,23 +136,30 @@ public class Fragment_Home extends Fragment {
         photo_Block = v.findViewById(R.id.homePhoto_Block);
         map_Block = v.findViewById(R.id.homeMap_Block);
 
-        itemPost = new ArrayList<>();
+        itemPost_ArrayList = new ArrayList<>();
         adapter = new Home_Adapter();
 
         recyclerView = v.findViewById(R.id.home_RecyclerView);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        adapter.setItemPost(itemPost);
+        adapter.setItemPost(itemPost_ArrayList);
 
         getData = getArguments();
 
         Log.d(TAG, "받은 번들 데이터 : " + getData);
 
         if (getData != null) {
-//            image = getData.getString("image");
-            image = getData.getString("image");
-            Log.d(TAG, "받아서 변환시킨 번들 데이터 : " + image);
+
+            nickname = getData.getString("nickname");
+            profileImage = getData.getString("profileImage");
+            heart = getData.getInt("heart");
+            location = getData.getString("location");
+            postImage = getData.getString("postImage");
+            writing = getData.getString("writing");
+            dateCreated = getData.getString("dateCreated");
+
+            Log.d(TAG, "받아서 변환시킨 번들 데이터 : " + nickname + " " + profileImage + " " + heart + " " + location + " " + postImage + " " + writing + " " + dateCreated);
 
         }
 

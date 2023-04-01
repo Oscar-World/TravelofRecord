@@ -15,7 +15,7 @@ import retrofit2.http.Query;
 public interface ApiInterface {
 
     // 회원가입
-    @GET("mysql_Insert.php")
+    @GET("mysql_UserInfo_Insert.php")
     Call<String> insertInfo (
             @Query("loginType") String loginType,
             @Query("id") String id,
@@ -26,32 +26,32 @@ public interface ApiInterface {
     );
 
     // 로그인
-    @GET("mysql_Login.php")
+    @GET("mysql_UserInfo_Login.php")
     Call<User> getLoginInfo (
             @Query("id") String id,
             @Query("password") String password
     );
 
     // 아이디 중복 확인
-    @GET("mysql_IdCheck.php")
+    @GET("mysql_UserInfo_IdCheck.php")
     Call<String> getIdCheck (
             @Query("id") String id
     );
 
     // 닉네임 중복 확인
-    @GET("mysql_NicknameCheck.php")
+    @GET("mysql_UserInfo_NicknameCheck.php")
     Call<String> getNicknameCheck (
             @Query("nickname") String nickname
     );
 
     // 아이디 찾기 - 핸드폰 번호 확인
-    @GET("mysql_PhoneCheck.php")
+    @GET("mysql_UserInfo_PhoneCheck.php")
     Call<String> getPhoneCheck (
             @Query("phone") String nickname
     );
 
     // 비밀번호 찾기 - 비밀번호 재설정
-    @GET("mysql_NewPw.php")
+    @GET("mysql_UserInfo_NewPw.php")
     Call<String> getNewPw (
             @Query("id") String id,
             @Query("password") String password
@@ -68,27 +68,27 @@ public interface ApiInterface {
 //    );
 
     // 회원 정보 가져오기 - 로그인 시, 홈 화면에 뿌려줌
-    @GET("mysql_GetInfo.php")
+    @GET("mysql_GetUserInfo.php")
     Call<User> getInfo (
             @Query("id") String id
     );
 
     // 내 상태 메시지 수정하기
-    @GET("mysql_UpdateMemo.php")
+    @GET("mysql_UserInfo_UpdateMemo.php")
     Call<User> updateMemo (
             @Query("nickname") String nickname,
             @Query("memo") String memo
     );
 
     // 내 프로필 사진 변경하기
-    @GET("mysql_UpdateImage.php")
+    @GET("mysql_UserInfo_UpdateImage.php")
     Call<User> updateImage (
             @Query("nickname") String nickname,
             @Query("imagePath") String imagePath
     );
 
     // 회원 탈퇴
-    @GET("mysql_Delete.php")
+    @GET("mysql_UserInfo_Delete.php")
     Call<String> deleteUser (
             @Query("id") String id
     );
@@ -99,11 +99,15 @@ public interface ApiInterface {
             @Part MultipartBody.Part uploaded_file
     );
 
-    @GET("mysql_CreateFeed.php")
-    Call<User> insertFeed(
-            @Query("id") String id,
-            @Query("text") String text,
-            @Query("imagePath") String imagePath
+    @GET("mysql_Post_Insert.php")
+    Call<Post> insertFeed(
+            @Query("nickname") String nickname,
+            @Query("profileImage") String profileImage,
+            @Query("heart") int heart,
+            @Query("location") String location,
+            @Query("imagePath") String imagePath,
+            @Query("writing") String writing,
+            @Query("dateCreated") String dateCreated
             );
 
 

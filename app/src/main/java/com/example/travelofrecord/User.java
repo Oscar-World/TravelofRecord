@@ -1,12 +1,11 @@
 package com.example.travelofrecord;
 
-import android.graphics.Bitmap;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-// 레트로핏 유저
+// 레트로핏 userinfo getter / setter
 public class User {
 
     @Expose

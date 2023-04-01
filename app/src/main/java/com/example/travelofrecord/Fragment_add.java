@@ -54,13 +54,18 @@ public class Fragment_add extends Fragment {
     View v;
 
     Button addUpload_Btn;
-    EditText addWrote_Edit;
-    ImageView addImage;
+    EditText writing_Edit;
+    ImageView postImage_Iv;
 
     File file;
 
-    String imagePath;
-    String wroteContent;
+    String nickname;
+    String profileImage;
+    int heart =0;
+    String location;
+    String postImage;
+    String writing;
+    String dataCreated;
 
     ActivityResultLauncher<Intent> launcher;
 
@@ -133,12 +138,12 @@ public class Fragment_add extends Fragment {
 //                            Intent i = result.getData();
 
                             Log.d(TAG, "경로! : " + photoUri);
-                            Log.d(TAG, "절대경로! : " + imagePath);
+                            Log.d(TAG, "절대경로! : " + postImage);
 
 
                             Glide.with(getActivity())
-                                    .load(imagePath)
-                                    .into(addImage);
+                                    .load(postImage)
+                                    .into(postImage_Iv);
 
                         }
 
@@ -160,7 +165,7 @@ public class Fragment_add extends Fragment {
                 storageDir
         );
 
-        imagePath = image.getAbsolutePath();
+        postImage = image.getAbsolutePath();
 
         return image;
     }
@@ -216,7 +221,7 @@ public class Fragment_add extends Fragment {
         super.onStart();
 
 
-        addImage.setOnClickListener(new View.OnClickListener() {
+        postImage_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -246,17 +251,14 @@ public class Fragment_add extends Fragment {
             @Override
             public void onClick(View view) {
 
-                wroteContent = addWrote_Edit.getText().toString();
+                writing = writing_Edit.getText().toString();
 
-                Log.d(TAG, "서버로 보낼 데이터 :\n아이디-" + sharedInfo + "\n텍스트-" + wroteContent + "\n비트맵이미지-" + imageBitmap);
+                Log.d(TAG, "서버로 보낼 데이터 :\n아이디-" + sharedInfo + "\n텍스트-" + writing + "\n비트맵이미지-" + imageBitmap);
 
-                insertFeed(sharedInfo, wroteContent, imagePath);
+                insertFeed(nickname, profileImage, heart, location, postImage, writing, dataCreated);
 
             }
         });
-
-
-        limitText(addWrote_Edit);
 
 
     }
@@ -297,8 +299,8 @@ public class Fragment_add extends Fragment {
     public void setView() {
 
         addUpload_Btn = v.findViewById(R.id.addUpload_Btn);
-        addWrote_Edit = v.findViewById(R.id.add_Wrote);
-        addImage = v.findViewById(R.id.addImage_Btn);
+        writing_Edit = v.findViewById(R.id.writing_Edit);
+        postImage_Iv = v.findViewById(R.id.postImage_Iv);
 
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
@@ -315,23 +317,28 @@ public class Fragment_add extends Fragment {
     }
 
 
-    // 서버에서 데이터 받아옴
-    public void insertFeed(String id, String text, String image) {
+    // 서버에 게시글 데이터 추가
+    public void insertFeed(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.insertFeed(id, text, image);
-        call.enqueue(new Callback<User>() {
+        Call<Post> call = apiInterface.insertFeed(nickname, profileImage, heart, location, postImage, writing, dateCreated);
+        call.enqueue(new Callback<Post>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<Post> call, Response<Post> response) {
 
                 if (response.isSuccessful()) {
 
-                    String rpId = response.body().getId();
-                    String rpText = response.body().getTextContent();
-                    String rpImg = response.body().getImage();
+                    Log.d(TAG, "onResponse: 리스폰스 성공");
 
-                    Log.d(TAG, "추가된 데이터 : " + rpId + "\n" + rpText + "\n" + rpImg);
+                    String rp_code = response.body().getResponse();
+                    Log.d(TAG, "서버에 게시글 추가 응답 : " + rp_code);
 
-                    sendData.putString("image", imagePath);
+                    sendData.putString("nickname", nickname);
+                    sendData.putString("profileImage", profileImage);
+                    sendData.putInt("heart", heart);
+                    sendData.putString("location", location);
+                    sendData.putString("postImage", postImage);
+                    sendData.putString("writing", writing);
+                    sendData.putString("dateCreated", dateCreated);
 
                     homeActivity.goHomeFragment(sendData);
                     Log.d(TAG, "보낸 번들 데이터 : " + sendData);
@@ -343,45 +350,14 @@ public class Fragment_add extends Fragment {
             }   // onResponse
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<Post> call, Throwable t) {
                 Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
             }
 
         });
 
-    }  // getInfo()
+    }  // insertFeed()
 
 
-    // EditText 라인 수 제한
-    public void limitText(EditText editText) {
-
-        editText.addTextChangedListener(new TextWatcher() {
-
-            String previousString = "";
-
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                previousString = charSequence.toString();
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-                if (editText.getLineCount() > 7) {
-
-                    editText.setText(previousString);
-                    editText.setSelection(editText.length());
-
-                }
-
-            }
-        });
-
-    }
 
 }

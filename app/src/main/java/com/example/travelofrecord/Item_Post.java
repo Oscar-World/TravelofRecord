@@ -4,16 +4,18 @@ import android.graphics.Bitmap;
 
 public class Item_Post {
 
-    String profileImage;
     String nickname;
+    String profileImage;
+    int heart;
     String location;
     String postImage;
     String writing;
     String dateCreated;
 
-    public Item_Post(String profileImage, String nickname, String location, String postImage, String writing, String dateCreated) {
-        this.profileImage = profileImage;
+    public Item_Post(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
         this.nickname = nickname;
+        this.profileImage = profileImage;
+        this.heart = heart;
         this.location = location;
         this.postImage = postImage;
         this.writing = writing;

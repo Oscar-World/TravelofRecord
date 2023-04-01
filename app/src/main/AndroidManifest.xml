@@ -44,15 +44,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Profile"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".Write"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Post"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
