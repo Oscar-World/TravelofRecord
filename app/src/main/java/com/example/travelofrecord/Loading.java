@@ -110,7 +110,7 @@ public class Loading extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        shared = sharedPreferences.getString("로그인","");
+        shared = sharedPreferences.getString("id","");
 
     }
 

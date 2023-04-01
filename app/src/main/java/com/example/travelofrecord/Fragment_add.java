@@ -41,6 +41,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import retrofit2.Call;
@@ -87,6 +88,10 @@ public class Fragment_add extends Fragment {
 
     Uri photoUri;
 
+    Home_Adapter adapter;
+    ArrayList <Item_Post> itemPost_ArrayList;
+    Item_Post itemPost;
+
 
     @Override
     public void onAttach(Context context) {
@@ -110,32 +115,7 @@ public class Fragment_add extends Fragment {
 
                         if (result.getResultCode() == RESULT_OK) {
 
-//                            getCamera = result.getData().getExtras();
-//
-//                            imageBitmap = (Bitmap) getCamera.get("data");
-//
-//                            Log.d(TAG, "result : " + result);
-//                            Log.d(TAG, "bundle : " + getCamera);
-//                            Log.d(TAG, "bitmap : " + imageBitmap);
-//
-////                            image = imageBitmap.toString();
-//                            String imageString = bitmapConverter.BitmapToString(imageBitmap);
-//                            byte[] imageByte = bitmapConverter.BitmapToByteArray(imageBitmap);
-//                            Bitmap bitmap = bitmapConverter.StringToBitmap(imageString);
-//
-//                            Log.d(TAG, "imageBitmap 데이터: " + imageBitmap + "\nimageString 데이터 : " + imageString + "\nimageByte 데이터 : " + imageByte + "\n다시 변환시킨 bitmap 데이터 : " + bitmap);
-//                            Log.d(TAG, "이미지스트링의 길이 : " + imageString.length());
-//
-//
-//                            Uri uri = getImageUri(getActivity(),imageBitmap);
-//
-//                            Log.d(TAG, "uri 데이터 : " + uri);
-//
-//                            String realPath = getRealPathFromUri(photoUri);
-//
-//                            Log.d(TAG, "절대경로 : " + realPath);
 
-//                            Intent i = result.getData();
 
                             Log.d(TAG, "경로! : " + photoUri);
                             Log.d(TAG, "절대경로! : " + postImage);
@@ -231,7 +211,7 @@ public class Fragment_add extends Fragment {
                 try {
                     photoFile = createImageFile();
                 } catch (IOException ex) {
-
+                    Log.d(TAG, "파일 생성 실패");
                 }
                 if (photoFile != null) {
 
@@ -252,8 +232,17 @@ public class Fragment_add extends Fragment {
             public void onClick(View view) {
 
                 writing = writing_Edit.getText().toString();
+                dataCreated = getTime();
 
-                Log.d(TAG, "서버로 보낼 데이터 :\n아이디-" + sharedInfo + "\n텍스트-" + writing + "\n비트맵이미지-" + imageBitmap);
+                Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + location +
+                        "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
+
+                itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dataCreated);
+
+                itemPost_ArrayList.add(itemPost);
+
+                adapter.notifyDataSetChanged();
+
 
                 insertFeed(nickname, profileImage, heart, location, postImage, writing, dataCreated);
 
@@ -310,12 +299,26 @@ public class Fragment_add extends Fragment {
         sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
 
-        sharedInfo = sharedPreferences.getString("로그인", "");
+        nickname = sharedPreferences.getString("nickname", "");
+        profileImage = sharedPreferences.getString("image", "");
 
         bitmapConverter = new BitmapConverter();
 
+
+        adapter = new Home_Adapter();
+        itemPost_ArrayList = new ArrayList<>();
+
     }
 
+    public String getTime() {
+
+        long currentTime = System.currentTimeMillis();
+        Date today = new Date(currentTime);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd hh:mm");
+
+        return format.format(today);
+
+    }
 
     // 서버에 게시글 데이터 추가
     public void insertFeed(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {

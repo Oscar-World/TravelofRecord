@@ -18,6 +18,10 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Fragment_Home extends Fragment {
 
     String TAG = "홈 프래그먼트";
@@ -124,7 +128,39 @@ public class Fragment_Home extends Fragment {
             }
         });
 
+    } // onStart()
 
+
+    public void getPost(String nickName) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<Post> call = apiInterface.getPost(nickName);
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (response.isSuccessful()) {
+
+                    nickname = response.body().getNickname();
+                    profileImage = response.body().getProfileImage();
+                    heart = response.body().getHeart();
+                    location = response.body().getLocation();
+                    postImage = response.body().getPostImage();
+                    writing = response.body().getWriting();
+                    dateCreated = response.body().getDateCreated();
+
+
+
+
+                } else {
+                    Log.d(TAG, "onResponse: 실패");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                Log.d(TAG, "onFailure: 실패");
+            }
+        });
 
     }
 

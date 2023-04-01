@@ -50,8 +50,6 @@ public class Fragment_myProfile extends Fragment {
     SharedPreferences.Editor editor;
     SharedPreferences.Editor editor_Kakao;
 
-    String sharedInfo;
-
     ImageButton drawer_Btn;
     Button logout_Btn;
     Button userQuit_Btn;
@@ -71,10 +69,7 @@ public class Fragment_myProfile extends Fragment {
     Button profile_editBtn;
     String edit_memo;
 
-    String user_type;
     String user_id;
-    String user_pw;
-    String user_phone;
     String user_nickname;
     String user_memo;
     String user_image;
@@ -83,7 +78,6 @@ public class Fragment_myProfile extends Fragment {
     View drawerView;
 
     Uri uri;
-    String imagePath;
 
     ActivityResultLauncher<Intent> launcher;
 
@@ -114,12 +108,12 @@ public class Fragment_myProfile extends Fragment {
                                     .load(uri)
                                     .into(profile_image);
 
-                            imagePath = getRealPathFromUri(uri);
+                            user_image = getRealPathFromUri(uri);
 //                            user_image = getRealPathFromUri(uri);
 
-                            updateImage(user_nickname,imagePath);
+                            updateImage(user_nickname,user_image);
 
-                            Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + imagePath);
+                            Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + user_image);
 
                         }
 
@@ -138,8 +132,6 @@ public class Fragment_myProfile extends Fragment {
         Log.d(TAG, "onCreateView()");
 
         setView();
-
-        getInfo(sharedInfo);
 
         return v;
 
@@ -267,13 +259,11 @@ public class Fragment_myProfile extends Fragment {
                 i.setAction(Intent.ACTION_PICK);
                 launcher.launch(i);
 
-                Log.d(TAG, "DB로 전송할 데이터 : " + user_nickname + " " + imagePath);
+                Log.d(TAG, "DB로 전송할 데이터 : " + user_nickname + " " + user_image);
 
 
             }
         });
-
-
 
 
     }
@@ -291,60 +281,6 @@ public class Fragment_myProfile extends Fragment {
     }
 
 
-    // 회원 정보 가져오기
-    public void getInfo(String id) {
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.getInfo(id);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                if (response.isSuccessful()) {
-
-                    user_type = response.body().getType();
-                    user_id = response.body().getId();
-                    user_pw = response.body().getPw();
-                    user_phone = response.body().getPhone();
-                    user_nickname = response.body().getNickname();
-                    user_memo = response.body().getMemo();
-                    user_image = response.body().getImage();
-
-                    Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_memo + "\n" + user_image);
-
-
-                    if (user_memo == null | "".equals(user_memo)) {
-                        profile_Edit.setVisibility(View.VISIBLE);
-                        profile_editBtn.setVisibility(View.VISIBLE);
-                        profile_memo.setVisibility(View.GONE);
-                    } else {
-                        profile_memo.setText(user_memo);
-                        profile_memo.setVisibility(View.VISIBLE);
-                        profile_Edit.setVisibility(View.GONE);
-                        profile_editBtn.setVisibility(View.GONE);
-                    }
-
-                    profile_nickname.setText(user_nickname);
-                    Glide.with(getActivity())
-                            .load(user_image)
-                            .into(profile_image);
-
-
-                } else {
-                    Log.d(TAG, "onResponse: 리스폰스 실패");
-                }
-
-            }   // onResponse
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
-            }
-
-        });
-
-    }  // getInfo()
-
-
     // 상태 메시지 변경
     public void updateMemo(String nickname, String memo) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -358,6 +294,9 @@ public class Fragment_myProfile extends Fragment {
                     user_memo = response.body().getMemo();
 
                     Log.d(TAG, "수정된 메모 : " + user_memo);
+
+                    editor.putString("memo", user_memo);
+                    editor.commit();
 
 
                     if (user_memo == null | "".equals(user_memo)) {
@@ -394,7 +333,7 @@ public class Fragment_myProfile extends Fragment {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<User> call = apiInterface.updateImage(nickname,image);
 
-        Log.d(TAG, "서버로 보낸 데이터 : " + imagePath);
+        Log.d(TAG, "서버로 보낸 데이터 : " + user_image);
 
         call.enqueue(new Callback<User>() {
             @Override
@@ -527,10 +466,31 @@ public class Fragment_myProfile extends Fragment {
         sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
 
-        sharedInfo = sharedPreferences.getString("로그인","");
+        user_id = sharedPreferences.getString("id","");
+        user_nickname = sharedPreferences.getString("nickname", "");
+        user_image = sharedPreferences.getString("image", "");
+        user_memo = sharedPreferences.getString("memo", "");
 
         drawerLayout = v.findViewById(R.id.myProfile_drawerLayout);
         drawerView = v.findViewById(R.id.myProfile_drawer);
+
+
+        if (user_memo == null | "".equals(user_memo)) {
+            profile_Edit.setVisibility(View.VISIBLE);
+            profile_editBtn.setVisibility(View.VISIBLE);
+            profile_memo.setVisibility(View.GONE);
+        } else {
+            profile_memo.setText(user_memo);
+            profile_memo.setVisibility(View.VISIBLE);
+            profile_Edit.setVisibility(View.GONE);
+            profile_editBtn.setVisibility(View.GONE);
+        }
+
+        profile_nickname.setText(user_nickname);
+        Glide.with(getActivity())
+                .load(user_image)
+                .into(profile_image);
+
 
     }
 

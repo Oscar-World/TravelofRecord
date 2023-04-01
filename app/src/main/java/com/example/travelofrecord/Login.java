@@ -304,7 +304,9 @@ public class Login extends AppCompatActivity {
                     Log.d(TAG, "서버에서 전달 받은 코드 - 타입 : " + user_type + "\n아이디 : " + user_id + "\n비번 : "
                             + user_pw + "\n전화번호 : " + user_phone + "\n닉네임 : " + user_nickname + "\n이미지 : " + user_image);
 
-                    editor.putString("로그인", edit_id);
+                    editor.putString("id", user_id);
+                    editor.putString("nickname", user_nickname);
+                    editor.putString("image", user_image);
                     editor.commit();
                     Intent i = new Intent(Login.this,Home.class);
                     startActivity(i);
@@ -359,7 +361,9 @@ public class Login extends AppCompatActivity {
                         Intent i = new Intent(Login.this, Home.class);
                         startActivity(i);
 
-                        editor.putString("로그인", kakaoId);
+                        editor.putString("id", kakaoId);
+                        editor.putString("nickname", user_nickname);
+                        editor.putString("image", kakaoImage);
                         editor.commit();
 
                         finish();

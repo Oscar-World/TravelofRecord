@@ -176,7 +176,7 @@ public class Home extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        sharedInfo = sharedPreferences.getString("로그인","");
+        sharedInfo = sharedPreferences.getString("id","");
 
         sharedPreferences_Kakao = getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
