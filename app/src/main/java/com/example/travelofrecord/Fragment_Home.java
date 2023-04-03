@@ -35,7 +35,6 @@ public class Fragment_Home extends Fragment {
 
     RecyclerView recyclerView;
 
-    Context context = getActivity();
     ArrayList<Item_Post> itemPost_ArrayList;
     int itemSize;
     Home_Adapter adapter;
@@ -53,11 +52,11 @@ public class Fragment_Home extends Fragment {
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG, "onAttach()");
+        Log.d(TAG, "onAttach() 호출됨");
     }
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate()");
+        Log.d(TAG, "onCreate() 호출됨");
 
     }
 
@@ -65,9 +64,13 @@ public class Fragment_Home extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView() 호출됨");
+
         v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        setView();
+        getPost();
+
+
 
         return v;
     }
@@ -75,34 +78,16 @@ public class Fragment_Home extends Fragment {
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated()");
+        Log.d(TAG, "onActivityCreated() 호출됨");
     }
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated()");
+        Log.d(TAG, "onViewCreated() 호출됨");
     }
     @Override public void onStart() {
-        Log.d(TAG, "onStart()");
+        Log.d(TAG, "onStart() 호출됨");
         super.onStart();
 
-        itemSize = itemPost_ArrayList.size();
-        Log.d(TAG, "아이템 사이즈 1 : " + itemSize);
-
-        if (getData != null) {
-
-            Item_Post item_post = new Item_Post(nickname,profileImage,heart,location,postImage,writing,dateCreated);
-
-            Log.d(TAG, "아이템 사이즈 2 : " + itemSize);
-            Log.d(TAG, "아이템 : " + item_post);
-
-            itemPost_ArrayList.add(itemSize,item_post);
-
-            adapter.notifyDataSetChanged();
-
-            Log.d(TAG, "아이템 사이즈 2 : " + itemSize);
-            Log.d(TAG, "아이템 : " + item_post);
-
-        }
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,14 +116,16 @@ public class Fragment_Home extends Fragment {
     } // onStart()
 
 
-    public void getPost(String nickName) {
+    public void getPost() {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<Post> call = apiInterface.getPost(nickName);
+        Call<Post> call = apiInterface.getPost();
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
                 if (response.isSuccessful()) {
+
+                    Log.d(TAG, "getPost : " + response.body().getResponse());
 
                     nickname = response.body().getNickname();
                     profileImage = response.body().getProfileImage();
@@ -149,10 +136,20 @@ public class Fragment_Home extends Fragment {
                     dateCreated = response.body().getDateCreated();
 
 
+                    setView();
+
+                    // add에서 넘어왔을 때만.
+                    if (getData != null) {
+
+                        Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dateCreated);
+                        itemPost_ArrayList.add(itemPost);
+                        adapter.notifyDataSetChanged();
+
+                    }
 
 
                 } else {
-                    Log.d(TAG, "onResponse: 실패");
+                    Log.d(TAG, "getPost : 실패");
                 }
             }
 
@@ -180,47 +177,36 @@ public class Fragment_Home extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapter.setItemPost(itemPost_ArrayList);
+        itemSize = itemPost_ArrayList.size();
 
         getData = getArguments();
 
-        Log.d(TAG, "받은 번들 데이터 : " + getData);
-
-        if (getData != null) {
-
-            nickname = getData.getString("nickname");
-            profileImage = getData.getString("profileImage");
-            heart = getData.getInt("heart");
-            location = getData.getString("location");
-            postImage = getData.getString("postImage");
-            writing = getData.getString("writing");
-            dateCreated = getData.getString("dateCreated");
-
-            Log.d(TAG, "받아서 변환시킨 번들 데이터 : " + nickname + " " + profileImage + " " + heart + " " + location + " " + postImage + " " + writing + " " + dateCreated);
-
-        }
-
+        Log.d(TAG, "getData : " + getData);
 
     }
 
 
     @Override public void onResume() {
-        Log.d(TAG, "onResume()");
+        Log.d(TAG, "onResume() 호출됨");
         super.onResume();
     }
     @Override public void onPause() {
-        Log.d(TAG, "onPause()");
+        Log.d(TAG, "onPause() 호출됨");
         super.onPause();
     }
     @Override public void onStop() {
-        Log.d(TAG, "onStop()");
+        Log.d(TAG, "onStop() 호출됨");
         super.onStop();
+
+        getData = null;
+
     }
     @Override public void onDestroyView() {
-        Log.d(TAG, "onDestroyView()");
+        Log.d(TAG, "onDestroyView() 호출됨");
         super.onDestroyView();
     }
     @Override public void onDetach() {
-        Log.d(TAG, "onDetach()");
+        Log.d(TAG, "onDetach() 호출됨");
         super.onDetach();
     }
 

@@ -110,9 +110,9 @@ public interface ApiInterface {
             @Query("dateCreated") String dateCreated
             );
 
-    @GET("mysql_Post_GetPost.php")
+    @GET("mysql_GetPostInfo.php")
     Call<Post> getPost(
-            @Query("nickname") String nickname
+//            @Query("nickname") String nickname
     );
 
 

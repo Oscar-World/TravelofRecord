@@ -88,10 +88,6 @@ public class Fragment_add extends Fragment {
 
     Uri photoUri;
 
-    Home_Adapter adapter;
-    ArrayList <Item_Post> itemPost_ArrayList;
-    Item_Post itemPost;
-
 
     @Override
     public void onAttach(Context context) {
@@ -114,8 +110,6 @@ public class Fragment_add extends Fragment {
                     public void onActivityResult(ActivityResult result) {
 
                         if (result.getResultCode() == RESULT_OK) {
-
-
 
                             Log.d(TAG, "경로! : " + photoUri);
                             Log.d(TAG, "절대경로! : " + postImage);
@@ -237,13 +231,6 @@ public class Fragment_add extends Fragment {
                 Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + location +
                         "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
 
-                itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dataCreated);
-
-                itemPost_ArrayList.add(itemPost);
-
-                adapter.notifyDataSetChanged();
-
-
                 insertFeed(nickname, profileImage, heart, location, postImage, writing, dataCreated);
 
             }
@@ -303,10 +290,6 @@ public class Fragment_add extends Fragment {
         profileImage = sharedPreferences.getString("image", "");
 
         bitmapConverter = new BitmapConverter();
-
-
-        adapter = new Home_Adapter();
-        itemPost_ArrayList = new ArrayList<>();
 
     }
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -70,23 +71,44 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     // 뷰홀더 생성
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        TextView post_Nickname;
         ImageView post_ProfileImage;
+        TextView post_Location;
+        ImageView post_PostImage;
+        TextView post_DateCreated;
+        TextView post_Writing;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            post_ProfileImage = (ImageView) itemView.findViewById(R.id.item_profileImage);
-
-
+            post_Nickname = itemView.findViewById(R.id.item_nickname);
+            post_ProfileImage = itemView.findViewById(R.id.item_profileImage);
+            post_Location = itemView.findViewById(R.id.item_location);
+            post_PostImage = itemView.findViewById(R.id.item_postImage);
+            post_Writing = itemView.findViewById(R.id.item_writing);
+            post_DateCreated = itemView.findViewById(R.id.item_dateCreated);
 
         }
 
         void onBind(Item_Post item) {
             Log.d(TAG, "onBind() 호출됨");
 
+            post_Nickname.setText(item.getNickname());
+
             Glide.with(context)
                     .load(item.getProfileImage())
                     .into(post_ProfileImage);
+
+            post_Location.setText(item.getLocation());
+
+            Glide.with(context)
+                    .load(item.getPostImage())
+                    .into(post_PostImage);
+
+            post_Writing.setText(item.getWriting());
+
+            post_DateCreated.setText(item.getDateCreated());
+
 
         }
 
