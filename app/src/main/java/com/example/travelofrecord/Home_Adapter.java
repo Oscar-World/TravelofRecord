@@ -43,18 +43,6 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         holder.onBind(itemPost.get(holder.getAdapterPosition()));
     }
 
-
-    // 리사이클러뷰 리스트 사이즈를 불러옴
-    @Override
-    public int getItemCount() {
-        Log.d(TAG, "getItemCount() 호출됨");
-        Log.d(TAG, "리스트 사이즈 : " + itemPost.size());
-
-        return itemPost.size();
-
-    }
-
-
     // 뷰와 데이터를 연결해줌
     public void setItemPost(ArrayList<Item_Post> list) {
         Log.d(TAG, "setGameList() 호출됨");
@@ -65,7 +53,15 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    // 리사이클러뷰 리스트 사이즈를 불러옴
+    @Override
+    public int getItemCount() {
+        Log.d(TAG, "getItemCount() 호출됨");
+        Log.d(TAG, "리스트 사이즈 : " + itemPost.size());
 
+        return itemPost.size();
+
+    }
 
 
     // 뷰홀더 생성

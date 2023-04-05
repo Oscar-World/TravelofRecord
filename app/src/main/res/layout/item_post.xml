@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_margin="10dp"
+    android:layout_marginHorizontal="10dp"
     >
 
     <LinearLayout
@@ -16,11 +16,11 @@
 
         <ImageView
             android:id="@+id/item_profileImage"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_foreground"
-            android:background="@drawable/ic_launcher_background"/>
+            android:background="#f2f3ff"/>
 
         <TextView
             android:id="@+id/item_nickname"
@@ -28,9 +28,12 @@
             android:layout_height="wrap_content"
             android:text="닉네임"
             android:textSize="25dp"
+            android:textColor="@color/black"
             android:textStyle="bold"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"/>
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="5dp"
+            />
 
         <View
             android:layout_width="0dp"
@@ -39,12 +42,13 @@
             />
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:src="@drawable/marker"
             android:scaleType="centerInside"
-            android:layout_gravity="center"
-            android:layout_marginRight="5dp"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="5dp"
             />
 
         <TextView
@@ -52,9 +56,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="위치"
-            android:textSize="20dp"
-            android:layout_gravity="center"
-            android:layout_marginRight="10dp"
+            android:textSize="15dp"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="5dp"
             />
 
     </LinearLayout>
@@ -64,8 +68,9 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_marginBottom="10dp"
+        android:scaleType="fitXY"
         android:src="@drawable/ic_launcher_foreground"
-        android:background="@drawable/ic_launcher_background"
+        android:background="#f2f3ff"
         />
 
 
@@ -97,7 +102,7 @@
             android:layout_height="40dp"
             android:scaleType="centerCrop"
             android:src="@drawable/heart"
-            android:background="@color/white"
+            android:background="#f2f3ff"
             android:layout_margin="10dp"
             />
 
@@ -107,7 +112,7 @@
             android:layout_height="40dp"
             android:scaleType="centerCrop"
             android:src="@drawable/comment"
-            android:background="@color/white"
+            android:background="#f2f3ff"
             android:layout_margin="10dp"
             />
 
@@ -122,7 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="날짜"
-            android:textSize="20dp"
+            android:textSize="15dp"
             android:layout_gravity="center"
             android:layout_marginRight="10dp"
             />
@@ -132,8 +137,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:background="#bbb"
-        android:layout_margin="5dp"
+        android:background="#ddd"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
         />
 
 </LinearLayout>

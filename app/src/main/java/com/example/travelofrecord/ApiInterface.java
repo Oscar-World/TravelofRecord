@@ -105,7 +105,7 @@ public interface ApiInterface {
             @Query("profileImage") String profileImage,
             @Query("heart") int heart,
             @Query("location") String location,
-            @Query("imagePath") String imagePath,
+            @Query("postImage") String postImage,
             @Query("writing") String writing,
             @Query("dateCreated") String dateCreated
             );

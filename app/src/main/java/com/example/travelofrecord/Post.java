@@ -3,6 +3,8 @@ package com.example.travelofrecord;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Post {
 
     @Expose
@@ -28,6 +30,17 @@ public class Post {
 
     @Expose
     @SerializedName("response") private String response;
+
+    @Expose
+    @SerializedName("data")  private List<Item_Post> data;
+
+    public List<Item_Post> getData() {
+        return data;
+    }
+
+    public void setData(List<Item_Post> data) {
+        this.data = data;
+    }
 
     public String getNickname() {
         return nickname;

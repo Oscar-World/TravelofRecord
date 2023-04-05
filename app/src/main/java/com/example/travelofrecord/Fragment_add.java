@@ -153,6 +153,8 @@ public class Fragment_add extends Fragment {
         return Uri.parse(path);
     }
 
+
+
     // uri 절대경로 리턴 메서드
     String getRealPathFromUri(Uri uri) {
         String[] proj = {MediaStore.Images.Media.DATA};
@@ -212,6 +214,8 @@ public class Fragment_add extends Fragment {
                     photoUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getPackageName() + ".fileprovider", photoFile);
                     i.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
 
+                    Log.d(TAG, "사진 찍었을 때 uri : " + photoUri);
+
                     launcher.launch(i);
 
                 }
@@ -227,6 +231,7 @@ public class Fragment_add extends Fragment {
 
                 writing = writing_Edit.getText().toString();
                 dataCreated = getTime();
+                location = "somewhere";
 
                 Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + location +
                         "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);

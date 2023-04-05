@@ -2,6 +2,11 @@ package com.example.travelofrecord;
 
 import android.graphics.Bitmap;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 public class Item_Post {
 
     String nickname;
@@ -11,6 +16,10 @@ public class Item_Post {
     String postImage;
     String writing;
     String dateCreated;
+
+    public Item_Post() {
+
+    }
 
     public Item_Post(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
         this.nickname = nickname;

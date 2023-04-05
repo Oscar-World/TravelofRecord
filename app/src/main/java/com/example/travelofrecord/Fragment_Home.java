@@ -70,7 +70,7 @@ public class Fragment_Home extends Fragment {
 
         getPost();
 
-
+        setView();
 
         return v;
     }
@@ -127,6 +127,11 @@ public class Fragment_Home extends Fragment {
 
                     Log.d(TAG, "getPost : " + response.body().getResponse());
 
+                    Log.d(TAG, "getInfo : " + response.body().getNickname());
+
+                    Post rp_code = response.body();
+                    Log.d(TAG, "onResponse: " + rp_code);
+
                     nickname = response.body().getNickname();
                     profileImage = response.body().getProfileImage();
                     heart = response.body().getHeart();
@@ -135,17 +140,24 @@ public class Fragment_Home extends Fragment {
                     writing = response.body().getWriting();
                     dateCreated = response.body().getDateCreated();
 
-
-                    setView();
-
-                    // add에서 넘어왔을 때만.
-                    if (getData != null) {
+                    itemSize = itemPost_ArrayList.size();
+                    Log.d(TAG, "itemSize : " + itemSize);
 
                         Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dateCreated);
+//                    Item_Post itemPost = new Item_Post();
                         itemPost_ArrayList.add(itemPost);
                         adapter.notifyDataSetChanged();
 
-                    }
+
+
+//                    // add에서 넘어왔을 때만.
+//                    if (getData != null) {
+//
+//                        Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dateCreated);
+//                        itemPost_ArrayList.add(itemPost);
+//                        adapter.notifyDataSetChanged();
+//
+//                    }
 
 
                 } else {
@@ -155,7 +167,7 @@ public class Fragment_Home extends Fragment {
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
-                Log.d(TAG, "onFailure: 실패");
+                Log.d(TAG, "onFailure: 실패 " + t);
             }
         });
 
@@ -169,15 +181,17 @@ public class Fragment_Home extends Fragment {
         photo_Block = v.findViewById(R.id.homePhoto_Block);
         map_Block = v.findViewById(R.id.homeMap_Block);
 
-        itemPost_ArrayList = new ArrayList<>();
+        recyclerView = v.findViewById(R.id.home_RecyclerView);
         adapter = new Home_Adapter();
 
-        recyclerView = v.findViewById(R.id.home_RecyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        itemPost_ArrayList = new ArrayList<>();
+
         adapter.setItemPost(itemPost_ArrayList);
-        itemSize = itemPost_ArrayList.size();
+
+//        itemSize = itemPost_ArrayList.size();
 
         getData = getArguments();
 

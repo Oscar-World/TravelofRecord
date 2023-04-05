@@ -685,11 +685,6 @@ public class Signup extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "퍼미션 거부");
 
-                    Intent i = new Intent();
-                    i.setType("image/*");
-                    i.setAction(Intent.ACTION_PICK);
-                    launcher.launch(i);
-
                 }
 
             }
