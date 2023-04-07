@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/user/AndroidStudioProjects/TravelofRecord/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1295" />
         <entry key="..\:/Users/user/AndroidStudioProjects/TravelofRecord/app/src/main/res/drawable/ic_launcher_background.xml" value="0.367" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/TravelofRecord/app/src/main/res/drawable/round_corner.xml" value="0.1295" />
         <entry key="..\:/Users/user/AndroidStudioProjects/TravelofRecord/app/src/main/res/layout/activity_find_user_info.xml" value="0.2630208333333333" />
         <entry key="..\:/Users/user/AndroidStudioProjects/TravelofRecord/app/src/main/res/layout/activity_home.xml" value="0.33" />
         <entry key="..\:/Users/user/AndroidStudioProjects/TravelofRecord/app/src/main/res/layout/activity_loding.xml" value="0.2125" />

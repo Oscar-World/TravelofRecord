@@ -90,6 +90,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             Log.d(TAG, "onBind() 호출됨");
 
             post_Nickname.setText(item.getNickname());
+            post_ProfileImage.setClipToOutline(true);
 
             Glide.with(context)
                     .load(item.getProfileImage())

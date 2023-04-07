@@ -20,14 +20,14 @@
             android:layout_height="65dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_foreground"
-            android:background="#f2f3ff"/>
+            android:background="@drawable/round_corner"/>
 
         <TextView
             android:id="@+id/item_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="닉네임"
-            android:textSize="25dp"
+            android:textSize="20dp"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:layout_gravity="bottom"
@@ -79,7 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="글 내용"
-        android:textSize="20dp"
+        android:textSize="18dp"
         android:layout_margin="10dp"
         />
 

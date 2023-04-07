@@ -103,7 +103,6 @@ public class Fragment_add extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
 
-
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
@@ -174,6 +173,7 @@ public class Fragment_add extends Fragment {
         v = inflater.inflate(R.layout.fragment_add, container, false);
 
         return v;
+
     }
 
 
@@ -187,6 +187,9 @@ public class Fragment_add extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated()");
+
+        postImage = null;
+
     }
 
     @Override
@@ -195,6 +198,11 @@ public class Fragment_add extends Fragment {
         super.onStart();
 
         setView();
+
+        Log.d(TAG, "postImage : " + postImage);
+        if (postImage == null) {
+            writing_Edit.setText("");
+        }
 
         postImage_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,8 +289,6 @@ public class Fragment_add extends Fragment {
         addUpload_Btn = v.findViewById(R.id.addUpload_Btn);
         writing_Edit = v.findViewById(R.id.writing_Edit);
         postImage_Iv = v.findViewById(R.id.postImage_Iv);
-
-        writing_Edit.setText("");
 
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
