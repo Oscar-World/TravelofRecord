@@ -3,6 +3,7 @@ package com.example.travelofrecord;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Post {
@@ -32,13 +33,16 @@ public class Post {
     @SerializedName("response") private String response;
 
     @Expose
-    @SerializedName("data")  private List<Item_Post> data;
+    @SerializedName("num") private int num;
 
-    public List<Item_Post> getData() {
+    @Expose
+    @SerializedName("data")  private ArrayList<Item_Post> data;
+
+    public ArrayList<Item_Post> getData() {
         return data;
     }
 
-    public void setData(List<Item_Post> data) {
+    public void setData(ArrayList<Item_Post> data) {
         this.data = data;
     }
 
@@ -58,6 +62,7 @@ public class Post {
     public String getWriting() { return writing; }
     public String getDateCreated() { return dateCreated; }
     public String getResponse() { return response; }
+    public int getNum() { return num; }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
@@ -81,5 +86,6 @@ public class Post {
         this.dateCreated = dateCreated;
     }
     public void setResponse(String response) { this.response = response; }
+    public void setNum(int num) { this.num = num; }
 
 }

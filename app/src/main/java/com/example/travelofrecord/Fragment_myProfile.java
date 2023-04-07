@@ -115,6 +115,9 @@ public class Fragment_myProfile extends Fragment {
 
                             Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + user_image);
 
+                            editor.putString("image",user_image);
+                            editor.commit();
+
                         }
 
                     }
@@ -342,6 +345,7 @@ public class Fragment_myProfile extends Fragment {
                 if (response.isSuccessful()) {
 
                     user_image = response.body().getImage();
+
 
                     Log.d(TAG, "수정된 이미지 데이터 : " + user_image);
 

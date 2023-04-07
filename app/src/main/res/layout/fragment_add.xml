@@ -88,15 +88,27 @@
         android:layout_marginLeft="15dp"
         />
 
-    <EditText
-        android:id="@+id/writing_Edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:maxLength="100"
-        android:maxLines="8"
-        android:lineSpacingExtra="7dp"
-        />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:background="#ffffff"
+                >
+
+                <EditText
+                    android:id="@+id/writing_Edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:maxLength="100"
+                    android:maxLines="8"
+                    android:lineSpacingExtra="7dp"
+                    android:background="@android:color/transparent"
+                    />
+
+            </FrameLayout>
+
+
 
 
         </LinearLayout>

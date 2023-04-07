@@ -2,6 +2,8 @@ package com.example.travelofrecord;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -111,9 +113,7 @@ public interface ApiInterface {
             );
 
     @GET("mysql_GetPostInfo.php")
-    Call<Post> getPost(
-//            @Query("nickname") String nickname
-    );
+    Call<ArrayList<Post>> getPost();
 
 
     @GET("mysql_Update.php")

@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -48,6 +50,7 @@ public class Fragment_Home extends Fragment {
     String postImage;
     String writing;
     String dateCreated;
+    int num;
 
 
     @Override public void onAttach(Context context) {
@@ -119,45 +122,47 @@ public class Fragment_Home extends Fragment {
     public void getPost() {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<Post> call = apiInterface.getPost();
-        call.enqueue(new Callback<Post>() {
+        Call<ArrayList<Post>> call = apiInterface.getPost();
+        call.enqueue(new Callback<ArrayList<Post>>() {
             @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
+            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
                 if (response.isSuccessful()) {
 
-                    Log.d(TAG, "getPost : " + response.body().getResponse());
 
-                    Log.d(TAG, "getInfo : " + response.body().getNickname());
 
-                    Post rp_code = response.body();
-                    Log.d(TAG, "onResponse: " + rp_code);
+                    ArrayList<Post> data = response.body();
+                    Log.d(TAG, "data : " + data);
+                    if (data.size() > 0) {
+                        Log.d(TAG, "onResponse: " + data);
+                        Log.d(TAG, "data : " + data.get(0).getNickname());
 
-                    nickname = response.body().getNickname();
-                    profileImage = response.body().getProfileImage();
-                    heart = response.body().getHeart();
-                    location = response.body().getLocation();
-                    postImage = response.body().getPostImage();
-                    writing = response.body().getWriting();
-                    dateCreated = response.body().getDateCreated();
+                        Log.d(TAG, "data.size : " + data.size());
 
-                    itemSize = itemPost_ArrayList.size();
-                    Log.d(TAG, "itemSize : " + itemSize);
+                        for (int i = 0; i < data.size(); i++) {
+                            num = data.get(i).getNum();
+                            nickname = data.get(i).getNickname();
+                            profileImage = data.get(i).getProfileImage();
+                            heart = data.get(i).getHeart();
+                            location = data.get(i).getLocation();
+                            postImage = data.get(i).getPostImage();
+                            writing = data.get(i).getWriting();
+                            dateCreated = data.get(i).getDateCreated();
 
-                        Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dateCreated);
+                            Log.d(TAG, "onResponse: num = " + num + " nickname = " + nickname + " profileImage = " + profileImage);
+
+
+                            Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dateCreated);
 //                    Item_Post itemPost = new Item_Post();
-                        itemPost_ArrayList.add(itemPost);
+                            itemPost_ArrayList.add(0, itemPost);
+
+
+                        }
+
+                        itemSize = itemPost_ArrayList.size();
+                        Log.d(TAG, "itemSize : " + itemSize);
+
                         adapter.notifyDataSetChanged();
-
-
-
-//                    // add에서 넘어왔을 때만.
-//                    if (getData != null) {
-//
-//                        Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dateCreated);
-//                        itemPost_ArrayList.add(itemPost);
-//                        adapter.notifyDataSetChanged();
-//
-//                    }
+                    }
 
 
                 } else {
@@ -166,12 +171,13 @@ public class Fragment_Home extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<Post> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
                 Log.d(TAG, "onFailure: 실패 " + t);
             }
         });
 
     }
+
 
 
     public void setView() {
