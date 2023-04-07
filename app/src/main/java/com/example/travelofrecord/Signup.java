@@ -15,6 +15,7 @@ import androidx.core.content.PermissionChecker;
 import androidx.loader.content.CursorLoader;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -984,10 +985,17 @@ public class Signup extends AppCompatActivity {
                     t.show();
 
 //                    자동로그인 기능 활성화 시 주석 해제. (회원가입 > 메인화면)
-//                    editor.putString("로그인", edit_id);
-//                    editor.commit();
 
+                    editor.putString("id", id);
+                    editor.putString("nickname", nickname);
+                    editor.putString("image", image);
+                    editor.commit();
+
+                    Intent intent = new Intent(Signup.this,Home.class);
+                    startActivity(intent);
                     finish();
+
+                    ((Login)Login.context).finish();
 
                 }
 
