@@ -173,8 +173,6 @@ public class Fragment_add extends Fragment {
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_add, container, false);
 
-        setView();
-
         return v;
     }
 
@@ -195,7 +193,8 @@ public class Fragment_add extends Fragment {
     public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
-
+        
+        setView();
 
         postImage_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -282,6 +281,8 @@ public class Fragment_add extends Fragment {
         addUpload_Btn = v.findViewById(R.id.addUpload_Btn);
         writing_Edit = v.findViewById(R.id.writing_Edit);
         postImage_Iv = v.findViewById(R.id.postImage_Iv);
+
+        writing_Edit.setText("");
 
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
