@@ -193,7 +193,7 @@ public class Fragment_add extends Fragment {
     public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
-        
+
         setView();
 
         postImage_Iv.setOnClickListener(new View.OnClickListener() {

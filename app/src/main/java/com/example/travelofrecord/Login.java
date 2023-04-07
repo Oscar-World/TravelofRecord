@@ -209,9 +209,7 @@ public class Login extends AppCompatActivity {
                                     kakaoId = user.getKakaoAccount().getEmail();
                                     kakaoImage = user.getKakaoAccount().getProfile().getProfileImageUrl();
 
-                                    getKakaoTest(kakaoId, "1");
-
-                                    Log.d(TAG, "if 문 진입 전 : " + rp_code);
+                                    getKakaoTest(kakaoId, "");
 
                                 }
                                 return null;
@@ -245,9 +243,7 @@ public class Login extends AppCompatActivity {
                                     kakaoId = user.getKakaoAccount().getEmail();
                                     kakaoImage = user.getKakaoAccount().getProfile().getProfileImageUrl();
 
-                                    getKakaoTest(kakaoId, "1");
-
-                                    Log.d(TAG, "if 문 진입 전 : " + rp_code);
+                                    getKakaoTest(kakaoId, "");
 
                                 }
                                 return null;
@@ -358,14 +354,13 @@ public class Login extends AppCompatActivity {
 
                         Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
 
-                        Intent i = new Intent(Login.this, Home.class);
-                        startActivity(i);
-
                         editor.putString("id", kakaoId);
                         editor.putString("nickname", user_nickname);
                         editor.putString("image", kakaoImage);
                         editor.commit();
 
+                        Intent i = new Intent(Login.this, Home.class);
+                        startActivity(i);
                         finish();
 
                     }

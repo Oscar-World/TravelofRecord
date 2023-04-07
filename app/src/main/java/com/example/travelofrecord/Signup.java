@@ -540,8 +540,8 @@ public class Signup extends AppCompatActivity {
                 edit_pwCheck = signup_pwCheck.getText().toString();
                 edit_phone = signup_phone.getText().toString();
                 edit_nickname = signup_nickname.getText().toString();
-//                profile_Imagefile = new File(imagePath);
 
+//                profile_Imagefile = new File(imagePath);
 
 //                uploadFile();
 
