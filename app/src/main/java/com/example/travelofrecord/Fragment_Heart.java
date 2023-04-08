@@ -12,6 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class Fragment_Heart extends Fragment {
 
     String TAG = "하트 프래그먼트";
@@ -20,6 +26,8 @@ public class Fragment_Heart extends Fragment {
     private Button map_Btn;
     private Button photo_Block;
     private Button map_Block;
+
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -57,6 +65,22 @@ public class Fragment_Heart extends Fragment {
     @Override public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
+
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        //Date 객체 사용
+        Date date = new Date();
+        String time1 = simpleDateFormat.format(date);
+
+        //Calendar 클래스의 getTime()함수 사용
+        Calendar calendar = Calendar.getInstance();
+        String time2 = simpleDateFormat.format(calendar.getTime());
+
+        //System 클래스의 currentTimeMillis()함수 사용
+        String time3 = simpleDateFormat.format(System.currentTimeMillis());
+
+        Log.d(TAG, "현재 시간 :\n" + time1 + "\n" + time2 + "\n" + time3);
 
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {

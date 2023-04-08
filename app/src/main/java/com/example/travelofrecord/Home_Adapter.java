@@ -1,6 +1,7 @@
 package com.example.travelofrecord;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +74,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         ImageView post_PostImage;
         TextView post_DateCreated;
         TextView post_Writing;
+        TextView post_SeeMore;
+        TextView post_Summary;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +86,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_PostImage = itemView.findViewById(R.id.item_postImage);
             post_Writing = itemView.findViewById(R.id.item_writing);
             post_DateCreated = itemView.findViewById(R.id.item_dateCreated);
+            post_SeeMore = itemView.findViewById(R.id.item_seeMore);
+            post_Summary = itemView.findViewById(R.id.item_summary);
 
         }
 
@@ -90,7 +95,48 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             Log.d(TAG, "onBind() 호출됨");
 
             post_Nickname.setText(item.getNickname());
+
             post_ProfileImage.setClipToOutline(true);
+
+            if (!itemView.isLaidOut()) {
+
+                final TextView postTextView = post_Writing;
+                post_Writing.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "linecount : " + postTextView.getLineCount());
+
+                        int line = post_Writing.getLineCount();
+                        Log.d(TAG, "lineCount : " + line);
+                        if (line > 3) {
+                            post_Writing.setMaxLines(3);
+                            post_Writing.setEllipsize(TextUtils.TruncateAt.END);
+                            post_SeeMore.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+
+            }
+
+            post_SeeMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    post_SeeMore.setVisibility(View.GONE);
+                    post_Summary.setVisibility(View.VISIBLE);
+                    post_Writing.setMaxLines(100);
+                }
+            });
+
+            post_Summary.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    post_SeeMore.setVisibility(View.VISIBLE);
+                    post_Summary.setVisibility(View.GONE);
+                    post_Writing.setMaxLines(3);
+                    post_Writing.setEllipsize(TextUtils.TruncateAt.END);
+                }
+            });
+
 
             Glide.with(context)
                     .load(item.getProfileImage())

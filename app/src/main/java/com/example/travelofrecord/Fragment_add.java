@@ -308,10 +308,13 @@ public class Fragment_add extends Fragment {
     public String getTime() {
 
         long currentTime = System.currentTimeMillis();
-        Date today = new Date(currentTime);
+        Date date = new Date(currentTime);
         SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd hh:mm");
 
-        return format.format(today);
+        String today = format.format(date);
+
+
+        return format.format(date);
 
     }
 

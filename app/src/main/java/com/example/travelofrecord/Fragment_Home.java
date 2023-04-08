@@ -91,7 +91,6 @@ public class Fragment_Home extends Fragment {
         Log.d(TAG, "onStart() 호출됨");
         super.onStart();
 
-
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

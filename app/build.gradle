@@ -66,5 +66,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
 
+    // 위치 정보 가져오기
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
 }
