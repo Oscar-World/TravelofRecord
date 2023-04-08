@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/item_profileImage"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_foreground"
             android:background="@drawable/round_corner"/>
@@ -30,9 +30,8 @@
             android:textSize="20dp"
             android:textColor="@color/black"
             android:textStyle="bold"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="5dp"
             />
 
         <View
@@ -48,7 +47,6 @@
             android:scaleType="centerInside"
             android:layout_gravity="bottom"
             android:layout_marginRight="2dp"
-            android:layout_marginBottom="5dp"
             />
 
         <TextView

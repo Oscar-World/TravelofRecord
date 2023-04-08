@@ -3,12 +3,17 @@ package com.example.travelofrecord;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,6 +22,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -34,8 +40,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,6 +53,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,7 +75,7 @@ public class Fragment_add extends Fragment {
     String nickname;
     String profileImage;
     int heart =0;
-    String location;
+    String currentLocation;
     String postImage;
     String writing;
     String dataCreated;
@@ -88,6 +100,22 @@ public class Fragment_add extends Fragment {
 
     Uri photoUri;
 
+    // 위치 정보 권한
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
+    private FusedLocationProviderClient fusedLocationClient;
+    String nowAddr; // 전체 주소
+    String adminArea; // 광역시, 도
+    String locality; // 시
+    String subLocality; // 구
+    String thoroughfare; // 동
+
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -102,6 +130,8 @@ public class Fragment_add extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -204,6 +234,39 @@ public class Fragment_add extends Fragment {
             writing_Edit.setText("");
         }
 
+
+        // 위치 권한 확인
+        int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int COARSE_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (LOCATION_PERMISSION != PackageManager.PERMISSION_GRANTED && COARSE_PERMISSION != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d(TAG, "위치 권한 없음");
+
+            ActivityCompat.requestPermissions(
+                    getActivity(),
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+            return;
+        } else {
+            Log.d(TAG, "위치 권한 있음");
+        }
+
+        // 현재 위치의 위도, 경도 확인
+        fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    Log.d(TAG, "onSuccess: location - " + location + "\n위도 - " + location.getLatitude() + "\n경도 - " + location.getLongitude());
+                    currentLocation = getAddress(getActivity(), location.getLatitude(), location.getLongitude());
+                } else {
+                    Log.d(TAG, "location == null");
+                }
+            }
+        });
+
+
         postImage_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -236,20 +299,22 @@ public class Fragment_add extends Fragment {
             @Override
             public void onClick(View view) {
 
+                if (currentLocation == null) {
+                    currentLocation = "someWhere";
+                }
                 writing = writing_Edit.getText().toString();
                 dataCreated = getTime();
-                location = "somewhere";
 
-                Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + location +
+                Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + currentLocation +
                         "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
 
-                insertFeed(nickname, profileImage, heart, location, postImage, writing, dataCreated);
+                insertFeed(nickname, profileImage, heart, currentLocation, postImage, writing, dataCreated);
 
             }
         });
 
+    } // onStart()
 
-    }
 
     @Override
     public void onResume() {
@@ -304,6 +369,46 @@ public class Fragment_add extends Fragment {
         bitmapConverter = new BitmapConverter();
 
     }
+
+    // Geocoder - 위도, 경도 사용해서 주소 구하기.
+    public String getAddress(Context mContext, double lat, double lng) {
+        nowAddr ="현재 위치를 확인 할 수 없습니다.";
+        Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
+        List<Address> address;
+
+        try
+        {
+            if (geocoder != null)
+            {
+                address = geocoder.getFromLocation(lat, lng, 1);
+                if (address != null && address.size() > 0)
+                {
+                    nowAddr = address.get(0).getAddressLine(0).toString();
+                    Log.d(TAG, "전체 주소 : " + nowAddr);
+
+                    adminArea = address.get(0).getAdminArea();
+                    locality = address.get(0).getLocality();
+                    subLocality = address.get(0).getSubLocality();
+                    thoroughfare = address.get(0).getThoroughfare();
+
+                    Log.d(TAG, "getAddress =\n광역시, 도 : " + adminArea + "\n시 : " + locality +
+                            "\n구 : " + subLocality + "\n동 : " + thoroughfare);
+
+                    nowAddr = adminArea + " " + locality + " " + subLocality + " " + thoroughfare;
+                    Log.d(TAG, "필요한 주소 : " + nowAddr);
+
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            Toast.makeText(mContext, "주소를 가져 올 수 없습니다.", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
+        return nowAddr;
+
+    } // getAddress
 
     public String getTime() {
 

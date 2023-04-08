@@ -1,9 +1,16 @@
 package com.example.travelofrecord;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -11,12 +18,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class Fragment_Heart extends Fragment {
 
@@ -27,13 +40,16 @@ public class Fragment_Heart extends Fragment {
     private Button photo_Block;
     private Button map_Block;
 
-    private FusedLocationProviderClient fusedLocationClient;
 
-    @Override public void onAttach(Context context) {
+
+    @Override
+    public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach()");
     }
-    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
     }
@@ -54,18 +70,28 @@ public class Fragment_Heart extends Fragment {
     }
 
 
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated()");
     }
-    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated()");
     }
-    @Override public void onStart() {
+
+
+
+
+    @Override
+    public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
 
+
+        // 현재 날짜 시간 받아오기 테스트 =========================================================================
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -82,6 +108,7 @@ public class Fragment_Heart extends Fragment {
 
         Log.d(TAG, "현재 시간 :\n" + time1 + "\n" + time2 + "\n" + time3);
 
+        // ==================================================================================================
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
