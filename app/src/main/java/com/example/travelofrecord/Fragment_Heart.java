@@ -25,6 +25,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -107,6 +108,27 @@ public class Fragment_Heart extends Fragment {
         String time3 = simpleDateFormat.format(System.currentTimeMillis());
 
         Log.d(TAG, "현재 시간 :\n" + time1 + "\n" + time2 + "\n" + time3);
+
+        Log.d(TAG, "System.currentTimeMillis : " + System.currentTimeMillis());
+        Log.d(TAG, "파싱 전 date.getTime() : " + date.getTime());
+        try {
+            date = simpleDateFormat.parse("2023-04-09 15:57:50");
+        } catch (ParseException e) {
+            Log.d(TAG, "파싱 실패");
+            e.printStackTrace();
+        }
+        Log.d(TAG, "파싱 후 date.getTime() : " + date.getTime());
+        Log.d(TAG, "지난 시간 : " + (System.currentTimeMillis() - date.getTime()));
+
+        long time = System.currentTimeMillis() - date.getTime();
+        String min = String.valueOf(time/60000);
+        String hour = String.valueOf(time/3600000);
+        String day = String.valueOf(time/86400000);
+        String week = String.valueOf(time/604800000);
+        String month = String.valueOf(time/2592000000L);
+        String year = String.valueOf(time/31536000000L);
+        Log.d(TAG, "year : " + year + "\nmonth : " + month + "\nweek : " + week + "\nday : " + day
+         + "\nhour : " + hour + "\nmin : " + min);
 
         // ==================================================================================================
 

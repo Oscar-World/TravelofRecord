@@ -303,7 +303,7 @@ public class Fragment_add extends Fragment {
                     currentLocation = "someWhere";
                 }
                 writing = writing_Edit.getText().toString();
-                dataCreated = getTime();
+                dataCreated = getTime().toString();
 
                 Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + currentLocation +
                         "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
@@ -410,16 +410,17 @@ public class Fragment_add extends Fragment {
 
     } // getAddress
 
-    public String getTime() {
+    public Long getTime() {
 
         long currentTime = System.currentTimeMillis();
-        Date date = new Date(currentTime);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd hh:mm");
+//        Date date = new Date(currentTime);
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+//
+//        String today = format.format(date);
+//
+//        return today;
 
-        String today = format.format(date);
-
-
-        return format.format(date);
+        return currentTime;
 
     }
 
