@@ -54,7 +54,8 @@
         <activity
             android:name=".Home"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".Signup"
             android:exported="false"

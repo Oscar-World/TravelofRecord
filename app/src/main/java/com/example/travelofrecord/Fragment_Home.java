@@ -147,10 +147,12 @@ public class Fragment_Home extends Fragment {
                             writing = data.get(i).getWriting();
                             dateCreated = data.get(i).getDateCreated();
 
+                            String datePost = lastTime(dateCreated);
+
                             Log.d(TAG, "onResponse: num = " + num + " nickname = " + nickname + " profileImage = " + profileImage);
 
 
-                            Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, dateCreated);
+                            Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, datePost);
 //                    Item_Post itemPost = new Item_Post();
                             itemPost_ArrayList.add(0, itemPost);
 
@@ -175,6 +177,37 @@ public class Fragment_Home extends Fragment {
             }
         });
 
+    }
+
+    public String lastTime(String dateCreated) {
+
+        String msg = null;
+
+        long datePosted = Long.parseLong(dateCreated);
+        long currentTime = System.currentTimeMillis();
+        long lastTime = (currentTime - datePosted) / 1000;
+
+        if (lastTime < 60) {
+            msg = "방금 전";
+        } else if ((lastTime /= 60) < 60) {
+            msg = lastTime + "분 전";
+        } else if ((lastTime /= 60) < 24) {
+            msg = lastTime + "시간 전";
+        } else if ((lastTime /= 24) < 7) {
+            msg = lastTime + "일 전";
+        } else if (lastTime < 14) {
+            msg = "1주 전";
+        } else if (lastTime < 21) {
+            msg = "2주 전";
+        } else if (lastTime < 28) {
+            msg = "3주 전";
+        } else if ((lastTime /= 30) < 12) {
+            msg = lastTime + "달 전";
+        } else {
+            msg = (lastTime /= 12) + "년 전";
+        }
+
+        return msg;
     }
 
 
