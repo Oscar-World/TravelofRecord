@@ -150,7 +150,7 @@ public class Fragment_Home extends Fragment {
                             String datePost = lastTime(dateCreated);
                             String addressPost = getAddress(location);
 
-                            Log.d(TAG, "onResponse: num = " + num + " nickname = " + nickname + " profileImage = " + profileImage);
+                            Log.d(TAG, "onResponse: num = " + num + " nickname = " + nickname + " profileImage = " + profileImage + "\n writing : " + writing);
 
 
                             Item_Post itemPost = new Item_Post(nickname, profileImage, heart, addressPost, postImage, writing, datePost);

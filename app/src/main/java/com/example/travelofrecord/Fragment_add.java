@@ -309,7 +309,13 @@ public class Fragment_add extends Fragment {
                 Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + currentLocation +
                         "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
 
-                insertFeed(nickname, profileImage, heart, currentLocation, postImage, writing, dataCreated);
+                if (postImage == null) {
+                    Toast.makeText(getActivity(),"사진을 촬영해주세요",Toast.LENGTH_SHORT).show();
+                } else if (writing.equals("")) {
+                    Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
+                } else {
+                    insertFeed(nickname, profileImage, heart, currentLocation, postImage, writing, dataCreated);
+                }
 
             }
         });
