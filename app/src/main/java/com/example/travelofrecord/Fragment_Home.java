@@ -148,11 +148,12 @@ public class Fragment_Home extends Fragment {
                             dateCreated = data.get(i).getDateCreated();
 
                             String datePost = lastTime(dateCreated);
+                            String addressPost = getAddress(location);
 
                             Log.d(TAG, "onResponse: num = " + num + " nickname = " + nickname + " profileImage = " + profileImage);
 
 
-                            Item_Post itemPost = new Item_Post(nickname, profileImage, heart, location, postImage, writing, datePost);
+                            Item_Post itemPost = new Item_Post(nickname, profileImage, heart, addressPost, postImage, writing, datePost);
 //                    Item_Post itemPost = new Item_Post();
                             itemPost_ArrayList.add(0, itemPost);
 
@@ -210,6 +211,17 @@ public class Fragment_Home extends Fragment {
         return msg;
     }
 
+    public String getAddress(String location) {
+
+        String address = null;
+
+        String[] addressArray = location.split(" ");
+
+        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+
+        return address;
+
+    }
 
 
     public void setView() {

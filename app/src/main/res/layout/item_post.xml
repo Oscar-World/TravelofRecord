@@ -30,7 +30,8 @@
             android:textSize="20dp"
             android:textColor="@color/black"
             android:textStyle="bold"
-            android:layout_gravity="center"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="3dp"
             android:layout_marginLeft="10dp"
             />
 
@@ -41,12 +42,13 @@
             />
 
         <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:src="@drawable/marker"
             android:scaleType="centerInside"
-            android:layout_gravity="bottom"
+            android:layout_gravity="top"
             android:layout_marginRight="2dp"
+            android:layout_marginTop="6dp"
             />
 
         <TextView
@@ -54,9 +56,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="위치"
-            android:textSize="15dp"
-            android:layout_gravity="bottom"
+            android:textSize="14dp"
+            android:layout_gravity="top"
             android:layout_marginRight="5dp"
+            android:layout_marginTop="6dp"
             />
 
     </LinearLayout>
@@ -66,9 +69,9 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_marginBottom="10dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_launcher_foreground"
-        android:background="#f2f3ff"
+        android:background="#ffffff"
         />
 
 
@@ -121,8 +124,8 @@
 
         <ImageView
             android:id="@+id/item_heart"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:scaleType="centerCrop"
             android:src="@drawable/heart"
             android:background="#f2f3ff"
@@ -132,8 +135,8 @@
 
         <ImageView
             android:id="@+id/item_comment"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:scaleType="centerCrop"
             android:src="@drawable/comment"
             android:background="#f2f3ff"
@@ -152,7 +155,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="날짜"
-            android:textSize="15dp"
+            android:textSize="13dp"
             android:layout_gravity="center"
             android:layout_marginRight="10dp"
             />

@@ -387,16 +387,19 @@ public class Fragment_add extends Fragment {
                     nowAddr = address.get(0).getAddressLine(0).toString();
                     Log.d(TAG, "전체 주소 : " + nowAddr);
 
-                    adminArea = address.get(0).getAdminArea();
-                    locality = address.get(0).getLocality();
-                    subLocality = address.get(0).getSubLocality();
-                    thoroughfare = address.get(0).getThoroughfare();
-
-                    Log.d(TAG, "getAddress =\n광역시, 도 : " + adminArea + "\n시 : " + locality +
-                            "\n구 : " + subLocality + "\n동 : " + thoroughfare);
-
-                    nowAddr = adminArea + " " + locality + " " + subLocality + " " + thoroughfare;
-                    Log.d(TAG, "필요한 주소 : " + nowAddr);
+//                    adminArea = address.get(0).getAdminArea();
+//                    locality = address.get(0).getLocality();
+//                    subLocality = address.get(0).getSubLocality();
+//                    thoroughfare = address.get(0).getThoroughfare();
+//                    String feature = address.get(0).getFeatureName();
+//                    String locality = address.get(0).getLocality();
+//                    String subThoroughfare = address.get(0).getSubThoroughfare();
+//
+//                    Log.d(TAG, "getAddress =\n광역시, 도 : " + adminArea + "\n시 : " + locality + "\n구 : " + subLocality + "\n동 : " + thoroughfare +
+//                            "\n기타 feature : " + feature + "\nlocality : " + locality + "\nsubThoroughfare : " + subThoroughfare);
+//
+//                    nowAddr = adminArea + " " + locality + " " + subLocality + " " + thoroughfare;
+//                    Log.d(TAG, "필요한 주소 : " + nowAddr);
 
                 }
             }
