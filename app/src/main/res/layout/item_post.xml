@@ -135,6 +135,18 @@
             />
 
         <ImageView
+            android:id="@+id/item_heartFull"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/heartfull"
+            android:background="#f2f3ff"
+            android:layout_marginVertical="5dp"
+            android:layout_marginHorizontal="10dp"
+            android:visibility="gone"
+            />
+
+        <ImageView
             android:id="@+id/item_comment"
             android:layout_width="30dp"
             android:layout_height="30dp"

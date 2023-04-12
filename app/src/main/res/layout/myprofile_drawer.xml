@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/myProfile_drawer"
-    android:layout_width="280dp"
+    android:layout_width="240dp"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_gravity="end"
@@ -16,6 +16,36 @@
         android:textSize="25dp"
         android:layout_margin="15dp"
         android:layout_gravity="start"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#dddddd"
+        android:layout_marginTop="5dp"
+        />
+
+    <Button
+        android:id="@+id/editProfile_Btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#00ff0000"
+        android:stateListAnimator="@null"
+        android:text="프로필 수정"
+        android:textSize="15dp"
+        android:textColor="#64c9ff"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#dddddd"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         />
 
     <View
@@ -55,6 +85,7 @@
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="#dddddd"
+        android:layout_marginBottom="5dp"
         />
 
 

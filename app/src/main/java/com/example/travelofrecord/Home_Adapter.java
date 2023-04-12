@@ -76,6 +76,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         TextView post_Writing;
         TextView post_SeeMore;
         TextView post_Summary;
+        ImageView post_Heart;
+        ImageView post_HeartFull;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,6 +90,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_DateCreated = itemView.findViewById(R.id.item_dateCreated);
             post_SeeMore = itemView.findViewById(R.id.item_seeMore);
             post_Summary = itemView.findViewById(R.id.item_summary);
+            post_Heart = itemView.findViewById(R.id.item_heart);
+            post_HeartFull = itemView.findViewById(R.id.item_heartFull);
 
         }
 
@@ -137,6 +141,21 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 }
             });
 
+            post_Heart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    post_Heart.setVisibility(View.GONE);
+                    post_HeartFull.setVisibility(View.VISIBLE);
+                }
+            });
+
+            post_HeartFull.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    post_HeartFull.setVisibility(View.GONE);
+                    post_Heart.setVisibility(View.VISIBLE);
+                }
+            });
 
             Glide.with(context)
                     .load(item.getProfileImage())

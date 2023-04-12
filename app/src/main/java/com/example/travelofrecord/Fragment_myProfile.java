@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,12 +51,17 @@ public class Fragment_myProfile extends Fragment {
     SharedPreferences.Editor editor;
     SharedPreferences.Editor editor_Kakao;
 
+    LinearLayout profileSelect_Layout;
     ImageButton drawer_Btn;
     Button logout_Btn;
     Button userQuit_Btn;
+    Button editProfile_Btn;
+    Button editProfileSubmit_Btn;
 
-    ImageView profile_image;
+    ImageView profile_Image;
+    ImageView editProfile_Image;
 
+    TextView profile_Text;
     TextView profile_nickname;
     TextView profile_memo;
 
@@ -66,7 +72,6 @@ public class Fragment_myProfile extends Fragment {
     Button map_Btn;
     Button map_Block;
 
-    Button profile_editBtn;
     String edit_memo;
 
     String user_id;
@@ -106,12 +111,13 @@ public class Fragment_myProfile extends Fragment {
 
                             Glide.with(getActivity())
                                     .load(uri)
-                                    .into(profile_image);
+                                    .into(profile_Image);
+
+                            Glide.with(getActivity())
+                                    .load(uri)
+                                    .into(editProfile_Image);
 
                             user_image = getRealPathFromUri(uri);
-//                            user_image = getRealPathFromUri(uri);
-
-                            updateImage(user_nickname,user_image);
 
                             Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + user_image);
 
@@ -158,6 +164,46 @@ public class Fragment_myProfile extends Fragment {
             @Override
             public void onClick(View view) {
                 drawerLayout.openDrawer(drawerView);
+            }
+        });
+
+        // 프로필 수정 버튼
+        editProfile_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                profile_Text.setText("프로필 수정");
+
+                profile_memo.setVisibility(View.GONE);
+                profile_Edit.setVisibility(View.VISIBLE);
+                profile_Edit.setText(user_memo);
+                drawer_Btn.setVisibility(View.GONE);
+                editProfileSubmit_Btn.setVisibility(View.VISIBLE);
+                profile_Image.setVisibility(View.GONE);
+                editProfile_Image.setVisibility(View.VISIBLE);
+                profileSelect_Layout.setVisibility(View.GONE);
+
+                drawerLayout.closeDrawer(drawerView);
+
+            }
+        });
+
+        // 프로필 수정 완료 버튼
+        editProfileSubmit_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                profile_Text.setText("프로필");
+                edit_memo = profile_Edit.getText().toString();
+                Log.d(TAG, "수정된 메시지 : " + edit_memo);
+
+                drawer_Btn.setVisibility(View.VISIBLE);
+                editProfileSubmit_Btn.setVisibility(View.GONE);
+                profile_Image.setVisibility(View.VISIBLE);
+                editProfile_Image.setVisibility(View.GONE);
+                profileSelect_Layout.setVisibility(View.VISIBLE);
+
+                updateMemo(user_nickname,edit_memo, user_image);
+
             }
         });
 
@@ -226,34 +272,8 @@ public class Fragment_myProfile extends Fragment {
             }
         });
 
-
-        // 상태메시지 수정 (텍스트뷰)
-        profile_memo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                profile_memo.setVisibility(View.GONE);
-                profile_Edit.setVisibility(View.VISIBLE);
-                profile_editBtn.setVisibility(View.VISIBLE);
-                profile_Edit.setText(user_memo);
-
-            }
-        });
-
-        // 상태메시지 수정 버튼
-        profile_editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                edit_memo = profile_Edit.getText().toString();
-
-                updateMemo(user_nickname,edit_memo);
-
-            }
-        });
-
         // 프로필 사진 수정 버튼
-        profile_image.setOnClickListener(new View.OnClickListener() {
+        editProfile_Image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -285,9 +305,9 @@ public class Fragment_myProfile extends Fragment {
 
 
     // 상태 메시지 변경
-    public void updateMemo(String nickname, String memo) {
+    public void updateMemo(String nickname, String memo, String image) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.updateMemo(nickname,memo);
+        Call<User> call = apiInterface.updateMemo(nickname, memo, image);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -295,22 +315,22 @@ public class Fragment_myProfile extends Fragment {
                 if (response.isSuccessful()) {
 
                     user_memo = response.body().getMemo();
+                    user_image = response.body().getImage();
 
                     Log.d(TAG, "수정된 메모 : " + user_memo);
+                    Log.d(TAG, "수정된 이미지 : " + user_image);
 
                     editor.putString("memo", user_memo);
                     editor.commit();
 
 
                     if (user_memo == null | "".equals(user_memo)) {
-                        profile_Edit.setVisibility(View.VISIBLE);
-                        profile_editBtn.setVisibility(View.VISIBLE);
-                        profile_memo.setVisibility(View.GONE);
+                        profile_Edit.setVisibility(View.GONE);
+                        profile_memo.setVisibility(View.VISIBLE);
                     } else {
                         profile_memo.setVisibility(View.VISIBLE);
                         profile_memo.setText(edit_memo);
                         profile_Edit.setVisibility(View.GONE);
-                        profile_editBtn.setVisibility(View.GONE);
                     }
 
 
@@ -328,42 +348,6 @@ public class Fragment_myProfile extends Fragment {
         });
 
     }  // updateMemo()
-
-
-
-    // 프로필 사진 변경
-    public void updateImage(String nickname, String image) {
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.updateImage(nickname,image);
-
-        Log.d(TAG, "서버로 보낸 데이터 : " + user_image);
-
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                if (response.isSuccessful()) {
-
-                    user_image = response.body().getImage();
-
-
-                    Log.d(TAG, "수정된 이미지 데이터 : " + user_image);
-
-                } else {
-                    Log.d(TAG, "onResponse: 리스폰스 실패");
-                }
-
-            }   // onResponse
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d(TAG, "onFailure: 에러!!! " + t.getMessage());
-            }
-
-        });
-
-    }  // updateImage()
-
 
     // 회원 탈퇴
     public void deleteUser(String id) {
@@ -445,12 +429,17 @@ public class Fragment_myProfile extends Fragment {
 
     public void setView() {
 
+        profileSelect_Layout = v.findViewById(R.id.myProfileSelect_Layout);
         drawer_Btn = v.findViewById(R.id.myProfile_drawerBtn);
         logout_Btn = v.findViewById(R.id.logout_Btn);
         userQuit_Btn = v.findViewById(R.id.userQuit_Btn);
+        editProfile_Btn = v.findViewById(R.id.editProfile_Btn);
+        editProfileSubmit_Btn = v.findViewById(R.id.editProfileSubmit_Btn);
 
-        profile_image = v.findViewById(R.id.myProfile_image);
+        profile_Image = v.findViewById(R.id.myProfile_image);
+        editProfile_Image = v.findViewById(R.id.myProfileEdit_image);
 
+        profile_Text = v.findViewById(R.id.profileText);
         profile_nickname = v.findViewById(R.id.myProfile_nickname);
         profile_memo = v.findViewById(R.id.myProfile_memo);
         profile_Edit = v.findViewById(R.id.myProfile_Edit);
@@ -459,7 +448,6 @@ public class Fragment_myProfile extends Fragment {
         photo_Block = v.findViewById(R.id.myProfilePhoto_Block);
         map_Btn = v.findViewById(R.id.myProfileMap_Btn);
         map_Block = v.findViewById(R.id.myProfileMap_Block);
-        profile_editBtn = v.findViewById(R.id.myProfile_editBtn);
 
 //        user_nickname = this.getArguments().getString("nickname");
 //        user_image = this.getArguments().getString("image");
@@ -480,20 +468,21 @@ public class Fragment_myProfile extends Fragment {
 
 
         if (user_memo == null | "".equals(user_memo)) {
-            profile_Edit.setVisibility(View.VISIBLE);
-            profile_editBtn.setVisibility(View.VISIBLE);
-            profile_memo.setVisibility(View.GONE);
+            profile_Edit.setVisibility(View.GONE);
+            profile_memo.setVisibility(View.VISIBLE);
         } else {
             profile_memo.setText(user_memo);
             profile_memo.setVisibility(View.VISIBLE);
             profile_Edit.setVisibility(View.GONE);
-            profile_editBtn.setVisibility(View.GONE);
         }
 
         profile_nickname.setText(user_nickname);
         Glide.with(getActivity())
                 .load(user_image)
-                .into(profile_image);
+                .into(profile_Image);
+        Glide.with(getActivity())
+                .load(user_image)
+                .into(editProfile_Image);
 
 
     }

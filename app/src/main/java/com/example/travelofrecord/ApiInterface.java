@@ -76,16 +76,10 @@ public interface ApiInterface {
     );
 
     // 내 상태 메시지 수정하기
-    @GET("mysql_UserInfo_UpdateMemo.php")
+    @GET("mysql_UserInfo_UpdateProfile.php")
     Call<User> updateMemo (
             @Query("nickname") String nickname,
-            @Query("memo") String memo
-    );
-
-    // 내 프로필 사진 변경하기
-    @GET("mysql_UserInfo_UpdateImage.php")
-    Call<User> updateImage (
-            @Query("nickname") String nickname,
+            @Query("memo") String memo,
             @Query("imagePath") String imagePath
     );
 
