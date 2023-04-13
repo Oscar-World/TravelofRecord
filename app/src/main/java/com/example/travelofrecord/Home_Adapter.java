@@ -117,6 +117,16 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                             post_Writing.setEllipsize(TextUtils.TruncateAt.END);
                             post_SeeMore.setVisibility(View.VISIBLE);
                         }
+
+
+                        Glide.with(context)
+                                .load(item.getProfileImage())
+                                .into(post_ProfileImage);
+
+                        Glide.with(context)
+                                .load(item.getPostImage())
+                                .into(post_PostImage);
+
                     }
                 });
 
@@ -157,15 +167,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 }
             });
 
-            Glide.with(context)
-                    .load(item.getProfileImage())
-                    .into(post_ProfileImage);
-
             post_Location.setText(item.getLocation());
-
-            Glide.with(context)
-                    .load(item.getPostImage())
-                    .into(post_PostImage);
 
             post_Writing.setText(item.getWriting());
 

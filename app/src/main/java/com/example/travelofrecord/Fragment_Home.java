@@ -71,8 +71,6 @@ public class Fragment_Home extends Fragment {
 
         v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        getPost();
-
         setView();
 
         return v;
@@ -86,6 +84,9 @@ public class Fragment_Home extends Fragment {
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출됨");
+
+        getPost();
+
     }
     @Override public void onStart() {
         Log.d(TAG, "onStart() 호출됨");
@@ -126,8 +127,6 @@ public class Fragment_Home extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
                 if (response.isSuccessful()) {
-
-
 
                     ArrayList<Post> data = response.body();
                     Log.d(TAG, "data : " + data);

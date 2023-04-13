@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="닉네임"
-            android:textSize="20dp"
+            android:textSize="17dp"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:layout_gravity="bottom"
@@ -46,9 +46,9 @@
             android:layout_height="18dp"
             android:src="@drawable/marker"
             android:scaleType="centerInside"
-            android:layout_gravity="top"
+            android:layout_gravity="bottom"
             android:layout_marginRight="2dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginBottom="5dp"
             />
 
         <TextView
@@ -57,9 +57,9 @@
             android:layout_height="wrap_content"
             android:text="위치"
             android:textSize="14dp"
-            android:layout_gravity="top"
+            android:layout_gravity="bottom"
             android:layout_marginRight="5dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginBottom="0dp"
             />
 
     </LinearLayout>
@@ -91,7 +91,7 @@
         android:layout_height="wrap_content"
         android:text="더보기"
         android:textSize="18dp"
-        android:textColor="@color/black"
+        android:textColor="#44000000"
         android:textStyle="bold"
         android:layout_margin="10dp"
         android:visibility="gone"
@@ -103,7 +103,7 @@
         android:layout_height="wrap_content"
         android:text="접기"
         android:textSize="18dp"
-        android:textColor="@color/black"
+        android:textColor="#44000000"
         android:textStyle="bold"
         android:layout_margin="10dp"
         android:visibility="gone"

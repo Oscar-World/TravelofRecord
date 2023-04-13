@@ -38,8 +38,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -70,6 +72,7 @@ public class Fragment_add extends Fragment {
     Button addUpload_Btn;
     EditText writing_Edit;
     ImageView postImage_Iv;
+    FrameLayout writing_Layout;
 
     File file;
 
@@ -100,6 +103,8 @@ public class Fragment_add extends Fragment {
     BitmapConverter bitmapConverter;
 
     Uri photoUri;
+    InputMethodManager imm;
+    InputMethodManager immhide;
 
     // 위치 정보 권한
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -320,6 +325,18 @@ public class Fragment_add extends Fragment {
             }
         });
 
+        writing_Layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                writing_Edit.requestFocus();
+
+            }
+        });
+
+
     } // onStart()
 
 
@@ -333,6 +350,7 @@ public class Fragment_add extends Fragment {
     public void onPause() {
         Log.d(TAG, "onPause()");
         super.onPause();
+//        immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     @Override
@@ -361,6 +379,7 @@ public class Fragment_add extends Fragment {
         addUpload_Btn = v.findViewById(R.id.addUpload_Btn);
         writing_Edit = v.findViewById(R.id.writing_Edit);
         postImage_Iv = v.findViewById(R.id.postImage_Iv);
+        writing_Layout = v.findViewById(R.id.writing_FrameLayout);
 
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
@@ -374,6 +393,11 @@ public class Fragment_add extends Fragment {
         profileImage = sharedPreferences.getString("image", "");
 
         bitmapConverter = new BitmapConverter();
+
+        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+        immhide = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+
+        writing_Edit.setFocusableInTouchMode(true);
 
     }
 

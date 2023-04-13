@@ -47,6 +47,7 @@ public class Login extends AppCompatActivity {
     String user_phone;
     String user_nickname;
     String user_image;
+    String user_memo;
     String no_id;
     String no_pw;
 
@@ -306,6 +307,7 @@ public class Login extends AppCompatActivity {
                     user_phone = response.body().getPhone();
                     user_nickname = response.body().getNickname();
                     user_image = response.body().getImage();
+                    user_memo = response.body().getMemo();
 
                     Log.d(TAG, "서버에서 전달 받은 코드 - 타입 : " + user_type + "\n아이디 : " + user_id + "\n비번 : "
                             + user_pw + "\n전화번호 : " + user_phone + "\n닉네임 : " + user_nickname + "\n이미지 : " + user_image);
@@ -313,6 +315,7 @@ public class Login extends AppCompatActivity {
                     editor.putString("id", user_id);
                     editor.putString("nickname", user_nickname);
                     editor.putString("image", user_image);
+                    editor.putString("memo", user_memo);
                     editor.commit();
                     Intent i = new Intent(Login.this,Home.class);
                     startActivity(i);

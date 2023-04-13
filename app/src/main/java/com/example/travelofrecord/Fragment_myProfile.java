@@ -60,6 +60,7 @@ public class Fragment_myProfile extends Fragment {
 
     ImageView profile_Image;
     ImageView editProfile_Image;
+    ImageView touchImage_Image;
 
     TextView profile_Text;
     TextView profile_nickname;
@@ -181,6 +182,7 @@ public class Fragment_myProfile extends Fragment {
                 profile_Image.setVisibility(View.GONE);
                 editProfile_Image.setVisibility(View.VISIBLE);
                 profileSelect_Layout.setVisibility(View.GONE);
+                touchImage_Image.setVisibility(View.VISIBLE);
 
                 drawerLayout.closeDrawer(drawerView);
 
@@ -201,8 +203,9 @@ public class Fragment_myProfile extends Fragment {
                 profile_Image.setVisibility(View.VISIBLE);
                 editProfile_Image.setVisibility(View.GONE);
                 profileSelect_Layout.setVisibility(View.VISIBLE);
+                touchImage_Image.setVisibility(View.GONE);
 
-                updateMemo(user_nickname,edit_memo, user_image);
+                updateProfile(user_nickname,edit_memo, user_image);
 
             }
         });
@@ -304,8 +307,8 @@ public class Fragment_myProfile extends Fragment {
     }
 
 
-    // 상태 메시지 변경
-    public void updateMemo(String nickname, String memo, String image) {
+    // 상태 메시지, 프로필 사진 변경
+    public void updateProfile(String nickname, String memo, String image) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<User> call = apiInterface.updateMemo(nickname, memo, image);
         call.enqueue(new Callback<User>() {
@@ -438,6 +441,7 @@ public class Fragment_myProfile extends Fragment {
 
         profile_Image = v.findViewById(R.id.myProfile_image);
         editProfile_Image = v.findViewById(R.id.myProfileEdit_image);
+        touchImage_Image = v.findViewById(R.id.myProfileTouchImage_Image);
 
         profile_Text = v.findViewById(R.id.profileText);
         profile_nickname = v.findViewById(R.id.myProfile_nickname);
