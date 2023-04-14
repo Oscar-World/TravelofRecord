@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ public class Fragment_Home extends Fragment {
     String TAG = "홈 프래그먼트";
 
     View v;
+
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private Button photo_Btn;
     private Button map_Btn;
@@ -91,6 +94,19 @@ public class Fragment_Home extends Fragment {
     @Override public void onStart() {
         Log.d(TAG, "onStart() 호출됨");
         super.onStart();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                itemPost_ArrayList = new ArrayList<>();
+                adapter.setItemPost(itemPost_ArrayList);
+                getPost();
+
+                swipeRefreshLayout.setRefreshing(false);
+
+            }
+        });
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +241,8 @@ public class Fragment_Home extends Fragment {
 
 
     public void setView() {
+
+        swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);
 
         photo_Btn = v.findViewById(R.id.homePhoto_Btn);
         map_Btn = v.findViewById(R.id.homeMap_Btn);

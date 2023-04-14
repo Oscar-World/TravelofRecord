@@ -33,7 +33,6 @@
         android:layout_height="65dp"
         android:backgroundTint="@color/primary"
         android:text="로 그 인"
-        android:visibility="invisible"
         android:textColor="@color/white"
         android:textSize="22dp"
         android:textStyle="bold"

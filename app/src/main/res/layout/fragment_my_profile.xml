@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:background="main"
+            android:background="@color/main"
             android:visibility="visible"
             >
 
@@ -183,7 +183,7 @@
                 android:layout_gravity="center"
                 android:text="피드"
                 android:textColor="@color/primary"
-                android:backgroundTint="main"
+                android:backgroundTint="@color/main"
                 android:visibility="gone"
                 />
 

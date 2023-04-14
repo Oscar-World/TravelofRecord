@@ -72,4 +72,7 @@ dependencies {
     // 원형 이미지뷰
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
+    // 아래로 당겨서 새로고침
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
 }
