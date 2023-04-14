@@ -163,6 +163,7 @@ public class Fragment_Home extends Fragment {
                         Log.d(TAG, "itemSize : " + itemSize);
 
                         adapter.notifyDataSetChanged();
+
                     }
 
 
@@ -239,8 +240,6 @@ public class Fragment_Home extends Fragment {
         itemPost_ArrayList = new ArrayList<>();
 
         adapter.setItemPost(itemPost_ArrayList);
-
-//        itemSize = itemPost_ArrayList.size();
 
         getData = getArguments();
 

@@ -77,7 +77,7 @@ public interface ApiInterface {
 
     // 내 상태 메시지 수정하기
     @GET("mysql_UserInfo_UpdateProfile.php")
-    Call<User> updateMemo (
+    Call<User> updateProfile (
             @Query("nickname") String nickname,
             @Query("memo") String memo,
             @Query("imagePath") String imagePath

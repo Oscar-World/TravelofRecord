@@ -30,7 +30,6 @@ public class Start extends AppCompatActivity {
 
     TextView title_Text;
     Button login_Btn;
-    Button start_Btn;
     ImageView imageView;
 
     Handler handler;
@@ -81,17 +80,6 @@ public class Start extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart() 호출");
 
-        if (!shared.equals("")) {
-            Log.d(TAG, "쉐어드 존재 O: " + shared);
-            login_Btn.setVisibility(View.INVISIBLE);
-            start_Btn.setVisibility(View.VISIBLE);
-        } else {
-            Log.d(TAG, "쉐어드 존재 X: " + shared);
-            start_Btn.setVisibility(View.INVISIBLE);
-            login_Btn.setVisibility(View.VISIBLE);
-        }
-
-
         login_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,24 +91,12 @@ public class Start extends AppCompatActivity {
             }
         });
 
-        start_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(Start.this,Home.class);
-                startActivity(i);
-                finish();
-            }
-        });
-
-
-
     }
 
     public void setView() {
 
         title_Text = findViewById(R.id.Title_text);
         login_Btn = findViewById(R.id.login_Button);
-        start_Btn = findViewById(R.id.start_Button);
         imageView = findViewById(R.id.imageView);
         animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.start_text);
         handler = new Handler();

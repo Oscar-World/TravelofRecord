@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Login"
-    android:background="#f2f3ff">
+    android:background="@color/feed">
 
     <EditText
         android:id="@+id/login_pw"
@@ -57,7 +57,7 @@
         android:id="@+id/login_Btn"
         android:layout_width="320dp"
         android:layout_height="60dp"
-        android:backgroundTint="#64c9ff"
+        android:backgroundTint="@color/primary"
         android:text="로 그 인"
         android:textSize="25dp"
         android:textStyle="bold"
@@ -72,7 +72,7 @@
         android:id="@+id/Signup_button"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:backgroundTint="#f2f3ff"
+        android:backgroundTint="@color/feed"
         android:stateListAnimator="@null"
         android:text="회원가입"
         android:textColor="@color/black"
@@ -88,7 +88,7 @@
         android:id="@+id/find_Info"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:backgroundTint="#f2f3ff"
+        android:backgroundTint="@color/feed"
         android:stateListAnimator="@null"
         android:text="아이디 · 비밀번호 찾기"
         android:textColor="@color/black"
@@ -147,7 +147,7 @@
         android:layout_height="42dp"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp"
-        android:backgroundTint="#00ffffff"
+        android:backgroundTint="@color/none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -161,7 +161,7 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:padding="0dp"
-        android:backgroundTint="#00ffffff"
+        android:backgroundTint="@color/none"
         app:srcCompat="@drawable/kakao" />
 
     </androidx.cardview.widget.CardView>
@@ -172,7 +172,7 @@
         android:layout_height="42dp"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp"
-        android:backgroundTint="#00ffffff"
+        android:backgroundTint="@color/none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -184,7 +184,7 @@
             android:id="@+id/Google_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="#00ffffff"
+            android:backgroundTint="@color/none"
             android:padding="0dp"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/google" />
@@ -196,7 +196,7 @@
         android:layout_height="42dp"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp"
-        android:backgroundTint="#00ffffff"
+        android:backgroundTint="@color/none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -210,7 +210,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:padding="0dp"
-            android:backgroundTint="#00ffffff"
+            android:backgroundTint="@color/none"
             app:srcCompat="@drawable/naver" />
 
     </androidx.cardview.widget.CardView>

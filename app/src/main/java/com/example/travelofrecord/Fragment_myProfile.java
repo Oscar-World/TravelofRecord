@@ -310,7 +310,7 @@ public class Fragment_myProfile extends Fragment {
     // 상태 메시지, 프로필 사진 변경
     public void updateProfile(String nickname, String memo, String image) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.updateMemo(nickname, memo, image);
+        Call<User> call = apiInterface.updateProfile(nickname, memo, image);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

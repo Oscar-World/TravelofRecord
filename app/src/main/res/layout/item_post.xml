@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_marginHorizontal="10dp"
-    >
+    android:layout_marginHorizontal="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,13 +13,25 @@
         android:layout_marginVertical="10dp"
         >
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/item_profileImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_foreground"
-            android:background="@drawable/round_corner"/>
+            app:civ_border_color="@color/primary"
+            app:civ_border_width="2dp"
+            app:civ_border_overlay="false"
+            />
+
+
+<!--        <ImageView-->
+<!--            android:id="@+id/item_profileImage"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:padding="1dp"-->
+<!--            android:src="@drawable/ic_launcher_foreground"-->
+<!--            android:background="@drawable/round_corner"/>-->
 
         <TextView
             android:id="@+id/item_nickname"
@@ -32,7 +43,7 @@
             android:textStyle="bold"
             android:layout_gravity="bottom"
             android:layout_marginBottom="3dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             />
 
         <View
@@ -71,7 +82,7 @@
         android:layout_marginBottom="10dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_launcher_foreground"
-        android:background="#ffffff"
+        android:background="@color/main"
         />
 
 
@@ -82,7 +93,7 @@
         android:text="글 내용"
         android:textSize="16dp"
         android:layout_margin="10dp"
-        android:textColor="#FF000000"
+        android:textColor="@color/black"
         />
 
     <TextView
@@ -112,7 +123,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#eee"
+        android:background="@color/gray"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="3dp"
         />
@@ -129,7 +140,7 @@
             android:layout_height="30dp"
             android:scaleType="centerCrop"
             android:src="@drawable/heart"
-            android:background="#f2f3ff"
+            android:background="@color/feed"
             android:layout_marginVertical="5dp"
             android:layout_marginHorizontal="10dp"
             />
@@ -140,7 +151,7 @@
             android:layout_height="30dp"
             android:scaleType="centerCrop"
             android:src="@drawable/heartfull"
-            android:background="#f2f3ff"
+            android:background="@color/feed"
             android:layout_marginVertical="5dp"
             android:layout_marginHorizontal="10dp"
             android:visibility="gone"
@@ -152,7 +163,7 @@
             android:layout_height="30dp"
             android:scaleType="centerCrop"
             android:src="@drawable/comment"
-            android:background="#f2f3ff"
+            android:background="@color/none"
             android:layout_marginVertical="5dp"
             android:layout_marginHorizontal="10dp"
             />
@@ -178,7 +189,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:background="#ddd"
+        android:background="@color/darkGray"
         android:layout_marginVertical="10dp"
         />
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Signup"
-    android:background="#f2f3ff"
+    android:background="@color/feed"
     android:fillViewport="true">
 
 
@@ -17,7 +17,7 @@
         android:id="@+id/signup_frameLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f3ff"
+        android:background="@color/feed"
         android:translationZ="10px"
         android:visibility="visible">
 
@@ -27,7 +27,7 @@
                 android:layout_height="120dp"
                 android:layout_gravity="top|center"
                 android:layout_marginTop="20dp"
-                android:background="#e7faff"
+                android:background="@color/lightBlue"
                 android:translationZ="15px"
                 android:visibility="gone"
                 >
@@ -58,7 +58,7 @@
             android:layout_height="90dp"
             android:layout_gravity="center"
             android:layout_marginTop="-115dp"
-            android:background="#e7faff"
+            android:background="@color/lightBlue"
             android:translationZ="15px"
             android:visibility="gone"
             >
@@ -122,7 +122,7 @@
             android:layout_gravity="top|center"
             android:layout_marginTop="135dp"
             android:layout_marginRight="-140dp"
-            android:backgroundTint="#f2f3ff"
+            android:backgroundTint="@color/feed"
             app:srcCompat="@android:drawable/ic_menu_help" />
 
         <EditText
@@ -154,7 +154,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="-50dp"
             android:layout_marginRight="-140dp"
-            android:backgroundTint="#f2f3ff"
+            android:backgroundTint="@color/feed"
             app:srcCompat="@android:drawable/ic_menu_help" />
 
         <EditText
@@ -195,7 +195,7 @@
             android:text="다 음"
             android:textStyle="bold"
             android:textSize="25dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:paddingHorizontal="30dp"
             android:paddingVertical="10dp"
             android:layout_gravity="bottom|center"
@@ -209,7 +209,7 @@
             android:text="다 음"
             android:textStyle="bold"
             android:textSize="25dp"
-            android:backgroundTint="#c6c6c6"
+            android:backgroundTint="@color/gray"
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="40dp"
             android:visibility="visible"/>
@@ -223,7 +223,7 @@
             android:layout_marginTop="-120dp"
             android:text="이미 사용중인 아이디입니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -235,7 +235,7 @@
             android:layout_marginTop="-120dp"
             android:text="이메일 형식이 올바르지 않습니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -247,7 +247,7 @@
             android:layout_marginTop="-120dp"
             android:text="사용가능한 아이디입니다"
             android:textSize="15dp"
-            android:textColor="#00ff33"
+            android:textColor="@color/green"
             android:visibility="invisible"/>
 
         <TextView
@@ -259,7 +259,7 @@
             android:layout_marginTop="30dp"
             android:text="비밀번호 형식이 올바르지 않습니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -271,7 +271,7 @@
             android:layout_marginTop="30dp"
             android:text="사용가능한 비밀번호입니다"
             android:textSize="15dp"
-            android:textColor="#00ff33"
+            android:textColor="@color/green"
             android:visibility="invisible"/>
 
         <TextView
@@ -283,7 +283,7 @@
             android:layout_marginTop="180dp"
             android:text="비밀번호가 일치하지 않습니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -295,7 +295,7 @@
             android:layout_marginTop="180dp"
             android:text="비밀번호가 일치합니다."
             android:textSize="15dp"
-            android:textColor="#00ff33"
+            android:textColor="@color/green"
             android:visibility="invisible"/>
 
     </FrameLayout>
@@ -307,7 +307,7 @@
         android:id="@+id/signup_frameLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f3ff"
+        android:background="@color/feed"
         android:translationZ="10px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -407,7 +407,7 @@
             android:layout_height="50dp"
             android:text="인증번호 받기"
             android:textSize="13dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="102dp"/>
@@ -418,7 +418,7 @@
             android:layout_height="50dp"
             android:text="인증번호 받기"
             android:textSize="13dp"
-            android:backgroundTint="#c6c6c6"
+            android:backgroundTint="@color/gray"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="102dp"
@@ -433,7 +433,7 @@
             android:layout_marginTop="50dp"
             android:text="인증번호를 발송했습니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -445,7 +445,7 @@
             android:layout_marginTop="50dp"
             android:text="휴대폰 번호를 입력해주세요."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -457,7 +457,7 @@
             android:layout_marginTop="50dp"
             android:text="휴대폰 번호가 올바르지 않습니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -490,7 +490,7 @@
             android:layout_height="50dp"
             android:text="인증번호 확인"
             android:textSize="13dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:layout_gravity="center"
             android:layout_marginTop="160dp"
             android:layout_marginLeft="102dp"
@@ -502,7 +502,7 @@
             android:layout_height="50dp"
             android:text="인증번호 확인"
             android:textSize="13dp"
-            android:backgroundTint="#c6c6c6"
+            android:backgroundTint="@color/gray"
             android:layout_gravity="center"
             android:layout_marginTop="160dp"
             android:layout_marginLeft="102dp"
@@ -517,7 +517,7 @@
             android:layout_marginTop="192dp"
             android:text=""
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -529,7 +529,7 @@
             android:layout_marginTop="192dp"
             android:text="인증이 완료되었습니다."
             android:textSize="15dp"
-            android:textColor="#00ff33"
+            android:textColor="@color/green"
             android:visibility="invisible"/>
 
         <TextView
@@ -541,7 +541,7 @@
             android:layout_marginTop="200dp"
             android:text="입력 시간이 초과되었습니다.\n인증번호를 재발급 해주세요."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -552,7 +552,7 @@
             android:layout_marginTop="200dp"
             android:layout_marginRight="60dp"
             android:text="인증번호가 일치하지 않습니다.\n인증번호를 재발급 해주세요."
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:textSize="15dp"
             android:visibility="invisible" />
 
@@ -563,7 +563,7 @@
             android:text="다 음"
             android:textStyle="bold"
             android:textSize="25dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:paddingHorizontal="30dp"
             android:paddingVertical="10dp"
             android:layout_gravity="bottom|center"
@@ -577,7 +577,7 @@
             android:text="다 음"
             android:textStyle="bold"
             android:textSize="25dp"
-            android:backgroundTint="#c6c6c6"
+            android:backgroundTint="@color/gray"
             android:paddingHorizontal="30dp"
             android:paddingVertical="10dp"
             android:layout_gravity="bottom|center"
@@ -592,7 +592,7 @@
         android:id="@+id/signup_frameLayout3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f3ff"
+        android:background="@color/feed"
         android:translationZ="10px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -608,7 +608,7 @@
             android:layout_height="70dp"
             android:layout_gravity="center"
             android:layout_marginTop="85dp"
-            android:background="#e7faff"
+            android:background="@color/lightBlue"
             android:translationZ="15px"
             android:visibility="gone"
             >
@@ -701,7 +701,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="138dp"
             android:layout_marginRight="-140dp"
-            android:backgroundTint="#f2f3ff"
+            android:backgroundTint="@color/feed"
             app:srcCompat="@android:drawable/ic_menu_help" />
 
         <EditText
@@ -723,7 +723,7 @@
             android:layout_marginBottom="135dp"
             android:text="닉네임 형식이 올바르지 않습니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -735,7 +735,7 @@
             android:layout_marginBottom="135dp"
             android:text="이미 사용중인 닉네임입니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -747,7 +747,7 @@
             android:layout_marginBottom="135dp"
             android:text="사용 가능한 닉네임입니다."
             android:textSize="15dp"
-            android:textColor="#00ffcc"
+            android:textColor="@color/green"
             android:visibility="invisible"/>
 
         <Button
@@ -757,7 +757,7 @@
             android:text="완 료"
             android:textStyle="bold"
             android:textSize="25dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:paddingHorizontal="30dp"
             android:paddingVertical="10dp"
             android:layout_gravity="bottom|center"
@@ -771,7 +771,7 @@
             android:text="완 료"
             android:textStyle="bold"
             android:textSize="25dp"
-            android:backgroundTint="#c6c6c6"
+            android:backgroundTint="@color/gray"
             android:paddingHorizontal="30dp"
             android:paddingVertical="10dp"
             android:layout_gravity="bottom|center"

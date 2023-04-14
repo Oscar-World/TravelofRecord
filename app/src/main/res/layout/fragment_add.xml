@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f2f3ff">
+    android:background="@color/feed">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:background="#f6feff"
+            android:background="@color/main"
             android:visibility="visible"
             >
 
@@ -43,8 +43,8 @@
                 android:layout_marginRight="15dp"
                 android:textStyle="bold"
                 android:textSize="18dp"
-                android:textColor="#64c9ff"
-                android:background="#00ff0000"
+                android:textColor="@color/primary"
+                android:background="@color/none"
                 />
 
         </FrameLayout>
@@ -61,7 +61,7 @@
         android:layout_marginBottom="20dp"
         android:scaleType="centerCrop"
         android:src="@drawable/camera"
-        android:background="#dddddd"
+        android:background="@color/darkGray"
         />
 
 
@@ -69,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="3dp"
             android:layout_marginBottom="5dp"
-            android:background="#dddddd"
+            android:background="@color/darkGray"
             />
 
         <LinearLayout
@@ -93,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="20dp"
-                android:background="#ffffff"
+                android:background="@color/main"
                 >
 
                 <EditText

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_gravity="end"
-    android:background="#ffffff"
+    android:background="@color/feed"
     >
 
     <TextView
@@ -21,7 +21,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="#dddddd"
+        android:background="@color/darkGray"
         android:layout_marginTop="5dp"
         />
 
@@ -33,26 +33,21 @@
         android:stateListAnimator="@null"
         android:text="프로필 수정"
         android:textSize="15dp"
-        android:textColor="#64c9ff"
+        android:textColor="@color/primary"
         />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="#dddddd"
+        android:background="@color/darkGray"
         />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="1"-->
+<!--        />-->
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="#dddddd"
-        />
 
     <Button
         android:id="@+id/logout_Btn"
@@ -62,12 +57,13 @@
         android:stateListAnimator="@null"
         android:text="로그아웃"
         android:textSize="15dp"
-        android:textColor="#64c9ff"
+        android:textColor="@color/primary"
         />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="#dddddd"
+        android:background="@color/darkGray"
         />
 
     <Button
@@ -78,13 +74,13 @@
         android:stateListAnimator="@null"
         android:text="회원 탈퇴"
         android:textSize="15dp"
-        android:textColor="#ff5500"
+        android:textColor="@color/red"
         />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="#dddddd"
+        android:background="@color/darkGray"
         android:layout_marginBottom="5dp"
         />
 

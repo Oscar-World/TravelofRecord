@@ -12,7 +12,7 @@
         android:id="@+id/findInfo_Frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f3ff"
+        android:background="@color/feed"
         android:visibility="visible"
         >
 
@@ -53,7 +53,7 @@
             android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginBottom="60dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:text="아이디 찾기"
             android:textSize="22dp"
             android:textStyle="bold"
@@ -65,7 +65,7 @@
             android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginTop="60dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:text="비밀번호 찾기"
             android:textSize="22dp"
             android:textStyle="bold"
@@ -79,7 +79,7 @@
         android:id="@+id/findInfo_idFrame1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f3ff"
+        android:background="@color/feed"
         android:visibility="gone"
         >
 
@@ -165,7 +165,7 @@
                 android:layout_height="50dp"
                 android:text="인증번호 받기"
                 android:textSize="13dp"
-                android:backgroundTint="#64c9ff"
+                android:backgroundTint="@color/primary"
                 android:layout_gravity="center"
                 android:layout_marginTop="60dp"
                 android:layout_marginLeft="102dp"/>
@@ -176,7 +176,7 @@
                 android:layout_height="50dp"
                 android:text="인증번호 받기"
                 android:textSize="13dp"
-                android:backgroundTint="#c6c6c6"
+                android:backgroundTint="@color/gray"
                 android:layout_gravity="center"
                 android:layout_marginTop="60dp"
                 android:layout_marginLeft="102dp"
@@ -191,7 +191,7 @@
                 android:layout_marginTop="90dp"
                 android:text="인증번호를 발송했습니다."
                 android:textSize="15dp"
-                android:textColor="#ff0000"
+                android:textColor="@color/red"
                 android:visibility="invisible"/>
 
             <TextView
@@ -223,7 +223,7 @@
                 android:layout_height="50dp"
                 android:text="인증번호 확인"
                 android:textSize="13dp"
-                android:backgroundTint="#64c9ff"
+                android:backgroundTint="@color/primary"
                 android:layout_gravity="center"
                 android:layout_marginTop="210dp"
                 android:layout_marginLeft="102dp"
@@ -235,7 +235,7 @@
                 android:layout_height="50dp"
                 android:text="인증번호 확인"
                 android:textSize="13dp"
-                android:backgroundTint="#c6c6c6"
+                android:backgroundTint="@color/gray"
                 android:layout_gravity="center"
                 android:layout_marginTop="210dp"
                 android:layout_marginLeft="102dp"
@@ -250,7 +250,7 @@
                 android:layout_marginTop="242dp"
                 android:text=""
                 android:textSize="15dp"
-                android:textColor="#ff0000"
+                android:textColor="@color/red"
                 android:visibility="invisible"/>
 
             <TextView
@@ -262,7 +262,7 @@
                 android:layout_marginTop="250dp"
                 android:text="입력 시간이 초과되었습니다.\n인증번호를 재발급 해주세요."
                 android:textSize="15dp"
-                android:textColor="#ff0000"
+                android:textColor="@color/red"
                 android:visibility="invisible"/>
 
             <TextView
@@ -273,7 +273,7 @@
                 android:layout_marginTop="250dp"
                 android:layout_marginRight="60dp"
                 android:text="인증번호가 일치하지 않습니다.\n인증번호를 재발급 해주세요."
-                android:textColor="#ff0000"
+                android:textColor="@color/red"
                 android:textSize="15dp"
                 android:visibility="invisible" />
 
@@ -286,7 +286,7 @@
         android:id="@+id/findInfo_idFrame2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f3ff"
+        android:background="@color/feed"
         android:visibility="gone"
         >
 
@@ -314,7 +314,7 @@
             android:layout_gravity="center"
             android:text="가입된 아이디 정보가 없습니다."
             android:textSize="20dp"
-            android:background="#dcecec"
+            android:background="@color/lightGreen"
             android:padding="30dp"
             />
 
@@ -324,7 +324,7 @@
             android:layout_height="70dp"
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="60dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:text="완 료"
             android:textSize="26dp"
             android:textStyle="bold"
@@ -338,7 +338,7 @@
         android:id="@+id/findInfo_pwFrame1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f3ff"
+        android:background="@color/feed"
         android:visibility="gone"
         >
 
@@ -421,7 +421,7 @@
             android:layout_height="50dp"
             android:text="인증번호 전송"
             android:textSize="13dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:layout_gravity="center"
             android:layout_marginTop="60dp"
             android:layout_marginLeft="102dp"/>
@@ -432,7 +432,7 @@
             android:layout_height="50dp"
             android:text="인증번호 전송"
             android:textSize="13dp"
-            android:backgroundTint="#c6c6c6"
+            android:backgroundTint="@color/gray"
             android:layout_gravity="center"
             android:layout_marginTop="60dp"
             android:layout_marginLeft="102dp"
@@ -447,7 +447,7 @@
             android:layout_marginTop="90dp"
             android:text="인증번호를 발송했습니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
 
@@ -480,7 +480,7 @@
             android:layout_height="50dp"
             android:text="인증번호 확인"
             android:textSize="13dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:layout_gravity="center"
             android:layout_marginTop="210dp"
             android:layout_marginLeft="102dp"
@@ -492,7 +492,7 @@
             android:layout_height="50dp"
             android:text="인증번호 확인"
             android:textSize="13dp"
-            android:backgroundTint="#c6c6c6"
+            android:backgroundTint="@color/gray"
             android:layout_gravity="center"
             android:layout_marginTop="210dp"
             android:layout_marginLeft="102dp"
@@ -507,7 +507,7 @@
             android:layout_marginTop="242dp"
             android:text=""
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -519,7 +519,7 @@
             android:layout_marginTop="250dp"
             android:text="입력 시간이 초과되었습니다.\n인증번호를 재발급 해주세요."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <TextView
@@ -530,7 +530,7 @@
             android:layout_marginTop="250dp"
             android:layout_marginRight="60dp"
             android:text="인증번호가 일치하지 않습니다.\n인증번호를 재발급 해주세요."
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:textSize="15dp"
             android:visibility="invisible" />
 
@@ -542,7 +542,7 @@
         android:id="@+id/findInfo_pwFrame2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f3ff"
+        android:background="@color/feed"
         android:visibility="gone"
         >
 
@@ -583,7 +583,7 @@
             android:layout_marginTop="30dp"
             android:text="사용가능한 비밀번호입니다"
             android:textSize="15dp"
-            android:textColor="#00ff33"
+            android:textColor="@color/green"
             android:visibility="invisible"/>
 
         <TextView
@@ -595,7 +595,7 @@
             android:layout_marginTop="30dp"
             android:text="비밀번호 형식이 올바르지 않습니다."
             android:textSize="15dp"
-            android:textColor="#ff0000"
+            android:textColor="@color/red"
             android:visibility="invisible"/>
 
         <Button
@@ -604,7 +604,7 @@
             android:layout_height="70dp"
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="60dp"
-            android:backgroundTint="#64c9ff"
+            android:backgroundTint="@color/primary"
             android:text="완 료"
             android:textSize="26dp"
             android:textStyle="bold"
@@ -617,7 +617,7 @@
             android:layout_height="70dp"
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="60dp"
-            android:backgroundTint="#c6c6c6"
+            android:backgroundTint="@color/gray"
             android:text="완 료"
             android:textSize="26dp"
             android:textStyle="bold"
