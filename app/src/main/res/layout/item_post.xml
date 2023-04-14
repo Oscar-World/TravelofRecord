@@ -157,6 +157,15 @@
             android:visibility="gone"
             />
 
+        <TextView
+            android:id="@+id/item_heartNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0"
+            android:layout_marginLeft="-5dp"
+            />
+
         <ImageView
             android:id="@+id/item_comment"
             android:layout_width="30dp"
@@ -165,7 +174,16 @@
             android:src="@drawable/comment"
             android:background="@color/none"
             android:layout_marginVertical="5dp"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginLeft="10dp"
+            />
+
+        <TextView
+            android:id="@+id/item_commentNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0"
+            android:layout_marginLeft="5dp"
             />
 
         <View

@@ -59,23 +59,13 @@ public interface ApiInterface {
             @Query("password") String password
     );
 
-//    @GET("mysql_GetUser.php")
-//    Call<User> getInfo (
-//            @Query("type") String type,
-//            @Query("id") String id,
-//            @Query("password") String password,
-//            @Query("phone") String phone,
-//            @Query("nickname") String nickname,
-//            @Query("image") String image
-//    );
-
     // 회원 정보 가져오기 - 로그인 시, 홈 화면에 뿌려줌
     @GET("mysql_GetUserInfo.php")
     Call<User> getInfo (
             @Query("id") String id
     );
 
-    // 내 상태 메시지 수정하기
+    // 내 프로필 수정하기
     @GET("mysql_UserInfo_UpdateProfile.php")
     Call<User> updateProfile (
             @Query("nickname") String nickname,
@@ -108,24 +98,5 @@ public interface ApiInterface {
 
     @GET("mysql_GetPostInfo.php")
     Call<ArrayList<Post>> getPost();
-
-
-    @GET("mysql_Update.php")
-    Call<User> updateInfo (
-            @Query("loginType") String loginType,
-            @Query("id") String id,
-            @Query("password") String password,
-            @Query("phone") String phone,
-            @Query("nickname") String nickname
-    );
-
-    @GET("mysql_Delete.php")
-    Call<User> deleteInfo (
-            @Query("loginType") String loginType,
-            @Query("id") String id,
-            @Query("password") String password,
-            @Query("phone") String phone,
-            @Query("nickname") String nickname
-    );
 
 }

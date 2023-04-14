@@ -9,42 +9,43 @@ import java.util.List;
 public class Post {
 
     @Expose
-    @SerializedName("nickname") private String nickname;
+    @SerializedName("nickname") String nickname;
 
     @Expose
-    @SerializedName("profileImage") private String profileImage;
+    @SerializedName("profileImage") String profileImage;
 
     @Expose
-    @SerializedName("heart") private int heart;
+    @SerializedName("heart") int heart;
 
     @Expose
-    @SerializedName("location") private String location;
+    @SerializedName("location") String location;
 
     @Expose
-    @SerializedName("postImage") private String postImage;
+    @SerializedName("postImage") String postImage;
 
     @Expose
-    @SerializedName("writing") private String writing;
+    @SerializedName("writing") String writing;
 
     @Expose
-    @SerializedName("dateCreated") private String dateCreated;
+    @SerializedName("dateCreated") String dateCreated;
 
     @Expose
-    @SerializedName("response") private String response;
+    @SerializedName("response") String response;
 
     @Expose
-    @SerializedName("num") private int num;
+    @SerializedName("num") int num;
 
-    @Expose
-    @SerializedName("data")  private ArrayList<Item_Post> data;
+    public Post(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+        this.nickname = nickname;
+        this.profileImage = profileImage;
+        this.heart = heart;
+        this.location = location;
+        this.postImage = postImage;
+        this.writing = writing;
+        this.dateCreated = dateCreated;
 
-    public ArrayList<Item_Post> getData() {
-        return data;
     }
 
-    public void setData(ArrayList<Item_Post> data) {
-        this.data = data;
-    }
 
     public String getNickname() {
         return nickname;

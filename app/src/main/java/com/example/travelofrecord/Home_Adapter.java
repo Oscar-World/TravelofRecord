@@ -20,7 +20,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
     String TAG = "홈 어댑터";
 
-    ArrayList<Item_Post> itemPost;
+    ArrayList<Post> post;
     Context context;
 
 
@@ -41,15 +41,15 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull Home_Adapter.ViewHolder holder,int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
-        holder.onBind(itemPost.get(holder.getAdapterPosition()));
+        holder.onBind(post.get(holder.getAdapterPosition()));
     }
 
     // 뷰와 데이터를 연결해줌
-    public void setItemPost(ArrayList<Item_Post> list) {
+    public void setItemPost(ArrayList<Post> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
-        this.itemPost = list;
-        Log.d(TAG, "어댑터 리스트 : " + itemPost);
+        this.post = list;
+        Log.d(TAG, "어댑터 리스트 : " + post);
 
         notifyDataSetChanged();
     }
@@ -58,9 +58,9 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount() 호출됨");
-        Log.d(TAG, "리스트 사이즈 : " + itemPost.size());
+        Log.d(TAG, "리스트 사이즈 : " + post.size());
 
-        return itemPost.size();
+        return post.size();
 
     }
 
@@ -78,6 +78,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         TextView post_Summary;
         ImageView post_Heart;
         ImageView post_HeartFull;
+        TextView post_HeartNum;
+        TextView post_CommentNum;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -92,10 +94,12 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_Summary = itemView.findViewById(R.id.item_summary);
             post_Heart = itemView.findViewById(R.id.item_heart);
             post_HeartFull = itemView.findViewById(R.id.item_heartFull);
+            post_HeartNum = itemView.findViewById(R.id.item_heartNumber);
+            post_CommentNum = itemView.findViewById(R.id.item_commentNumber);
 
         }
 
-        void onBind(Item_Post item) {
+        void onBind(Post item) {
             Log.d(TAG, "onBind() 호출됨");
 
             post_Nickname.setText(item.getNickname());
@@ -156,6 +160,9 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 public void onClick(View view) {
                     post_Heart.setVisibility(View.GONE);
                     post_HeartFull.setVisibility(View.VISIBLE);
+                    item.heart += 1;
+                    post_HeartNum.setText(String.valueOf(item.getHeart()));
+
                 }
             });
 
@@ -164,6 +171,9 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 public void onClick(View view) {
                     post_HeartFull.setVisibility(View.GONE);
                     post_Heart.setVisibility(View.VISIBLE);
+                    item.heart -= 1;
+                    post_HeartNum.setText(String.valueOf(item.getHeart()));
+
                 }
             });
 

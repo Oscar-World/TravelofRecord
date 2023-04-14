@@ -40,7 +40,7 @@ public class Fragment_Home extends Fragment {
 
     RecyclerView recyclerView;
 
-    ArrayList<Item_Post> itemPost_ArrayList;
+    ArrayList<Post> post_ArrayList;
     int itemSize;
     Home_Adapter adapter;
 
@@ -99,8 +99,8 @@ public class Fragment_Home extends Fragment {
             @Override
             public void onRefresh() {
 
-                itemPost_ArrayList = new ArrayList<>();
-                adapter.setItemPost(itemPost_ArrayList);
+                post_ArrayList = new ArrayList<>();
+                adapter.setItemPost(post_ArrayList);
                 getPost();
 
                 swipeRefreshLayout.setRefreshing(false);
@@ -168,14 +168,14 @@ public class Fragment_Home extends Fragment {
                             Log.d(TAG, "onResponse: num = " + num + " nickname = " + nickname + " profileImage = " + profileImage + "\n writing : " + writing);
 
 
-                            Item_Post itemPost = new Item_Post(nickname, profileImage, heart, addressPost, postImage, writing, datePost);
-//                    Item_Post itemPost = new Item_Post();
-                            itemPost_ArrayList.add(0, itemPost);
+                            Post post = new Post(nickname, profileImage, heart, addressPost, postImage, writing, datePost);
+
+                            post_ArrayList.add(0, post);
 
 
                         }
 
-                        itemSize = itemPost_ArrayList.size();
+                        itemSize = post_ArrayList.size();
                         Log.d(TAG, "itemSize : " + itemSize);
 
                         adapter.notifyDataSetChanged();
@@ -255,9 +255,9 @@ public class Fragment_Home extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        itemPost_ArrayList = new ArrayList<>();
+        post_ArrayList = new ArrayList<>();
 
-        adapter.setItemPost(itemPost_ArrayList);
+        adapter.setItemPost(post_ArrayList);
 
         getData = getArguments();
 
