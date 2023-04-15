@@ -364,12 +364,14 @@ public class Login extends AppCompatActivity {
                         user_phone = response.body().getPhone();
                         user_nickname = response.body().getNickname();
                         user_image = response.body().getImage();
+                        user_memo = response.body().getMemo();
 
                         Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
 
                         editor.putString("id", kakaoId);
                         editor.putString("nickname", user_nickname);
                         editor.putString("image", kakaoImage);
+                        editor.putString("memo", user_memo);
                         editor.commit();
 
                         Intent i = new Intent(Login.this, Home.class);
