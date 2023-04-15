@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    android:layout_margin="2dp"
+    >
+
+    <TextView
+        android:id="@+id/heart_NicknameText"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:text="닉네임"
+        android:textSize="15dp"
+        android:textColor="@color/black"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="20dp"
+        />
+
+    <ImageView
+        android:id="@+id/heart_PostImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_foreground"
+        android:background="@color/main"
+        />
+
+    <TextView
+        android:id="@+id/heart_LocationText"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:text="주소"
+        android:textSize="15dp"
+        android:gravity="center"
+        />
+
+</LinearLayout>

@@ -219,10 +219,10 @@ public class Fragment_Home extends Fragment {
             msg = "2주 전";
         } else if (lastTime < 28) {
             msg = "3주 전";
-        } else if ((lastTime /= 30) < 12) {
+        } else if ((lastTime / 30) < 12) {
             msg = lastTime + "달 전";
         } else {
-            msg = (lastTime /= 12) + "년 전";
+            msg = (lastTime / 365) + "년 전";
         }
 
         return msg;

@@ -12,6 +12,8 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -36,10 +39,18 @@ public class Fragment_Heart extends Fragment {
 
     String TAG = "하트 프래그먼트";
 
+    View v;
+
     private Button photo_Btn;
     private Button map_Btn;
     private Button photo_Block;
     private Button map_Block;
+
+    RecyclerView recyclerView;
+    ArrayList<Post> post_ArrayList;
+    Heart_Adapter adapter;
+
+    int itemSize;
 
 
 
@@ -59,13 +70,10 @@ public class Fragment_Heart extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_heart, container, false);
 
-        photo_Btn = v.findViewById(R.id.heartPhoto_Btn);
-        map_Btn = v.findViewById(R.id.heartMap_Btn);
-        photo_Block = v.findViewById(R.id.heartPhoto_Block);
-        map_Block = v.findViewById(R.id.heartMap_Block);
+        v = inflater.inflate(R.layout.fragment_heart, container, false);
+
+        setView();
 
         return v;
     }
@@ -91,46 +99,6 @@ public class Fragment_Heart extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
-
-        // 현재 날짜 시간 받아오기 테스트 =========================================================================
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        //Date 객체 사용
-        Date date = new Date();
-        String time1 = simpleDateFormat.format(date);
-
-        //Calendar 클래스의 getTime()함수 사용
-        Calendar calendar = Calendar.getInstance();
-        String time2 = simpleDateFormat.format(calendar.getTime());
-
-        //System 클래스의 currentTimeMillis()함수 사용
-        String time3 = simpleDateFormat.format(System.currentTimeMillis());
-
-        Log.d(TAG, "현재 시간 :\n" + time1 + "\n" + time2 + "\n" + time3);
-
-        Log.d(TAG, "System.currentTimeMillis : " + System.currentTimeMillis());
-        Log.d(TAG, "파싱 전 date.getTime() : " + date.getTime());
-        try {
-            date = simpleDateFormat.parse("2023-04-09 15:57:50");
-        } catch (ParseException e) {
-            Log.d(TAG, "파싱 실패");
-            e.printStackTrace();
-        }
-        Log.d(TAG, "파싱 후 date.getTime() : " + date.getTime());
-        Log.d(TAG, "지난 시간 : " + (System.currentTimeMillis() - date.getTime()));
-
-        long time = System.currentTimeMillis() - date.getTime();
-        String min = String.valueOf(time/60000);
-        String hour = String.valueOf(time/3600000);
-        String day = String.valueOf(time/86400000);
-        String week = String.valueOf(time/604800000);
-        String month = String.valueOf(time/2592000000L);
-        String year = String.valueOf(time/31536000000L);
-        Log.d(TAG, "year : " + year + "\nmonth : " + month + "\nweek : " + week + "\nday : " + day
-         + "\nhour : " + hour + "\nmin : " + min);
-
-        // ==================================================================================================
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +126,30 @@ public class Fragment_Heart extends Fragment {
 
 
     }
+
+
+
+
+
+    public void setView() {
+
+        photo_Btn = v.findViewById(R.id.heartPhoto_Btn);
+        map_Btn = v.findViewById(R.id.heartMap_Btn);
+        photo_Block = v.findViewById(R.id.heartPhoto_Block);
+        map_Block = v.findViewById(R.id.heartMap_Block);
+
+        recyclerView = v.findViewById(R.id.heart_RecyclerView);
+        adapter = new Heart_Adapter();
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
+
+        post_ArrayList = new ArrayList<>();
+
+        adapter.setItemHeart(post_ArrayList);
+
+    }
+
     @Override public void onResume() {
         Log.d(TAG, "onResume()");
         super.onResume();

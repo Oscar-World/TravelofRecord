@@ -36,6 +36,19 @@ public class Post {
     @SerializedName("num") int num;
 
     public Post(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+
+        this.nickname = nickname;
+        this.profileImage = profileImage;
+        this.heart = heart;
+        this.location = location;
+        this.postImage = postImage;
+        this.writing = writing;
+        this.dateCreated = dateCreated;
+
+    }
+
+    public Post(String nickname, String profileImage, String location, String postImage) {
+
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.heart = heart;
