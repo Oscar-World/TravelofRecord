@@ -99,4 +99,11 @@ public interface ApiInterface {
     @GET("mysql_GetPostInfo.php")
     Call<ArrayList<Post>> getPost();
 
+    @GET("mysql_Post_UpdateHeart.php")
+    Call<Post> updateHeart(
+            @Query("num") int num,
+            @Query("nickname") String nickname,
+            @Query("heart") int heart
+    );
+
 }

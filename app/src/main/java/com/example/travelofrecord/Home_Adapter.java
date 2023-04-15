@@ -16,6 +16,10 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> {
 
     String TAG = "홈 어댑터";
@@ -184,11 +188,42 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_DateCreated.setText(item.getDateCreated());
 
 
-        }
+        } // onBind
 
 
-    }
+        public void updateHeart(int num, String nickname, int heart) {
+
+            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+            Call<Post> call = apiInterface.updateHeart(num, nickname, heart);
+            call.enqueue(new Callback<Post>() {
+                @Override
+                public void onResponse(Call<Post> call, Response<Post> response) {
+
+                    if (response.isSuccessful()) {
+
+                        int rp_num = response.body().getNum();
+                        int rp_heart = response.body().getHeart();
+                        String rp_nickname = response.body().getNickname();
+
+                        Log.d(TAG, "rp_num : " + rp_num + " rp_heart : " + rp_heart + "rp_nickname : " + rp_nickname);
+
+                    } else {
+                        Log.d(TAG, "Response 실패");
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<Post> call, Throwable t) {
+                    Log.d(TAG, "onFailure: 실패 " + t);
+                }
+            });
+
+        } // updateHeart
+
+
+    } // ViewHolder
 
 
 
-}
+} // Home_Adapter

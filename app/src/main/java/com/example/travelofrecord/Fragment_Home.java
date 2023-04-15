@@ -135,6 +135,7 @@ public class Fragment_Home extends Fragment {
     } // onStart()
 
 
+
     public void getPost() {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
