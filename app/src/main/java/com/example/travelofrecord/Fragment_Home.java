@@ -146,7 +146,7 @@ public class Fragment_Home extends Fragment {
                 if (response.isSuccessful()) {
 
                     ArrayList<Post> data = response.body();
-                    Log.d(TAG, "data : " + data);
+
                     if (data.size() > 0) {
                         Log.d(TAG, "onResponse: " + data);
                         Log.d(TAG, "data : " + data.get(0).getNickname());

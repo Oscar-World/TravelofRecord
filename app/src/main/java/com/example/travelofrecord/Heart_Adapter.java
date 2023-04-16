@@ -72,7 +72,6 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
     // 뷰홀더 생성
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView heart_Nickname;
         TextView heart_Location;
         ImageView heart_PostImage;
 
@@ -81,7 +80,6 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            heart_Nickname = itemView.findViewById(R.id.heart_NicknameText);
             heart_Location = itemView.findViewById(R.id.heart_LocationText);
             heart_PostImage = itemView.findViewById(R.id.heart_PostImage);
 
@@ -90,7 +88,6 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
         void onBind(Post item) {
             Log.d(TAG, "onBind() 호출됨");
 
-            heart_Nickname.setText(item.getNickname());
             heart_Location.setText(item.getLocation());
 
             Glide.with(context)

@@ -35,6 +35,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Fragment_Heart extends Fragment {
 
     String TAG = "하트 프래그먼트";
@@ -51,6 +55,9 @@ public class Fragment_Heart extends Fragment {
     Heart_Adapter adapter;
 
     int itemSize;
+
+    String location;
+    String postImage;
 
 
 
@@ -89,6 +96,9 @@ public class Fragment_Heart extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated()");
+
+        getHeart();
+
     }
 
 
@@ -128,8 +138,68 @@ public class Fragment_Heart extends Fragment {
     }
 
 
+    public void getHeart() {
 
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<ArrayList<Post>> call = apiInterface.getPost();
+        call.enqueue(new Callback<ArrayList<Post>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
 
+                if (response.isSuccessful()) {
+
+                    ArrayList<Post> data = response.body();
+                    Log.d(TAG, "response.body : " + data);
+
+                    if (data.size() > 0) {
+
+                        for (int i = 0; i < data.size(); i++) {
+
+                            location = data.get(i).getLocation();
+                            postImage = data.get(i).getPostImage();
+
+                            String addressHeart = getAddress(location);
+
+                            Post post = new Post(addressHeart,postImage);
+
+                            post_ArrayList.add(0, post);
+
+                        }
+
+                        itemSize = post_ArrayList.size();
+                        Log.d(TAG, "itemSize : " + itemSize);
+
+                        adapter.notifyDataSetChanged();
+
+                    }
+
+                } else {
+                    Log.d(TAG, "onResponse 실패");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+                Log.d(TAG, "onFailure 실패");
+            }
+        });
+
+    } // getHeart()
+
+    public String getAddress(String location) {
+
+        String address = null;
+
+        String[] addressArray = location.split(" ");
+
+//        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+
+        address = addressArray[2] + " " + addressArray[4];
+
+        return address;
+
+    }
 
     public void setView() {
 
@@ -142,7 +212,7 @@ public class Fragment_Heart extends Fragment {
         adapter = new Heart_Adapter();
 
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
 
         post_ArrayList = new ArrayList<>();
 

@@ -47,15 +47,10 @@ public class Post {
 
     }
 
-    public Post(String nickname, String profileImage, String location, String postImage) {
+    public Post(String location, String postImage) {
 
-        this.nickname = nickname;
-        this.profileImage = profileImage;
-        this.heart = heart;
         this.location = location;
         this.postImage = postImage;
-        this.writing = writing;
-        this.dateCreated = dateCreated;
 
     }
 
