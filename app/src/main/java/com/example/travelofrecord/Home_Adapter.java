@@ -1,12 +1,14 @@
 package com.example.travelofrecord;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,7 +28,6 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
     ArrayList<Post> post;
     Context context;
-
 
     // 레이아웃을 실체화 해줌 - inflate
     @Override
@@ -61,8 +62,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     // 리사이클러뷰 리스트 사이즈를 불러옴
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount() 호출됨");
-        Log.d(TAG, "리스트 사이즈 : " + post.size());
+//        Log.d(TAG, "getItemCount() 호출됨");
+//        Log.d(TAG, "리스트 사이즈 : " + post.size());
 
         return post.size();
 
@@ -85,6 +86,11 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         TextView post_HeartNum;
         TextView post_CommentNum;
 
+        LinearLayout topLayout;
+
+        SharedPreferences sharedPreferences;
+        String nickname;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -101,12 +107,27 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_HeartNum = itemView.findViewById(R.id.item_heartNumber);
             post_CommentNum = itemView.findViewById(R.id.item_commentNumber);
 
+            topLayout = itemView.findViewById(R.id.item_TopLayout);
+
+            sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
+
+            nickname = sharedPreferences.getString("nickname","");
+
         }
 
         void onBind(Post item) {
             Log.d(TAG, "onBind() 호출됨");
+            
 
             post_Nickname.setText(item.getNickname());
+
+            post_HeartNum.setText(String.valueOf(item.getHeart()));
+
+            post_Location.setText(item.getLocation());
+
+            post_Writing.setText(item.getWriting());
+
+            post_DateCreated.setText(item.getDateCreated());
 
             post_ProfileImage.setClipToOutline(true);
 
@@ -164,8 +185,14 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 public void onClick(View view) {
                     post_Heart.setVisibility(View.GONE);
                     post_HeartFull.setVisibility(View.VISIBLE);
+
+                    Log.d(TAG, "누르기전 item.getHeart() : " + item.getHeart());
                     item.heart += 1;
                     post_HeartNum.setText(String.valueOf(item.getHeart()));
+
+                    Log.d(TAG, "누른 후 item.getHeart() : " + item.getHeart());
+
+                    insertWhoLike(item.getNum(),nickname, item.getHeart());
 
                 }
             });
@@ -175,40 +202,41 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 public void onClick(View view) {
                     post_HeartFull.setVisibility(View.GONE);
                     post_Heart.setVisibility(View.VISIBLE);
+
+                    Log.d(TAG, "누르기전 item.getHeart() : " + item.getHeart());
                     item.heart -= 1;
                     post_HeartNum.setText(String.valueOf(item.getHeart()));
+
+                    Log.d(TAG, "누른 후 item.getHeart() : " + item.getHeart());
+
+                    deleteWhoLike(item.getNum(), nickname, item.getHeart());
 
                 }
             });
 
-            post_Location.setText(item.getLocation());
-
-            post_Writing.setText(item.getWriting());
-
-            post_DateCreated.setText(item.getDateCreated());
 
 
         } // onBind
 
 
-        public void updateHeart(int num, String nickname, int heart) {
+        public void insertWhoLike(int postNum, String whoLike, int heart) {
 
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<Post> call = apiInterface.updateHeart(num, nickname, heart);
+            Call<Post> call = apiInterface.insertWhoLike(postNum, whoLike, heart);
             call.enqueue(new Callback<Post>() {
                 @Override
                 public void onResponse(Call<Post> call, Response<Post> response) {
 
                     if (response.isSuccessful()) {
+                        Log.d(TAG, "insertWhoLike_Response 성공");
 
-                        int rp_num = response.body().getNum();
-                        int rp_heart = response.body().getHeart();
-                        String rp_nickname = response.body().getNickname();
+                        int rp_postNum = response.body().getPostNum();
+                        String rp_whoLike = response.body().getWhoLike();
 
-                        Log.d(TAG, "rp_num : " + rp_num + " rp_heart : " + rp_heart + "rp_nickname : " + rp_nickname);
+                        Log.d(TAG, "저장된 데이터 -\nrp_num : " + rp_postNum + "\nrp_heart : " + rp_whoLike);
 
                     } else {
-                        Log.d(TAG, "Response 실패");
+                        Log.d(TAG, "insertWhoLike_Response 실패");
                     }
 
                 }
@@ -219,7 +247,32 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 }
             });
 
-        } // updateHeart
+        } // insertWhoLike
+
+
+        public void deleteWhoLike(int postNum, String whoLike, int heart) {
+
+            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+            Call<Post> call = apiInterface.deleteWhoLike(postNum, whoLike, heart);
+            call.enqueue(new Callback<Post>() {
+                @Override
+                public void onResponse(Call<Post> call, Response<Post> response) {
+
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, "insertWhoLike_Response 성공");
+                    } else {
+                        Log.d(TAG, "insertWhoLike_Response 실패");
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<Post> call, Throwable t) {
+                    Log.d(TAG, "onFailure: 실패 " + t);
+                }
+            });
+
+        } // deleteWhoLike()
 
 
     } // ViewHolder

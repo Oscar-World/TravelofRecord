@@ -93,17 +93,28 @@ public interface ApiInterface {
             @Query("location") String location,
             @Query("postImage") String postImage,
             @Query("writing") String writing,
-            @Query("dateCreated") String dateCreated
+            @Query("dateCreated") String dateCreated,
+            @Query("userLike") String userLike
             );
 
     @GET("mysql_GetPostInfo.php")
     Call<ArrayList<Post>> getPost();
 
-    @GET("mysql_Post_UpdateHeart.php")
-    Call<Post> updateHeart(
-            @Query("num") int num,
-            @Query("nickname") String nickname,
+    @GET("mysql_Heart_Insert.php")
+    Call<Post> insertWhoLike(
+            @Query("postNum") int postNum,
+            @Query("whoLike") String whoLike,
             @Query("heart") int heart
     );
+
+    @GET("mysql_Heart_Delete.php")
+    Call<Post> deleteWhoLike(
+            @Query("postNum") int postNum,
+            @Query("whoLike") String whoLike,
+            @Query("heart") int heart
+    );
+
+    @GET("mysql_GetHeartInfo.php")
+    Call<ArrayList<Post>> getHeart();
 
 }

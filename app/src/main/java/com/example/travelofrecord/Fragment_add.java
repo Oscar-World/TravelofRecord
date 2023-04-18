@@ -78,11 +78,12 @@ public class Fragment_add extends Fragment {
 
     String nickname;
     String profileImage;
-    int heart =0;
+    int heart = 0;
     String currentLocation;
     String postImage;
     String writing;
     String dataCreated;
+    String userLike = "";
 
     ActivityResultLauncher<Intent> launcher;
 
@@ -312,14 +313,14 @@ public class Fragment_add extends Fragment {
                 dataCreated = getTime().toString();
 
                 Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + currentLocation +
-                        "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
+                        "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated + "\n좋아한사람 : " + userLike);
 
                 if (postImage == null) {
                     Toast.makeText(getActivity(),"사진을 촬영해주세요",Toast.LENGTH_SHORT).show();
                 } else if (writing.equals("")) {
                     Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
                 } else {
-                    insertFeed(nickname, profileImage, heart, currentLocation, postImage, writing, dataCreated);
+                    insertFeed(nickname, profileImage, heart, currentLocation, postImage, writing, dataCreated, userLike);
                 }
 
             }
@@ -459,9 +460,9 @@ public class Fragment_add extends Fragment {
     }
 
     // 서버에 게시글 데이터 추가
-    public void insertFeed(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+    public void insertFeed(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated, String userLike) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<Post> call = apiInterface.insertFeed(nickname, profileImage, heart, location, postImage, writing, dateCreated);
+        Call<Post> call = apiInterface.insertFeed(nickname, profileImage, heart, location, postImage, writing, dateCreated, userLike);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {

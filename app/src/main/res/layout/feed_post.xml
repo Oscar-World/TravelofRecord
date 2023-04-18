@@ -7,6 +7,7 @@
     android:layout_marginHorizontal="10dp">
 
     <LinearLayout
+        android:id="@+id/item_TopLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -162,9 +163,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="0"
             android:layout_marginLeft="-5dp"
-            />
+            android:text="0" />
 
         <ImageView
             android:id="@+id/item_comment"

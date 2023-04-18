@@ -169,9 +169,9 @@ public class Fragment_Home extends Fragment {
                             Log.d(TAG, "onResponse: num = " + num + " nickname = " + nickname + " profileImage = " + profileImage + "\n writing : " + writing);
 
 
-                            Post post = new Post(nickname, profileImage, heart, addressPost, postImage, writing, datePost);
+                            Post post = new Post(num, nickname, profileImage, heart, addressPost, postImage, writing, datePost);
 
-                            post_ArrayList.add(0, post);
+                            post_ArrayList.add(0,post);
 
 
                         }

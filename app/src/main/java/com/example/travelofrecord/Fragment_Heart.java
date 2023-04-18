@@ -141,7 +141,7 @@ public class Fragment_Heart extends Fragment {
     public void getHeart() {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<Post>> call = apiInterface.getPost();
+        Call<ArrayList<Post>> call = apiInterface.getHeart();
         call.enqueue(new Callback<ArrayList<Post>>() {
             @Override
             public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
@@ -155,8 +155,8 @@ public class Fragment_Heart extends Fragment {
 
                         for (int i = 0; i < data.size(); i++) {
 
-                            location = data.get(i).getLocation();
                             postImage = data.get(i).getPostImage();
+                            location = data.get(i).getLocation();
 
                             String addressHeart = getAddress(location);
 

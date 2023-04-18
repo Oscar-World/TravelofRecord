@@ -9,6 +9,9 @@ import java.util.List;
 public class Post {
 
     @Expose
+    @SerializedName("num") int num;
+
+    @Expose
     @SerializedName("nickname") String nickname;
 
     @Expose
@@ -33,10 +36,15 @@ public class Post {
     @SerializedName("response") String response;
 
     @Expose
-    @SerializedName("num") int num;
+    @SerializedName("postNum") int postNum;
 
-    public Post(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+    @Expose
+    @SerializedName("whoLike") String whoLike;
 
+
+    public Post(int num, String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+
+        this.num = num;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.heart = heart;
@@ -72,6 +80,8 @@ public class Post {
     public String getDateCreated() { return dateCreated; }
     public String getResponse() { return response; }
     public int getNum() { return num; }
+    public int getPostNum() { return postNum; }
+    public String getWhoLike() { return whoLike; }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
@@ -96,5 +106,6 @@ public class Post {
     }
     public void setResponse(String response) { this.response = response; }
     public void setNum(int num) { this.num = num; }
-
+    public void setPostNum(int postNum) { this.postNum = postNum; }
+    public void setWhoLike(String whoLike) { this.whoLike = whoLike; }
 }
