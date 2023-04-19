@@ -43,6 +43,12 @@
 
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="a5636c0dc6cb43c4ea8f52134f0f1337"
+            />
+
         <activity
             android:name=".Start"
             android:exported="false"

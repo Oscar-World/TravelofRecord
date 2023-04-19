@@ -86,10 +86,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         TextView post_HeartNum;
         TextView post_CommentNum;
 
-        LinearLayout topLayout;
-
         SharedPreferences sharedPreferences;
         String nickname;
+
+        LinearLayout linearLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -107,17 +107,27 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_HeartNum = itemView.findViewById(R.id.item_heartNumber);
             post_CommentNum = itemView.findViewById(R.id.item_commentNumber);
 
-            topLayout = itemView.findViewById(R.id.item_TopLayout);
-
             sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
-
             nickname = sharedPreferences.getString("nickname","");
+
+            linearLayout = itemView.findViewById(R.id.item_TopLayout);
 
         }
 
         void onBind(Post item) {
             Log.d(TAG, "onBind() 호출됨");
-            
+
+            if (item.heartStatus) {
+                post_HeartFull.setVisibility(View.VISIBLE);
+                post_Heart.setVisibility(View.GONE);
+            }
+
+            linearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, "getNum() : " + item.getNum() + "\ngetPostNum() : " + item.getPostNum() + "\ngetWhoLike : " + item.getWhoLike() + "\ngetHeartStatus : " + item.getHeartStatus());
+                }
+            });
 
             post_Nickname.setText(item.getNickname());
 

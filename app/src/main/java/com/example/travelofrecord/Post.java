@@ -41,8 +41,11 @@ public class Post {
     @Expose
     @SerializedName("whoLike") String whoLike;
 
+    boolean heartStatus;
 
-    public Post(int num, String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+
+
+    public Post(int num, String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus) {
 
         this.num = num;
         this.nickname = nickname;
@@ -52,6 +55,9 @@ public class Post {
         this.postImage = postImage;
         this.writing = writing;
         this.dateCreated = dateCreated;
+        this.postNum = postNum;
+        this.whoLike = whoLike;
+        this.heartStatus = heartStatus;
 
     }
 
@@ -82,6 +88,7 @@ public class Post {
     public int getNum() { return num; }
     public int getPostNum() { return postNum; }
     public String getWhoLike() { return whoLike; }
+    public boolean getHeartStatus() {return heartStatus; }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
@@ -108,4 +115,5 @@ public class Post {
     public void setNum(int num) { this.num = num; }
     public void setPostNum(int postNum) { this.postNum = postNum; }
     public void setWhoLike(String whoLike) { this.whoLike = whoLike; }
+    public void setHeartStatus(boolean heartStatus) { this.heartStatus = heartStatus; }
 }

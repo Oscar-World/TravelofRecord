@@ -1,6 +1,7 @@
 package com.example.travelofrecord;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -54,6 +55,12 @@ public class Fragment_Home extends Fragment {
     String writing;
     String dateCreated;
     int num;
+    int postNum;
+    String whoLike;
+    boolean heartStatus;
+
+    SharedPreferences sharedPreferences;
+    String loginNickname;
 
 
     @Override public void onAttach(Context context) {
@@ -148,8 +155,6 @@ public class Fragment_Home extends Fragment {
                     ArrayList<Post> data = response.body();
 
                     if (data.size() > 0) {
-                        Log.d(TAG, "onResponse: " + data);
-                        Log.d(TAG, "data : " + data.get(0).getNickname());
 
                         Log.d(TAG, "data.size : " + data.size());
 
@@ -162,17 +167,26 @@ public class Fragment_Home extends Fragment {
                             postImage = data.get(i).getPostImage();
                             writing = data.get(i).getWriting();
                             dateCreated = data.get(i).getDateCreated();
+                            postNum = data.get(i).getPostNum();
+                            whoLike = data.get(i).getWhoLike();
+
+                            heartStatus = false;
+
+                            if (loginNickname.equals(whoLike)) {
+                                heartStatus = true;
+                            }
 
                             String datePost = lastTime(dateCreated);
                             String addressPost = getAddress(location);
+                            Log.d(TAG, "i : " + i);
 
-                            Log.d(TAG, "onResponse: num = " + num + " nickname = " + nickname + " profileImage = " + profileImage + "\n writing : " + writing);
+                            Log.d(TAG, "num = " + num + "\nnickname = " + nickname + "\npostNum : " + postNum
+                             + "\nwhoLike : " + whoLike + "\nheartStatus : " + heartStatus);
 
 
-                            Post post = new Post(num, nickname, profileImage, heart, addressPost, postImage, writing, datePost);
+                            Post post = new Post(num, nickname, profileImage, heart, addressPost, postImage, writing, datePost, postNum, whoLike, heartStatus);
 
                             post_ArrayList.add(0,post);
-
 
                         }
 
@@ -182,7 +196,6 @@ public class Fragment_Home extends Fragment {
                         adapter.notifyDataSetChanged();
 
                     }
-
 
                 } else {
                     Log.d(TAG, "getPost : 실패");
@@ -263,6 +276,9 @@ public class Fragment_Home extends Fragment {
         getData = getArguments();
 
         Log.d(TAG, "getData : " + getData);
+
+        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
+        loginNickname = sharedPreferences.getString("nickname","");
 
     }
 

@@ -3,6 +3,7 @@ package com.example.travelofrecord;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -20,11 +21,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import net.daum.android.map.MapViewEventListener;
+import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -58,6 +64,13 @@ public class Fragment_Heart extends Fragment {
 
     String location;
     String postImage;
+
+    SharedPreferences sharedPreferences;
+    String nickname;
+
+    FrameLayout map_FrameLayout;
+    MapView mapView;
+    ViewGroup mapViewContainer;
 
 
 
@@ -97,7 +110,8 @@ public class Fragment_Heart extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated()");
 
-        getHeart();
+        Log.d(TAG, "onViewCreated: " + nickname);
+        getHeart(nickname);
 
     }
 
@@ -109,6 +123,18 @@ public class Fragment_Heart extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
+        mapViewContainer.addView(mapView);
+
+        mapView.setMapViewEventListener(this::onStart);
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+
+//        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633),true);
+//        mapView.setZoomLevel(10,true);
+
+//        mapView.zoomIn(true);
+//        mapView.zoomOut(true);
+
+
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +144,9 @@ public class Fragment_Heart extends Fragment {
                 photo_Block.setVisibility(View.VISIBLE);
                 map_Btn.setVisibility(View.VISIBLE);
                 map_Block.setVisibility(View.GONE);
+
+                recyclerView.setVisibility(View.VISIBLE);
+                map_FrameLayout.setVisibility(View.GONE);
 
             }
         });
@@ -131,6 +160,9 @@ public class Fragment_Heart extends Fragment {
                 photo_Btn.setVisibility(View.VISIBLE);
                 photo_Block.setVisibility(View.GONE);
 
+                recyclerView.setVisibility(View.GONE);
+                map_FrameLayout.setVisibility(View.VISIBLE);
+
             }
         });
 
@@ -138,10 +170,10 @@ public class Fragment_Heart extends Fragment {
     }
 
 
-    public void getHeart() {
+    public void getHeart(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<Post>> call = apiInterface.getHeart();
+        Call<ArrayList<Post>> call = apiInterface.getHeart(nickname);
         call.enqueue(new Callback<ArrayList<Post>>() {
             @Override
             public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
@@ -149,7 +181,6 @@ public class Fragment_Heart extends Fragment {
                 if (response.isSuccessful()) {
 
                     ArrayList<Post> data = response.body();
-                    Log.d(TAG, "response.body : " + data);
 
                     if (data.size() > 0) {
 
@@ -218,6 +249,13 @@ public class Fragment_Heart extends Fragment {
 
         adapter.setItemHeart(post_ArrayList);
 
+        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보",Context.MODE_PRIVATE);
+        nickname = sharedPreferences.getString("nickname","");
+
+        map_FrameLayout = v.findViewById(R.id.heart_MapView);
+        mapView = new MapView(this.getActivity());
+        mapViewContainer = (ViewGroup) v.findViewById(R.id.heart_MapView);
+
     }
 
     @Override public void onResume() {
@@ -231,6 +269,7 @@ public class Fragment_Heart extends Fragment {
     @Override public void onStop() {
         Log.d(TAG, "onStop()");
         super.onStop();
+        mapViewContainer.removeView(mapView);
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView()");

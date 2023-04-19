@@ -114,7 +114,10 @@ public interface ApiInterface {
             @Query("heart") int heart
     );
 
-    @GET("mysql_GetHeartInfo.php")
-    Call<ArrayList<Post>> getHeart();
+    @GET("mysql_GetHeartFeed.php")
+    Call<ArrayList<Post>> getHeart(
+            @Query("nickname") String nickname
+    );
+
 
 }
