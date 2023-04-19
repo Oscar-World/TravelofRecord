@@ -75,8 +75,6 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
         TextView heart_Location;
         ImageView heart_PostImage;
 
-
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 

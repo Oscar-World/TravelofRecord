@@ -93,8 +93,7 @@ public interface ApiInterface {
             @Query("location") String location,
             @Query("postImage") String postImage,
             @Query("writing") String writing,
-            @Query("dateCreated") String dateCreated,
-            @Query("userLike") String userLike
+            @Query("dateCreated") String dateCreated
             );
 
     @GET("mysql_GetPostInfo.php")

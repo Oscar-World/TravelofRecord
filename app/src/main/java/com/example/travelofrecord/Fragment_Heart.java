@@ -1,6 +1,7 @@
 package com.example.travelofrecord;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import net.daum.android.map.MapViewEventListener;
+import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
@@ -64,6 +66,12 @@ public class Fragment_Heart extends Fragment {
 
     String location;
     String postImage;
+    String profileImage;
+    String nowAddr;
+    String addressHeart;
+
+    double latitude;
+    double longitude;
 
     SharedPreferences sharedPreferences;
     String nickname;
@@ -123,18 +131,12 @@ public class Fragment_Heart extends Fragment {
         Log.d(TAG, "onStart()");
         super.onStart();
 
-        mapViewContainer.addView(mapView);
+        mapView.setMapViewEventListener(new MapViewEventListener() {
+            @Override
+            public void onLoadMapView() {
 
-        mapView.setMapViewEventListener(this::onStart);
-        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
-
-//        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633),true);
-//        mapView.setZoomLevel(10,true);
-
-//        mapView.zoomIn(true);
-//        mapView.zoomOut(true);
-
-
+            }
+        });
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +171,19 @@ public class Fragment_Heart extends Fragment {
 
     }
 
+    public void pickMarker(double lat, double log, int i) {
+
+        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(lat, log);
+        MapPOIItem marker = new MapPOIItem();
+        marker.setItemName(addressHeart);
+        marker.setTag(i);
+        marker.setMapPoint(mapPoint);
+        marker.setMarkerType(MapPOIItem.MarkerType.RedPin); // 기본으로 제공하는 BluePin 마커 모양.
+        marker.setSelectedMarkerType(MapPOIItem.MarkerType.BluePin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+        mapView.addPOIItem(marker);
+
+    } // pickMaker()
+
 
     public void getHeart(String nickname) {
 
@@ -182,14 +197,29 @@ public class Fragment_Heart extends Fragment {
 
                     ArrayList<Post> data = response.body();
 
+                    Log.d(TAG, "data.size : " + data.size());
+
                     if (data.size() > 0) {
 
                         for (int i = 0; i < data.size(); i++) {
 
                             postImage = data.get(i).getPostImage();
                             location = data.get(i).getLocation();
+                            profileImage = data.get(i).getProfileImage();
 
-                            String addressHeart = getAddress(location);
+                            String[] arrayLocation = location.split(" ");
+                            latitude = Double.parseDouble(arrayLocation[0]);
+                            longitude = Double.parseDouble(arrayLocation[1]);
+
+                            Log.d(TAG, "getHeart - latitude : " + latitude);
+                            Log.d(TAG, "getHeart - longitude : " + longitude);
+
+//                            mapView.setCalloutBalloonAdapter();
+
+                            pickMarker(latitude, longitude, i);
+
+                            String currentLocation = getAddress(getContext(),latitude,longitude);
+                            addressHeart = editAddress(currentLocation);
 
                             Post post = new Post(addressHeart,postImage);
 
@@ -201,6 +231,14 @@ public class Fragment_Heart extends Fragment {
                         Log.d(TAG, "itemSize : " + itemSize);
 
                         adapter.notifyDataSetChanged();
+
+                        Log.d(TAG, "latitude : " + latitude);
+                        Log.d(TAG, "longitude : " + longitude);
+
+                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude),true);
+                        mapView.setZoomLevel(10,true);
+                        mapView.zoomIn(true);
+                        mapView.zoomOut(true);
 
                     }
 
@@ -218,7 +256,43 @@ public class Fragment_Heart extends Fragment {
 
     } // getHeart()
 
-    public String getAddress(String location) {
+
+    public class CustomBalloonAdapter {
+
+
+
+    }
+
+
+    // Geocoder - 위도, 경도 사용해서 주소 구하기.
+    public String getAddress(Context mContext, double lat, double lng) {
+        nowAddr ="현재 위치를 확인 할 수 없습니다.";
+        Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
+        List<Address> address;
+
+        try
+        {
+            if (geocoder != null)
+            {
+                address = geocoder.getFromLocation(lat, lng, 1);
+                if (address != null && address.size() > 0)
+                {
+                    nowAddr = address.get(0).getAddressLine(0).toString();
+                    Log.d(TAG, "전체 주소 : " + nowAddr);
+
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            Toast.makeText(mContext, "주소를 가져 올 수 없습니다.", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+        return nowAddr;
+    } // getAddress
+
+
+    public String editAddress(String location) {
 
         String address = null;
 
@@ -232,6 +306,7 @@ public class Fragment_Heart extends Fragment {
 
     }
 
+    @SuppressLint("CutPasteId")
     public void setView() {
 
         photo_Btn = v.findViewById(R.id.heartPhoto_Btn);
@@ -255,6 +330,7 @@ public class Fragment_Heart extends Fragment {
         map_FrameLayout = v.findViewById(R.id.heart_MapView);
         mapView = new MapView(this.getActivity());
         mapViewContainer = (ViewGroup) v.findViewById(R.id.heart_MapView);
+        mapViewContainer.addView(mapView);
 
     }
 

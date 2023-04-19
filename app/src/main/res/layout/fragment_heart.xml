@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main">
+    android:background="@color/feed">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginRight="35dp"
-                android:text="사진"
+                android:text="피드"
                 android:textColor="@color/primary"
                 android:backgroundTint="@color/main"
                 android:visibility="gone"
@@ -52,7 +52,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginRight="35dp"
-                android:text="사진"
+                android:text="피드"
                 android:backgroundTint="@color/primary"
                 android:visibility="visible"
                 />
@@ -87,6 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="8"
+            android:visibility="visible"
             />
 
         <FrameLayout

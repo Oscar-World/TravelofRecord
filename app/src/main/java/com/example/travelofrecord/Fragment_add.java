@@ -83,7 +83,6 @@ public class Fragment_add extends Fragment {
     String postImage;
     String writing;
     String dataCreated;
-    String userLike = "";
 
     ActivityResultLauncher<Intent> launcher;
 
@@ -115,12 +114,14 @@ public class Fragment_add extends Fragment {
     };
 
     private FusedLocationProviderClient fusedLocationClient;
-    String nowAddr; // 전체 주소
+
     String adminArea; // 광역시, 도
     String locality; // 시
     String subLocality; // 구
     String thoroughfare; // 동
 
+    String latitude; // 위도
+    String longitude; // 경도
 
 
 
@@ -266,7 +267,12 @@ public class Fragment_add extends Fragment {
             public void onSuccess(Location location) {
                 if (location != null) {
                     Log.d(TAG, "onSuccess: location - " + location + "\n위도 - " + location.getLatitude() + "\n경도 - " + location.getLongitude());
-                    currentLocation = getAddress(getActivity(), location.getLatitude(), location.getLongitude());
+                    latitude = String.valueOf(location.getLatitude());
+                    longitude = String.valueOf(location.getLongitude());
+                    currentLocation = latitude + " " + longitude;
+
+                    Log.d(TAG, "location : " + currentLocation);
+
                 } else {
                     Log.d(TAG, "location == null");
                 }
@@ -313,14 +319,14 @@ public class Fragment_add extends Fragment {
                 dataCreated = getTime().toString();
 
                 Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + currentLocation +
-                        "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated + "\n좋아한사람 : " + userLike);
+                        "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
 
                 if (postImage == null) {
                     Toast.makeText(getActivity(),"사진을 촬영해주세요",Toast.LENGTH_SHORT).show();
                 } else if (writing.equals("")) {
                     Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
                 } else {
-                    insertFeed(nickname, profileImage, heart, currentLocation, postImage, writing, dataCreated, userLike);
+                    insertFeed(nickname, profileImage, heart, currentLocation, postImage, writing, dataCreated);
                 }
 
             }
@@ -402,48 +408,7 @@ public class Fragment_add extends Fragment {
 
     }
 
-    // Geocoder - 위도, 경도 사용해서 주소 구하기.
-    public String getAddress(Context mContext, double lat, double lng) {
-        nowAddr ="현재 위치를 확인 할 수 없습니다.";
-        Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
-        List<Address> address;
 
-        try
-        {
-            if (geocoder != null)
-            {
-                address = geocoder.getFromLocation(lat, lng, 1);
-                if (address != null && address.size() > 0)
-                {
-                    nowAddr = address.get(0).getAddressLine(0).toString();
-                    Log.d(TAG, "전체 주소 : " + nowAddr);
-
-//                    adminArea = address.get(0).getAdminArea();
-//                    locality = address.get(0).getLocality();
-//                    subLocality = address.get(0).getSubLocality();
-//                    thoroughfare = address.get(0).getThoroughfare();
-//                    String feature = address.get(0).getFeatureName();
-//                    String locality = address.get(0).getLocality();
-//                    String subThoroughfare = address.get(0).getSubThoroughfare();
-//
-//                    Log.d(TAG, "getAddress =\n광역시, 도 : " + adminArea + "\n시 : " + locality + "\n구 : " + subLocality + "\n동 : " + thoroughfare +
-//                            "\n기타 feature : " + feature + "\nlocality : " + locality + "\nsubThoroughfare : " + subThoroughfare);
-//
-//                    nowAddr = adminArea + " " + locality + " " + subLocality + " " + thoroughfare;
-//                    Log.d(TAG, "필요한 주소 : " + nowAddr);
-
-                }
-            }
-        }
-        catch (IOException e)
-        {
-            Toast.makeText(mContext, "주소를 가져 올 수 없습니다.", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-
-        return nowAddr;
-
-    } // getAddress
 
     public Long getTime() {
 
@@ -460,9 +425,9 @@ public class Fragment_add extends Fragment {
     }
 
     // 서버에 게시글 데이터 추가
-    public void insertFeed(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated, String userLike) {
+    public void insertFeed(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<Post> call = apiInterface.insertFeed(nickname, profileImage, heart, location, postImage, writing, dateCreated, userLike);
+        Call<Post> call = apiInterface.insertFeed(nickname, profileImage, heart, location, postImage, writing, dateCreated);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
