@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -23,13 +24,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import net.daum.android.map.MapViewEventListener;
+import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
@@ -42,6 +47,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,6 +71,7 @@ public class Fragment_Heart extends Fragment {
 
     int itemSize;
 
+    
     String location;
     String postImage;
     String profileImage;
@@ -106,13 +114,6 @@ public class Fragment_Heart extends Fragment {
         return v;
     }
 
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated()");
-    }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -130,13 +131,6 @@ public class Fragment_Heart extends Fragment {
     public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
-
-        mapView.setMapViewEventListener(new MapViewEventListener() {
-            @Override
-            public void onLoadMapView() {
-
-            }
-        });
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,11 +165,11 @@ public class Fragment_Heart extends Fragment {
 
     }
 
-    public void pickMarker(double lat, double log, int i) {
+    public void pickMarker(double lat, double log, int i, String address) {
 
         MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(lat, log);
         MapPOIItem marker = new MapPOIItem();
-        marker.setItemName(addressHeart);
+        marker.setItemName(address);
         marker.setTag(i);
         marker.setMapPoint(mapPoint);
         marker.setMarkerType(MapPOIItem.MarkerType.RedPin); // 기본으로 제공하는 BluePin 마커 모양.
@@ -214,12 +208,10 @@ public class Fragment_Heart extends Fragment {
                             Log.d(TAG, "getHeart - latitude : " + latitude);
                             Log.d(TAG, "getHeart - longitude : " + longitude);
 
-//                            mapView.setCalloutBalloonAdapter();
-
-                            pickMarker(latitude, longitude, i);
-
                             String currentLocation = getAddress(getContext(),latitude,longitude);
                             addressHeart = editAddress(currentLocation);
+
+                            pickMarker(latitude, longitude, i, addressHeart);
 
                             Post post = new Post(addressHeart,postImage);
 
@@ -257,11 +249,40 @@ public class Fragment_Heart extends Fragment {
     } // getHeart()
 
 
-    public class CustomBalloonAdapter {
+    class CustomBalloonAdapter implements CalloutBalloonAdapter {
+        private final View calloutBalloon;
 
+        public CustomBalloonAdapter() {
+            calloutBalloon = getLayoutInflater().inflate(R.layout.custom_balloon,null);
+        }
 
+        @Override
+        public View getCalloutBalloon(MapPOIItem mapPOIItem) {
+            Log.d(TAG, "getCalloutBalloon - postImage : " + postImage);
 
-    }
+            ((ImageView) calloutBalloon.findViewById(R.id.ballon_Image)).setImageResource(R.drawable.heartfull);
+
+//            ImageView imageView = calloutBalloon.findViewById(R.id.ballon_Image);
+//
+//            imageView.post(new Runnable() {
+//                @Override
+//                public void run() {
+////                    Glide.with(requireActivity())
+////                            .load(postImage)
+////                            .into(imageView);
+//                    imageView.setImageResource(R.drawable.heartfull);
+//
+//                }
+//            });
+
+            return calloutBalloon;
+        }
+
+        @Override
+        public View getPressedCalloutBalloon(MapPOIItem mapPOIItem) {
+            return null;
+        }
+    } // CustomBalloonAdapter
 
 
     // Geocoder - 위도, 경도 사용해서 주소 구하기.
@@ -331,6 +352,7 @@ public class Fragment_Heart extends Fragment {
         mapView = new MapView(this.getActivity());
         mapViewContainer = (ViewGroup) v.findViewById(R.id.heart_MapView);
         mapViewContainer.addView(mapView);
+//        mapView.setCalloutBalloonAdapter(new CustomBalloonAdapter());
 
     }
 

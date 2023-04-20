@@ -68,6 +68,19 @@ public class Post {
 
     }
 
+    public Post(int num, String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+
+        this.num = num;
+        this.nickname = nickname;
+        this.profileImage = profileImage;
+        this.heart = heart;
+        this.location = location;
+        this.postImage = postImage;
+        this.writing = writing;
+        this.dateCreated = dateCreated;
+
+    }
+
 
     public String getNickname() {
         return nickname;

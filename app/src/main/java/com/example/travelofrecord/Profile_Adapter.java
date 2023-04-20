@@ -2,7 +2,6 @@ package com.example.travelofrecord;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,30 +16,24 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHolder> {
 
-public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder> {
-
-    String TAG = "하트 어댑터";
+    String TAG = "프로필 어댑터";
 
     ArrayList<Post> post;
     Context context;
-
-    Home home;
     Bundle bundle;
-
+    Home home;
 
     // 레이아웃을 실체화 해줌 - inflate
     @Override
-    public Heart_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
+    public Profile_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         home = (Home) context;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.feed_heart, parent, false);
-        Heart_Adapter.ViewHolder viewHolder = new Heart_Adapter.ViewHolder(view);
+        View view = inflater.inflate(R.layout.feed_profile, parent, false);
+        Profile_Adapter.ViewHolder viewHolder = new Profile_Adapter.ViewHolder(view);
 
         return viewHolder;
     }
@@ -48,7 +41,7 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
 
     // 받아온 데이터를 바인딩해줌
     @Override
-    public void onBindViewHolder(@NonNull Heart_Adapter.ViewHolder holder,int position) {
+    public void onBindViewHolder(@NonNull Profile_Adapter.ViewHolder holder,int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
         holder.onBind(post.get(holder.getAdapterPosition()));
     }
@@ -62,6 +55,11 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
 
         notifyDataSetChanged();
     }
+
+//    public void setBundle(Bundle bundle) {
+//        this.bundle = bundle;
+//        notifyDataSetChanged();
+//    }
 
     // 리사이클러뷰 리스트 사이즈를 불러옴
     @Override
@@ -77,15 +75,12 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
     // 뷰홀더 생성
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView heart_Location;
-        ImageView heart_PostImage;
-
+        ImageView proflie_PostImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            heart_Location = itemView.findViewById(R.id.heart_LocationText);
-            heart_PostImage = itemView.findViewById(R.id.heart_PostImage);
+            proflie_PostImage = itemView.findViewById(R.id.profile_PostImage);
             bundle = new Bundle();
 
         }
@@ -93,13 +88,11 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
         void onBind(Post item) {
             Log.d(TAG, "onBind() 호출됨");
 
-            heart_Location.setText(item.getLocation());
-
             Glide.with(context)
                     .load(item.getPostImage())
-                    .into(heart_PostImage);
+                    .into(proflie_PostImage);
 
-            heart_PostImage.setOnClickListener(new View.OnClickListener() {
+            proflie_PostImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -111,7 +104,7 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
                     bundle.putString("postImage", item.getPostImage());
                     bundle.putString("writing", item.getWriting());
                     bundle.putString("dateCreated", item.getDateCreated());
-                    bundle.putInt("backPosition", 1);
+                    bundle.putInt("backPosition", 3);
 
                     home.goPostFragment(bundle);
 
@@ -126,5 +119,4 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
     } // ViewHolder
 
 
-
-} // Heart_Adapter
+}

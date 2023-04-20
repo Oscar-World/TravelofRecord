@@ -51,6 +51,7 @@ public class Home extends AppCompatActivity {
     Fragment_Heart fragment_heart;
     Fragment_add fragment_add;
     Fragment_myProfile fragment_myProfile;
+    Fragment_Post fragment_post;
 
     Bundle bundle;
 
@@ -185,6 +186,7 @@ public class Home extends AppCompatActivity {
         fragment_heart = new Fragment_Heart();
         fragment_add = new Fragment_add();
         fragment_myProfile = new Fragment_myProfile();
+        fragment_post = new Fragment_Post();
 
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
@@ -207,8 +209,15 @@ public class Home extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_add).commitAllowingStateLoss();
         } else if (index == 3) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_myProfile).commitAllowingStateLoss();
+        } else if (index == 4) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_post).commitAllowingStateLoss();
         }
 
+    }
+
+    public void goPostFragment(Bundle bundle) {
+        fragment_post.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_post).commitAllowingStateLoss();
     }
 
 

@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -19,6 +21,8 @@ import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.loader.content.CursorLoader;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -35,6 +39,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kakao.sdk.user.UserApiClient;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -87,6 +96,23 @@ public class Fragment_myProfile extends Fragment {
 
     ActivityResultLauncher<Intent> launcher;
 
+    RecyclerView recyclerView;
+    ArrayList<Post> post_ArrayList;
+    Profile_Adapter adapter;
+    int itemSize;
+
+    int post_Num;
+    String post_Nickname;
+    String post_ProfileImage;
+    int post_Heart;
+    String post_Location;
+    String post_PostImage;
+    String post_Writing;
+    String post_DateCreated;
+
+    String nowAddr;
+
+    Bundle bundle;
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -155,6 +181,9 @@ public class Fragment_myProfile extends Fragment {
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated()");
+
+        getMyPost(user_nickname);
+
     }
     @Override public void onStart() {
         Log.d(TAG, "onStart()");
@@ -306,6 +335,81 @@ public class Fragment_myProfile extends Fragment {
         return  result;
     }
 
+    public void getMyPost(String nickname) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<ArrayList<Post>> call = apiInterface.getMyPost(nickname);
+        call.enqueue(new Callback<ArrayList<Post>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+
+                if (response.isSuccessful()) {
+
+                    ArrayList<Post> data = response.body();
+
+                    Log.d(TAG, "data.size : " + data.size());
+
+                    if (data.size() > 0) {
+
+                        for (int i = 0; i < data.size(); i++) {
+
+                            post_Num = data.get(i).getNum();
+                            post_Nickname = data.get(i).getNickname();
+                            post_ProfileImage = data.get(i).getProfileImage();
+                            post_Heart = data.get(i).getHeart();
+                            post_Location = data.get(i).getLocation();
+                            post_PostImage = data.get(i).getPostImage();
+                            post_Writing = data.get(i).getWriting();
+                            post_DateCreated = data.get(i).getDateCreated();
+
+                            String[] arrayLocation = post_Location.split(" ");
+                            double latitude = Double.parseDouble(arrayLocation[0]);
+                            double longitude = Double.parseDouble(arrayLocation[1]);
+
+                            String currentLocation = getAddress(getContext(),latitude,longitude);
+                            String addressPost = editAddress(currentLocation);
+
+                            String datePost = lastTime(post_DateCreated);
+
+//                            bundle.putInt("num", post_Num);
+//                            bundle.putString("nickname", post_Nickname);
+//                            bundle.putString("profileImage", post_ProfileImage);
+//                            bundle.putInt("heart", post_Heart);
+//                            bundle.putString("location", addressPost);
+//                            bundle.putString("postImage", post_PostImage);
+//                            bundle.putString("writing", post_Writing);
+//                            bundle.putString("dateCreated", post_DateCreated);
+//                            bundle.putInt("backPosition", 3);
+//                            adapter.setBundle(bundle);
+
+                            Post post = new Post(post_Num, post_Nickname, post_ProfileImage, post_Heart, addressPost, post_PostImage, post_Writing, datePost);
+                            post_ArrayList.add(0, post);
+
+                        }
+
+                        itemSize = post_ArrayList.size();
+                        Log.d(TAG, "itemSize : " + itemSize);
+
+                        adapter.notifyDataSetChanged();
+
+
+
+                    }
+
+                } else {
+                    Log.d(TAG, "onResponse 실패");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+                Log.d(TAG, "onFailure 실패");
+            }
+        });
+
+    }
+
 
     // 상태 메시지, 프로필 사진 변경
     public void updateProfile(String nickname, String memo, String image) {
@@ -407,6 +511,79 @@ public class Fragment_myProfile extends Fragment {
     }  // deleteUser()
 
 
+    // Geocoder - 위도, 경도 사용해서 주소 구하기.
+    public String getAddress(Context mContext, double lat, double lng) {
+        nowAddr ="현재 위치를 확인 할 수 없습니다.";
+        Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
+        List<Address> address;
+
+        try
+        {
+            if (geocoder != null)
+            {
+                address = geocoder.getFromLocation(lat, lng, 1);
+                if (address != null && address.size() > 0)
+                {
+                    nowAddr = address.get(0).getAddressLine(0).toString();
+                    Log.d(TAG, "전체 주소 : " + nowAddr);
+
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            Toast.makeText(mContext, "주소를 가져 올 수 없습니다.", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+        return nowAddr;
+    } // getAddress
+
+
+    public String editAddress(String location) {
+
+        String address = null;
+
+        String[] addressArray = location.split(" ");
+
+        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+
+//        address = addressArray[2] + " " + addressArray[4];
+
+        return address;
+
+    } // editAddress()
+
+    public String lastTime(String dateCreated) {
+
+        String msg = null;
+
+        long datePosted = Long.parseLong(dateCreated);
+        long currentTime = System.currentTimeMillis();
+        long lastTime = (currentTime - datePosted) / 1000;
+
+        if (lastTime < 60) {
+            msg = "방금 전";
+        } else if ((lastTime /= 60) < 60) {
+            msg = lastTime + "분 전";
+        } else if ((lastTime /= 60) < 24) {
+            msg = lastTime + "시간 전";
+        } else if ((lastTime /= 24) < 7) {
+            msg = lastTime + "일 전";
+        } else if (lastTime < 14) {
+            msg = "1주 전";
+        } else if (lastTime < 21) {
+            msg = "2주 전";
+        } else if (lastTime < 28) {
+            msg = "3주 전";
+        } else if ((lastTime / 30) < 12) {
+            msg = lastTime + "달 전";
+        } else {
+            msg = (lastTime / 365) + "년 전";
+        }
+
+        return msg;
+
+    } // lastTime()
 
 
     @Override public void onResume() {
@@ -453,10 +630,6 @@ public class Fragment_myProfile extends Fragment {
         map_Btn = v.findViewById(R.id.myProfileMap_Btn);
         map_Block = v.findViewById(R.id.myProfileMap_Block);
 
-//        user_nickname = this.getArguments().getString("nickname");
-//        user_image = this.getArguments().getString("image");
-//        user_memo = this.getArguments().getString("memo");
-
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
@@ -488,7 +661,18 @@ public class Fragment_myProfile extends Fragment {
                 .load(user_image)
                 .into(editProfile_Image);
 
+        recyclerView = v.findViewById(R.id.profile_RecyclerView);
+        adapter = new Profile_Adapter();
 
-    }
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
+
+        post_ArrayList = new ArrayList<>();
+
+        adapter.setItemHeart(post_ArrayList);
+
+        bundle = new Bundle();
+
+    } // setView()
 
 }

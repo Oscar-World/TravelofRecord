@@ -118,5 +118,10 @@ public interface ApiInterface {
             @Query("nickname") String nickname
     );
 
+    @GET("mysql_GetMyPost.php")
+    Call<ArrayList<Post>> getMyPost(
+            @Query("nickname") String nickname
+    );
+
 
 }
