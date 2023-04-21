@@ -114,17 +114,25 @@ public class Login extends AppCompatActivity {
 
                 Log.d(TAG, "버튼 클릭");
 
-                edit_id = login_id.getText().toString();
-                edit_pw = login_pw.getText().toString();
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                if (edit_id.isEmpty()) {
-                    Toast t = Toast.makeText(login_Btn.getContext(),"아이디를 입력해주세요.",Toast.LENGTH_SHORT);
-                    t.show();
-                } else if (edit_pw.isEmpty()) {
-                    Toast t = Toast.makeText(login_Btn.getContext(),"비밀번호를 입력해주세요.",Toast.LENGTH_SHORT);
-                    t.show();
-                } else {
-                    getLogin(edit_id,edit_pw);
+                    edit_id = login_id.getText().toString();
+                    edit_pw = login_pw.getText().toString();
+
+                    if (edit_id.isEmpty()) {
+                        Toast t = Toast.makeText(login_Btn.getContext(),"아이디를 입력해주세요.",Toast.LENGTH_SHORT);
+                        t.show();
+                    } else if (edit_pw.isEmpty()) {
+                        Toast t = Toast.makeText(login_Btn.getContext(),"비밀번호를 입력해주세요.",Toast.LENGTH_SHORT);
+                        t.show();
+                    } else {
+                        getLogin(edit_id,edit_pw);
+                    }
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -134,8 +142,16 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(Login.this,Find_UserInfo.class);
-                startActivity(i);
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                    Intent i = new Intent(Login.this,Find_UserInfo.class);
+                    startActivity(i);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -144,8 +160,16 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(signup_Btn.getContext(),Signup.class);
-                startActivity(i);
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                    Intent i = new Intent(signup_Btn.getContext(),Signup.class);
+                    startActivity(i);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -154,7 +178,15 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                kakao_Dialog();
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                    kakao_Dialog();
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -165,13 +197,33 @@ public class Login extends AppCompatActivity {
         google_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onResponse: " + no_id + " / " + no_pw);
+
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
         naver_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });

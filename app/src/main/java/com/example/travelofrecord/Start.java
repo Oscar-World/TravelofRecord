@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -83,11 +84,19 @@ public class Start extends AppCompatActivity {
         login_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Start.this,Login.class);
-                String kakao = "kakao";
-//                i.putExtra("kakao",kakao);
-                startActivity(i);
-                finish();
+
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                    Intent i = new Intent(Start.this,Login.class);
+                    startActivity(i);
+                    finish();
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 

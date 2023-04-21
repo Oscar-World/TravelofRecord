@@ -201,19 +201,28 @@ public class Fragment_myProfile extends Fragment {
         editProfile_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profile_Text.setText("프로필 수정");
 
-                profile_memo.setVisibility(View.GONE);
-                profile_Edit.setVisibility(View.VISIBLE);
-                profile_Edit.setText(user_memo);
-                drawer_Btn.setVisibility(View.GONE);
-                editProfileSubmit_Btn.setVisibility(View.VISIBLE);
-                profile_Image.setVisibility(View.GONE);
-                editProfile_Image.setVisibility(View.VISIBLE);
-                profileSelect_Layout.setVisibility(View.GONE);
-                touchImage_Image.setVisibility(View.VISIBLE);
+                int status = NetworkStatus.getConnectivityStatus(getActivity());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                drawerLayout.closeDrawer(drawerView);
+                    profile_Text.setText("프로필 수정");
+
+                    profile_memo.setVisibility(View.GONE);
+                    profile_Edit.setVisibility(View.VISIBLE);
+                    profile_Edit.setText(user_memo);
+                    drawer_Btn.setVisibility(View.GONE);
+                    editProfileSubmit_Btn.setVisibility(View.VISIBLE);
+                    profile_Image.setVisibility(View.GONE);
+                    editProfile_Image.setVisibility(View.VISIBLE);
+                    profileSelect_Layout.setVisibility(View.GONE);
+                    touchImage_Image.setVisibility(View.VISIBLE);
+
+                    drawerLayout.closeDrawer(drawerView);
+
+                }else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -223,18 +232,26 @@ public class Fragment_myProfile extends Fragment {
             @Override
             public void onClick(View view) {
 
-                profile_Text.setText("프로필");
-                edit_memo = profile_Edit.getText().toString();
-                Log.d(TAG, "수정된 메시지 : " + edit_memo);
+                int status = NetworkStatus.getConnectivityStatus(getActivity());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                drawer_Btn.setVisibility(View.VISIBLE);
-                editProfileSubmit_Btn.setVisibility(View.GONE);
-                profile_Image.setVisibility(View.VISIBLE);
-                editProfile_Image.setVisibility(View.GONE);
-                profileSelect_Layout.setVisibility(View.VISIBLE);
-                touchImage_Image.setVisibility(View.GONE);
+                    profile_Text.setText("프로필");
+                    edit_memo = profile_Edit.getText().toString();
+                    Log.d(TAG, "수정된 메시지 : " + edit_memo);
 
-                updateProfile(user_nickname,edit_memo, user_image);
+                    drawer_Btn.setVisibility(View.VISIBLE);
+                    editProfileSubmit_Btn.setVisibility(View.GONE);
+                    profile_Image.setVisibility(View.VISIBLE);
+                    editProfile_Image.setVisibility(View.GONE);
+                    profileSelect_Layout.setVisibility(View.VISIBLE);
+                    touchImage_Image.setVisibility(View.GONE);
+
+                    updateProfile(user_nickname,edit_memo, user_image);
+
+                }else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -244,25 +261,34 @@ public class Fragment_myProfile extends Fragment {
             @Override
             public void onClick(View view) {
 
-                UserApiClient.getInstance().unlink(error -> {
-                    if (error != null) {
-                        Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
-                    }else{
-                        Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
-                    }
-                    return null;
-                });
+                int status = NetworkStatus.getConnectivityStatus(getActivity());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                editor_Kakao.clear();
-                editor_Kakao.commit();
+                    UserApiClient.getInstance().unlink(error -> {
+                        if (error != null) {
+                            Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
+                        }else{
+                            Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
+                        }
+                        return null;
+                    });
 
-                editor.clear();
-                editor.commit();
+                    editor_Kakao.clear();
+                    editor_Kakao.commit();
 
-                Intent i = new Intent(getActivity(),Start.class);
-                startActivity(i);
+                    editor.clear();
+                    editor.commit();
 
-                getActivity().finish();
+                    Intent i = new Intent(getActivity(),Start.class);
+                    startActivity(i);
+
+                    getActivity().finish();
+
+                }else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -271,7 +297,15 @@ public class Fragment_myProfile extends Fragment {
             @Override
             public void onClick(View view) {
 
-                deleteUser(user_id);
+                int status = NetworkStatus.getConnectivityStatus(getActivity());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                    deleteUser(user_id);
+
+                }else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -282,10 +316,18 @@ public class Fragment_myProfile extends Fragment {
             @Override
             public void onClick(View view) {
 
-                photo_Btn.setVisibility(View.GONE);
-                photo_Block.setVisibility(View.VISIBLE);
-                map_Btn.setVisibility(View.VISIBLE);
-                map_Block.setVisibility(View.GONE);
+                int status = NetworkStatus.getConnectivityStatus(getActivity());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                    photo_Btn.setVisibility(View.GONE);
+                    photo_Block.setVisibility(View.VISIBLE);
+                    map_Btn.setVisibility(View.VISIBLE);
+                    map_Block.setVisibility(View.GONE);
+
+                }else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -296,10 +338,18 @@ public class Fragment_myProfile extends Fragment {
             @Override
             public void onClick(View view) {
 
-                map_Btn.setVisibility(View.GONE);
-                map_Block.setVisibility(View.VISIBLE);
-                photo_Btn.setVisibility(View.VISIBLE);
-                photo_Block.setVisibility(View.GONE);
+                int status = NetworkStatus.getConnectivityStatus(getActivity());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                    map_Btn.setVisibility(View.GONE);
+                    map_Block.setVisibility(View.VISIBLE);
+                    photo_Btn.setVisibility(View.VISIBLE);
+                    photo_Block.setVisibility(View.GONE);
+
+                }else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -309,12 +359,20 @@ public class Fragment_myProfile extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent();
-                i.setType("image/*");
-                i.setAction(Intent.ACTION_PICK);
-                launcher.launch(i);
+                int status = NetworkStatus.getConnectivityStatus(getActivity());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                Log.d(TAG, "DB로 전송할 데이터 : " + user_nickname + " " + user_image);
+                    Intent i = new Intent();
+                    i.setType("image/*");
+                    i.setAction(Intent.ACTION_PICK);
+                    launcher.launch(i);
+
+                    Log.d(TAG, "DB로 전송할 데이터 : " + user_nickname + " " + user_image);
+
+                }else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
 
             }

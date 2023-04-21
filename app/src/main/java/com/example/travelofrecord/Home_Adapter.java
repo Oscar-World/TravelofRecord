@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -193,16 +194,25 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_Heart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    post_Heart.setVisibility(View.GONE);
-                    post_HeartFull.setVisibility(View.VISIBLE);
 
-                    Log.d(TAG, "누르기전 item.getHeart() : " + item.getHeart());
-                    item.heart += 1;
-                    post_HeartNum.setText(String.valueOf(item.getHeart()));
+                    int status = NetworkStatus.getConnectivityStatus(context);
+                    Log.d(TAG, "NetworkStatus : " + status);
+                    if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    Log.d(TAG, "누른 후 item.getHeart() : " + item.getHeart());
+                        post_Heart.setVisibility(View.GONE);
+                        post_HeartFull.setVisibility(View.VISIBLE);
 
-                    insertWhoLike(item.getNum(),nickname, item.getHeart());
+                        Log.d(TAG, "누르기전 item.getHeart() : " + item.getHeart());
+                        item.heart += 1;
+                        post_HeartNum.setText(String.valueOf(item.getHeart()));
+
+                        Log.d(TAG, "누른 후 item.getHeart() : " + item.getHeart());
+
+                        insertWhoLike(item.getNum(),nickname, item.getHeart());
+
+                    }else {
+                        Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             });
@@ -210,16 +220,25 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_HeartFull.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    post_HeartFull.setVisibility(View.GONE);
-                    post_Heart.setVisibility(View.VISIBLE);
 
-                    Log.d(TAG, "누르기전 item.getHeart() : " + item.getHeart());
-                    item.heart -= 1;
-                    post_HeartNum.setText(String.valueOf(item.getHeart()));
+                    int status = NetworkStatus.getConnectivityStatus(context);
+                    Log.d(TAG, "NetworkStatus : " + status);
+                    if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    Log.d(TAG, "누른 후 item.getHeart() : " + item.getHeart());
+                        post_HeartFull.setVisibility(View.GONE);
+                        post_Heart.setVisibility(View.VISIBLE);
 
-                    deleteWhoLike(item.getNum(), nickname, item.getHeart());
+                        Log.d(TAG, "누르기전 item.getHeart() : " + item.getHeart());
+                        item.heart -= 1;
+                        post_HeartNum.setText(String.valueOf(item.getHeart()));
+
+                        Log.d(TAG, "누른 후 item.getHeart() : " + item.getHeart());
+
+                        deleteWhoLike(item.getNum(), nickname, item.getHeart());
+
+                    }else {
+                        Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             });

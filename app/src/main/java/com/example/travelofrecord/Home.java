@@ -85,18 +85,26 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fragmentChange(0);
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                home_Btn.setVisibility(View.GONE);
-                homeFull_Btn.setVisibility(View.VISIBLE);
+                    fragmentChange(0);
 
-                heart_Btn.setVisibility(View.VISIBLE);
-                add_Btn.setVisibility(View.VISIBLE);
-                myProfile_Btn.setVisibility(View.VISIBLE);
+                    home_Btn.setVisibility(View.GONE);
+                    homeFull_Btn.setVisibility(View.VISIBLE);
 
-                heartFull_Btn.setVisibility(View.GONE);
-                addFull_Btn.setVisibility(View.GONE);
-                myProfileFull_Btn.setVisibility(View.GONE);
+                    heart_Btn.setVisibility(View.VISIBLE);
+                    add_Btn.setVisibility(View.VISIBLE);
+                    myProfile_Btn.setVisibility(View.VISIBLE);
+
+                    heartFull_Btn.setVisibility(View.GONE);
+                    addFull_Btn.setVisibility(View.GONE);
+                    myProfileFull_Btn.setVisibility(View.GONE);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -105,18 +113,26 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fragmentChange(1);
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                heart_Btn.setVisibility(View.GONE);
-                heartFull_Btn.setVisibility(View.VISIBLE);
+                    fragmentChange(1);
 
-                home_Btn.setVisibility(View.VISIBLE);
-                add_Btn.setVisibility(View.VISIBLE);
-                myProfile_Btn.setVisibility(View.VISIBLE);
+                    heart_Btn.setVisibility(View.GONE);
+                    heartFull_Btn.setVisibility(View.VISIBLE);
 
-                homeFull_Btn.setVisibility(View.GONE);
-                addFull_Btn.setVisibility(View.GONE);
-                myProfileFull_Btn.setVisibility(View.GONE);
+                    home_Btn.setVisibility(View.VISIBLE);
+                    add_Btn.setVisibility(View.VISIBLE);
+                    myProfile_Btn.setVisibility(View.VISIBLE);
+
+                    homeFull_Btn.setVisibility(View.GONE);
+                    addFull_Btn.setVisibility(View.GONE);
+                    myProfileFull_Btn.setVisibility(View.GONE);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -125,18 +141,26 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fragmentChange(2);
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                add_Btn.setVisibility(View.GONE);
-                addFull_Btn.setVisibility(View.VISIBLE);
+                    fragmentChange(2);
 
-                home_Btn.setVisibility(View.VISIBLE);
-                heart_Btn.setVisibility(View.VISIBLE);
-                myProfile_Btn.setVisibility(View.VISIBLE);
+                    add_Btn.setVisibility(View.GONE);
+                    addFull_Btn.setVisibility(View.VISIBLE);
 
-                homeFull_Btn.setVisibility(View.GONE);
-                heartFull_Btn.setVisibility(View.GONE);
-                myProfileFull_Btn.setVisibility(View.GONE);
+                    home_Btn.setVisibility(View.VISIBLE);
+                    heart_Btn.setVisibility(View.VISIBLE);
+                    myProfile_Btn.setVisibility(View.VISIBLE);
+
+                    homeFull_Btn.setVisibility(View.GONE);
+                    heartFull_Btn.setVisibility(View.GONE);
+                    myProfileFull_Btn.setVisibility(View.GONE);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -145,18 +169,26 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fragmentChange(3);
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                myProfile_Btn.setVisibility(View.GONE);
-                myProfileFull_Btn.setVisibility(View.VISIBLE);
+                    fragmentChange(3);
 
-                home_Btn.setVisibility(View.VISIBLE);
-                heart_Btn.setVisibility(View.VISIBLE);
-                add_Btn.setVisibility(View.VISIBLE);
+                    myProfile_Btn.setVisibility(View.GONE);
+                    myProfileFull_Btn.setVisibility(View.VISIBLE);
 
-                homeFull_Btn.setVisibility(View.GONE);
-                heartFull_Btn.setVisibility(View.GONE);
-                addFull_Btn.setVisibility(View.GONE);
+                    home_Btn.setVisibility(View.VISIBLE);
+                    heart_Btn.setVisibility(View.VISIBLE);
+                    add_Btn.setVisibility(View.VISIBLE);
+
+                    homeFull_Btn.setVisibility(View.GONE);
+                    heartFull_Btn.setVisibility(View.GONE);
+                    addFull_Btn.setVisibility(View.GONE);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });

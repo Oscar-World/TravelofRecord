@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -103,17 +104,25 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
                 @Override
                 public void onClick(View view) {
 
-                    bundle.putInt("num", item.getNum());
-                    bundle.putString("nickname", item.getNickname());
-                    bundle.putString("profileImage", item.getProfileImage());
-                    bundle.putInt("heart", item.getHeart());
-                    bundle.putString("location", item.getLocation());
-                    bundle.putString("postImage", item.getPostImage());
-                    bundle.putString("writing", item.getWriting());
-                    bundle.putString("dateCreated", item.getDateCreated());
-                    bundle.putInt("backPosition", 1);
+                    int status = NetworkStatus.getConnectivityStatus(context);
+                    Log.d(TAG, "NetworkStatus : " + status);
+                    if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    home.goPostFragment(bundle);
+                        bundle.putInt("num", item.getNum());
+                        bundle.putString("nickname", item.getNickname());
+                        bundle.putString("profileImage", item.getProfileImage());
+                        bundle.putInt("heart", item.getHeart());
+                        bundle.putString("location", item.getLocation());
+                        bundle.putString("postImage", item.getPostImage());
+                        bundle.putString("writing", item.getWriting());
+                        bundle.putString("dateCreated", item.getDateCreated());
+                        bundle.putInt("backPosition", 1);
+
+                        home.goPostFragment(bundle);
+
+                    }else {
+                        Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             });

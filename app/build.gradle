@@ -58,6 +58,7 @@ dependencies {
     // 카카오 로그인
     implementation "com.kakao.sdk:v2-user:2.10.0"
 
+    // 카카오 지도
     implementation fileTree(includes: ['*.jar'], dir: 'jniLibs')
     implementation files('libs/libDaumMapAndroid.jar')
 

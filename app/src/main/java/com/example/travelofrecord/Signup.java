@@ -536,27 +536,33 @@ public class Signup extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                edit_id = signup_id.getText().toString();
-                edit_pw = signup_pw.getText().toString();
-                edit_pwCheck = signup_pwCheck.getText().toString();
-                edit_phone = signup_phone.getText().toString();
-                edit_nickname = signup_nickname.getText().toString();
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-//                profile_Imagefile = new File(imagePath);
+                    edit_id = signup_id.getText().toString();
+                    edit_pw = signup_pw.getText().toString();
+                    edit_pwCheck = signup_pwCheck.getText().toString();
+                    edit_phone = signup_phone.getText().toString();
+                    edit_nickname = signup_nickname.getText().toString();
 
-//                uploadFile();
-
-                if (kakaoId != null) {
-                    if (signupCheck2()) {
-                        login_Type = "Kakao";
-                        getSignup(login_Type,kakaoId,"",edit_phone,edit_nickname,imagePath);
+                    if (kakaoId != null) {
+                        if (signupCheck2()) {
+                            login_Type = "Kakao";
+                            getSignup(login_Type,kakaoId,"",edit_phone,edit_nickname,imagePath);
+                        }
+                    } else {
+                        if (signupCheck()) {
+                            login_Type = "Basic";
+                            getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,imagePath);
+                        }
                     }
-                } else {
-                    if (signupCheck()) {
-                        login_Type = "Basic";
-                        getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,imagePath);
-                    }
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
+
+
 
             }
         });
@@ -600,39 +606,49 @@ public class Signup extends AppCompatActivity {
         smsSend_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                edit_phone = signup_phone.getText().toString();
 
-                signup_phoneCheck.setText("");
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                if (edit_phone.isEmpty()) {
-                    phone_NumberError.setVisibility(View.INVISIBLE);
-                    phone_SmsEmpty.setVisibility(View.VISIBLE);
-                } else if (!phoneRuleCheck()) {
-                    phone_SmsEmpty.setVisibility(View.INVISIBLE);
-                    phone_NumberError.setVisibility(View.VISIBLE);
-                } else {
+                    edit_phone = signup_phone.getText().toString();
 
-                    smsTimeThread = new SmsTimeThread();
-                    smsTimeThread.start();
+                    signup_phoneCheck.setText("");
 
-                    phone_SmsEmpty.setVisibility(View.INVISIBLE);
-                    phone_NumberError.setVisibility(View.INVISIBLE);
-                    phone_Send.setVisibility(View.VISIBLE);
-                    phone_SmsTime.setVisibility(View.VISIBLE);
-                    phone_SmsOk.setVisibility(View.INVISIBLE);
-                    phone_SmsError.setVisibility(View.INVISIBLE);
-                    phone_SmsTimeout.setVisibility(View.INVISIBLE);
+                    if (edit_phone.isEmpty()) {
+                        phone_NumberError.setVisibility(View.INVISIBLE);
+                        phone_SmsEmpty.setVisibility(View.VISIBLE);
+                    } else if (!phoneRuleCheck()) {
+                        phone_SmsEmpty.setVisibility(View.INVISIBLE);
+                        phone_NumberError.setVisibility(View.VISIBLE);
+                    } else {
 
-                    smsSend_Block.setVisibility(View.VISIBLE);
-                    smsSend_Btn.setVisibility(View.INVISIBLE);
-                    smsCheck_Block.setVisibility(View.INVISIBLE);
-                    smsCheck_Btn.setVisibility(View.VISIBLE);
+                        smsTimeThread = new SmsTimeThread();
+                        smsTimeThread.start();
 
-                    smsCheckNumber = 1;
+                        phone_SmsEmpty.setVisibility(View.INVISIBLE);
+                        phone_NumberError.setVisibility(View.INVISIBLE);
+                        phone_Send.setVisibility(View.VISIBLE);
+                        phone_SmsTime.setVisibility(View.VISIBLE);
+                        phone_SmsOk.setVisibility(View.INVISIBLE);
+                        phone_SmsError.setVisibility(View.INVISIBLE);
+                        phone_SmsTimeout.setVisibility(View.INVISIBLE);
 
-                    Log.d(TAG, "smsCheckNumber : " + smsCheckNumber);
+                        smsSend_Block.setVisibility(View.VISIBLE);
+                        smsSend_Btn.setVisibility(View.INVISIBLE);
+                        smsCheck_Block.setVisibility(View.INVISIBLE);
+                        smsCheck_Btn.setVisibility(View.VISIBLE);
 
+                        smsCheckNumber = 1;
+
+                        Log.d(TAG, "smsCheckNumber : " + smsCheckNumber);
+
+                    }
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
+
 
             }
         });
@@ -642,27 +658,37 @@ public class Signup extends AppCompatActivity {
         smsCheck_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                smsCheckNumber = 2;
-                smsTime = 0;
 
-                Log.d(TAG, "smsCheckNumber : " + smsCheckNumber);
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                phone_Send.setVisibility(View.INVISIBLE);
-                phone_SmsTime.setVisibility(View.INVISIBLE);
-                smsCheck_Block.setVisibility(View.VISIBLE);
-                smsCheck_Btn.setVisibility(View.INVISIBLE);
+                    smsCheckNumber = 2;
+                    smsTime = 0;
 
-                edit_phoneCheck = signup_phoneCheck.getText().toString();
+                    Log.d(TAG, "smsCheckNumber : " + smsCheckNumber);
 
-                if (edit_phoneCheck.equals("7777")) {
-                    phone_SmsOk.setVisibility(View.VISIBLE);
-                    nextBlock_2.setVisibility(View.INVISIBLE);
-                    nextBtn_2.setVisibility(View.VISIBLE);
-                } else {
-                    phone_SmsError.setVisibility(View.VISIBLE);
-                    smsSend_Btn.setVisibility(View.VISIBLE);
-                    smsSend_Block.setVisibility(View.INVISIBLE);
+                    phone_Send.setVisibility(View.INVISIBLE);
+                    phone_SmsTime.setVisibility(View.INVISIBLE);
+                    smsCheck_Block.setVisibility(View.VISIBLE);
+                    smsCheck_Btn.setVisibility(View.INVISIBLE);
+
+                    edit_phoneCheck = signup_phoneCheck.getText().toString();
+
+                    if (edit_phoneCheck.equals("7777")) {
+                        phone_SmsOk.setVisibility(View.VISIBLE);
+                        nextBlock_2.setVisibility(View.INVISIBLE);
+                        nextBtn_2.setVisibility(View.VISIBLE);
+                    } else {
+                        phone_SmsError.setVisibility(View.VISIBLE);
+                        smsSend_Btn.setVisibility(View.VISIBLE);
+                        smsSend_Block.setVisibility(View.INVISIBLE);
+                    }
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
+
 
             }
         });
@@ -673,19 +699,28 @@ public class Signup extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: 프로필 사진 버튼");
-                if (ActivityCompat.checkSelfPermission(Signup.this,Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
 
-                    Log.d(TAG, "퍼미션 허용");
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    Intent i = new Intent();
-                    i.setType("image/*");
-                    i.setAction(Intent.ACTION_PICK);
-                    launcher.launch(i);
+                    if (ActivityCompat.checkSelfPermission(Signup.this,Manifest.permission.READ_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
 
-                } else {
-                    Log.d(TAG, "퍼미션 거부");
+                        Log.d(TAG, "퍼미션 허용");
 
+                        Intent i = new Intent();
+                        i.setType("image/*");
+                        i.setAction(Intent.ACTION_PICK);
+                        launcher.launch(i);
+
+                    } else {
+                        Log.d(TAG, "퍼미션 거부");
+
+                    }
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }

@@ -71,7 +71,7 @@ public class Fragment_Heart extends Fragment {
 
     int itemSize;
 
-    
+
     String location;
     String postImage;
     String profileImage;
