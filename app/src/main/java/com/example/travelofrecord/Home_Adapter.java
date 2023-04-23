@@ -2,6 +2,7 @@ package com.example.travelofrecord;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,11 +30,14 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
     ArrayList<Post> post;
     Context context;
+    Bundle bundle;
+    Home home;
 
     // 레이아웃을 실체화 해줌 - inflate
     @Override
     public Home_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
+        home = (Home) context;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.feed_post, parent, false);
@@ -110,6 +114,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
             sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
             nickname = sharedPreferences.getString("nickname","");
+            bundle = new Bundle();
 
             linearLayout = itemView.findViewById(R.id.item_TopLayout);
 
@@ -235,6 +240,33 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                         Log.d(TAG, "누른 후 item.getHeart() : " + item.getHeart());
 
                         deleteWhoLike(item.getNum(), nickname, item.getHeart());
+
+                    }else {
+                        Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+
+            post_PostImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int status = NetworkStatus.getConnectivityStatus(context);
+                    Log.d(TAG, "NetworkStatus : " + status);
+                    if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                        bundle.putInt("num", item.getNum());
+                        bundle.putString("nickname", item.getNickname());
+                        bundle.putString("profileImage", item.getProfileImage());
+                        bundle.putInt("heart", item.getHeart());
+                        bundle.putString("location", item.getLocation());
+                        bundle.putString("postImage", item.getPostImage());
+                        bundle.putString("writing", item.getWriting());
+                        bundle.putString("dateCreated", item.getDateCreated());
+                        bundle.putInt("backPosition", 0);
+
+                        home.goPostFragment(bundle);
 
                     }else {
                         Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
