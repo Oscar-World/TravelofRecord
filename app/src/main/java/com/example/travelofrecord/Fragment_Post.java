@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +47,10 @@ public class Fragment_Post extends Fragment {
 
     Home home;
 
+    RecyclerView recyclerView;
+    Comment_Adapter adapter;
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -55,12 +60,13 @@ public class Fragment_Post extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(TAG, "onCreate()");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView() 호출됨");
         v = inflater.inflate(R.layout.fragment_post, container, false);
 
         setView();
