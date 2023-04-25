@@ -56,6 +56,7 @@ public class Fragment_Home extends Fragment {
     String nickname;
     String profileImage;
     int heart;
+    int commentNum;
     String location;
     String postImage;
     String writing;
@@ -166,6 +167,7 @@ public class Fragment_Home extends Fragment {
                             nickname = data.get(i).getNickname();
                             profileImage = data.get(i).getProfileImage();
                             heart = data.get(i).getHeart();
+                            commentNum = data.get(i).getCommentNum();
                             location = data.get(i).getLocation();
                             postImage = data.get(i).getPostImage();
                             writing = data.get(i).getWriting();
@@ -193,7 +195,7 @@ public class Fragment_Home extends Fragment {
                              + "\nwhoLike : " + whoLike + "\nheartStatus : " + heartStatus);
 
 
-                            Post post = new Post(num, nickname, profileImage, heart, addressPost, postImage, writing, datePost, postNum, whoLike, heartStatus);
+                            Post post = new Post(num, nickname, profileImage, heart, commentNum, addressPost, postImage, writing, datePost, postNum, whoLike, heartStatus);
 
                             post_ArrayList.add(0,post);
 

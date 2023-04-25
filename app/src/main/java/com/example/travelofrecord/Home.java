@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,9 @@ public class Home extends AppCompatActivity {
     Fragment_add fragment_add;
     Fragment_myProfile fragment_myProfile;
     Fragment_Post fragment_post;
+
+    LinearLayout homeFootLayout;
+    FrameLayout homeBodyLayout;
 
     Bundle bundle;
 
@@ -227,6 +231,9 @@ public class Home extends AppCompatActivity {
 
         bundle = new Bundle();
 
+        homeFootLayout = findViewById(R.id.homeFoot_Layout);
+        homeBodyLayout = findViewById(R.id.homeBody_Frame);
+
     }
 
 
@@ -235,21 +242,26 @@ public class Home extends AppCompatActivity {
 
         if (index == 0) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_home).commitAllowingStateLoss();
+            homeFootLayout.setVisibility(View.VISIBLE);
         } else if (index == 1) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_heart).commitAllowingStateLoss();
+            homeFootLayout.setVisibility(View.VISIBLE);
         } else if (index == 2) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_add).commitAllowingStateLoss();
+            homeFootLayout.setVisibility(View.VISIBLE);
         } else if (index == 3) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_myProfile).commitAllowingStateLoss();
+            homeFootLayout.setVisibility(View.VISIBLE);
         } else if (index == 4) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_post).commitAllowingStateLoss();
+            homeFootLayout.setVisibility(View.GONE);
         }
 
     }
 
     public void goPostFragment(Bundle bundle) {
         fragment_post.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_post).commitAllowingStateLoss();
+        fragmentChange(4);
     }
 
 

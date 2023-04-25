@@ -105,6 +105,7 @@ public class Fragment_myProfile extends Fragment {
     String post_Nickname;
     String post_ProfileImage;
     int post_Heart;
+    int post_CommentNum;
     String post_Location;
     String post_PostImage;
     String post_Writing;
@@ -415,6 +416,7 @@ public class Fragment_myProfile extends Fragment {
                             post_Nickname = data.get(i).getNickname();
                             post_ProfileImage = data.get(i).getProfileImage();
                             post_Heart = data.get(i).getHeart();
+                            post_CommentNum = data.get(i).getCommentNum();
                             post_Location = data.get(i).getLocation();
                             post_PostImage = data.get(i).getPostImage();
                             post_Writing = data.get(i).getWriting();
@@ -440,7 +442,7 @@ public class Fragment_myProfile extends Fragment {
 //                            bundle.putInt("backPosition", 3);
 //                            adapter.setBundle(bundle);
 
-                            Post post = new Post(post_Num, post_Nickname, post_ProfileImage, post_Heart, addressPost, post_PostImage, post_Writing, datePost);
+                            Post post = new Post(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum, addressPost, post_PostImage, post_Writing, datePost);
                             post_ArrayList.add(0, post);
 
                         }

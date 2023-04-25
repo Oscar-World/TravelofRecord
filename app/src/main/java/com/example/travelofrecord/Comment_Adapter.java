@@ -86,9 +86,9 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         void onBind(Post item) {
             Log.d(TAG, "onBind() 호출됨");
 
-            comment_NicknameText.setText(item.getNickname());
-            comment_DateCreatedText.setText(item.getDateCreated());
-            comment_CommentText.setText("");
+            comment_NicknameText.setText(item.getWhoComment());
+            comment_DateCreatedText.setText(item.getDateComment());
+            comment_CommentText.setText(item.getComment());
 
             Glide.with(context)
                     .load(item.getProfileImage())

@@ -79,6 +79,7 @@ public class Fragment_add extends Fragment {
     String nickname;
     String profileImage;
     int heart = 0;
+    int commentNum = 0;
     String currentLocation;
     String postImage;
     String writing;
@@ -326,7 +327,7 @@ public class Fragment_add extends Fragment {
                 } else if (writing.equals("")) {
                     Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
                 } else {
-                    insertFeed(nickname, profileImage, heart, currentLocation, postImage, writing, dataCreated);
+                    insertFeed(nickname, profileImage, heart, commentNum, currentLocation, postImage, writing, dataCreated);
                 }
 
             }
@@ -425,9 +426,9 @@ public class Fragment_add extends Fragment {
     }
 
     // 서버에 게시글 데이터 추가
-    public void insertFeed(String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+    public void insertFeed(String nickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<Post> call = apiInterface.insertFeed(nickname, profileImage, heart, location, postImage, writing, dateCreated);
+        Call<Post> call = apiInterface.insertFeed(nickname, profileImage, heart, commentNum, location, postImage, writing, dateCreated);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {

@@ -41,16 +41,29 @@ public class Post {
     @Expose
     @SerializedName("whoLike") String whoLike;
 
+    @Expose
+    @SerializedName("whoComment") String whoComment;
+
+    @Expose
+    @SerializedName("dateComment") String dateComment;
+
+    @Expose
+    @SerializedName("comment") String comment;
+
+    @Expose
+    @SerializedName("commentNum") int commentNum;
+
     boolean heartStatus;
 
 
 
-    public Post(int num, String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus) {
+    public Post(int num, String nickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus) {
 
         this.num = num;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.heart = heart;
+        this.commentNum = commentNum;
         this.location = location;
         this.postImage = postImage;
         this.writing = writing;
@@ -68,16 +81,26 @@ public class Post {
 
     }
 
-    public Post(int num, String nickname, String profileImage, int heart, String location, String postImage, String writing, String dateCreated) {
+    public Post(int num, String nickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated) {
 
         this.num = num;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.heart = heart;
+        this.commentNum = commentNum;
         this.location = location;
         this.postImage = postImage;
         this.writing = writing;
         this.dateCreated = dateCreated;
+
+    }
+
+    public Post(String profileImage, String whoComment, String dateComment, String comment) {
+
+        this.profileImage = profileImage;
+        this.whoComment = whoComment;
+        this.dateComment = dateComment;
+        this.comment = comment;
 
     }
 
@@ -102,6 +125,10 @@ public class Post {
     public int getPostNum() { return postNum; }
     public String getWhoLike() { return whoLike; }
     public boolean getHeartStatus() {return heartStatus; }
+    public String getWhoComment() { return whoComment; }
+    public String getDateComment() { return dateComment; }
+    public String getComment() { return comment; }
+    public int getCommentNum() { return commentNum; }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
@@ -129,4 +156,9 @@ public class Post {
     public void setPostNum(int postNum) { this.postNum = postNum; }
     public void setWhoLike(String whoLike) { this.whoLike = whoLike; }
     public void setHeartStatus(boolean heartStatus) { this.heartStatus = heartStatus; }
+    public void setWhoComment(String whoComment) { this.whoComment = whoComment; }
+    public void setDateComment(String dateComment) { this.dateComment = dateComment; }
+    public void setComment(String comment) { this.comment = comment; }
+    public void setCommentNum(int commentNum) { this.commentNum = commentNum; }
+
 }

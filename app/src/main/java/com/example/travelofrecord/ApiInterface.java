@@ -85,20 +85,24 @@ public interface ApiInterface {
             @Part MultipartBody.Part uploaded_file
     );
 
+    // 게시글 추가
     @GET("mysql_Post_Insert.php")
     Call<Post> insertFeed(
             @Query("nickname") String nickname,
             @Query("profileImage") String profileImage,
             @Query("heart") int heart,
+            @Query("commentNum") int commentNum,
             @Query("location") String location,
             @Query("postImage") String postImage,
             @Query("writing") String writing,
             @Query("dateCreated") String dateCreated
             );
 
+    // 게시글 데이터 가져오기
     @GET("mysql_GetPostInfo.php")
     Call<ArrayList<Post>> getPost();
 
+    // 좋아요 눌렀을 때 추가
     @GET("mysql_Heart_Insert.php")
     Call<Post> insertWhoLike(
             @Query("postNum") int postNum,
@@ -106,6 +110,7 @@ public interface ApiInterface {
             @Query("heart") int heart
     );
 
+    // 좋아요 취소 눌렀을 때 삭제
     @GET("mysql_Heart_Delete.php")
     Call<Post> deleteWhoLike(
             @Query("postNum") int postNum,
@@ -113,14 +118,31 @@ public interface ApiInterface {
             @Query("heart") int heart
     );
 
+    // 좋아요 누른 게시글 불러오기
     @GET("mysql_GetHeartFeed.php")
     Call<ArrayList<Post>> getHeart(
             @Query("nickname") String nickname
     );
 
+    // 접속중인 유저가 올린 게시글 불러오기
     @GET("mysql_GetMyPost.php")
     Call<ArrayList<Post>> getMyPost(
             @Query("nickname") String nickname
+    );
+
+    // 댓글 추가하기
+    @GET("mysql_Comment_Insert.php")
+    Call<String> insertComment(
+            @Query("postNum") int postNum,
+            @Query("whoComment") String whoComment,
+            @Query("dateComment") String dateComment,
+            @Query("comment") String comment
+    );
+
+    // 댓글 불러오기
+    @GET("mysql_GetComment.php")
+    Call<ArrayList<Post>> getComment(
+            @Query("postNum") int postNum
     );
 
 
