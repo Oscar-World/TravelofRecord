@@ -1,6 +1,7 @@
 package com.example.travelofrecord;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -28,7 +29,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
     String TAG = "홈 어댑터";
 
-    ArrayList<Post> post;
+    ArrayList<PostData> postData;
     Context context;
     Bundle bundle;
     Home home;
@@ -51,15 +52,15 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull Home_Adapter.ViewHolder holder,int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
-        holder.onBind(post.get(holder.getAdapterPosition()));
+        holder.onBind(postData.get(holder.getAdapterPosition()));
     }
 
     // 뷰와 데이터를 연결해줌
-    public void setItemPost(ArrayList<Post> list) {
+    public void setItemPost(ArrayList<PostData> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
-        this.post = list;
-        Log.d(TAG, "어댑터 리스트 : " + post);
+        this.postData = list;
+        Log.d(TAG, "어댑터 리스트 : " + postData);
 
         notifyDataSetChanged();
     }
@@ -68,9 +69,9 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     @Override
     public int getItemCount() {
 //        Log.d(TAG, "getItemCount() 호출됨");
-//        Log.d(TAG, "리스트 사이즈 : " + post.size());
+//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
 
-        return post.size();
+        return postData.size();
 
     }
 
@@ -116,11 +117,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             nickname = sharedPreferences.getString("nickname","");
             bundle = new Bundle();
 
-            linearLayout = itemView.findViewById(R.id.item_TopLayout);
 
         }
 
-        void onBind(Post item) {
+        void onBind(PostData item) {
             Log.d(TAG, "onBind() 호출됨");
 
             if (item.heartStatus) {
@@ -128,12 +128,6 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 post_Heart.setVisibility(View.GONE);
             }
 
-            linearLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d(TAG, "getNum() : " + item.getNum() + "\ngetPostNum() : " + item.getPostNum() + "\ngetWhoLike : " + item.getWhoLike() + "\ngetHeartStatus : " + item.getHeartStatus());
-                }
-            });
 
             post_Nickname.setText(item.getNickname());
 
@@ -256,17 +250,18 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                     Log.d(TAG, "NetworkStatus : " + status);
                     if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                        bundle.putInt("num", item.getNum());
-                        bundle.putString("nickname", item.getNickname());
-                        bundle.putString("profileImage", item.getProfileImage());
-                        bundle.putInt("heart", item.getHeart());
-                        bundle.putString("location", item.getLocation());
-                        bundle.putString("postImage", item.getPostImage());
-                        bundle.putString("writing", item.getWriting());
-                        bundle.putString("dateCreated", item.getDateCreated());
-                        bundle.putInt("backPosition", 0);
+                        Intent i = new Intent(context, Post.class);
+                        i.putExtra("num", item.getNum());
+                        i.putExtra("nickname", item.getNickname());
+                        i.putExtra("profileImage", item.getProfileImage());
+                        i.putExtra("heart", item.getHeart());
+                        i.putExtra("commentNum", item.getCommentNum());
+                        i.putExtra("location", item.getLocation());
+                        i.putExtra("postImage", item.getPostImage());
+                        i.putExtra("writing", item.getWriting());
+                        i.putExtra("dateCreated", item.getDateCreated());
 
-                        home.goPostFragment(bundle);
+                        context.startActivity(i);
 
                     }else {
                         Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -283,10 +278,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         public void insertWhoLike(int postNum, String whoLike, int heart) {
 
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<Post> call = apiInterface.insertWhoLike(postNum, whoLike, heart);
-            call.enqueue(new Callback<Post>() {
+            Call<PostData> call = apiInterface.insertWhoLike(postNum, whoLike, heart);
+            call.enqueue(new Callback<PostData>() {
                 @Override
-                public void onResponse(Call<Post> call, Response<Post> response) {
+                public void onResponse(Call<PostData> call, Response<PostData> response) {
 
                     if (response.isSuccessful()) {
                         Log.d(TAG, "insertWhoLike_Response 성공");
@@ -303,7 +298,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 }
 
                 @Override
-                public void onFailure(Call<Post> call, Throwable t) {
+                public void onFailure(Call<PostData> call, Throwable t) {
                     Log.d(TAG, "onFailure: 실패 " + t);
                 }
             });
@@ -314,10 +309,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         public void deleteWhoLike(int postNum, String whoLike, int heart) {
 
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<Post> call = apiInterface.deleteWhoLike(postNum, whoLike, heart);
-            call.enqueue(new Callback<Post>() {
+            Call<PostData> call = apiInterface.deleteWhoLike(postNum, whoLike, heart);
+            call.enqueue(new Callback<PostData>() {
                 @Override
-                public void onResponse(Call<Post> call, Response<Post> response) {
+                public void onResponse(Call<PostData> call, Response<PostData> response) {
 
                     if (response.isSuccessful()) {
                         Log.d(TAG, "insertWhoLike_Response 성공");
@@ -328,7 +323,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 }
 
                 @Override
-                public void onFailure(Call<Post> call, Throwable t) {
+                public void onFailure(Call<PostData> call, Throwable t) {
                     Log.d(TAG, "onFailure: 실패 " + t);
                 }
             });

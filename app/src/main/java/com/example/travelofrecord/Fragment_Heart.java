@@ -1,19 +1,13 @@
 package com.example.travelofrecord;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,28 +21,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import net.daum.android.map.MapViewEventListener;
 import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,7 +47,7 @@ public class Fragment_Heart extends Fragment {
     private Button map_Block;
 
     RecyclerView recyclerView;
-    ArrayList<Post> post_ArrayList;
+    ArrayList<PostData> post_Data_ArrayList;
     Heart_Adapter adapter;
 
     int itemSize;
@@ -182,14 +163,14 @@ public class Fragment_Heart extends Fragment {
     public void getHeart(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<Post>> call = apiInterface.getHeart(nickname);
-        call.enqueue(new Callback<ArrayList<Post>>() {
+        Call<ArrayList<PostData>> call = apiInterface.getHeart(nickname);
+        call.enqueue(new Callback<ArrayList<PostData>>() {
             @Override
-            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
 
                 if (response.isSuccessful()) {
 
-                    ArrayList<Post> data = response.body();
+                    ArrayList<PostData> data = response.body();
 
                     Log.d(TAG, "data.size : " + data.size());
 
@@ -213,13 +194,13 @@ public class Fragment_Heart extends Fragment {
 
                             pickMarker(latitude, longitude, i, addressHeart);
 
-                            Post post = new Post(addressHeart,postImage);
+                            PostData postData = new PostData(addressHeart,postImage);
 
-                            post_ArrayList.add(0, post);
+                            post_Data_ArrayList.add(0, postData);
 
                         }
 
-                        itemSize = post_ArrayList.size();
+                        itemSize = post_Data_ArrayList.size();
                         Log.d(TAG, "itemSize : " + itemSize);
 
                         adapter.notifyDataSetChanged();
@@ -241,7 +222,7 @@ public class Fragment_Heart extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
                 Log.d(TAG, "onFailure 실패");
             }
         });
@@ -264,7 +245,7 @@ public class Fragment_Heart extends Fragment {
 
 //            ImageView imageView = calloutBalloon.findViewById(R.id.ballon_Image);
 //
-//            imageView.post(new Runnable() {
+//            imageView.postData(new Runnable() {
 //                @Override
 //                public void run() {
 ////                    Glide.with(requireActivity())
@@ -341,9 +322,9 @@ public class Fragment_Heart extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
 
-        post_ArrayList = new ArrayList<>();
+        post_Data_ArrayList = new ArrayList<>();
 
-        adapter.setItemHeart(post_ArrayList);
+        adapter.setItemHeart(post_Data_ArrayList);
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보",Context.MODE_PRIVATE);
         nickname = sharedPreferences.getString("nickname","");

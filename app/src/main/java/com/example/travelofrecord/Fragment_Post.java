@@ -1,13 +1,10 @@
 package com.example.travelofrecord;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,9 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
@@ -65,6 +59,7 @@ public class Fragment_Post extends Fragment {
 
     String addComment;
     String accessNickname;
+    String accessProfileImage;
     String dateComment;
     SharedPreferences sharedPreferences;
 
@@ -72,7 +67,7 @@ public class Fragment_Post extends Fragment {
 
     RecyclerView recyclerView;
     Comment_Adapter adapter;
-    ArrayList<Post> postArrayList;
+    ArrayList<PostData> postDataArrayList;
     int listSize;
 
     ApiInterface apiInterface;
@@ -147,7 +142,7 @@ public class Fragment_Post extends Fragment {
 
                 Log.d(TAG, "postNum : " + post_Num + "\naccessNickname : " + accessNickname + "\ndateComment : " + dateComment + "\naddComment : " + addComment);
 
-                addComment(post_Num, accessNickname, dateComment, addComment);
+                addComment(post_Num, accessProfileImage, accessNickname, dateComment, addComment);
 
             }
         });
@@ -195,15 +190,20 @@ public class Fragment_Post extends Fragment {
         return msg;
     }
 
-    public void addComment(int postNum, String whoComment, String dateComment, String comment) {
+    public void addComment(int postNum, String profileImage, String whoComment, String dateComment, String comment) {
 
-        Call<String> call = apiInterface.insertComment(postNum, whoComment, dateComment, comment);
+        Call<String> call = apiInterface.insertComment(postNum, profileImage, whoComment, dateComment, comment);
         call.enqueue(new Callback<String>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.d(TAG, "insertComment onResponse");
                 if (response.isSuccessful()) {
                     Log.d(TAG, "response : " + response.body().toString());
+
+                    postDataArrayList.clear();
+                    adapter.setItemComment(postDataArrayList);
+                    adapter.notifyDataSetChanged();
 
                     getComment(post_Num);
 
@@ -222,22 +222,22 @@ public class Fragment_Post extends Fragment {
 
     public void getComment(int num) {
 
-        Call<ArrayList<Post>> call = apiInterface.getComment(num);
-        call.enqueue(new Callback<ArrayList<Post>>() {
+        Call<ArrayList<PostData>> call = apiInterface.getComment(num);
+        call.enqueue(new Callback<ArrayList<PostData>>() {
             @Override
-            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
                 Log.d(TAG, "getComment onResponse");
                 if (response.isSuccessful()) {
                     Log.d(TAG, "response : " + response.body().toString());
 
-                    ArrayList<Post> data = response.body();
+                    ArrayList<PostData> data = response.body();
                     Log.d(TAG, "data.size() : " + data.size());
 
                     if (data.size() > 0) {
 
                         for (int i = 0; i < data.size(); i++) {
 
-                            String profileImage = data.get(i).getProfileImage();
+                            String profileImage = data.get(i).getCommentProfileImage();
                             String whoComment = data.get(i).getWhoComment();
                             String dateComment = data.get(i).getDateComment();
                             String comment = data.get(i).getComment();
@@ -247,17 +247,16 @@ public class Fragment_Post extends Fragment {
 
                             Log.d(TAG, "profileImage : " + profileImage + "\nwhoComment : " + whoComment + "\ndateComment : " + commentTime + "\ncomment : " + comment);
 
-                            Post post = new Post(profileImage, whoComment, commentTime, comment);
+                            PostData postData = new PostData(profileImage, whoComment, commentTime, comment);
 
-                            postArrayList.add(post);
+                            postDataArrayList.add(postData);
 
                         }
 
-                        listSize = postArrayList.size();
+                        listSize = postDataArrayList.size();
                         adapter.notifyDataSetChanged();
 
                     }
-
 
                 } else {
                     Log.d(TAG, "responseFail");
@@ -266,7 +265,7 @@ public class Fragment_Post extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
                 Log.d(TAG, "getComent onFailure : " + t);
             }
         });
@@ -305,6 +304,7 @@ public class Fragment_Post extends Fragment {
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보",Context.MODE_PRIVATE);
         accessNickname = sharedPreferences.getString("nickname","");
+        accessProfileImage = sharedPreferences.getString("image", "");
 
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
@@ -312,8 +312,8 @@ public class Fragment_Post extends Fragment {
         adapter = new Comment_Adapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        postArrayList = new ArrayList<>();
-        adapter.setItemComment(postArrayList);
+        postDataArrayList = new ArrayList<>();
+        adapter.setItemComment(postDataArrayList);
 
 
 

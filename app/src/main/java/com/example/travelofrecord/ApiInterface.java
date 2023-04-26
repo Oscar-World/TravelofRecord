@@ -1,7 +1,5 @@
 package com.example.travelofrecord;
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
 
 import okhttp3.MultipartBody;
@@ -87,7 +85,7 @@ public interface ApiInterface {
 
     // 게시글 추가
     @GET("mysql_Post_Insert.php")
-    Call<Post> insertFeed(
+    Call<PostData> insertFeed(
             @Query("nickname") String nickname,
             @Query("profileImage") String profileImage,
             @Query("heart") int heart,
@@ -100,11 +98,11 @@ public interface ApiInterface {
 
     // 게시글 데이터 가져오기
     @GET("mysql_GetPostInfo.php")
-    Call<ArrayList<Post>> getPost();
+    Call<ArrayList<PostData>> getPost();
 
     // 좋아요 눌렀을 때 추가
     @GET("mysql_Heart_Insert.php")
-    Call<Post> insertWhoLike(
+    Call<PostData> insertWhoLike(
             @Query("postNum") int postNum,
             @Query("whoLike") String whoLike,
             @Query("heart") int heart
@@ -112,7 +110,7 @@ public interface ApiInterface {
 
     // 좋아요 취소 눌렀을 때 삭제
     @GET("mysql_Heart_Delete.php")
-    Call<Post> deleteWhoLike(
+    Call<PostData> deleteWhoLike(
             @Query("postNum") int postNum,
             @Query("whoLike") String whoLike,
             @Query("heart") int heart
@@ -120,13 +118,13 @@ public interface ApiInterface {
 
     // 좋아요 누른 게시글 불러오기
     @GET("mysql_GetHeartFeed.php")
-    Call<ArrayList<Post>> getHeart(
+    Call<ArrayList<PostData>> getHeart(
             @Query("nickname") String nickname
     );
 
     // 접속중인 유저가 올린 게시글 불러오기
     @GET("mysql_GetMyPost.php")
-    Call<ArrayList<Post>> getMyPost(
+    Call<ArrayList<PostData>> getMyPost(
             @Query("nickname") String nickname
     );
 
@@ -134,6 +132,7 @@ public interface ApiInterface {
     @GET("mysql_Comment_Insert.php")
     Call<String> insertComment(
             @Query("postNum") int postNum,
+            @Query("profileImage") String profileImage,
             @Query("whoComment") String whoComment,
             @Query("dateComment") String dateComment,
             @Query("comment") String comment
@@ -141,7 +140,7 @@ public interface ApiInterface {
 
     // 댓글 불러오기
     @GET("mysql_GetComment.php")
-    Call<ArrayList<Post>> getComment(
+    Call<ArrayList<PostData>> getComment(
             @Query("postNum") int postNum
     );
 

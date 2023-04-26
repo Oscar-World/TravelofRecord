@@ -2,14 +2,12 @@ package com.example.travelofrecord;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -18,10 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
-
-import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,7 +42,7 @@ public class Fragment_Home extends Fragment {
 
     RecyclerView recyclerView;
 
-    ArrayList<Post> post_ArrayList;
+    ArrayList<PostData> post_Data_ArrayList;
     int itemSize;
     Home_Adapter adapter;
 
@@ -110,8 +105,8 @@ public class Fragment_Home extends Fragment {
             @Override
             public void onRefresh() {
 
-                post_ArrayList = new ArrayList<>();
-                adapter.setItemPost(post_ArrayList);
+                post_Data_ArrayList = new ArrayList<>();
+                adapter.setItemPost(post_Data_ArrayList);
                 getPost();
 
                 swipeRefreshLayout.setRefreshing(false);
@@ -150,13 +145,13 @@ public class Fragment_Home extends Fragment {
     public void getPost() {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<Post>> call = apiInterface.getPost();
-        call.enqueue(new Callback<ArrayList<Post>>() {
+        Call<ArrayList<PostData>> call = apiInterface.getPost();
+        call.enqueue(new Callback<ArrayList<PostData>>() {
             @Override
-            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
                 if (response.isSuccessful()) {
 
-                    ArrayList<Post> data = response.body();
+                    ArrayList<PostData> data = response.body();
 
                     if (data.size() > 0) {
 
@@ -195,13 +190,13 @@ public class Fragment_Home extends Fragment {
                              + "\nwhoLike : " + whoLike + "\nheartStatus : " + heartStatus);
 
 
-                            Post post = new Post(num, nickname, profileImage, heart, commentNum, addressPost, postImage, writing, datePost, postNum, whoLike, heartStatus);
+                            PostData postData = new PostData(num, nickname, profileImage, heart, commentNum, addressPost, postImage, writing, datePost, postNum, whoLike, heartStatus);
 
-                            post_ArrayList.add(0,post);
+                            post_Data_ArrayList.add(0, postData);
 
                         }
 
-                        itemSize = post_ArrayList.size();
+                        itemSize = post_Data_ArrayList.size();
                         Log.d(TAG, "itemSize : " + itemSize);
 
                         adapter.notifyDataSetChanged();
@@ -214,7 +209,7 @@ public class Fragment_Home extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
                 Log.d(TAG, "onFailure: 실패 " + t);
             }
         });
@@ -308,9 +303,9 @@ public class Fragment_Home extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        post_ArrayList = new ArrayList<>();
+        post_Data_ArrayList = new ArrayList<>();
 
-        adapter.setItemPost(post_ArrayList);
+        adapter.setItemPost(post_Data_ArrayList);
 
         getData = getArguments();
 

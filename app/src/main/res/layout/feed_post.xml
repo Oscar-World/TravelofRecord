@@ -7,7 +7,6 @@
     android:layout_marginHorizontal="10dp">
 
     <LinearLayout
-        android:id="@+id/item_TopLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

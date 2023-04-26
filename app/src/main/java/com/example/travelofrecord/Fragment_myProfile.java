@@ -3,7 +3,6 @@ package com.example.travelofrecord;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -97,7 +96,7 @@ public class Fragment_myProfile extends Fragment {
     ActivityResultLauncher<Intent> launcher;
 
     RecyclerView recyclerView;
-    ArrayList<Post> post_ArrayList;
+    ArrayList<PostData> post_Data_ArrayList;
     Profile_Adapter adapter;
     int itemSize;
 
@@ -397,14 +396,14 @@ public class Fragment_myProfile extends Fragment {
     public void getMyPost(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<Post>> call = apiInterface.getMyPost(nickname);
-        call.enqueue(new Callback<ArrayList<Post>>() {
+        Call<ArrayList<PostData>> call = apiInterface.getMyPost(nickname);
+        call.enqueue(new Callback<ArrayList<PostData>>() {
             @Override
-            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
 
                 if (response.isSuccessful()) {
 
-                    ArrayList<Post> data = response.body();
+                    ArrayList<PostData> data = response.body();
 
                     Log.d(TAG, "data.size : " + data.size());
 
@@ -442,12 +441,12 @@ public class Fragment_myProfile extends Fragment {
 //                            bundle.putInt("backPosition", 3);
 //                            adapter.setBundle(bundle);
 
-                            Post post = new Post(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum, addressPost, post_PostImage, post_Writing, datePost);
-                            post_ArrayList.add(0, post);
+                            PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum, addressPost, post_PostImage, post_Writing, datePost);
+                            post_Data_ArrayList.add(0, postData);
 
                         }
 
-                        itemSize = post_ArrayList.size();
+                        itemSize = post_Data_ArrayList.size();
                         Log.d(TAG, "itemSize : " + itemSize);
 
                         adapter.notifyDataSetChanged();
@@ -463,7 +462,7 @@ public class Fragment_myProfile extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
                 Log.d(TAG, "onFailure 실패");
             }
         });
@@ -727,9 +726,9 @@ public class Fragment_myProfile extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
 
-        post_ArrayList = new ArrayList<>();
+        post_Data_ArrayList = new ArrayList<>();
 
-        adapter.setItemHeart(post_ArrayList);
+        adapter.setItemHeart(post_Data_ArrayList);
 
         bundle = new Bundle();
 

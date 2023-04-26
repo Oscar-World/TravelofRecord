@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,18 +21,14 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
     String TAG = "댓글 어댑터";
 
-    ArrayList<Post> post;
+    ArrayList<PostData> postData;
     Context context;
-    Bundle bundle;
-    Home home;
 
     @Override
     public Comment_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
-        home = (Home) context;
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.comment_post, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_post, parent, false);
         Comment_Adapter.ViewHolder viewHolder = new Comment_Adapter.ViewHolder(view);
 
         return viewHolder;
@@ -42,14 +37,14 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull Comment_Adapter.ViewHolder holder,int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
-        holder.onBind(post.get(holder.getAdapterPosition()));
+        holder.onBind(postData.get(holder.getAdapterPosition()));
     }
 
-    public void setItemComment(ArrayList<Post> list) {
+    public void setItemComment(ArrayList<PostData> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
-        this.post = list;
-        Log.d(TAG, "어댑터 리스트 : " + post);
+        this.postData = list;
+        Log.d(TAG, "어댑터 리스트 : " + postData);
 
         notifyDataSetChanged();
     }
@@ -57,9 +52,9 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount() 호출됨");
-        Log.d(TAG, "리스트 사이즈 : " + post.size());
+        Log.d(TAG, "리스트 사이즈 : " + postData.size());
 
-        return post.size();
+        return postData.size();
 
     }
 
@@ -83,7 +78,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
         }
 
-        void onBind(Post item) {
+        void onBind(PostData item) {
             Log.d(TAG, "onBind() 호출됨");
 
             comment_NicknameText.setText(item.getWhoComment());
@@ -91,7 +86,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
             comment_CommentText.setText(item.getComment());
 
             Glide.with(context)
-                    .load(item.getProfileImage())
+                    .load(item.getCommentProfileImage())
                     .into(comment_ProfileImage);
 
             comment_MenuBtn.setOnClickListener(new View.OnClickListener() {
