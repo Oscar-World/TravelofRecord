@@ -52,7 +52,6 @@ public class Home extends AppCompatActivity {
     Fragment_Heart fragment_heart;
     Fragment_add fragment_add;
     Fragment_myProfile fragment_myProfile;
-    Fragment_Post fragment_post;
 
     LinearLayout homeFootLayout;
     FrameLayout homeBodyLayout;
@@ -222,7 +221,6 @@ public class Home extends AppCompatActivity {
         fragment_heart = new Fragment_Heart();
         fragment_add = new Fragment_add();
         fragment_myProfile = new Fragment_myProfile();
-        fragment_post = new Fragment_Post();
 
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
@@ -252,18 +250,9 @@ public class Home extends AppCompatActivity {
         } else if (index == 3) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_myProfile).commitAllowingStateLoss();
             homeFootLayout.setVisibility(View.VISIBLE);
-        } else if (index == 4) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_post).commitAllowingStateLoss();
-            homeFootLayout.setVisibility(View.GONE);
         }
 
     }
-
-    public void goPostFragment(Bundle bundle) {
-        fragment_post.setArguments(bundle);
-        fragmentChange(4);
-    }
-
 
     // 홈프래그먼트로 이동 + 번들 전달
     public void goHomeFragment(Bundle bundle) {
@@ -283,42 +272,6 @@ public class Home extends AppCompatActivity {
         myProfileFull_Btn.setVisibility(View.GONE);
 
     }
-
-
-    // 서버에서 데이터 받아옴 (현재 필요 없음. 쉐어드에 사용자 정보 저장해서 사용)
-//    public void getInfo(String id) {
-//        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-//        Call<User> call = apiInterface.getInfo(id);
-//        call.enqueue(new Callback<User>() {
-//            @Override
-//            public void onResponse(Call<User> call, Response<User> response) {
-//
-//                if (response.isSuccessful()) {
-//
-//                    user_type = response.body().getType();
-//                    user_id = response.body().getId();
-//                    user_pw = response.body().getPw();
-//                    user_phone = response.body().getPhone();
-//                    user_nickname = response.body().getNickname();
-//                    user_memo = response.body().getMemo();
-//                    user_image = response.body().getImage();
-//
-//                    Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_memo + "\n" + user_image);
-//
-//                } else {
-//                    Log.d(TAG, "onResponse: 리스폰스 실패");
-//                }
-//
-//            }   // onResponse
-//
-//            @Override
-//            public void onFailure(Call<User> call, Throwable t) {
-//                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
-//            }
-//
-//        });
-//
-//    }  // getInfo()
 
 
     @Override
