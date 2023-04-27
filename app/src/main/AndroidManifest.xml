@@ -23,7 +23,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".Post"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Find_UserInfo"
             android:exported="false"

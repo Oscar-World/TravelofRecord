@@ -90,7 +90,9 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
         void onBind(PostData item) {
             Log.d(TAG, "onBind() 호출됨");
 
-            heart_Location.setText(item.getLocation());
+            Log.d(TAG, "item.getLocation : " + item.getLocation() + "\n편집 후 : " + editAddress(item.getLocation()));
+
+            heart_Location.setText(editAddress(item.getLocation()));
 
             Glide.with(context)
                     .load(item.getPostImage())
@@ -114,6 +116,8 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
                         i.putExtra("postImage", item.getPostImage());
                         i.putExtra("writing", item.getWriting());
                         i.putExtra("dateCreated", item.getDateCreated());
+                        i.putExtra("whoLike", item.getWhoLike());
+                        i.putExtra("heartStatus", item.getHeartStatus());
 
                         context.startActivity(i);
 
@@ -131,6 +135,14 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
 
     } // ViewHolder
 
+    public String editAddress(String location) {
+
+        String[] address = location.split(" ");
+        String editAdrress = address[1] + " " + address[3];
+
+        return editAdrress;
+
+    }
 
 
 } // Heart_Adapter

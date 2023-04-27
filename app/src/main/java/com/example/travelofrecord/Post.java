@@ -54,6 +54,8 @@ public class Post extends AppCompatActivity {
     String post_PostImage;
     String post_Writing;
     String post_DateCreated;
+    String post_WhoLike;
+    boolean post_HeartStatus;
 
     String addComment;
     String accessNickname;
@@ -158,6 +160,9 @@ public class Post extends AppCompatActivity {
         post_PostImage = i.getStringExtra("postImage");
         post_Writing = i.getStringExtra("writing");
         post_DateCreated = i.getStringExtra("dateCreated");
+        post_WhoLike = i.getStringExtra("whoLike");
+        post_HeartStatus = i.getBooleanExtra("heartStatus", false);
+        Log.d(TAG, "heartStatus : " + post_HeartStatus);
 
         home = new Home();
 
@@ -188,6 +193,11 @@ public class Post extends AppCompatActivity {
         post_DateCreated_Text.setText(post_DateCreated);
         post_Writing_Text.setText(post_Writing);
 
+        if (post_HeartStatus) {
+            post_Heart_Iv.setVisibility(View.GONE);
+            post_HeartFull_Iv.setVisibility(View.VISIBLE);
+        }
+
         Glide.with(this)
                 .load(post_ProfileImage)
                 .into(post_ProfileImage_Iv);
@@ -212,10 +222,13 @@ public class Post extends AppCompatActivity {
                 addComment = post_Comment_Edit.getText().toString();
                 dateComment = getTime().toString();
 
-                Log.d(TAG, "postNum : " + post_Num + "\naccessProfileImage : " + accessProfileImage +
-                        "\naccessNickname : " + accessNickname + "\ndateComment : " + dateComment + "\naddComment : " + addComment);
+                Log.d(TAG, "postNum : " + post_Num + "\naccessProfileImage : " + accessProfileImage + "\naccessNickname : " + accessNickname +
+                        "\ndateComment : " + dateComment + "\naddComment : " + addComment + "\ncommentNum : " + post_CommentNum);
 
-                addComment(post_Num, accessProfileImage, accessNickname, dateComment, addComment);
+                post_CommentNum += 1;
+                post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
+
+                addComment(post_Num, accessProfileImage, accessNickname, dateComment, addComment, post_CommentNum);
 
                 post_Comment_Edit.setText("");
 
@@ -279,9 +292,9 @@ public class Post extends AppCompatActivity {
     } // lastTime()
 
 
-    public void addComment(int postNum, String profileImage, String whoComment, String dateComment, String comment) {
+    public void addComment(int postNum, String profileImage, String whoComment, String dateComment, String comment, int commentNum) {
 
-        Call<String> call = apiInterface.insertComment(postNum, profileImage, whoComment, dateComment, comment);
+        Call<String> call = apiInterface.insertComment(postNum, profileImage, whoComment, dateComment, comment, commentNum);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -305,6 +318,8 @@ public class Post extends AppCompatActivity {
         });
 
     } // addComment()
+
+
 
     public void getComment(int num) {
 

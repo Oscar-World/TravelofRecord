@@ -130,13 +130,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
 
             post_Nickname.setText(item.getNickname());
-
             post_HeartNum.setText(String.valueOf(item.getHeart()));
-
+            post_CommentNum.setText(String.valueOf(item.getCommentNum()));
             post_Location.setText(item.getLocation());
-
             post_Writing.setText(item.getWriting());
-
             post_DateCreated.setText(item.getDateCreated());
 
             post_ProfileImage.setClipToOutline(true);
@@ -260,6 +257,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                         i.putExtra("postImage", item.getPostImage());
                         i.putExtra("writing", item.getWriting());
                         i.putExtra("dateCreated", item.getDateCreated());
+                        i.putExtra("whoLike", item.getWhoLike());
+                        i.putExtra("heartStatus", item.getHeartStatus());
 
                         context.startActivity(i);
 

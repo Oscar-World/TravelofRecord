@@ -135,13 +135,22 @@ public interface ApiInterface {
             @Query("profileImage") String profileImage,
             @Query("whoComment") String whoComment,
             @Query("dateComment") String dateComment,
-            @Query("comment") String comment
+            @Query("comment") String comment,
+            @Query("commentNum") int commentNum
     );
 
     // 댓글 불러오기
     @GET("mysql_GetComment.php")
     Call<ArrayList<PostData>> getComment(
             @Query("postNum") int postNum
+    );
+
+    // 댓글 삭제하기
+    @GET("mysql_Comment_Delete.php")
+    Call<String> deleteComment(
+            @Query("whoComment") String whoComment,
+            @Query("dateComment") String dateComment,
+            @Query("commentNum") int commentNum
     );
 
 

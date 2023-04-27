@@ -111,6 +111,8 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
                         i.putExtra("postImage", item.getPostImage());
                         i.putExtra("writing", item.getWriting());
                         i.putExtra("dateCreated", item.getDateCreated());
+                        i.putExtra("whoLike", item.getWhoLike());
+                        i.putExtra("heartStatus", item.getHeartStatus());
 
                         context.startActivity(i);
 

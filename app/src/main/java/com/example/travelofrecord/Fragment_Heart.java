@@ -52,10 +52,18 @@ public class Fragment_Heart extends Fragment {
 
     int itemSize;
 
+    int post_Num;
+    String post_Nickname;
+    String post_ProfileImage;
+    int post_Heart;
+    int post_CommentNum;
+    String post_Location;
+    String post_PostImage;
+    String post_Writing;
+    String post_DateCreated;
+    String post_WhoLike;
+    boolean heartStatus;
 
-    String location;
-    String postImage;
-    String profileImage;
     String nowAddr;
     String addressHeart;
 
@@ -178,11 +186,24 @@ public class Fragment_Heart extends Fragment {
 
                         for (int i = 0; i < data.size(); i++) {
 
-                            postImage = data.get(i).getPostImage();
-                            location = data.get(i).getLocation();
-                            profileImage = data.get(i).getProfileImage();
+                            post_Num = data.get(i).getNum();
+                            post_Nickname = data.get(i).getNickname();
+                            post_ProfileImage = data.get(i).getProfileImage();
+                            post_Heart = data.get(i).getHeart();
+                            post_CommentNum = data.get(i).getCommentNum();
+                            post_Location = data.get(i).getLocation();
+                            post_PostImage = data.get(i).getPostImage();
+                            post_Writing = data.get(i).getWriting();
+                            post_DateCreated = data.get(i).getDateCreated();
+                            post_WhoLike = data.get(i).getWhoLike();
 
-                            String[] arrayLocation = location.split(" ");
+                            heartStatus = false;
+
+                            if (nickname.equals(post_WhoLike)) {
+                                heartStatus = true;
+                            }
+
+                            String[] arrayLocation = post_Location.split(" ");
                             latitude = Double.parseDouble(arrayLocation[0]);
                             longitude = Double.parseDouble(arrayLocation[1]);
 
@@ -194,7 +215,8 @@ public class Fragment_Heart extends Fragment {
 
                             pickMarker(latitude, longitude, i, addressHeart);
 
-                            PostData postData = new PostData(addressHeart,postImage);
+                            PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum,
+                                    addressHeart, post_PostImage, post_Writing, post_DateCreated, post_Num, post_WhoLike, heartStatus);
 
                             post_Data_ArrayList.add(0, postData);
 
@@ -239,7 +261,7 @@ public class Fragment_Heart extends Fragment {
 
         @Override
         public View getCalloutBalloon(MapPOIItem mapPOIItem) {
-            Log.d(TAG, "getCalloutBalloon - postImage : " + postImage);
+            Log.d(TAG, "getCalloutBalloon - postImage : " + post_PostImage);
 
             ((ImageView) calloutBalloon.findViewById(R.id.ballon_Image)).setImageResource(R.drawable.heartfull);
 
@@ -300,9 +322,9 @@ public class Fragment_Heart extends Fragment {
 
         String[] addressArray = location.split(" ");
 
-//        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
 
-        address = addressArray[2] + " " + addressArray[4];
+//        address = addressArray[2] + " " + addressArray[4];
 
         return address;
 

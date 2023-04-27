@@ -109,6 +109,8 @@ public class Fragment_myProfile extends Fragment {
     String post_PostImage;
     String post_Writing;
     String post_DateCreated;
+    String post_WhoLike;
+    boolean heartStatus;
 
     String nowAddr;
 
@@ -216,6 +218,7 @@ public class Fragment_myProfile extends Fragment {
                     profile_Image.setVisibility(View.GONE);
                     editProfile_Image.setVisibility(View.VISIBLE);
                     profileSelect_Layout.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.GONE);
                     touchImage_Image.setVisibility(View.VISIBLE);
 
                     drawerLayout.closeDrawer(drawerView);
@@ -245,6 +248,7 @@ public class Fragment_myProfile extends Fragment {
                     profile_Image.setVisibility(View.VISIBLE);
                     editProfile_Image.setVisibility(View.GONE);
                     profileSelect_Layout.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
                     touchImage_Image.setVisibility(View.GONE);
 
                     updateProfile(user_nickname,edit_memo, user_image);
@@ -420,6 +424,13 @@ public class Fragment_myProfile extends Fragment {
                             post_PostImage = data.get(i).getPostImage();
                             post_Writing = data.get(i).getWriting();
                             post_DateCreated = data.get(i).getDateCreated();
+                            post_WhoLike = data.get(i).getWhoLike();
+
+                            heartStatus = false;
+
+                            if (user_nickname.equals(post_WhoLike)) {
+                                heartStatus = true;
+                            }
 
                             String[] arrayLocation = post_Location.split(" ");
                             double latitude = Double.parseDouble(arrayLocation[0]);
@@ -441,7 +452,8 @@ public class Fragment_myProfile extends Fragment {
 //                            bundle.putInt("backPosition", 3);
 //                            adapter.setBundle(bundle);
 
-                            PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum, addressPost, post_PostImage, post_Writing, datePost);
+                            PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum,
+                                    addressPost, post_PostImage, post_Writing, datePost, post_Num, post_WhoLike, heartStatus);
                             post_Data_ArrayList.add(0, postData);
 
                         }

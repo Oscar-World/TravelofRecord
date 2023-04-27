@@ -17,7 +17,7 @@
             android:id="@+id/homeHead_Frame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -29,56 +29,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="홈"
-                android:textSize="28dp"
+                android:textSize="24dp"
                 android:layout_gravity="center|start"
                 android:layout_marginLeft="15dp"
                 />
-
-<!--            <Button-->
-<!--                android:id="@+id/homePhoto_Btn"-->
-<!--                android:layout_width="70dp"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:layout_marginRight="35dp"-->
-<!--                android:text="사진"-->
-<!--                android:textColor="@color/primary"-->
-<!--                android:backgroundTint="@color/main"-->
-<!--                android:visibility="gone"-->
-<!--                />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/homePhoto_Block"-->
-<!--                android:layout_width="70dp"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:layout_marginRight="35dp"-->
-<!--                android:text="사진"-->
-<!--                android:backgroundTint="@color/primary"-->
-<!--                android:visibility="visible"-->
-<!--                />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/homeMap_Btn"-->
-<!--                android:layout_width="70dp"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:layout_marginLeft="35dp"-->
-<!--                android:text="지도"-->
-<!--                android:textColor="@color/primary"-->
-<!--                android:backgroundTint="@color/main"-->
-<!--                android:visibility="visible"-->
-<!--                />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/homeMap_Block"-->
-<!--                android:layout_width="70dp"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:layout_marginLeft="35dp"-->
-<!--                android:text="지도"-->
-<!--                android:backgroundTint="@color/primary"-->
-<!--                android:visibility="gone"-->
-<!--                />-->
 
         </FrameLayout>
 
@@ -86,7 +40,7 @@
             android:id="@+id/home_SwipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="8"
+            android:layout_weight="8.2"
             >
 
             <androidx.recyclerview.widget.RecyclerView

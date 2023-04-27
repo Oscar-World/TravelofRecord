@@ -17,12 +17,17 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHolder> {
 
     String TAG = "댓글 어댑터";
 
     ArrayList<PostData> postData;
     Context context;
+    Post post;
 
     @Override
     public Comment_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -51,8 +56,8 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount() 호출됨");
-        Log.d(TAG, "리스트 사이즈 : " + postData.size());
+//        Log.d(TAG, "getItemCount() 호출됨");
+//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
 
         return postData.size();
 
@@ -66,6 +71,8 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         TextView comment_CommentText;
         ImageButton comment_MenuBtn;
 
+        ApiInterface apiInterface;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -75,6 +82,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
             comment_CommentText = itemView.findViewById(R.id.commnet_commentText);
             comment_MenuBtn = itemView.findViewById(R.id.comment_menuBtn);
 
+            post = new Post();
 
         }
 
@@ -93,7 +101,10 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                 @Override
                 public void onClick(View view) {
 
+                    Log.d(TAG, "item.getWhoComment : " + item.getWhoComment() + "\nitem.dateComment : " + item.dateComment +
+                            "\npost_CommentNum : " + post.post_CommentNum + "\nitem.postNum : " + item.postNum);
 
+//                    deleteComment(item.getWhoComment(), item.dateComment, post.post_CommentNum, item.postNum);
 
                 }
             });
@@ -101,7 +112,29 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
         } // onBind
 
+        public void deleteComment(String whoComment, String dateComment, int commentNum, int postNum) {
 
+            apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+            Call<String> call = apiInterface.deleteComment(whoComment, dateComment, commentNum);
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.d(TAG, "deleteComment onResponse");
+                    if (response.isSuccessful()) {
+
+                        post.getComment(postNum);
+
+                    }
+                    Log.d(TAG, "responseFail");
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.d(TAG, "deleteComent onFailure : " + t);
+                }
+            });
+
+        }
 
     } // ViewHolder
 
