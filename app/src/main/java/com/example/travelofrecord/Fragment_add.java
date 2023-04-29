@@ -26,6 +26,8 @@ import androidx.loader.content.CursorLoader;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -62,6 +65,7 @@ public class Fragment_add extends Fragment {
     EditText writing_Edit;
     ImageView postImage_Iv;
     FrameLayout writing_Layout;
+    TextView writingCount_Text;
 
     File file;
 
@@ -333,6 +337,27 @@ public class Fragment_add extends Fragment {
             }
         });
 
+        writing_Edit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                int writingCount = writing_Edit.getText().toString().length();
+                Log.d(TAG, "writingLength : " + writingCount);
+                writingCount_Text.setText(String.valueOf(writingCount) + "/100");
+
+            }
+        });
+
 
     } // onStart()
 
@@ -377,6 +402,7 @@ public class Fragment_add extends Fragment {
         writing_Edit = v.findViewById(R.id.writing_Edit);
         postImage_Iv = v.findViewById(R.id.postImage_Iv);
         writing_Layout = v.findViewById(R.id.writing_FrameLayout);
+        writingCount_Text = v.findViewById(R.id.writingCount_Text);
 
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
