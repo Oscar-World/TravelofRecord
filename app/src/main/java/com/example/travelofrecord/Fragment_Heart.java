@@ -21,7 +21,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import net.daum.android.map.MapViewEventListener;
 import net.daum.mf.map.api.CalloutBalloonAdapter;
+import net.daum.mf.map.api.CameraUpdate;
+import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
@@ -151,8 +154,88 @@ public class Fragment_Heart extends Fragment {
             }
         });
 
+        mapView.setMapViewEventListener(new MapViewEventListener() {
+            @Override
+            public void onLoadMapView() {
 
-    }
+
+
+            }
+        });
+
+        mapView.setMapViewEventListener(new MapView.MapViewEventListener() {
+            @Override
+            public void onMapViewInitialized(MapView mapView) {
+
+            }
+
+            @Override
+            public void onMapViewCenterPointMoved(MapView mapView, MapPoint mapPoint) {
+
+            }
+
+            @Override
+            public void onMapViewZoomLevelChanged(MapView mapView, int i) {
+
+            }
+
+            @Override
+            public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
+
+            }
+
+            @Override
+            public void onMapViewDoubleTapped(MapView mapView, MapPoint mapPoint) {
+
+            }
+
+            @Override
+            public void onMapViewLongPressed(MapView mapView, MapPoint mapPoint) {
+
+            }
+
+            @Override
+            public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
+
+            }
+
+            @Override
+            public void onMapViewDragEnded(MapView mapView, MapPoint mapPoint) {
+
+            }
+
+            @Override
+            public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
+
+            }
+        });
+
+        mapView.setPOIItemEventListener(new MapView.POIItemEventListener() {
+            @Override
+            public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
+                mapView.setMapCenterPoint(mapPOIItem.getMapPoint(), true);
+                mapView.setZoomLevel(5,true);
+
+            }
+
+            @Override
+            public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+
+            }
+
+            @Override
+            public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+
+            }
+
+            @Override
+            public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+
+            }
+        });
+
+
+    } // onStart()
 
     public void pickMarker(double lat, double log, int i, String address) {
 
@@ -232,8 +315,6 @@ public class Fragment_Heart extends Fragment {
 
                         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude),true);
                         mapView.setZoomLevel(10,true);
-                        mapView.zoomIn(true);
-                        mapView.zoomOut(true);
 
                     }
 
