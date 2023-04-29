@@ -118,11 +118,11 @@ public class Fragment_myProfile extends Fragment {
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG, "onAttach()");
+        Log.d(TAG, "onAttach() 호출");
     }
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate()");
+        Log.d(TAG, "onCreate() 호출");
 
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -167,7 +167,7 @@ public class Fragment_myProfile extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_my_profile, container, false);
 
-        Log.d(TAG, "onCreateView()");
+        Log.d(TAG, "onCreateView() 호출");
 
         setView();
 
@@ -175,20 +175,15 @@ public class Fragment_myProfile extends Fragment {
 
     }
 
-
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated()");
-    }
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated()");
+        Log.d(TAG, "onViewCreated() 호출");
 
         getMyPost(user_nickname);
 
     }
     @Override public void onStart() {
-        Log.d(TAG, "onStart()");
+        Log.d(TAG, "onStart() 호출");
         super.onStart();
 
         // 햄버거 버튼
@@ -658,23 +653,23 @@ public class Fragment_myProfile extends Fragment {
 
 
     @Override public void onResume() {
-        Log.d(TAG, "onResume()");
+        Log.d(TAG, "onResume() 호출");
         super.onResume();
     }
     @Override public void onPause() {
-        Log.d(TAG, "onPause()");
+        Log.d(TAG, "onPause() 호출");
         super.onPause();
     }
     @Override public void onStop() {
-        Log.d(TAG, "onStop()");
+        Log.d(TAG, "onStop() 호출");
         super.onStop();
     }
     @Override public void onDestroyView() {
-        Log.d(TAG, "onDestroyView()");
+        Log.d(TAG, "onDestroyView() 호출");
         super.onDestroyView();
     }
     @Override public void onDetach() {
-        Log.d(TAG, "onDetach()");
+        Log.d(TAG, "onDetach() 호출");
         super.onDetach();
     }
 

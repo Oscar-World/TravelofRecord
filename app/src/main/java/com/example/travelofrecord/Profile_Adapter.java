@@ -65,8 +65,8 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
     // 리사이클러뷰 리스트 사이즈를 불러옴
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount() 호출됨");
-        Log.d(TAG, "리스트 사이즈 : " + postData.size());
+//        Log.d(TAG, "getItemCount() 호출됨");
+//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
 
         return postData.size();
 

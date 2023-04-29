@@ -117,6 +117,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             nickname = sharedPreferences.getString("nickname","");
             bundle = new Bundle();
 
+            linearLayout = itemView.findViewById(R.id.post_LinearLayout);
+
 
         }
 
@@ -239,7 +241,21 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 }
             });
 
-            post_PostImage.setOnClickListener(new View.OnClickListener() {
+            post_ProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, "프로필로 이동 예정", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            post_Nickname.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, "프로필로 이동 예정", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 

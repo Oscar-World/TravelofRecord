@@ -122,7 +122,7 @@ public class Fragment_add extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG, "onAttach()");
+        Log.d(TAG, "onAttach() 호출");
 
         homeActivity = (Home) getActivity();
 
@@ -131,7 +131,7 @@ public class Fragment_add extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate()");
+        Log.d(TAG, "onCreate() 호출");
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -155,7 +155,7 @@ public class Fragment_add extends Fragment {
                     }
                 });
 
-    }
+    } // onCreate()
 
 
     // ImageFile 생성 후, 경로를 가져올 메서드 선언
@@ -202,10 +202,11 @@ public class Fragment_add extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView() 호출");
         v = inflater.inflate(R.layout.fragment_add, container, false);
+        setView();
 
         return v;
-
     }
 
 
@@ -218,24 +219,17 @@ public class Fragment_add extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated()");
-
-        postImage = null;
+        Log.d(TAG, "onViewCreated() 호출");
 
     }
 
     @Override
     public void onStart() {
-        Log.d(TAG, "onStart()");
+        Log.d(TAG, "onStart() 호출");
         super.onStart();
 
-        setView();
-
-        Log.d(TAG, "postImage : " + postImage);
-        if (postImage == null) {
-            writing_Edit.setText("");
-        }
-
+        postImage = null;
+        writing_Edit.setText("");
 
         // 위치 권한 확인
         int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
@@ -364,32 +358,32 @@ public class Fragment_add extends Fragment {
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume()");
+        Log.d(TAG, "onResume() 호출");
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        Log.d(TAG, "onPause()");
+        Log.d(TAG, "onPause() 호출");
         super.onPause();
 //        immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     @Override
     public void onStop() {
-        Log.d(TAG, "onStop()");
+        Log.d(TAG, "onStop() 호출");
         super.onStop();
     }
 
     @Override
     public void onDestroyView() {
-        Log.d(TAG, "onDestroyView()");
+        Log.d(TAG, "onDestroyView() 호출");
         super.onDestroyView();
     }
 
     @Override
     public void onDetach() {
-        Log.d(TAG, "onDetach()");
+        Log.d(TAG, "onDetach() 호출");
         super.onDetach();
 
         homeActivity = null;
