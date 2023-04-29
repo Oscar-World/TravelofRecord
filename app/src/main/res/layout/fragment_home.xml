@@ -43,11 +43,33 @@
             android:layout_weight="8.2"
             >
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_RecyclerView"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/home_RecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    />
+
+                <TextView
+                    android:id="@+id/internetCheck_Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="인터넷 연결을 확인해주세요."
+                    android:textSize="20dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    />
+
+            </FrameLayout>
+
+
+
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -41,6 +43,7 @@ public class Fragment_Home extends Fragment {
 //    private Button map_Block;
 
     RecyclerView recyclerView;
+    TextView internetText;
 
     ArrayList<PostData> post_Data_ArrayList;
     int itemSize;
@@ -94,7 +97,17 @@ public class Fragment_Home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출됨");
 
-        getPost();
+        int status = NetworkStatus.getConnectivityStatus(getActivity());
+        Log.d(TAG, "NetworkStatus : " + status);
+        if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+            internetText.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            getPost();
+        }else {
+            internetText.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+        }
 
     }
     @Override public void onStart() {
@@ -105,11 +118,23 @@ public class Fragment_Home extends Fragment {
             @Override
             public void onRefresh() {
 
-                post_Data_ArrayList = new ArrayList<>();
-                adapter.setItemPost(post_Data_ArrayList);
-                getPost();
+                int status = NetworkStatus.getConnectivityStatus(getActivity());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                    internetText.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    post_Data_ArrayList = new ArrayList<>();
+                    adapter.setItemPost(post_Data_ArrayList);
+                    getPost();
 
-                swipeRefreshLayout.setRefreshing(false);
+                    swipeRefreshLayout.setRefreshing(false);
+                }else {
+                    internetText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+
+                    swipeRefreshLayout.setRefreshing(false);
+                }
 
             }
         });
@@ -297,6 +322,7 @@ public class Fragment_Home extends Fragment {
 //        photo_Block = v.findViewById(R.id.homePhoto_Block);
 //        map_Block = v.findViewById(R.id.homeMap_Block);
 
+        internetText = v.findViewById(R.id.internetCheck_Text);
         recyclerView = v.findViewById(R.id.home_RecyclerView);
         adapter = new Home_Adapter();
 
