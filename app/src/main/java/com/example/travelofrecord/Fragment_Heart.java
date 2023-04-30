@@ -23,8 +23,10 @@ import android.widget.Toast;
 
 import net.daum.android.map.MapViewEventListener;
 import net.daum.mf.map.api.CalloutBalloonAdapter;
+import net.daum.mf.map.api.CameraPosition;
 import net.daum.mf.map.api.CameraUpdate;
 import net.daum.mf.map.api.CameraUpdateFactory;
+import net.daum.mf.map.api.CancelableCallback;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
@@ -38,7 +40,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Fragment_Heart extends Fragment {
+public class Fragment_Heart extends Fragment implements MapView.MapViewEventListener, MapView.POIItemEventListener {
 
     String TAG = "하트 프래그먼트";
 
@@ -79,6 +81,7 @@ public class Fragment_Heart extends Fragment {
     FrameLayout map_FrameLayout;
     MapView mapView;
     ViewGroup mapViewContainer;
+    MapView.POIItemEventListener poiItemEventListener;
 
 
 
@@ -115,8 +118,6 @@ public class Fragment_Heart extends Fragment {
         getHeart(nickname);
 
     }
-
-
 
 
     @Override
@@ -163,59 +164,11 @@ public class Fragment_Heart extends Fragment {
             }
         });
 
-        mapView.setMapViewEventListener(new MapView.MapViewEventListener() {
-            @Override
-            public void onMapViewInitialized(MapView mapView) {
-
-            }
-
-            @Override
-            public void onMapViewCenterPointMoved(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewZoomLevelChanged(MapView mapView, int i) {
-
-            }
-
-            @Override
-            public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewDoubleTapped(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewLongPressed(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewDragEnded(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
-
-            }
-        });
-
-        mapView.setPOIItemEventListener(new MapView.POIItemEventListener() {
+        poiItemEventListener = new MapView.POIItemEventListener() {
             @Override
             public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
                 mapView.setMapCenterPoint(mapPOIItem.getMapPoint(), true);
                 mapView.setZoomLevel(5,true);
-
             }
 
             @Override
@@ -232,10 +185,12 @@ public class Fragment_Heart extends Fragment {
             public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
 
             }
-        });
+        };
 
 
     } // onStart()
+
+
 
     public void pickMarker(double lat, double log, int i, String address) {
 
@@ -331,6 +286,8 @@ public class Fragment_Heart extends Fragment {
         });
 
     } // getHeart()
+
+
 
 
     class CustomBalloonAdapter implements CalloutBalloonAdapter {
@@ -436,9 +393,79 @@ public class Fragment_Heart extends Fragment {
         mapView = new MapView(this.getActivity());
         mapViewContainer = (ViewGroup) v.findViewById(R.id.heart_MapView);
         mapViewContainer.addView(mapView);
+        mapView.setMapViewEventListener(this);
+        mapView.setPOIItemEventListener(this);
 //        mapView.setCalloutBalloonAdapter(new CustomBalloonAdapter());
 
     }
+
+    // MapView.MapViewEventListener
+    @Override
+    public void onMapViewInitialized(MapView mapView) {
+    }
+
+    @Override
+    public void onMapViewCenterPointMoved(MapView mapView, MapPoint mapPoint) {
+    }
+
+    @Override
+    public void onMapViewZoomLevelChanged(MapView mapView, int i) {
+    }
+
+    @Override
+    public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
+    }
+
+    @Override
+    public void onMapViewDoubleTapped(MapView mapView, MapPoint mapPoint) {
+    }
+
+    @Override
+    public void onMapViewLongPressed(MapView mapView, MapPoint mapPoint) {
+    }
+
+    @Override
+    public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
+    }
+
+    @Override
+    public void onMapViewDragEnded(MapView mapView, MapPoint mapPoint) {
+    }
+
+    @Override
+    public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
+    }
+
+
+    // MapView.POIItemEventListener
+    @Override
+    public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
+        CameraPosition cameraPosition = new CameraPosition(mapPOIItem.getMapPoint(), 3);
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, new CancelableCallback() {
+            @Override
+            public void onFinish() {
+                Toast.makeText(getActivity(),"이동 완료", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+    }
+
+    @Override
+    public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+    }
+
 
     @Override public void onResume() {
         Log.d(TAG, "onResume()");
