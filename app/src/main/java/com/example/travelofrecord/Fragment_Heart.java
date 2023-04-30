@@ -3,8 +3,11 @@ package com.example.travelofrecord;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -104,8 +108,6 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
 
         v = inflater.inflate(R.layout.fragment_heart, container, false);
 
-        setView();
-
         return v;
     }
 
@@ -113,9 +115,7 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated()");
-
         Log.d(TAG, "onViewCreated: " + nickname);
-        getHeart(nickname);
 
     }
 
@@ -124,6 +124,10 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
     public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
+
+        setView();
+        setMapView();
+        getHeart(nickname);
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,55 +159,7 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
             }
         });
 
-        mapView.setMapViewEventListener(new MapViewEventListener() {
-            @Override
-            public void onLoadMapView() {
-
-
-
-            }
-        });
-
-        poiItemEventListener = new MapView.POIItemEventListener() {
-            @Override
-            public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
-                mapView.setMapCenterPoint(mapPOIItem.getMapPoint(), true);
-                mapView.setZoomLevel(5,true);
-            }
-
-            @Override
-            public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
-
-            }
-
-            @Override
-            public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
-
-            }
-
-            @Override
-            public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
-
-            }
-        };
-
-
     } // onStart()
-
-
-
-    public void pickMarker(double lat, double log, int i, String address) {
-
-        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(lat, log);
-        MapPOIItem marker = new MapPOIItem();
-        marker.setItemName(address);
-        marker.setTag(i);
-        marker.setMapPoint(mapPoint);
-        marker.setMarkerType(MapPOIItem.MarkerType.RedPin); // 기본으로 제공하는 BluePin 마커 모양.
-        marker.setSelectedMarkerType(MapPOIItem.MarkerType.BluePin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-        mapView.addPOIItem(marker);
-
-    } // pickMaker()
 
 
     public void getHeart(String nickname) {
@@ -288,44 +244,6 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
     } // getHeart()
 
 
-
-
-    class CustomBalloonAdapter implements CalloutBalloonAdapter {
-        private final View calloutBalloon;
-
-        public CustomBalloonAdapter() {
-            calloutBalloon = getLayoutInflater().inflate(R.layout.custom_balloon,null);
-        }
-
-        @Override
-        public View getCalloutBalloon(MapPOIItem mapPOIItem) {
-            Log.d(TAG, "getCalloutBalloon - postImage : " + post_PostImage);
-
-            ((ImageView) calloutBalloon.findViewById(R.id.ballon_Image)).setImageResource(R.drawable.heartfull);
-
-//            ImageView imageView = calloutBalloon.findViewById(R.id.ballon_Image);
-//
-//            imageView.postData(new Runnable() {
-//                @Override
-//                public void run() {
-////                    Glide.with(requireActivity())
-////                            .load(postImage)
-////                            .into(imageView);
-//                    imageView.setImageResource(R.drawable.heartfull);
-//
-//                }
-//            });
-
-            return calloutBalloon;
-        }
-
-        @Override
-        public View getPressedCalloutBalloon(MapPOIItem mapPOIItem) {
-            return null;
-        }
-    } // CustomBalloonAdapter
-
-
     // Geocoder - 위도, 경도 사용해서 주소 구하기.
     public String getAddress(Context mContext, double lat, double lng) {
         nowAddr ="현재 위치를 확인 할 수 없습니다.";
@@ -390,18 +308,58 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
         nickname = sharedPreferences.getString("nickname","");
 
         map_FrameLayout = v.findViewById(R.id.heart_MapView);
+
+    }
+
+    class CustomBalloonAdapter implements CalloutBalloonAdapter {
+        private final View calloutBalloon;
+
+        public CustomBalloonAdapter() {
+            calloutBalloon = getLayoutInflater().inflate(R.layout.custom_balloon,null);
+
+        }
+
+        @Override
+        public View getCalloutBalloon(MapPOIItem mapPOIItem) {
+            ((ImageView) calloutBalloon.findViewById(R.id.ballon_Image)).setImageURI(Uri.parse(post_Data_ArrayList.get(2).postImage));
+
+            return calloutBalloon;
+        }
+
+        @Override
+        public View getPressedCalloutBalloon(MapPOIItem mapPOIItem) {
+            return null;
+        }
+    } // CustomBalloonAdapter
+
+    public void setMapView() {
         mapView = new MapView(this.getActivity());
         mapViewContainer = (ViewGroup) v.findViewById(R.id.heart_MapView);
         mapViewContainer.addView(mapView);
         mapView.setMapViewEventListener(this);
         mapView.setPOIItemEventListener(this);
-//        mapView.setCalloutBalloonAdapter(new CustomBalloonAdapter());
+        mapView.setCalloutBalloonAdapter(new CustomBalloonAdapter());
 
     }
+
+    public void pickMarker(double lat, double log, int i, String address) {
+        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(lat, log);
+        MapPOIItem marker = new MapPOIItem();
+        marker.setItemName(address);
+        marker.setTag(i);
+        marker.setMapPoint(mapPoint);
+        marker.setMarkerType(MapPOIItem.MarkerType.RedPin); // 기본으로 제공하는 BluePin 마커 모양.
+        marker.setSelectedMarkerType(MapPOIItem.MarkerType.BluePin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+        mapView.addPOIItem(marker);
+
+
+    } // pickMaker()
 
     // MapView.MapViewEventListener
     @Override
     public void onMapViewInitialized(MapView mapView) {
+        int a = mapView.getPOIItems().length;
+        Toast.makeText(getActivity(),String.valueOf(a),Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -410,6 +368,7 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
 
     @Override
     public void onMapViewZoomLevelChanged(MapView mapView, int i) {
+        Toast.makeText(getActivity(), "zoomLevel : " + i, Toast.LENGTH_SHORT).show();
     }
 
     @Override

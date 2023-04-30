@@ -331,6 +331,8 @@ public class Fragment_add extends Fragment {
             }
         });
 
+
+
         writing_Edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
