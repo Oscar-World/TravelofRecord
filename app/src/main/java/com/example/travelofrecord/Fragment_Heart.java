@@ -25,10 +25,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import net.daum.android.map.MapViewEventListener;
 import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.CameraPosition;
-import net.daum.mf.map.api.CameraUpdate;
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.CancelableCallback;
 import net.daum.mf.map.api.MapPOIItem;
@@ -37,6 +35,7 @@ import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,7 +43,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Fragment_Heart extends Fragment implements MapView.MapViewEventListener, MapView.POIItemEventListener {
+public class Fragment_Heart extends Fragment {
 
     String TAG = "하트 프래그먼트";
 
@@ -85,7 +84,8 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
     FrameLayout map_FrameLayout;
     MapView mapView;
     ViewGroup mapViewContainer;
-    MapView.POIItemEventListener poiItemEventListener;
+
+    MapPOIItem[] markerItem;
 
 
 
@@ -126,7 +126,7 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
         super.onStart();
 
         setView();
-        setMapView();
+//        setMapView();
         getHeart(nickname);
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +207,7 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
                             String currentLocation = getAddress(getContext(),latitude,longitude);
                             addressHeart = editAddress(currentLocation);
 
-                            pickMarker(latitude, longitude, i, addressHeart);
+//                            pickMarker(latitude, longitude, i, addressHeart);
 
                             PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum,
                                     addressHeart, post_PostImage, post_Writing, post_DateCreated, post_Num, post_WhoLike, heartStatus);
@@ -311,119 +311,6 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
 
     }
 
-    class CustomBalloonAdapter implements CalloutBalloonAdapter {
-        private final View calloutBalloon;
-
-        public CustomBalloonAdapter() {
-            calloutBalloon = getLayoutInflater().inflate(R.layout.custom_balloon,null);
-
-        }
-
-        @Override
-        public View getCalloutBalloon(MapPOIItem mapPOIItem) {
-            ((ImageView) calloutBalloon.findViewById(R.id.ballon_Image)).setImageURI(Uri.parse(post_Data_ArrayList.get(2).postImage));
-
-            return calloutBalloon;
-        }
-
-        @Override
-        public View getPressedCalloutBalloon(MapPOIItem mapPOIItem) {
-            return null;
-        }
-    } // CustomBalloonAdapter
-
-    public void setMapView() {
-        mapView = new MapView(this.getActivity());
-        mapViewContainer = (ViewGroup) v.findViewById(R.id.heart_MapView);
-        mapViewContainer.addView(mapView);
-        mapView.setMapViewEventListener(this);
-        mapView.setPOIItemEventListener(this);
-        mapView.setCalloutBalloonAdapter(new CustomBalloonAdapter());
-
-    }
-
-    public void pickMarker(double lat, double log, int i, String address) {
-        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(lat, log);
-        MapPOIItem marker = new MapPOIItem();
-        marker.setItemName(address);
-        marker.setTag(i);
-        marker.setMapPoint(mapPoint);
-        marker.setMarkerType(MapPOIItem.MarkerType.RedPin); // 기본으로 제공하는 BluePin 마커 모양.
-        marker.setSelectedMarkerType(MapPOIItem.MarkerType.BluePin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-        mapView.addPOIItem(marker);
-
-
-    } // pickMaker()
-
-    // MapView.MapViewEventListener
-    @Override
-    public void onMapViewInitialized(MapView mapView) {
-        int a = mapView.getPOIItems().length;
-        Toast.makeText(getActivity(),String.valueOf(a),Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onMapViewCenterPointMoved(MapView mapView, MapPoint mapPoint) {
-    }
-
-    @Override
-    public void onMapViewZoomLevelChanged(MapView mapView, int i) {
-        Toast.makeText(getActivity(), "zoomLevel : " + i, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
-    }
-
-    @Override
-    public void onMapViewDoubleTapped(MapView mapView, MapPoint mapPoint) {
-    }
-
-    @Override
-    public void onMapViewLongPressed(MapView mapView, MapPoint mapPoint) {
-    }
-
-    @Override
-    public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
-    }
-
-    @Override
-    public void onMapViewDragEnded(MapView mapView, MapPoint mapPoint) {
-    }
-
-    @Override
-    public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
-    }
-
-
-    // MapView.POIItemEventListener
-    @Override
-    public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
-        CameraPosition cameraPosition = new CameraPosition(mapPOIItem.getMapPoint(), 3);
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, new CancelableCallback() {
-            @Override
-            public void onFinish() {
-                Toast.makeText(getActivity(),"이동 완료", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-        });
-    }
-
-    @Override
-    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
-    }
-
-    @Override
-    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
-    }
-
-    @Override
-    public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
-    }
 
 
     @Override public void onResume() {
@@ -437,7 +324,7 @@ public class Fragment_Heart extends Fragment implements MapView.MapViewEventList
     @Override public void onStop() {
         Log.d(TAG, "onStop()");
         super.onStop();
-        mapViewContainer.removeView(mapView);
+
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView()");
