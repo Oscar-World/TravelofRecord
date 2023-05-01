@@ -10,6 +10,7 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -25,13 +26,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.naver.maps.map.MapView;
+
 import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.CameraPosition;
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.CancelableCallback;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
-import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,12 +83,7 @@ public class Fragment_Heart extends Fragment {
     SharedPreferences sharedPreferences;
     String nickname;
 
-    FrameLayout map_FrameLayout;
     MapView mapView;
-    ViewGroup mapViewContainer;
-
-    MapPOIItem[] markerItem;
-
 
 
     @Override
@@ -115,7 +112,8 @@ public class Fragment_Heart extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated()");
-        Log.d(TAG, "onViewCreated: " + nickname);
+        mapView = view.findViewById(R.id.map_view);
+        mapView.onCreate(savedInstanceState);
 
     }
 
@@ -124,6 +122,7 @@ public class Fragment_Heart extends Fragment {
     public void onStart() {
         Log.d(TAG, "onStart()");
         super.onStart();
+        mapView.onStart();
 
         setView();
 //        setMapView();
@@ -139,8 +138,7 @@ public class Fragment_Heart extends Fragment {
                 map_Block.setVisibility(View.GONE);
 
                 recyclerView.setVisibility(View.VISIBLE);
-                map_FrameLayout.setVisibility(View.GONE);
-
+                mapView.setVisibility(View.GONE);
             }
         });
 
@@ -154,7 +152,7 @@ public class Fragment_Heart extends Fragment {
                 photo_Block.setVisibility(View.GONE);
 
                 recyclerView.setVisibility(View.GONE);
-                map_FrameLayout.setVisibility(View.VISIBLE);
+                mapView.setVisibility(View.VISIBLE);
 
             }
         });
@@ -223,9 +221,6 @@ public class Fragment_Heart extends Fragment {
 
                         Log.d(TAG, "latitude : " + latitude);
                         Log.d(TAG, "longitude : " + longitude);
-
-                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude),true);
-                        mapView.setZoomLevel(10,true);
 
                     }
 
@@ -306,8 +301,7 @@ public class Fragment_Heart extends Fragment {
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보",Context.MODE_PRIVATE);
         nickname = sharedPreferences.getString("nickname","");
-
-        map_FrameLayout = v.findViewById(R.id.heart_MapView);
+        
 
     }
 
@@ -316,23 +310,36 @@ public class Fragment_Heart extends Fragment {
     @Override public void onResume() {
         Log.d(TAG, "onResume()");
         super.onResume();
+        mapView.onResume();
     }
     @Override public void onPause() {
         Log.d(TAG, "onPause()");
         super.onPause();
+        mapView.onPause();
+    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
     @Override public void onStop() {
         Log.d(TAG, "onStop()");
         super.onStop();
-
+        mapView.onStop();
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView()");
         super.onDestroyView();
+        mapView.onDestroy();
     }
     @Override public void onDetach() {
         Log.d(TAG, "onDetach()");
         super.onDetach();
+    }
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
 }

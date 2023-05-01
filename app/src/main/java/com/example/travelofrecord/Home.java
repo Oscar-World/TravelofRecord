@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kakao.sdk.user.UserApiClient;
+import com.naver.maps.map.MapFragment;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,6 +53,7 @@ public class Home extends AppCompatActivity {
     Fragment_Heart fragment_heart;
     Fragment_add fragment_add;
     Fragment_myProfile fragment_myProfile;
+    Fragment_Map fragment_map;
 
     LinearLayout homeFootLayout;
     FrameLayout homeBodyLayout;
@@ -221,6 +223,7 @@ public class Home extends AppCompatActivity {
         fragment_heart = new Fragment_Heart();
         fragment_add = new Fragment_add();
         fragment_myProfile = new Fragment_myProfile();
+        fragment_map = new Fragment_Map();
 
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
@@ -240,16 +243,12 @@ public class Home extends AppCompatActivity {
 
         if (index == 0) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_home).commitAllowingStateLoss();
-            homeFootLayout.setVisibility(View.VISIBLE);
         } else if (index == 1) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_heart).commitAllowingStateLoss();
-            homeFootLayout.setVisibility(View.VISIBLE);
         } else if (index == 2) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_add).commitAllowingStateLoss();
-            homeFootLayout.setVisibility(View.VISIBLE);
         } else if (index == 3) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_myProfile).commitAllowingStateLoss();
-            homeFootLayout.setVisibility(View.VISIBLE);
         }
 
     }

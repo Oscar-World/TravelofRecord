@@ -21,6 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelOfRecord"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="fgl129utnc" />
+
         <activity
             android:name=".Post"
             android:exported="false"

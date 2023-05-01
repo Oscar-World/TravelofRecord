@@ -81,6 +81,14 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     // 아래로 당겨서 새로고침
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    // 네이버 지도 SDK
+    implementation ('com.naver.maps:map-sdk:3.16.2') {
+        exclude group: 'com.android.support'
+    }
+
+//    implementation 'com.naver.maps:map-sdk:3.16.2'
+
 
 }
