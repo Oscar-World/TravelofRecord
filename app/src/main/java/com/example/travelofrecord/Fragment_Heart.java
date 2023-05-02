@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PointF;
 import android.graphics.drawable.Icon;
 import android.location.Address;
 import android.location.Geocoder;
@@ -34,17 +35,23 @@ import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.Align;
+import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.overlay.Overlay;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ted.gun0912.clustering.clustering.TedClusterItem;
+import ted.gun0912.clustering.geometry.TedLatLng;
+import ted.gun0912.clustering.naver.TedNaverClustering;
 
 public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
@@ -87,6 +94,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     MapView mapView;
     NaverMap naverMap;
+//    InfoWindow infoWindow;
 
     @Override
     public void onAttach(Context context) {
@@ -230,13 +238,19 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         naverMap.setMaxZoom(17);
         naverMap.setMinZoom(5);
 
-        CameraPosition cameraPosition = new CameraPosition(new LatLng(33.38, 126.55),9);
+        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 9);
         naverMap.setCameraPosition(cameraPosition);
 
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setScaleBarEnabled(false);
         uiSettings.setZoomControlEnabled(false);
         uiSettings.setLogoClickEnabled(false);
+
+        addMarker();
+
+    }
+
+    public void addMarker() {
 
         if (data.size() > 0) {
             for (int i=0; i < data.size(); i++) {
@@ -250,23 +264,52 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 String currentLocation = getAddress(getContext(),latitude,longitude);
                 addressHeart = editAddress2(currentLocation);
 
-                addMarker(latitude, longitude, i, addressHeart);
+                setMarker(latitude, longitude, i, addressHeart);
             }
         }
 
     }
 
-    public void addMarker(double lat, double lng, int i, String addressHeart) {
+    public void setMarker(double lat, double lng, int i, String addressHeart) {
 
         Marker marker = new Marker();
         marker.setPosition(new LatLng(lat,lng));
-        marker.setTag(i);
-        marker.setCaptionText(addressHeart);
-        marker.setCaptionAligns(Align.Top);
-        marker.setCaptionMinZoom(12);
-        marker.setCaptionOffset(10);
-        
+        marker.setTag(addressHeart);
+//        marker.setCaptionText(addressHeart);
+//        marker.setCaptionAligns(Align.Top);
+//        marker.setCaptionMinZoom(11);
+//        marker.setCaptionOffset(10);
+
         marker.setMap(naverMap);
+
+        setInfoWindow(marker);
+
+    }
+
+    public void setInfoWindow(Marker marker) {
+
+        InfoWindow infoWindow = new InfoWindow();
+        infoWindow.setAdapter(new InfoWindow.DefaultTextAdapter(getActivity()) {
+            @NonNull
+            @Override
+            public CharSequence getText(@NonNull InfoWindow infoWindow) {
+                return marker.getTag().toString();
+            }
+        });
+
+        marker.setOnClickListener(new Overlay.OnClickListener() {
+            @Override
+            public boolean onClick(@NonNull Overlay overlay) {
+                if (marker.getInfoWindow() == null) {
+                    // 현재 마커에 정보 창이 열려있지 않을 경우 엶
+                    infoWindow.open(marker);
+                } else {
+                    // 이미 현재 마커에 정보 창이 열려있을 경우 닫음
+                    infoWindow.close();
+                }
+                return true;
+            }
+        });
 
     }
 
@@ -398,6 +441,5 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         return address;
 
     } // editAddress()
-
 
 }
