@@ -59,8 +59,8 @@ dependencies {
     implementation "com.kakao.sdk:v2-user:2.10.0"
 
     // 카카오 지도
-    implementation fileTree(includes: ['*.jar'], dir: 'jniLibs')
-    implementation files('libs/libDaumMapAndroid.jar')
+//    implementation fileTree(includes: ['*.jar'], dir: 'jniLibs')
+//    implementation files('libs/libDaumMapAndroid.jar')
 
     // 레트로핏
     implementation 'com.squareup.retrofit2:retrofit:2.6.4'
@@ -87,6 +87,9 @@ dependencies {
     implementation ('com.naver.maps:map-sdk:3.16.2') {
         exclude group: 'com.android.support'
     }
+
+    // 네이버지도 클러스터링
+    implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
 
 //    implementation 'com.naver.maps:map-sdk:3.16.2'
 

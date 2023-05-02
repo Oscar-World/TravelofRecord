@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -26,14 +27,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.naver.maps.geometry.LatLng;
+import com.naver.maps.map.CameraPosition;
 import com.naver.maps.map.MapView;
-
-import net.daum.mf.map.api.CalloutBalloonAdapter;
-import net.daum.mf.map.api.CameraPosition;
-import net.daum.mf.map.api.CameraUpdateFactory;
-import net.daum.mf.map.api.CancelableCallback;
-import net.daum.mf.map.api.MapPOIItem;
-import net.daum.mf.map.api.MapPoint;
+import com.naver.maps.map.NaverMap;
+import com.naver.maps.map.OnMapReadyCallback;
+import com.naver.maps.map.UiSettings;
+import com.naver.maps.map.overlay.Align;
+import com.naver.maps.map.overlay.Marker;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Fragment_Heart extends Fragment {
+public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     String TAG = "하트 프래그먼트";
 
@@ -59,6 +60,7 @@ public class Fragment_Heart extends Fragment {
     RecyclerView recyclerView;
     ArrayList<PostData> post_Data_ArrayList;
     Heart_Adapter adapter;
+    ArrayList<PostData> data;
 
     int itemSize;
 
@@ -84,49 +86,105 @@ public class Fragment_Heart extends Fragment {
     String nickname;
 
     MapView mapView;
-
+    NaverMap naverMap;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG, "onAttach()");
+        Log.d(TAG, "onAttach() 호출");
     }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate()");
+        Log.d(TAG, "onCreate() 호출");
     }
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView() 호출");
         v = inflater.inflate(R.layout.fragment_heart, container, false);
-
         return v;
     }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated()");
+        Log.d(TAG, "onViewCreated() 호출");
         mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
-
+        mapView.getMapAsync(this);
     }
-
-
     @Override
     public void onStart() {
-        Log.d(TAG, "onStart()");
+        Log.d(TAG, "onStart() 호출");
         super.onStart();
         mapView.onStart();
 
+        setVariable();
         setView();
-//        setMapView();
         getHeart(nickname);
+
+    }
+    @Override public void onResume() {
+        Log.d(TAG, "onResume() 호출");
+        super.onResume();
+        mapView.onResume();
+    }
+    @Override public void onPause() {
+        Log.d(TAG, "onPause() 호출");
+        super.onPause();
+        mapView.onPause();
+    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+    @Override public void onStop() {
+        Log.d(TAG, "onStop() 호출");
+        super.onStop();
+        mapView.onStop();
+    }
+    @Override public void onDestroyView() {
+        Log.d(TAG, "onDestroyView() 호출");
+        super.onDestroyView();
+        mapView.onDestroy();
+    }
+    @Override public void onDetach() {
+        Log.d(TAG, "onDetach() 호출");
+        super.onDetach();
+    }
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+
+    // ----------------------------------------------------------------------------------------------------------
+
+
+    public void setVariable() {
+
+        photo_Btn = v.findViewById(R.id.heartPhoto_Btn);
+        map_Btn = v.findViewById(R.id.heartMap_Btn);
+        photo_Block = v.findViewById(R.id.heartPhoto_Block);
+        map_Block = v.findViewById(R.id.heartMap_Block);
+
+        recyclerView = v.findViewById(R.id.heart_RecyclerView);
+        adapter = new Heart_Adapter();
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
+
+        post_Data_ArrayList = new ArrayList<>();
+
+        adapter.setItemHeart(post_Data_ArrayList);
+
+        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보",Context.MODE_PRIVATE);
+        nickname = sharedPreferences.getString("nickname","");
+
+    }
+
+    public void setView() {
 
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,7 +215,60 @@ public class Fragment_Heart extends Fragment {
             }
         });
 
-    } // onStart()
+    } //setView()
+
+
+    // -------------------------------------------------------------------------------------------------------
+
+
+    @Override
+    public void onMapReady(@NonNull NaverMap naverMap) {
+        Log.d(TAG, "onMapReady() 호출");
+
+        this.naverMap = naverMap;
+
+        naverMap.setMaxZoom(17);
+        naverMap.setMinZoom(5);
+
+        CameraPosition cameraPosition = new CameraPosition(new LatLng(33.38, 126.55),9);
+        naverMap.setCameraPosition(cameraPosition);
+
+        UiSettings uiSettings = naverMap.getUiSettings();
+        uiSettings.setScaleBarEnabled(false);
+        uiSettings.setZoomControlEnabled(false);
+        uiSettings.setLogoClickEnabled(false);
+
+        if (data.size() > 0) {
+            for (int i=0; i < data.size(); i++) {
+
+                post_Location = data.get(i).getLocation();
+
+                String[] arrayLocation = post_Location.split(" ");
+                latitude = Double.parseDouble(arrayLocation[0]);
+                longitude = Double.parseDouble(arrayLocation[1]);
+
+                String currentLocation = getAddress(getContext(),latitude,longitude);
+                addressHeart = editAddress2(currentLocation);
+
+                addMarker(latitude, longitude, i, addressHeart);
+            }
+        }
+
+    }
+
+    public void addMarker(double lat, double lng, int i, String addressHeart) {
+
+        Marker marker = new Marker();
+        marker.setPosition(new LatLng(lat,lng));
+        marker.setTag(i);
+        marker.setCaptionText(addressHeart);
+        marker.setCaptionAligns(Align.Top);
+        marker.setCaptionMinZoom(12);
+        marker.setCaptionOffset(10);
+        
+        marker.setMap(naverMap);
+
+    }
 
 
     public void getHeart(String nickname) {
@@ -169,8 +280,8 @@ public class Fragment_Heart extends Fragment {
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
 
                 if (response.isSuccessful()) {
-
-                    ArrayList<PostData> data = response.body();
+                    Log.d(TAG, "onResponse 호출");
+                    data = response.body();
 
                     Log.d(TAG, "data.size : " + data.size());
 
@@ -203,9 +314,7 @@ public class Fragment_Heart extends Fragment {
                             Log.d(TAG, "getHeart - longitude : " + longitude);
 
                             String currentLocation = getAddress(getContext(),latitude,longitude);
-                            addressHeart = editAddress(currentLocation);
-
-//                            pickMarker(latitude, longitude, i, addressHeart);
+                            addressHeart = editAddress4(currentLocation);
 
                             PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum,
                                     addressHeart, post_PostImage, post_Writing, post_DateCreated, post_Num, post_WhoLike, heartStatus);
@@ -264,82 +373,31 @@ public class Fragment_Heart extends Fragment {
             e.printStackTrace();
         }
         return nowAddr;
+
     } // getAddress
 
 
-    public String editAddress(String location) {
+    public String editAddress4(String location) {
 
         String address = null;
-
         String[] addressArray = location.split(" ");
-
         address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
-
 //        address = addressArray[2] + " " + addressArray[4];
 
         return address;
 
-    }
+    } // editAddress()
 
-    @SuppressLint("CutPasteId")
-    public void setView() {
+    public String editAddress2(String location) {
 
-        photo_Btn = v.findViewById(R.id.heartPhoto_Btn);
-        map_Btn = v.findViewById(R.id.heartMap_Btn);
-        photo_Block = v.findViewById(R.id.heartPhoto_Block);
-        map_Block = v.findViewById(R.id.heartMap_Block);
+        String address = null;
+        String[] addressArray = location.split(" ");
+//        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+        address = addressArray[2] + " " + addressArray[4];
 
-        recyclerView = v.findViewById(R.id.heart_RecyclerView);
-        adapter = new Heart_Adapter();
+        return address;
 
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
+    } // editAddress()
 
-        post_Data_ArrayList = new ArrayList<>();
-
-        adapter.setItemHeart(post_Data_ArrayList);
-
-        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보",Context.MODE_PRIVATE);
-        nickname = sharedPreferences.getString("nickname","");
-        
-
-    }
-
-
-
-    @Override public void onResume() {
-        Log.d(TAG, "onResume()");
-        super.onResume();
-        mapView.onResume();
-    }
-    @Override public void onPause() {
-        Log.d(TAG, "onPause()");
-        super.onPause();
-        mapView.onPause();
-    }
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
-    @Override public void onStop() {
-        Log.d(TAG, "onStop()");
-        super.onStop();
-        mapView.onStop();
-    }
-    @Override public void onDestroyView() {
-        Log.d(TAG, "onDestroyView()");
-        super.onDestroyView();
-        mapView.onDestroy();
-    }
-    @Override public void onDetach() {
-        Log.d(TAG, "onDetach()");
-        super.onDetach();
-    }
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
-    }
 
 }

@@ -63,8 +63,8 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
     // 리사이클러뷰 리스트 사이즈를 불러옴
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount() 호출됨");
-        Log.d(TAG, "리스트 사이즈 : " + postData.size());
+//        Log.d(TAG, "getItemCount() 호출됨");
+//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
 
         return postData.size();
 

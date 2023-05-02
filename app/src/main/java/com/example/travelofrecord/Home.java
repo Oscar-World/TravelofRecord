@@ -53,7 +53,6 @@ public class Home extends AppCompatActivity {
     Fragment_Heart fragment_heart;
     Fragment_add fragment_add;
     Fragment_myProfile fragment_myProfile;
-    Fragment_Map fragment_map;
 
     LinearLayout homeFootLayout;
     FrameLayout homeBodyLayout;
@@ -223,7 +222,6 @@ public class Home extends AppCompatActivity {
         fragment_heart = new Fragment_Heart();
         fragment_add = new Fragment_add();
         fragment_myProfile = new Fragment_myProfile();
-        fragment_map = new Fragment_Map();
 
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
