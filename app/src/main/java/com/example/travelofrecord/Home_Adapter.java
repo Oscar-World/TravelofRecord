@@ -124,10 +124,13 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
         void onBind(PostData item) {
             Log.d(TAG, "onBind() 호출됨");
-
+            Log.d(TAG, "item.heartStatus : " + item.heartStatus);
             if (item.heartStatus) {
                 post_HeartFull.setVisibility(View.VISIBLE);
                 post_Heart.setVisibility(View.GONE);
+            } else {
+                post_HeartFull.setVisibility(View.GONE);
+                post_Heart.setVisibility(View.VISIBLE);
             }
 
 
@@ -199,6 +202,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
                         post_Heart.setVisibility(View.GONE);
                         post_HeartFull.setVisibility(View.VISIBLE);
+                        item.heartStatus = true;
 
                         Log.d(TAG, "누르기전 item.getHeart() : " + item.getHeart());
                         item.heart += 1;
@@ -225,6 +229,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
                         post_HeartFull.setVisibility(View.GONE);
                         post_Heart.setVisibility(View.VISIBLE);
+                        item.heartStatus = false;
 
                         Log.d(TAG, "누르기전 item.getHeart() : " + item.getHeart());
                         item.heart -= 1;

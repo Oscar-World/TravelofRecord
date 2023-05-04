@@ -243,7 +243,6 @@
 
         </ScrollView>
 
-
     </LinearLayout>
 
     <include layout="@layout/myprofile_drawer"/>

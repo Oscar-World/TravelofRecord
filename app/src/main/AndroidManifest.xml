@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelOfRecord"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".Profile"
+            android:exported="false" />
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"

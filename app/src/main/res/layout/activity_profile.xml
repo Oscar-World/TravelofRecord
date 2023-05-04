@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    tools:context=".Profile">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.8"
+        android:background="@color/main"
+        android:orientation="horizontal"
+        >
+
+        <ImageButton
+            android:id="@+id/profileBack_Btn"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:backgroundTint="@color/none"
+            android:scaleType="fitXY"
+            app:srcCompat="?attr/actionModeCloseDrawable" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/profileInfo_Btn"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:text="정보"
+            android:textColor="@color/primary"
+            android:backgroundTint="@color/main"
+            android:visibility="gone"
+            />
+
+        <Button
+            android:id="@+id/profileInfo_Block"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:text="정보"
+            android:backgroundTint="@color/primary"
+            android:visibility="visible"
+            />
+
+        <Button
+            android:id="@+id/profileMap_Btn"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:text="지도"
+            android:textColor="@color/primary"
+            android:backgroundTint="@color/main"
+            android:visibility="visible"
+            />
+
+        <Button
+            android:id="@+id/profileMap_Block"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:text="지도"
+            android:backgroundTint="@color/primary"
+            android:visibility="gone"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/profileDM_Btn"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:text="DM"
+            android:padding="0dp"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/primary"
+            android:background="@color/none"
+            />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9.2"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_Image"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/user"
+                app:civ_border_color="@color/primary"
+                app:civ_border_width="2dp"
+                app:civ_border_overlay="false"
+                />
+
+            <TextView
+                android:id="@+id/profile_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="닉네임"
+                android:textSize="22dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                />
+
+            <TextView
+                android:id="@+id/profile_memo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="상태 메시지"
+                android:textSize="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:textColor="#55000000"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@color/darkGray"
+                android:layout_marginTop="20dp"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/profile_RecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.naver.maps.map.MapView
+        android:id="@+id/profile_MapView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9.2"
+        android:visibility="gone"
+        />
+
+</LinearLayout>
