@@ -29,7 +29,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.naver.maps.geometry.LatLng;
+import com.naver.maps.geometry.LatLngBounds;
+import com.naver.maps.map.CameraAnimation;
 import com.naver.maps.map.CameraPosition;
+import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
@@ -234,6 +237,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         Log.d(TAG, "onMapReady() 호출");
 
         this.naverMap = naverMap;
+        naverMap.setExtent(new LatLngBounds(new LatLng(31.43, 122.37), new LatLng(44.35, 132)));
 
         naverMap.setMaxZoom(17);
         naverMap.setMinZoom(5);
@@ -307,6 +311,11 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                     // 이미 현재 마커에 정보 창이 열려있을 경우 닫음
                     infoWindow.close();
                 }
+
+                CameraPosition cameraPosition = new CameraPosition(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude), 12);
+                CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,2000);
+                naverMap.moveCamera(cameraUpdate);
+
                 return true;
             }
         });
