@@ -94,8 +94,6 @@ public class Post extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
 
-
-
     }
 
     @Override

@@ -686,7 +686,7 @@ public class Fragment_myProfile extends Fragment {
         editProfile_Image = v.findViewById(R.id.myProfileEdit_image);
         touchImage_Image = v.findViewById(R.id.myProfileTouchImage_Image);
 
-        profile_Text = v.findViewById(R.id.profileText);
+        profile_Text = v.findViewById(R.id.myProfile_Text);
         profile_nickname = v.findViewById(R.id.myProfile_nickname);
         profile_memo = v.findViewById(R.id.myProfile_memo);
         profile_Edit = v.findViewById(R.id.myProfile_Edit);
@@ -727,7 +727,7 @@ public class Fragment_myProfile extends Fragment {
                 .load(user_image)
                 .into(editProfile_Image);
 
-        recyclerView = v.findViewById(R.id.profile_RecyclerView);
+        recyclerView = v.findViewById(R.id.myProfile_RecyclerView);
         adapter = new Profile_Adapter();
 
         recyclerView.setAdapter(adapter);

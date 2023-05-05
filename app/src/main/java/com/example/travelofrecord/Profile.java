@@ -3,12 +3,19 @@ package com.example.travelofrecord;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Profile extends AppCompatActivity {
 
@@ -24,6 +31,12 @@ public class Profile extends AppCompatActivity {
     ImageView profileImage;
     ImageButton profileBackBtn;
     RecyclerView profileRecyclerView;
+
+    SharedPreferences sharedPreferences;
+
+    String getNickname;
+
+    ApiInterface apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +79,32 @@ public class Profile extends AppCompatActivity {
         Log.d(TAG, "onDestroy() 호출됨");
     }
 
+    public void getProfile(String nickname) {
+
+        Call<ArrayList<PostData>> call = apiInterface.getProfile(nickname);
+        call.enqueue(new Callback<ArrayList<PostData>>() {
+            @Override
+            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "getProfile onResponse");
+
+
+
+                } else {
+                    Log.d(TAG, "responseFail");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
+                Log.d(TAG, "getProfile onFailure");
+            }
+        });
+
+    }
+
     public void setVariable() {
 
         profileNicknameText = findViewById(R.id.profile_nickname);
@@ -79,6 +118,10 @@ public class Profile extends AppCompatActivity {
         profileBackBtn = findViewById(R.id.profileBack_Btn);
         profileRecyclerView = findViewById(R.id.profile_RecyclerView);
 
+        sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        getNickname = sharedPreferences.getString("nickname","");
+
+        apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
     }
 
     public void setView() {

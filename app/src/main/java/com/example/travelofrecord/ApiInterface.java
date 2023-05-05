@@ -153,5 +153,10 @@ public interface ApiInterface {
             @Query("commentNum") int commentNum
     );
 
+    @GET("mysql_GetProfileInfo.php")
+    Call<ArrayList<PostData>> getProfile(
+            @Query("nickname") String nickname
+    );
+
 
 }
