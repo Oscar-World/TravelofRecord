@@ -86,7 +86,7 @@ public interface ApiInterface {
     // 게시글 추가
     @GET("mysql_Post_Insert.php")
     Call<PostData> insertFeed(
-            @Query("nickname") String nickname,
+            @Query("postNickname") String postNickname,
             @Query("profileImage") String profileImage,
             @Query("heart") int heart,
             @Query("commentNum") int commentNum,
@@ -155,7 +155,7 @@ public interface ApiInterface {
 
     @GET("mysql_GetProfileInfo.php")
     Call<ArrayList<PostData>> getProfile(
-            @Query("nickname") String nickname
+            @Query("postNickname") String nickname
     );
 
 

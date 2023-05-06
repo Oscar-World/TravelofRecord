@@ -184,7 +184,7 @@ public class Fragment_Home extends Fragment {
 
                         for (int i = 0; i < data.size(); i++) {
                             num = data.get(i).getNum();
-                            nickname = data.get(i).getNickname();
+                            nickname = data.get(i).getPostNickname();
                             profileImage = data.get(i).getProfileImage();
                             heart = data.get(i).getHeart();
                             commentNum = data.get(i).getCommentNum();

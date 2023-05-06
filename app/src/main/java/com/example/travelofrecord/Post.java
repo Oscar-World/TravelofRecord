@@ -60,7 +60,7 @@ public class Post extends AppCompatActivity {
     String addComment;
     String accessNickname;
     String accessProfileImage;
-    String dateComment;
+    String addDateComment;
     SharedPreferences sharedPreferences;
 
     Home home;
@@ -207,8 +207,28 @@ public class Post extends AppCompatActivity {
         back_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 finish();
+            }
+        });
+
+        post_ProfileImage_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent(getApplicationContext(),Profile.class);
+                i.putExtra("nickname",post_Nickname);
+                startActivity(i);
+
+            }
+        });
+
+        post_Nickname_Text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent(getApplicationContext(),Profile.class);
+                i.putExtra("nickname",post_Nickname);
+                startActivity(i);
 
             }
         });
@@ -218,15 +238,15 @@ public class Post extends AppCompatActivity {
             public void onClick(View view) {
 
                 addComment = post_Comment_Edit.getText().toString();
-                dateComment = getTime().toString();
+                addDateComment = getTime().toString();
 
                 Log.d(TAG, "postNum : " + post_Num + "\naccessProfileImage : " + accessProfileImage + "\naccessNickname : " + accessNickname +
-                        "\ndateComment : " + dateComment + "\naddComment : " + addComment + "\ncommentNum : " + post_CommentNum);
+                        "\ndateComment : " + addDateComment + "\naddComment : " + addComment + "\ncommentNum : " + post_CommentNum);
 
                 post_CommentNum += 1;
                 post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
 
-                addComment(post_Num, accessProfileImage, accessNickname, dateComment, addComment, post_CommentNum);
+                addComment(post_Num, accessProfileImage, accessNickname, addDateComment, addComment, post_CommentNum);
 
                 post_Comment_Edit.setText("");
 

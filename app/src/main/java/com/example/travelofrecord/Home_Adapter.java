@@ -134,7 +134,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             }
 
 
-            post_Nickname.setText(item.getNickname());
+            post_Nickname.setText(item.getPostNickname());
             post_HeartNum.setText(String.valueOf(item.getHeart()));
             post_CommentNum.setText(String.valueOf(item.getCommentNum()));
             post_Location.setText(item.getLocation());
@@ -249,14 +249,22 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_ProfileImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, "프로필로 이동 예정", Toast.LENGTH_SHORT).show();
+
+                    Intent i = new Intent(context,Profile.class);
+                    i.putExtra("nickname", item.getPostNickname());
+                    context.startActivity(i);
+
                 }
             });
 
             post_Nickname.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, "프로필로 이동 예정", Toast.LENGTH_SHORT).show();
+
+                    Intent i = new Intent(context,Profile.class);
+                    i.putExtra("nickname", item.getPostNickname());
+                    context.startActivity(i);
+
                 }
             });
 
@@ -270,7 +278,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
                         Intent i = new Intent(context, Post.class);
                         i.putExtra("num", item.getNum());
-                        i.putExtra("nickname", item.getNickname());
+                        i.putExtra("nickname", item.getPostNickname());
                         i.putExtra("profileImage", item.getProfileImage());
                         i.putExtra("heart", item.getHeart());
                         i.putExtra("commentNum", item.getCommentNum());

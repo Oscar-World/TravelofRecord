@@ -97,7 +97,7 @@ public class Fragment_myProfile extends Fragment {
 
     RecyclerView recyclerView;
     ArrayList<PostData> post_Data_ArrayList;
-    Profile_Adapter adapter;
+    MyProfile_Adapter adapter;
     int itemSize;
 
     int post_Num;
@@ -111,8 +111,6 @@ public class Fragment_myProfile extends Fragment {
     String post_DateCreated;
     String post_WhoLike;
     boolean heartStatus;
-
-    String nowAddr;
 
     Bundle bundle;
 
@@ -411,7 +409,7 @@ public class Fragment_myProfile extends Fragment {
                         for (int i = 0; i < data.size(); i++) {
 
                             post_Num = data.get(i).getNum();
-                            post_Nickname = data.get(i).getNickname();
+                            post_Nickname = data.get(i).getPostNickname();
                             post_ProfileImage = data.get(i).getProfileImage();
                             post_Heart = data.get(i).getHeart();
                             post_CommentNum = data.get(i).getCommentNum();
@@ -579,7 +577,7 @@ public class Fragment_myProfile extends Fragment {
 
     // Geocoder - 위도, 경도 사용해서 주소 구하기.
     public String getAddress(Context mContext, double lat, double lng) {
-        nowAddr ="현재 위치를 확인 할 수 없습니다.";
+        String nowAddr ="현재 위치를 확인 할 수 없습니다.";
         Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
         List<Address> address;
 
@@ -598,7 +596,7 @@ public class Fragment_myProfile extends Fragment {
         }
         catch (IOException e)
         {
-            Toast.makeText(mContext, "주소를 가져 올 수 없습니다.", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
         return nowAddr;
@@ -728,14 +726,12 @@ public class Fragment_myProfile extends Fragment {
                 .into(editProfile_Image);
 
         recyclerView = v.findViewById(R.id.myProfile_RecyclerView);
-        adapter = new Profile_Adapter();
-
+        adapter = new MyProfile_Adapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
 
         post_Data_ArrayList = new ArrayList<>();
-
-        adapter.setItemHeart(post_Data_ArrayList);
+        adapter.setItemMyProfile(post_Data_ArrayList);
 
         bundle = new Bundle();
 

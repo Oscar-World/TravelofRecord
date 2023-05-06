@@ -268,13 +268,13 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 String currentLocation = getAddress(getContext(),latitude,longitude);
                 addressHeart = editAddress2(currentLocation);
 
-                setMarker(latitude, longitude, i, addressHeart);
+                setMarker(latitude, longitude, addressHeart);
             }
         }
 
-    }
+    } // addMarker()
 
-    public void setMarker(double lat, double lng, int i, String addressHeart) {
+    public void setMarker(double lat, double lng, String addressHeart) {
 
         Marker marker = new Marker();
         marker.setPosition(new LatLng(lat,lng));
@@ -288,7 +288,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
         setInfoWindow(marker);
 
-    }
+    } // setMarker()
 
     public void setInfoWindow(Marker marker) {
 
@@ -326,9 +326,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             }
         });
 
-
-
-    }
+    } // setInfoWindow()
 
 
     public void getHeart(String nickname) {
@@ -350,7 +348,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                         for (int i = 0; i < data.size(); i++) {
 
                             post_Num = data.get(i).getNum();
-                            post_Nickname = data.get(i).getNickname();
+                            post_Nickname = data.get(i).getPostNickname();
                             post_ProfileImage = data.get(i).getProfileImage();
                             post_Heart = data.get(i).getHeart();
                             post_CommentNum = data.get(i).getCommentNum();

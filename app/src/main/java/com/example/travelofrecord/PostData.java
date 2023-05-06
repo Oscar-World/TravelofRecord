@@ -12,7 +12,7 @@ public class PostData {
     @SerializedName("num") int num;
 
     @Expose
-    @SerializedName("nickname") String nickname;
+    @SerializedName("postNickname") String postNickname;
 
     @Expose
     @SerializedName("profileImage") String profileImage;
@@ -58,12 +58,21 @@ public class PostData {
 
     boolean heartStatus;
 
+    @Expose
+    @SerializedName("nickname") String nickname;
+
+    @Expose
+    @SerializedName("imagePath") String imagePath;
+
+    @Expose
+    @SerializedName("memo") String memo;
 
 
-    public PostData(int num, String nickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus) {
+
+    public PostData(int num, String postNickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus) {
 
         this.num = num;
-        this.nickname = nickname;
+        this.postNickname = postNickname;
         this.profileImage = profileImage;
         this.heart = heart;
         this.commentNum = commentNum;
@@ -84,10 +93,10 @@ public class PostData {
 
     }
 
-    public PostData(int num, String nickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated) {
+    public PostData(int num, String postNickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated) {
 
         this.num = num;
-        this.nickname = nickname;
+        this.postNickname = postNickname;
         this.profileImage = profileImage;
         this.heart = heart;
         this.commentNum = commentNum;
@@ -107,9 +116,28 @@ public class PostData {
 
     }
 
+    public PostData(String nickname, String imagePath, String memo, int num, String postNickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated) {
 
-    public String getNickname() {
-        return nickname;
+        this.nickname = nickname;
+        this.imagePath = imagePath;
+        this.memo = memo;
+        this.num = num;
+        this.postNickname = postNickname;
+        this.profileImage = profileImage;
+        this.heart = heart;
+        this.commentNum = commentNum;
+        this.location = location;
+        this.postImage = postImage;
+        this.writing = writing;
+        this.dateCreated = dateCreated;
+
+    }
+
+    public String getNickname() { return nickname; }
+    public String getImagePath() { return imagePath; }
+    public String getMemo() { return memo; }
+    public String getPostNickname() {
+        return postNickname;
     }
     public String getProfileImage() {
         return profileImage;
@@ -134,8 +162,11 @@ public class PostData {
     public int getCommentNum() { return commentNum; }
     public String getCommentProfileImage() { return commentProfileImage; }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setNickname(String nickname) { this.nickname = nickname; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+    public void setMemo(String memo) { this.memo = memo; }
+    public void setPostNickname(String postNickname) {
+        this.postNickname = postNickname;
     }
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;

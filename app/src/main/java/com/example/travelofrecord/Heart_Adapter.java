@@ -108,7 +108,7 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
 
                         Intent i = new Intent(context, Post.class);
                         i.putExtra("num", item.getNum());
-                        i.putExtra("nickname", item.getNickname());
+                        i.putExtra("nickname", item.getPostNickname());
                         i.putExtra("profileImage", item.getProfileImage());
                         i.putExtra("heart", item.getHeart());
                         i.putExtra("commentNum", item.getCommentNum());
