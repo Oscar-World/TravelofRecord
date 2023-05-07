@@ -13,14 +13,11 @@
         android:weightSum="9"
         >
 
-        <FrameLayout
-            android:id="@+id/heartHead_Frame"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.8"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:orientation="horizontal"
             android:background="@color/main"
             android:visibility="visible"
             >
@@ -34,13 +31,19 @@
                 android:layout_marginLeft="15dp"
                 />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
+
             <Button
                 android:id="@+id/heartPhoto_Btn"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
                 android:layout_gravity="center"
-                android:layout_marginRight="35dp"
                 android:text="피드"
+                android:padding="0dp"
                 android:textColor="@color/primary"
                 android:backgroundTint="@color/main"
                 android:visibility="gone"
@@ -48,22 +51,22 @@
 
             <Button
                 android:id="@+id/heartPhoto_Block"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
                 android:layout_gravity="center"
-                android:layout_marginRight="35dp"
                 android:text="피드"
+                android:padding="0dp"
                 android:backgroundTint="@color/primary"
                 android:visibility="visible"
                 />
 
             <Button
                 android:id="@+id/heartMap_Btn"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="35dp"
                 android:text="지도"
+                android:padding="0dp"
                 android:textColor="@color/primary"
                 android:backgroundTint="@color/main"
                 android:visibility="visible"
@@ -71,16 +74,22 @@
 
             <Button
                 android:id="@+id/heartMap_Block"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="35dp"
                 android:text="지도"
+                android:padding="0dp"
                 android:backgroundTint="@color/primary"
                 android:visibility="gone"
                 />
 
-        </FrameLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                />
+
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/noHeart_FrameLayout"

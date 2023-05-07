@@ -34,11 +34,13 @@ public class Home extends AppCompatActivity {
     ImageButton home_Btn;
     ImageButton heart_Btn;
     ImageButton add_Btn;
+    ImageButton dm_Btn;
     ImageButton myProfile_Btn;
 
     ImageButton homeFull_Btn;
     ImageButton heartFull_Btn;
     ImageButton addFull_Btn;
+    ImageButton dmFull_Btn;
     ImageButton myProfileFull_Btn;
 
     SharedPreferences sharedPreferences;
@@ -52,6 +54,7 @@ public class Home extends AppCompatActivity {
     Fragment_Home fragment_home;
     Fragment_Heart fragment_heart;
     Fragment_add fragment_add;
+    Fragment_Dm fragment_dm;
     Fragment_myProfile fragment_myProfile;
 
     LinearLayout homeFootLayout;
@@ -100,10 +103,12 @@ public class Home extends AppCompatActivity {
 
                     heart_Btn.setVisibility(View.VISIBLE);
                     add_Btn.setVisibility(View.VISIBLE);
+                    dm_Btn.setVisibility(View.VISIBLE);
                     myProfile_Btn.setVisibility(View.VISIBLE);
 
                     heartFull_Btn.setVisibility(View.GONE);
                     addFull_Btn.setVisibility(View.GONE);
+                    dmFull_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.GONE);
 
                 }else {
@@ -128,10 +133,12 @@ public class Home extends AppCompatActivity {
 
                     home_Btn.setVisibility(View.VISIBLE);
                     add_Btn.setVisibility(View.VISIBLE);
+                    dm_Btn.setVisibility(View.VISIBLE);
                     myProfile_Btn.setVisibility(View.VISIBLE);
 
                     homeFull_Btn.setVisibility(View.GONE);
                     addFull_Btn.setVisibility(View.GONE);
+                    dmFull_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.GONE);
 
                 }else {
@@ -156,10 +163,42 @@ public class Home extends AppCompatActivity {
 
                     home_Btn.setVisibility(View.VISIBLE);
                     heart_Btn.setVisibility(View.VISIBLE);
+                    dm_Btn.setVisibility(View.VISIBLE);
                     myProfile_Btn.setVisibility(View.VISIBLE);
 
                     homeFull_Btn.setVisibility(View.GONE);
                     heartFull_Btn.setVisibility(View.GONE);
+                    dmFull_Btn.setVisibility(View.GONE);
+                    myProfileFull_Btn.setVisibility(View.GONE);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        dm_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
+                Log.d(TAG, "NetworkStatus : " + status);
+                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+
+                    fragmentChange(3);
+
+                    dm_Btn.setVisibility(View.GONE);
+                    dmFull_Btn.setVisibility(View.VISIBLE);
+
+                    home_Btn.setVisibility(View.VISIBLE);
+                    heart_Btn.setVisibility(View.VISIBLE);
+                    add_Btn.setVisibility(View.VISIBLE);
+                    myProfile_Btn.setVisibility(View.VISIBLE);
+
+                    homeFull_Btn.setVisibility(View.GONE);
+                    heartFull_Btn.setVisibility(View.GONE);
+                    addFull_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.GONE);
 
                 }else {
@@ -177,7 +216,7 @@ public class Home extends AppCompatActivity {
                 Log.d(TAG, "NetworkStatus : " + status);
                 if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    fragmentChange(3);
+                    fragmentChange(4);
 
                     myProfile_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.VISIBLE);
@@ -185,10 +224,12 @@ public class Home extends AppCompatActivity {
                     home_Btn.setVisibility(View.VISIBLE);
                     heart_Btn.setVisibility(View.VISIBLE);
                     add_Btn.setVisibility(View.VISIBLE);
+                    dm_Btn.setVisibility(View.VISIBLE);
 
                     homeFull_Btn.setVisibility(View.GONE);
                     heartFull_Btn.setVisibility(View.GONE);
                     addFull_Btn.setVisibility(View.GONE);
+                    dmFull_Btn.setVisibility(View.GONE);
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -204,11 +245,13 @@ public class Home extends AppCompatActivity {
         home_Btn = findViewById(R.id.home_Btn);
         heart_Btn = findViewById(R.id.heart_Btn);
         add_Btn = findViewById(R.id.add_Btn);
+        dm_Btn = findViewById(R.id.dm_Btn);
         myProfile_Btn = findViewById(R.id.myProfile_Btn);
 
         homeFull_Btn = findViewById(R.id.homefull_Btn);
         heartFull_Btn = findViewById(R.id.heartfull_Btn);
         addFull_Btn = findViewById(R.id.addfull_Btn);
+        dmFull_Btn = findViewById(R.id.dmfull_Btn);
         myProfileFull_Btn = findViewById(R.id.myProfilefull_Btn);
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
@@ -221,6 +264,7 @@ public class Home extends AppCompatActivity {
         fragment_home = new Fragment_Home();
         fragment_heart = new Fragment_Heart();
         fragment_add = new Fragment_add();
+        fragment_dm = new Fragment_Dm();
         fragment_myProfile = new Fragment_myProfile();
 
         fragmentManager = getSupportFragmentManager();
@@ -246,6 +290,8 @@ public class Home extends AppCompatActivity {
         } else if (index == 2) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_add).commitAllowingStateLoss();
         } else if (index == 3) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_dm).commitAllowingStateLoss();
+        } else if (index == 4) {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_myProfile).commitAllowingStateLoss();
         }
 

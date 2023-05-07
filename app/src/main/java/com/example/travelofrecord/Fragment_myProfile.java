@@ -210,9 +210,12 @@ public class Fragment_myProfile extends Fragment {
                     editProfileSubmit_Btn.setVisibility(View.VISIBLE);
                     profile_Image.setVisibility(View.GONE);
                     editProfile_Image.setVisibility(View.VISIBLE);
-                    profileSelect_Layout.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.GONE);
                     touchImage_Image.setVisibility(View.VISIBLE);
+                    map_Btn.setVisibility(View.GONE);
+                    map_Block.setVisibility(View.GONE);
+                    photo_Btn.setVisibility(View.GONE);
+                    photo_Block.setVisibility(View.GONE);
 
                     drawerLayout.closeDrawer(drawerView);
 
@@ -240,9 +243,12 @@ public class Fragment_myProfile extends Fragment {
                     editProfileSubmit_Btn.setVisibility(View.GONE);
                     profile_Image.setVisibility(View.VISIBLE);
                     editProfile_Image.setVisibility(View.GONE);
-                    profileSelect_Layout.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);
                     touchImage_Image.setVisibility(View.GONE);
+                    map_Btn.setVisibility(View.VISIBLE);
+                    map_Block.setVisibility(View.VISIBLE);
+                    photo_Btn.setVisibility(View.VISIBLE);
+                    photo_Block.setVisibility(View.VISIBLE);
 
                     updateProfile(user_nickname,edit_memo, user_image);
 
@@ -308,7 +314,7 @@ public class Fragment_myProfile extends Fragment {
         });
 
 
-        // 피드 버튼
+        // 정보 버튼
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -321,6 +327,7 @@ public class Fragment_myProfile extends Fragment {
                     photo_Block.setVisibility(View.VISIBLE);
                     map_Btn.setVisibility(View.VISIBLE);
                     map_Block.setVisibility(View.GONE);
+                    drawer_Btn.setVisibility(View.VISIBLE);
 
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -343,6 +350,7 @@ public class Fragment_myProfile extends Fragment {
                     map_Block.setVisibility(View.VISIBLE);
                     photo_Btn.setVisibility(View.VISIBLE);
                     photo_Block.setVisibility(View.GONE);
+                    drawer_Btn.setVisibility(View.INVISIBLE);
 
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -673,7 +681,7 @@ public class Fragment_myProfile extends Fragment {
 
     public void setView() {
 
-        profileSelect_Layout = v.findViewById(R.id.myProfileSelect_Layout);
+//        profileSelect_Layout = v.findViewById(R.id.myProfileSelect_Layout);
         drawer_Btn = v.findViewById(R.id.myProfile_drawerBtn);
         logout_Btn = v.findViewById(R.id.logout_Btn);
         userQuit_Btn = v.findViewById(R.id.userQuit_Btn);

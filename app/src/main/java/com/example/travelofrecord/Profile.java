@@ -56,8 +56,8 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     Button profileInfoBlock;
     Button profileMapBtn;
     Button profileMapBlock;
-    Button profileDmBtn;
     ImageView profileImage;
+    ImageButton profileDmBtn;
     ImageButton profileBackBtn;
 
     String getNickname;

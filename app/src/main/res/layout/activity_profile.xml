@@ -35,10 +35,11 @@
 
         <Button
             android:id="@+id/profileInfo_Btn"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:text="정보"
+            android:padding="0dp"
             android:textColor="@color/primary"
             android:backgroundTint="@color/main"
             android:visibility="gone"
@@ -46,9 +47,10 @@
 
         <Button
             android:id="@+id/profileInfo_Block"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
+            android:padding="0dp"
             android:text="정보"
             android:backgroundTint="@color/primary"
             android:visibility="visible"
@@ -56,10 +58,11 @@
 
         <Button
             android:id="@+id/profileMap_Btn"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:text="지도"
+            android:padding="0dp"
             android:textColor="@color/primary"
             android:backgroundTint="@color/main"
             android:visibility="visible"
@@ -67,10 +70,11 @@
 
         <Button
             android:id="@+id/profileMap_Block"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:text="지도"
+            android:padding="0dp"
             android:backgroundTint="@color/primary"
             android:visibility="gone"
             />
@@ -81,12 +85,15 @@
             android:layout_weight="1"
             />
 
-        <Button
+        <ImageButton
             android:id="@+id/profileDM_Btn"
             android:layout_width="55dp"
-            android:layout_height="wrap_content"
-            android:text="DM"
-            android:padding="0dp"
+            android:layout_height="55dp"
+            android:padding="10dp"
+            android:src="@drawable/dm"
+            android:scaleType="fitCenter"
+            android:stateListAnimator="@null"
+            android:adjustViewBounds="true"
             android:layout_gravity="center_vertical"
             android:textColor="@color/primary"
             android:background="@color/none"

@@ -14,16 +14,12 @@
         android:weightSum="9"
         >
 
-        <FrameLayout
-            android:id="@+id/homeHead_Frame"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.8"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
             android:background="@color/main"
-            android:visibility="visible"
+            android:orientation="horizontal"
             >
 
             <TextView
@@ -32,8 +28,66 @@
                 android:layout_height="wrap_content"
                 android:text="프로필"
                 android:textSize="24dp"
-                android:layout_gravity="center|start"
+                android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
+                />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:id="@+id/myProfilePhoto_Btn"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:text="정보"
+                android:padding="0dp"
+                android:textColor="@color/primary"
+                android:backgroundTint="@color/main"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:id="@+id/myProfilePhoto_Block"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:text="정보"
+                android:padding="0dp"
+                android:backgroundTint="@color/primary"
+                android:visibility="visible"
+                />
+
+            <Button
+                android:id="@+id/myProfileMap_Btn"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:text="지도"
+                android:padding="0dp"
+                android:textColor="@color/primary"
+                android:backgroundTint="@color/main"
+                android:visibility="visible"
+                />
+
+            <Button
+                android:id="@+id/myProfileMap_Block"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
+                android:padding="0dp"
+                android:layout_gravity="center"
+                android:text="지도"
+                android:backgroundTint="@color/primary"
+                android:visibility="gone"
+                />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1.5"
                 />
 
             <Button
@@ -44,7 +98,7 @@
                 android:layout_gravity="center|end"
                 android:layout_marginRight="5dp"
                 android:textStyle="bold"
-                android:textSize="18dp"
+                android:textSize="17dp"
                 android:textColor="@color/primary"
                 android:background="@color/none"
                 android:visibility="gone"
@@ -62,7 +116,7 @@
                 app:srcCompat="@drawable/hamburger" />
 
 
-        </FrameLayout>
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -172,64 +226,10 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="10dp"
+                    android:layout_height="5dp"
                     android:background="@color/darkGray"
                     android:layout_marginTop="20dp"
                     />
-
-                <LinearLayout
-                    android:id="@+id/myProfileSelect_Layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:gravity="center"
-                    >
-
-                    <Button
-                        android:id="@+id/myProfilePhoto_Btn"
-                        android:layout_width="70dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:text="피드"
-                        android:textColor="@color/primary"
-                        android:backgroundTint="@color/main"
-                        android:visibility="gone"
-                        />
-
-                    <Button
-                        android:id="@+id/myProfilePhoto_Block"
-                        android:layout_width="70dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:text="피드"
-                        android:backgroundTint="@color/primary"
-                        android:visibility="visible"
-                        />
-
-                    <Button
-                        android:id="@+id/myProfileMap_Btn"
-                        android:layout_width="70dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:text="지도"
-                        android:textColor="@color/primary"
-                        android:backgroundTint="@color/main"
-                        android:visibility="visible"
-                        />
-
-                    <Button
-                        android:id="@+id/myProfileMap_Block"
-                        android:layout_width="70dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:text="지도"
-                        android:backgroundTint="@color/primary"
-                        android:visibility="gone"
-                        />
-
-                </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/myProfile_RecyclerView"
