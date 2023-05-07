@@ -1,19 +1,23 @@
 package com.example.travelofrecord;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.graphics.drawable.Icon;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +32,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.geometry.LatLngBounds;
 import com.naver.maps.map.CameraAnimation;
@@ -67,6 +74,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
     private Button photo_Block;
     private Button map_Block;
 
+    FrameLayout noHeartFrameLayout;
     RecyclerView recyclerView;
     ArrayList<PostData> post_Data_ArrayList;
     Heart_Adapter adapter;
@@ -89,15 +97,24 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
     String nowAddr;
     String addressHeart;
 
+    // 위치 정보 권한 상수
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
     double latitude;
     double longitude;
+    double currentLatitude;
+    double currentLongitude;
 
     SharedPreferences sharedPreferences;
     String nickname;
 
     MapView mapView;
     NaverMap naverMap;
-//    InfoWindow infoWindow;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     public void onAttach(Context context) {
@@ -180,6 +197,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         photo_Block = v.findViewById(R.id.heartPhoto_Block);
         map_Block = v.findViewById(R.id.heartMap_Block);
 
+        noHeartFrameLayout = v.findViewById(R.id.noHeart_FrameLayout);
         recyclerView = v.findViewById(R.id.heart_RecyclerView);
         adapter = new Heart_Adapter();
 
@@ -206,7 +224,14 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 map_Btn.setVisibility(View.VISIBLE);
                 map_Block.setVisibility(View.GONE);
 
-                recyclerView.setVisibility(View.VISIBLE);
+                if (post_Data_ArrayList.size() == 0) {
+                    noHeartFrameLayout.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    noHeartFrameLayout.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+
                 mapView.setVisibility(View.GONE);
             }
         });
@@ -220,9 +245,45 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 photo_Btn.setVisibility(View.VISIBLE);
                 photo_Block.setVisibility(View.GONE);
 
+                noHeartFrameLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
                 mapView.setVisibility(View.VISIBLE);
 
+            }
+        });
+
+        // 위치 권한 확인
+        int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int COARSE_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (LOCATION_PERMISSION != PackageManager.PERMISSION_GRANTED && COARSE_PERMISSION != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d(TAG, "위치 권한 없음");
+
+            ActivityCompat.requestPermissions(
+                    getActivity(),
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+            return;
+        } else {
+            Log.d(TAG, "위치 권한 있음");
+        }
+
+        // 현재 위치의 위도, 경도 확인
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+
+                    Log.d(TAG, "onSuccess: location - " + location + "\n위도 - " + location.getLatitude() + "\n경도 - " + location.getLongitude());
+                    currentLatitude = location.getLatitude();
+                    currentLongitude = location.getLongitude();
+
+                } else {
+                    Log.d(TAG, "location == null");
+                }
             }
         });
 
@@ -241,9 +302,14 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
         naverMap.setMaxZoom(17);
         naverMap.setMinZoom(5);
+        if (latitude == 0.0) {
+            CameraPosition cameraPosition = new CameraPosition(new LatLng(currentLatitude, currentLongitude), 6);
+            naverMap.setCameraPosition(cameraPosition);
+        } else {
+            CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 8);
+            naverMap.setCameraPosition(cameraPosition);
+        }
 
-        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 9);
-        naverMap.setCameraPosition(cameraPosition);
 
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setScaleBarEnabled(false);
@@ -386,9 +452,14 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
                         adapter.notifyDataSetChanged();
 
-                        Log.d(TAG, "latitude : " + latitude);
-                        Log.d(TAG, "longitude : " + longitude);
+                    }
 
+                    if (data.size() == 0) {
+                        noHeartFrameLayout.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        noHeartFrameLayout.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
                     }
 
                 } else {
@@ -444,7 +515,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
         return address;
 
-    } // editAddress()
+    } // editAddress4()
 
     public String editAddress2(String location) {
 
@@ -455,6 +526,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
         return address;
 
-    } // editAddress()
+    } // editAddress2()
+
+
 
 }

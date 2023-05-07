@@ -66,6 +66,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     RecyclerView profileRecyclerView;
     Profile_Adapter adapter;
     ArrayList<PostData> postData_ArrayList;
+    ArrayList<PostData> data;
 
     String user_Nickname;
     String user_ImagePath;
@@ -80,18 +81,19 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         Log.d(TAG, "onCreate() 호출됨");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-        setVariable();
-        setView();
-        getProfile(getNickname);
+        mapView = findViewById(R.id.profile_MapView);
         mapView.onCreate(savedInstanceState);
-
+        mapView.getMapAsync(this);
     }
     @Override
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
         mapView.onStart();
+
+        setVariable();
+        setView();
+        getProfile(getNickname);
     }
     @Override
     protected void onResume(){
@@ -147,6 +149,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         naverMap.setMaxZoom(17);
         naverMap.setMinZoom(5);
 
+        Log.d(TAG, "onMapReady: " + latitude + " " + longitude);
         CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 9);
         naverMap.setCameraPosition(cameraPosition);
 
@@ -163,17 +166,17 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
         if (data.size() > 0) {
             for (int i=0; i < data.size(); i++) {
+                Log.d(TAG, "datasize() : " + data.size());
+                String location = data.get(i).getLocation();
 
-                post_Location = data.get(i).getLocation();
+                String[] arrayLocation = location.split(" ");
+                double latitude = Double.parseDouble(arrayLocation[0]);
+                double longitude = Double.parseDouble(arrayLocation[1]);
 
-                String[] arrayLocation = post_Location.split(" ");
-                latitude = Double.parseDouble(arrayLocation[0]);
-                longitude = Double.parseDouble(arrayLocation[1]);
+                String currentLocation = getAddress(this,latitude,longitude);
+                String shortLocation = editAddress2(currentLocation);
 
-                String currentLocation = getAddress(getContext(),latitude,longitude);
-                addressHeart = editAddress2(currentLocation);
-
-                setMarker(latitude, longitude, addressHeart);
+                setMarker(latitude, longitude, shortLocation);
             }
         }
 
@@ -243,7 +246,8 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "getProfile onResponse");
 
-                    ArrayList<PostData> data = response.body();
+                    data = response.body();
+                    Log.d(TAG, "onResponse: " + data + " " + data.toString());
 
                     for (int i = 0; i < data.size(); i++) {
 
@@ -261,11 +265,11 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                         String dateCreated = data.get(i).getDateCreated();
 
                         String[] arrayLocation = location.split(" ");
-                        double latitude = Double.parseDouble(arrayLocation[0]);
-                        double longitude = Double.parseDouble(arrayLocation[1]);
+                        latitude = Double.parseDouble(arrayLocation[0]);
+                        longitude = Double.parseDouble(arrayLocation[1]);
 
                         String currentLocation = getAddress(getApplicationContext(),latitude,longitude);
-                        String addressPost = editAddress(currentLocation);
+                        String addressPost = editAddress4(currentLocation);
 
                         String datePost = lastTime(dateCreated);
 
@@ -274,7 +278,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                         postData_ArrayList.add(0, postData);
 
                     }
-
+                    Log.d(TAG, "nickname : " + user_Nickname + " memo : " + user_Memo);
                     profileNicknameText.setText(user_Nickname);
                     profileMemoText.setText(user_Memo);
 
@@ -325,7 +329,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     } // getAddress
 
 
-    public String editAddress(String location) {
+    public String editAddress4(String location) {
 
         String address = null;
 
@@ -337,7 +341,18 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
         return address;
 
-    } // editAddress()
+    } // editAddress4()
+
+    public String editAddress2(String location) {
+
+        String address = null;
+        String[] addressArray = location.split(" ");
+//        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+        address = addressArray[2] + " " + addressArray[4];
+
+        return address;
+
+    } // editAddress2()
 
     public String lastTime(String dateCreated) {
 
@@ -375,7 +390,6 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
     public void setVariable() {
 
-        mapView = findViewById(R.id.profile_MapView);
         profileScrollView = findViewById(R.id.profile_ScrollView);
         profileNicknameText = findViewById(R.id.profile_nickname);
         profileMemoText = findViewById(R.id.profile_memo);

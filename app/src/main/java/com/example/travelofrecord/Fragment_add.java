@@ -100,7 +100,7 @@ public class Fragment_add extends Fragment {
     InputMethodManager imm;
     InputMethodManager immhide;
 
-    // 위치 정보 권한
+    // 위치 정보 권한 상수
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -209,27 +209,18 @@ public class Fragment_add extends Fragment {
         return v;
     }
 
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated()");
-    }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출");
-
+        postImage = null;
+        writing_Edit.setText("");
     }
 
     @Override
     public void onStart() {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
-
-        postImage = null;
-        writing_Edit.setText("");
 
         // 위치 권한 확인
         int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);

@@ -26,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:weightSum="5"
         android:orientation="horizontal"
         android:background="@color/main"
         >
@@ -108,6 +109,34 @@
             android:backgroundTint="@color/main"
             android:stateListAnimator="@null"
             android:src="@drawable/sumfull"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:padding="18dp"
+            />
+
+        <ImageButton
+            android:id="@+id/dm_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="@color/main"
+            android:stateListAnimator="@null"
+            android:src="@drawable/dm"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:visibility="visible"
+            android:padding="18dp"
+            />
+
+        <ImageButton
+            android:id="@+id/dmfull_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="@color/main"
+            android:stateListAnimator="@null"
+            android:src="@drawable/dmfull"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"
