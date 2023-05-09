@@ -16,6 +16,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -33,11 +34,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kakao.sdk.user.UserApiClient;
+import com.naver.maps.map.MapView;
+import com.naver.maps.map.NaverMap;
+import com.naver.maps.map.OnMapReadyCallback;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +53,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Fragment_myProfile extends Fragment {
+public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     String TAG = "내 프로필 프래그먼트";
 
@@ -80,6 +85,8 @@ public class Fragment_myProfile extends Fragment {
     Button photo_Block;
     Button map_Btn;
     Button map_Block;
+
+    ScrollView scrollView;
 
     String edit_memo;
 
@@ -113,6 +120,9 @@ public class Fragment_myProfile extends Fragment {
     boolean heartStatus;
 
     Bundle bundle;
+
+    MapView mapView;
+    NaverMap naverMap;
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -176,13 +186,16 @@ public class Fragment_myProfile extends Fragment {
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출");
-
+        mapView = view.findViewById(R.id.myProfile_MapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
         getMyPost(user_nickname);
 
     }
     @Override public void onStart() {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
+        mapView.onStart();
 
         // 햄버거 버튼
         drawer_Btn.setOnClickListener(new View.OnClickListener() {
@@ -329,6 +342,9 @@ public class Fragment_myProfile extends Fragment {
                     map_Block.setVisibility(View.GONE);
                     drawer_Btn.setVisibility(View.VISIBLE);
 
+                    mapView.setVisibility(View.GONE);
+                    scrollView.setVisibility(View.VISIBLE);
+
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -351,6 +367,9 @@ public class Fragment_myProfile extends Fragment {
                     photo_Btn.setVisibility(View.VISIBLE);
                     photo_Block.setVisibility(View.GONE);
                     drawer_Btn.setVisibility(View.INVISIBLE);
+
+                    scrollView.setVisibility(View.GONE);
+                    mapView.setVisibility(View.VISIBLE);
 
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -397,6 +416,13 @@ public class Fragment_myProfile extends Fragment {
         cursor.close();
         return  result;
     }
+
+
+    @Override
+    public void onMapReady(@NonNull NaverMap naverMap) {
+
+    }
+
 
     public void getMyPost(String nickname) {
 
@@ -661,22 +687,36 @@ public class Fragment_myProfile extends Fragment {
     @Override public void onResume() {
         Log.d(TAG, "onResume() 호출");
         super.onResume();
+        mapView.onResume();
     }
     @Override public void onPause() {
         Log.d(TAG, "onPause() 호출");
         super.onPause();
+        mapView.onPause();
+    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출");
         super.onStop();
+        mapView.onStop();
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출");
         super.onDestroyView();
+        mapView.onDestroy();
     }
     @Override public void onDetach() {
         Log.d(TAG, "onDetach() 호출");
         super.onDetach();
+    }
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     public void setView() {
