@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.PointF;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -40,9 +41,18 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kakao.sdk.user.UserApiClient;
+import com.naver.maps.geometry.LatLng;
+import com.naver.maps.geometry.LatLngBounds;
+import com.naver.maps.map.CameraAnimation;
+import com.naver.maps.map.CameraPosition;
+import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
+import com.naver.maps.map.UiSettings;
+import com.naver.maps.map.overlay.InfoWindow;
+import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.overlay.Overlay;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,6 +116,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     ArrayList<PostData> post_Data_ArrayList;
     MyProfile_Adapter adapter;
     int itemSize;
+    ArrayList<PostData> data;
 
     int post_Num;
     String post_Nickname;
@@ -118,6 +129,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     String post_DateCreated;
     String post_WhoLike;
     boolean heartStatus;
+
+    double latitude;
+    double longitude;
 
     Bundle bundle;
 
@@ -174,13 +188,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_my_profile, container, false);
-
         Log.d(TAG, "onCreateView() 호출");
 
-        setView();
-
         return v;
-
     }
 
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -189,13 +199,14 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         mapView = view.findViewById(R.id.myProfile_MapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-        getMyPost(user_nickname);
 
     }
     @Override public void onStart() {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
         mapView.onStart();
+        setView();
+        getMyPost(user_nickname);
 
         // 햄버거 버튼
         drawer_Btn.setOnClickListener(new View.OnClickListener() {
@@ -259,8 +270,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     recyclerView.setVisibility(View.VISIBLE);
                     touchImage_Image.setVisibility(View.GONE);
                     map_Btn.setVisibility(View.VISIBLE);
-                    map_Block.setVisibility(View.VISIBLE);
-                    photo_Btn.setVisibility(View.VISIBLE);
+                    map_Block.setVisibility(View.GONE);
+                    photo_Btn.setVisibility(View.GONE);
                     photo_Block.setVisibility(View.VISIBLE);
 
                     updateProfile(user_nickname,edit_memo, user_image);
@@ -403,7 +414,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         });
 
 
-    }
+    } // onStart()
 
     //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
     String getRealPathFromUri(Uri uri){
@@ -420,8 +431,101 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
+        Log.d(TAG, "onMapReady() 호출");
+
+        this.naverMap = naverMap;
+        naverMap.setExtent(new LatLngBounds(new LatLng(31.43, 122.37), new LatLng(44.35, 132)));
+
+        naverMap.setMaxZoom(17);
+        naverMap.setMinZoom(5);
+
+        Log.d(TAG, "onMapReady: " + latitude + " " + longitude);
+        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 9);
+        naverMap.setCameraPosition(cameraPosition);
+
+        UiSettings uiSettings = naverMap.getUiSettings();
+        uiSettings.setScaleBarEnabled(false);
+        uiSettings.setZoomControlEnabled(false);
+        uiSettings.setLogoClickEnabled(false);
+
+        addMarker();
 
     }
+
+
+    public void addMarker() {
+
+        if (data.size() > 0) {
+            for (int i=0; i < data.size(); i++) {
+                Log.d(TAG, "datasize() : " + data.size());
+                String location = data.get(i).getLocation();
+
+                String[] arrayLocation = location.split(" ");
+                double latitude = Double.parseDouble(arrayLocation[0]);
+                double longitude = Double.parseDouble(arrayLocation[1]);
+
+                String currentLocation = getAddress(getActivity(),latitude,longitude);
+                String shortLocation = editAddress2(currentLocation);
+
+                setMarker(latitude, longitude, shortLocation);
+            }
+        }
+
+    } // addMarker()
+
+    public void setMarker(double lat, double lng, String addressHeart) {
+
+        Marker marker = new Marker();
+        marker.setPosition(new LatLng(lat,lng));
+        marker.setTag(addressHeart);
+//        marker.setCaptionText(addressHeart);
+//        marker.setCaptionAligns(Align.Top);
+//        marker.setCaptionMinZoom(11);
+//        marker.setCaptionOffset(10);
+
+        marker.setMap(naverMap);
+
+        setInfoWindow(marker);
+
+    } // setMarker()
+
+    public void setInfoWindow(Marker marker) {
+
+        InfoWindow infoWindow = new InfoWindow();
+        infoWindow.setAdapter(new InfoWindow.DefaultTextAdapter(getActivity()) {
+            @NonNull
+            @Override
+            public CharSequence getText(@NonNull InfoWindow infoWindow) {
+                return marker.getTag().toString();
+            }
+        });
+
+        marker.setOnClickListener(new Overlay.OnClickListener() {
+            @Override
+            public boolean onClick(@NonNull Overlay overlay) {
+                if (marker.getInfoWindow() == null) {
+                    // 현재 마커에 정보 창이 열려있지 않을 경우 엶
+                    infoWindow.open(marker);
+                } else {
+                    // 이미 현재 마커에 정보 창이 열려있을 경우 닫음
+                    infoWindow.close();
+                }
+
+                CameraPosition cameraPosition = new CameraPosition(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude), 12);
+                CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,2000);
+                naverMap.moveCamera(cameraUpdate);
+
+                return true;
+            }
+        });
+        naverMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(@NonNull PointF pointF, @NonNull LatLng latLng) {
+
+            }
+        });
+
+    } // setInfoWindow()
 
 
     public void getMyPost(String nickname) {
@@ -434,7 +538,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                 if (response.isSuccessful()) {
 
-                    ArrayList<PostData> data = response.body();
+                    data = response.body();
 
                     Log.d(TAG, "data.size : " + data.size());
 
@@ -460,24 +564,13 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                             }
 
                             String[] arrayLocation = post_Location.split(" ");
-                            double latitude = Double.parseDouble(arrayLocation[0]);
-                            double longitude = Double.parseDouble(arrayLocation[1]);
+                            latitude = Double.parseDouble(arrayLocation[0]);
+                            longitude = Double.parseDouble(arrayLocation[1]);
 
                             String currentLocation = getAddress(getContext(),latitude,longitude);
-                            String addressPost = editAddress(currentLocation);
+                            String addressPost = editAddress4(currentLocation);
 
                             String datePost = lastTime(post_DateCreated);
-
-//                            bundle.putInt("num", post_Num);
-//                            bundle.putString("nickname", post_Nickname);
-//                            bundle.putString("profileImage", post_ProfileImage);
-//                            bundle.putInt("heart", post_Heart);
-//                            bundle.putString("location", addressPost);
-//                            bundle.putString("postImage", post_PostImage);
-//                            bundle.putString("writing", post_Writing);
-//                            bundle.putString("dateCreated", post_DateCreated);
-//                            bundle.putInt("backPosition", 3);
-//                            adapter.setBundle(bundle);
 
                             PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum,
                                     addressPost, post_PostImage, post_Writing, datePost, post_Num, post_WhoLike, heartStatus);
@@ -637,7 +730,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     } // getAddress
 
 
-    public String editAddress(String location) {
+    public String editAddress4(String location) {
 
         String address = null;
 
@@ -649,7 +742,20 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
         return address;
 
-    } // editAddress()
+    } // editAddress4()
+
+    public String editAddress2(String location) {
+
+        String address = null;
+        String[] addressArray = location.split(" ");
+//        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+        address = addressArray[2] + " " + addressArray[4];
+
+        return address;
+
+    } // editAddress2()
+
+
 
     public String lastTime(String dateCreated) {
 
@@ -721,6 +827,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     public void setView() {
 
+        scrollView = v.findViewById(R.id.myProfile_ScrollView);
 //        profileSelect_Layout = v.findViewById(R.id.myProfileSelect_Layout);
         drawer_Btn = v.findViewById(R.id.myProfile_drawerBtn);
         logout_Btn = v.findViewById(R.id.logout_Btn);
