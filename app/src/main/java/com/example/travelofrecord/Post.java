@@ -262,6 +262,15 @@ public class Post extends AppCompatActivity {
             }
         });
 
+        post_Comment_Iv.setFocusableInTouchMode(true);
+        recyclerView.setFocusableInTouchMode(true);
+        post_Comment_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recyclerView.requestFocus();
+            }
+        });
+
 
     } // setView()
 
