@@ -518,12 +518,6 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                 return true;
             }
         });
-        naverMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(@NonNull PointF pointF, @NonNull LatLng latLng) {
-
-            }
-        });
 
     } // setInfoWindow()
 

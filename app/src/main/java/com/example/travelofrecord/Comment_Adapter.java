@@ -1,6 +1,8 @@
 package com.example.travelofrecord;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -73,6 +75,9 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
         ApiInterface apiInterface;
 
+        SharedPreferences sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
+        String currentNickname = sharedPreferences.getString("nickname","");
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -96,6 +101,32 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
             Glide.with(context)
                     .load(item.getCommentProfileImage())
                     .into(comment_ProfileImage);
+
+            comment_ProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (!currentNickname.equals(item.getWhoComment())) {
+                        Intent intent = new Intent(context, Profile.class);
+                        intent.putExtra("nickname",item.getWhoComment());
+                        context.startActivity(intent);
+                    }
+
+                }
+            });
+
+            comment_NicknameText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (!currentNickname.equals(item.getWhoComment())) {
+                        Intent intent = new Intent(context, Profile.class);
+                        intent.putExtra("nickname",item.getWhoComment());
+                        context.startActivity(intent);
+                    }
+
+                }
+            });
 
             comment_MenuBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
