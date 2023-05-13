@@ -271,6 +271,33 @@ public class Post extends AppCompatActivity {
             }
         });
 
+        post_Heart_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                post_Heart_Iv.setVisibility(View.GONE);
+                post_HeartFull_Iv.setVisibility(View.VISIBLE);
+                post_Heart += 1;
+                post_HeartNum_Text.setText(String.valueOf(post_Heart));
+
+                insertWhoLike(post_Num, accessNickname, post_Heart);
+
+            }
+        });
+
+        post_HeartFull_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                post_HeartFull_Iv.setVisibility(View.GONE);
+                post_Heart_Iv.setVisibility(View.VISIBLE);
+                post_Heart -= 1;
+                post_HeartNum_Text.setText(String.valueOf(post_Heart));
+
+                deleteWhoLike(post_Num, accessNickname, post_Heart);
+
+            }
+        });
 
     } // setView()
 
@@ -317,6 +344,60 @@ public class Post extends AppCompatActivity {
         return msg;
 
     } // lastTime()
+
+    public void insertWhoLike(int postNum, String whoLike, int heart) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<PostData> call = apiInterface.insertWhoLike(postNum, whoLike, heart);
+        call.enqueue(new Callback<PostData>() {
+            @Override
+            public void onResponse(Call<PostData> call, Response<PostData> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "insertWhoLike_Response 성공");
+
+                    int rp_postNum = response.body().getPostNum();
+                    String rp_whoLike = response.body().getWhoLike();
+
+                    Log.d(TAG, "저장된 데이터 -\nrp_num : " + rp_postNum + "\nrp_heart : " + rp_whoLike);
+
+                } else {
+                    Log.d(TAG, "insertWhoLike_Response 실패");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<PostData> call, Throwable t) {
+                Log.d(TAG, "onFailure: 실패 " + t);
+            }
+        });
+
+    } // insertWhoLike
+
+    public void deleteWhoLike(int postNum, String whoLike, int heart) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<PostData> call = apiInterface.deleteWhoLike(postNum, whoLike, heart);
+        call.enqueue(new Callback<PostData>() {
+            @Override
+            public void onResponse(Call<PostData> call, Response<PostData> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "insertWhoLike_Response 성공");
+                } else {
+                    Log.d(TAG, "insertWhoLike_Response 실패");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<PostData> call, Throwable t) {
+                Log.d(TAG, "onFailure: 실패 " + t);
+            }
+        });
+
+    } // deleteWhoLike()
 
 
     public void addComment(int postNum, String profileImage, String whoComment, String dateComment, String comment, int commentNum) {
