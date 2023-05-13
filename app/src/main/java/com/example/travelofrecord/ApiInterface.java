@@ -98,7 +98,9 @@ public interface ApiInterface {
 
     // 게시글 데이터 가져오기
     @GET("mysql_GetPostInfo.php")
-    Call<ArrayList<PostData>> getPost();
+    Call<ArrayList<PostData>> getPost(
+            @Query("nickname") String nickname
+    );
 
     // 좋아요 눌렀을 때 추가
     @GET("mysql_Heart_Insert.php")

@@ -102,7 +102,7 @@ public class Fragment_Home extends Fragment {
         if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
             internetText.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            getPost();
+            getPost(loginNickname);
         }else {
             internetText.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
@@ -125,7 +125,7 @@ public class Fragment_Home extends Fragment {
                     recyclerView.setVisibility(View.VISIBLE);
                     post_Data_ArrayList = new ArrayList<>();
                     adapter.setItemPost(post_Data_ArrayList);
-                    getPost();
+                    getPost(loginNickname);
 
                     swipeRefreshLayout.setRefreshing(false);
                 }else {
@@ -167,10 +167,10 @@ public class Fragment_Home extends Fragment {
 
 
 
-    public void getPost() {
+    public void getPost(String currentNickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<PostData>> call = apiInterface.getPost();
+        Call<ArrayList<PostData>> call = apiInterface.getPost(currentNickname);
         call.enqueue(new Callback<ArrayList<PostData>>() {
             @Override
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
