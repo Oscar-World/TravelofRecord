@@ -278,16 +278,6 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
                         Intent i = new Intent(context, Post.class);
                         i.putExtra("num", item.getNum());
-                        i.putExtra("nickname", item.getPostNickname());
-                        i.putExtra("profileImage", item.getProfileImage());
-                        i.putExtra("heart", item.getHeart());
-                        i.putExtra("commentNum", item.getCommentNum());
-                        i.putExtra("location", item.getLocation());
-                        i.putExtra("postImage", item.getPostImage());
-                        i.putExtra("writing", item.getWriting());
-                        i.putExtra("dateCreated", item.getDateCreated());
-                        i.putExtra("whoLike", item.getWhoLike());
-                        i.putExtra("heartStatus", item.getHeartStatus());
 
                         context.startActivity(i);
 

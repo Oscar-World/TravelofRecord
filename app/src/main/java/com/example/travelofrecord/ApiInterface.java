@@ -96,10 +96,17 @@ public interface ApiInterface {
             @Query("dateCreated") String dateCreated
             );
 
-    // 게시글 데이터 가져오기
+    // 게시글 데이터 가져오기 (메인 피드)
     @GET("mysql_GetPostInfo.php")
     Call<ArrayList<PostData>> getPost(
             @Query("nickname") String nickname
+    );
+
+    // 게시글 데이터 가져오기 (게시글 내부)
+    @GET("mysql_GetPostInfo.php")
+    Call<ArrayList<PostData>> getPost(
+            @Query("nickname") String nickname,
+            @Query("num") int num
     );
 
     // 좋아요 눌렀을 때 추가

@@ -57,6 +57,9 @@ public class Post extends AppCompatActivity {
     String post_WhoLike;
     boolean post_HeartStatus;
 
+    String post_EditDate;
+    String post_EditLocation;
+
     String addComment;
     String accessNickname;
     String accessProfileImage;
@@ -74,6 +77,8 @@ public class Post extends AppCompatActivity {
     ApiInterface apiInterface;
     LinearLayout post_TopLayout;
 
+    GetAdress getAddress = new GetAdress();
+
 
 
     @Override
@@ -83,8 +88,7 @@ public class Post extends AppCompatActivity {
         Log.d(TAG, "onStart() 호출됨");
 
         setVariable();
-        setView();
-
+        getPost(accessNickname, post_Num);
         getComment(post_Num);
 
     }
@@ -146,21 +150,20 @@ public class Post extends AppCompatActivity {
         post_CommentAdd_Btn = findViewById(R.id.post_commentAdd_Btn);
 
         Intent i = getIntent();
-
         Log.d(TAG, "getIntent : " + i);
-
+//
         post_Num = i.getIntExtra("num", 0);
-        post_Nickname = i.getStringExtra("nickname");
-        post_ProfileImage = i.getStringExtra("profileImage");
-        post_Heart = i.getIntExtra("heart", 0);
-        post_CommentNum = i.getIntExtra("commentNum", 0);
-        post_Location = i.getStringExtra("location");
-        post_PostImage = i.getStringExtra("postImage");
-        post_Writing = i.getStringExtra("writing");
-        post_DateCreated = i.getStringExtra("dateCreated");
-        post_WhoLike = i.getStringExtra("whoLike");
-        post_HeartStatus = i.getBooleanExtra("heartStatus", false);
-        Log.d(TAG, "heartStatus : " + post_HeartStatus);
+//        post_Nickname = i.getStringExtra("nickname");
+//        post_ProfileImage = i.getStringExtra("profileImage");
+//        post_Heart = i.getIntExtra("heart", 0);
+//        post_CommentNum = i.getIntExtra("commentNum", 0);
+//        post_Location = i.getStringExtra("location");
+//        post_PostImage = i.getStringExtra("postImage");
+//        post_Writing = i.getStringExtra("writing");
+//        post_DateCreated = i.getStringExtra("dateCreated");
+//        post_WhoLike = i.getStringExtra("whoLike");
+//        post_HeartStatus = i.getBooleanExtra("heartStatus", false);
+//        Log.d(TAG, "heartStatus : " + post_HeartStatus);
 
         home = new Home();
 
@@ -185,10 +188,10 @@ public class Post extends AppCompatActivity {
     public void setView() {
 
         post_Nickname_Text.setText(post_Nickname);
-        post_Location_Text.setText(post_Location);
+        post_Location_Text.setText(post_EditLocation);
         post_HeartNum_Text.setText(String.valueOf(post_Heart));
         post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
-        post_DateCreated_Text.setText(post_DateCreated);
+        post_DateCreated_Text.setText(post_EditDate);
         post_Writing_Text.setText(post_Writing);
 
         if (post_HeartStatus) {
@@ -196,11 +199,11 @@ public class Post extends AppCompatActivity {
             post_HeartFull_Iv.setVisibility(View.VISIBLE);
         }
 
-        Glide.with(this)
+        Glide.with(getApplicationContext())
                 .load(post_ProfileImage)
                 .into(post_ProfileImage_Iv);
 
-        Glide.with(this)
+        Glide.with(getApplicationContext())
                 .load(post_PostImage)
                 .into(post_PostImage_Iv);
 
@@ -481,6 +484,62 @@ public class Post extends AppCompatActivity {
         });
 
     } // getComment()
+
+    public void getPost(String currentNickname, int postNum) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<ArrayList<PostData>> call = apiInterface.getPost(currentNickname, postNum);
+        call.enqueue(new Callback<ArrayList<PostData>>() {
+            @Override
+            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
+                if (response.isSuccessful()) {
+
+                    ArrayList<PostData> data = response.body();
+
+                    if (data.size() > 0) {
+                        Log.d(TAG, "data.size : " + data.size());
+
+                            post_Num = data.get(0).getNum();
+                            post_Nickname = data.get(0).getPostNickname();
+                            post_ProfileImage = data.get(0).getProfileImage();
+                            post_Heart = data.get(0).getHeart();
+                            post_CommentNum = data.get(0).getCommentNum();
+                            post_Location = data.get(0).getLocation();
+                            post_PostImage = data.get(0).getPostImage();
+                            post_Writing = data.get(0).getWriting();
+                            post_DateCreated = data.get(0).getDateCreated();
+                            post_WhoLike = data.get(0).getWhoLike();
+                            post_HeartStatus = false;
+
+                            if (currentNickname.equals(post_WhoLike)) {
+                                post_HeartStatus = true;
+                            }
+
+                            String[] arrayLocation = post_Location.split(" ");
+                            double latitude = Double.parseDouble(arrayLocation[0]);
+                            double longitude = Double.parseDouble(arrayLocation[1]);
+
+                            String currentLocation = getAddress.getAddress(getApplicationContext(),latitude,longitude);
+
+                            post_EditDate = lastTime(post_DateCreated);
+                            post_EditLocation = getAddress.editAddress4(currentLocation);
+
+                            setView();
+
+                    }
+
+                } else {
+                    Log.d(TAG, "getPost : 실패");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
+                Log.d(TAG, "onFailure: 실패 " + t);
+            }
+        });
+
+    }
 
 
 

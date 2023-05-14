@@ -2,6 +2,7 @@ package com.example.travelofrecord;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,8 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
     String TAG = "프로필 어댑터";
     Context context;
     ArrayList<PostData> postData;
+    SharedPreferences sharedPreferences;
+    String currentNickname;
 
     @Override
     public Profile_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,6 +64,8 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
             super(itemView);
 
             proflie_PostImage = itemView.findViewById(R.id.profile_PostImage);
+            sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
+            currentNickname = sharedPreferences.getString("nickname","");
 
         }
 
@@ -80,14 +85,6 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
 
                         Intent i = new Intent(context, Post.class);
                         i.putExtra("num", item.getNum());
-                        i.putExtra("nickname", item.getPostNickname());
-                        i.putExtra("profileImage", item.getProfileImage());
-                        i.putExtra("heart", item.getHeart());
-                        i.putExtra("commentNum", item.getCommentNum());
-                        i.putExtra("location", item.getLocation());
-                        i.putExtra("postImage", item.getPostImage());
-                        i.putExtra("writing", item.getWriting());
-                        i.putExtra("dateCreated", item.getDateCreated());
 
                         context.startActivity(i);
 
