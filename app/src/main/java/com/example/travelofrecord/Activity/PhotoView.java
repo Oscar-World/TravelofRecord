@@ -1,4 +1,4 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.bumptech.glide.Glide;
+import com.example.travelofrecord.R;
 
 public class PhotoView extends AppCompatActivity {
 

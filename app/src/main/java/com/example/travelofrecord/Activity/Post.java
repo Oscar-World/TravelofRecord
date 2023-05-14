@@ -1,4 +1,4 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +19,13 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
+import com.example.travelofrecord.Adapter.Comment_Adapter;
+import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetTime;
+import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
 
@@ -210,7 +217,7 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(getApplicationContext(),Profile.class);
+                Intent i = new Intent(getApplicationContext(), Profile.class);
                 i.putExtra("nickname",post_Nickname);
                 startActivity(i);
 

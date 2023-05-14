@@ -1,9 +1,8 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.travelofrecord.Activity.Profile;
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
+import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
 
@@ -29,7 +33,6 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
     ArrayList<PostData> postData;
     Context context;
-    Post post;
 
     @Override
     public Comment_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -87,7 +90,6 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
             comment_CommentText = itemView.findViewById(R.id.commnet_commentText);
             comment_MenuBtn = itemView.findViewById(R.id.comment_menuBtn);
 
-            post = new Post();
 
         }
 
@@ -132,9 +134,6 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                 @Override
                 public void onClick(View view) {
 
-                    Log.d(TAG, "item.getWhoComment : " + item.getWhoComment() + "\nitem.dateComment : " + item.dateComment +
-                            "\npost_CommentNum : " + post.post_CommentNum + "\nitem.postNum : " + item.postNum);
-
 //                    deleteComment(item.getWhoComment(), item.dateComment, post.post_CommentNum, item.postNum);
 
                 }
@@ -153,7 +152,6 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                     Log.d(TAG, "deleteComment onResponse");
                     if (response.isSuccessful()) {
 
-                        post.getComment(postNum);
 
                     }
                     Log.d(TAG, "responseFail");

@@ -1,8 +1,7 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.travelofrecord.Activity.Post;
+import com.example.travelofrecord.Activity.Home;
+import com.example.travelofrecord.Network.NetworkStatus;
+import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
 

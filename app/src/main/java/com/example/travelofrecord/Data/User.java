@@ -1,4 +1,4 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Data;
 
 
 import com.google.gson.annotations.Expose;
@@ -9,31 +9,31 @@ import com.google.gson.annotations.SerializedName;
 public class User {
 
     @Expose
-    @SerializedName("loginType") private String loginType;
+    @SerializedName("loginType") public String loginType;
 
     @Expose
-    @SerializedName("id") private String id;
+    @SerializedName("id") public String id;
 
     @Expose
-    @SerializedName("password") private String password;
+    @SerializedName("password") public String password;
 
     @Expose
-    @SerializedName("phone") private String phone;
+    @SerializedName("phone") public String phone;
 
     @Expose
-    @SerializedName("nickname") private String nickname;
+    @SerializedName("nickname") public String nickname;
 
     @Expose
-    @SerializedName("memo") private String memo;
+    @SerializedName("memo") public String memo;
 
     @Expose
-    @SerializedName("text") private String text;
+    @SerializedName("text") public String text;
 
     @Expose
-    @SerializedName("imagePath") private String imagePath;
+    @SerializedName("imagePath") public String imagePath;
 
     @Expose
-    @SerializedName("response") private String response;
+    @SerializedName("response") public String response;
 
     public String getType() {
         return loginType;

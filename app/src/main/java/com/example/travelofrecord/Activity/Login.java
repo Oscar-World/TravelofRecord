@@ -1,4 +1,4 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -16,12 +16,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
+import com.example.travelofrecord.Network.NetworkStatus;
+import com.example.travelofrecord.R;
+import com.example.travelofrecord.Data.User;
 import com.kakao.sdk.user.UserApiClient;
-import com.kakao.sdk.user.model.Account;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -146,7 +149,7 @@ public class Login extends AppCompatActivity {
                 Log.d(TAG, "NetworkStatus : " + status);
                 if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    Intent i = new Intent(Login.this,Find_UserInfo.class);
+                    Intent i = new Intent(Login.this, Find_UserInfo.class);
                     startActivity(i);
 
                 }else {
@@ -164,7 +167,7 @@ public class Login extends AppCompatActivity {
                 Log.d(TAG, "NetworkStatus : " + status);
                 if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    Intent i = new Intent(signup_Btn.getContext(),Signup.class);
+                    Intent i = new Intent(signup_Btn.getContext(), Signup.class);
                     startActivity(i);
 
                 }else {
@@ -369,7 +372,7 @@ public class Login extends AppCompatActivity {
                     editor.putString("image", user_image);
                     editor.putString("memo", user_memo);
                     editor.commit();
-                    Intent i = new Intent(Login.this,Home.class);
+                    Intent i = new Intent(Login.this, Home.class);
                     startActivity(i);
                     finish();
                 }

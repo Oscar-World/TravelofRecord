@@ -1,4 +1,4 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import com.example.travelofrecord.R;
 
 public class Fragment_Dm extends Fragment {
 

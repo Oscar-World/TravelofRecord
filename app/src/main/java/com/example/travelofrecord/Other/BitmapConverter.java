@@ -1,4 +1,4 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Other;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

@@ -1,4 +1,4 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.travelofrecord.Activity.Post;
+import com.example.travelofrecord.Activity.Profile;
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
+import com.example.travelofrecord.Activity.Home;
+import com.example.travelofrecord.Network.NetworkStatus;
+import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
 
@@ -250,7 +258,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 @Override
                 public void onClick(View view) {
 
-                    Intent i = new Intent(context,Profile.class);
+                    Intent i = new Intent(context, Profile.class);
                     i.putExtra("nickname", item.getPostNickname());
                     context.startActivity(i);
 

@@ -1,11 +1,9 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,12 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import com.example.travelofrecord.Network.NetworkStatus;
+import com.example.travelofrecord.R;
 
 public class Start extends AppCompatActivity {
 
@@ -89,7 +83,7 @@ public class Start extends AppCompatActivity {
                 Log.d(TAG, "NetworkStatus : " + status);
                 if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    Intent i = new Intent(Start.this,Login.class);
+                    Intent i = new Intent(Start.this, Login.class);
                     startActivity(i);
                     finish();
 

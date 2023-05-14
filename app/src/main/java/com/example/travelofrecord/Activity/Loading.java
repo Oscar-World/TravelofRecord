@@ -1,23 +1,14 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import com.example.travelofrecord.R;
 
 public class Loading extends AppCompatActivity {
 
@@ -77,7 +68,7 @@ public class Loading extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            Intent i = new Intent(Loading.this,Home.class);
+            Intent i = new Intent(Loading.this, Home.class);
 //            Intent i = new Intent(Loading.this,Start.class);
             startActivity(i);
 
@@ -94,7 +85,7 @@ public class Loading extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            Intent i = new Intent(Loading.this,Start.class);
+            Intent i = new Intent(Loading.this, Start.class);
             startActivity(i);
 
             finish();

@@ -1,4 +1,4 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Fragment;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
@@ -7,9 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.PointF;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -40,6 +37,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.travelofrecord.Activity.PhotoView;
+import com.example.travelofrecord.Activity.Start;
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
+import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetTime;
+import com.example.travelofrecord.Adapter.MyProfile_Adapter;
+import com.example.travelofrecord.Network.NetworkStatus;
+import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.R;
+import com.example.travelofrecord.Data.User;
 import com.kakao.sdk.user.UserApiClient;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.geometry.LatLngBounds;
@@ -54,10 +62,7 @@ import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -427,7 +432,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     editor.clear();
                     editor.commit();
 
-                    Intent i = new Intent(getActivity(),Start.class);
+                    Intent i = new Intent(getActivity(), Start.class);
                     startActivity(i);
 
                     getActivity().finish();
@@ -529,7 +534,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(getActivity(),PhotoView.class);
+                Intent i = new Intent(getActivity(), PhotoView.class);
                 i.putExtra("image",user_image);
                 startActivity(i);
 

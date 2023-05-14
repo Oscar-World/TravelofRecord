@@ -1,4 +1,7 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Network;
+
+import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.Data.User;
 
 import java.util.ArrayList;
 

@@ -1,9 +1,7 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,14 +14,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
+import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetTime;
+import com.example.travelofrecord.Adapter.Home_Adapter;
+import com.example.travelofrecord.Network.NetworkStatus;
+import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.R;
+
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -1,71 +1,68 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Data;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PostData {
 
     @Expose
-    @SerializedName("num") int num;
+    @SerializedName("num") public int num;
 
     @Expose
-    @SerializedName("postNickname") String postNickname;
+    @SerializedName("postNickname") public String postNickname;
 
     @Expose
-    @SerializedName("profileImage") String profileImage;
+    @SerializedName("profileImage") public String profileImage;
 
     @Expose
-    @SerializedName("heart") int heart;
+    @SerializedName("heart") public int heart;
 
     @Expose
-    @SerializedName("location") String location;
+    @SerializedName("location") public String location;
 
     @Expose
-    @SerializedName("postImage") String postImage;
+    @SerializedName("postImage") public String postImage;
 
     @Expose
-    @SerializedName("writing") String writing;
+    @SerializedName("writing") public String writing;
 
     @Expose
-    @SerializedName("dateCreated") String dateCreated;
+    @SerializedName("dateCreated") public String dateCreated;
 
     @Expose
-    @SerializedName("response") String response;
+    @SerializedName("response") public String response;
 
     @Expose
-    @SerializedName("postNum") int postNum;
+    @SerializedName("postNum") public int postNum;
 
     @Expose
-    @SerializedName("whoLike") String whoLike;
+    @SerializedName("whoLike") public String whoLike;
 
     @Expose
-    @SerializedName("whoComment") String whoComment;
+    @SerializedName("whoComment") public String whoComment;
 
     @Expose
-    @SerializedName("dateComment") String dateComment;
+    @SerializedName("dateComment") public String dateComment;
 
     @Expose
-    @SerializedName("comment") String comment;
+    @SerializedName("comment") public String comment;
 
     @Expose
-    @SerializedName("commentNum") int commentNum;
+    @SerializedName("commentNum") public int commentNum;
 
     @Expose
-    @SerializedName("commentProfileImage") String commentProfileImage;
+    @SerializedName("commentProfileImage") public String commentProfileImage;
 
-    boolean heartStatus;
-
-    @Expose
-    @SerializedName("nickname") String nickname;
+    public boolean heartStatus;
 
     @Expose
-    @SerializedName("imagePath") String imagePath;
+    @SerializedName("nickname") public String nickname;
 
     @Expose
-    @SerializedName("memo") String memo;
+    @SerializedName("imagePath") public String imagePath;
+
+    @Expose
+    @SerializedName("memo") public String memo;
 
 
 

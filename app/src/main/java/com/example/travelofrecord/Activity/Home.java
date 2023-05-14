@@ -1,31 +1,25 @@
-package com.example.travelofrecord;
+package com.example.travelofrecord.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.kakao.sdk.user.UserApiClient;
-import com.naver.maps.map.MapFragment;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.travelofrecord.Fragment.Fragment_Dm;
+import com.example.travelofrecord.Fragment.Fragment_Heart;
+import com.example.travelofrecord.Fragment.Fragment_Home;
+import com.example.travelofrecord.Fragment.Fragment_add;
+import com.example.travelofrecord.Fragment.Fragment_myProfile;
+import com.example.travelofrecord.Network.NetworkStatus;
+import com.example.travelofrecord.R;
 
 public class Home extends AppCompatActivity {
 
