@@ -29,6 +29,8 @@ import retrofit2.Response;
 public class Post extends AppCompatActivity {
 
     String TAG = "게시글 액티비티";
+    GetAdress getAddress = new GetAdress();
+    GetTime getTime = new GetTime();
 
     ImageButton back_Btn;
     TextView post_Nickname_Text;
@@ -77,8 +79,6 @@ public class Post extends AppCompatActivity {
     ApiInterface apiInterface;
     LinearLayout post_TopLayout;
 
-    GetAdress getAddress = new GetAdress();
-
 
 
     @Override
@@ -97,7 +97,6 @@ public class Post extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
-
     }
 
     @Override
@@ -130,6 +129,10 @@ public class Post extends AppCompatActivity {
         Log.d(TAG, "onDestroy() 호출됨");
     }
 
+
+    // ---------------------------------------------------------------------------------------------
+
+
     public void setVariable() {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -151,19 +154,8 @@ public class Post extends AppCompatActivity {
 
         Intent i = getIntent();
         Log.d(TAG, "getIntent : " + i);
-//
+
         post_Num = i.getIntExtra("num", 0);
-//        post_Nickname = i.getStringExtra("nickname");
-//        post_ProfileImage = i.getStringExtra("profileImage");
-//        post_Heart = i.getIntExtra("heart", 0);
-//        post_CommentNum = i.getIntExtra("commentNum", 0);
-//        post_Location = i.getStringExtra("location");
-//        post_PostImage = i.getStringExtra("postImage");
-//        post_Writing = i.getStringExtra("writing");
-//        post_DateCreated = i.getStringExtra("dateCreated");
-//        post_WhoLike = i.getStringExtra("whoLike");
-//        post_HeartStatus = i.getBooleanExtra("heartStatus", false);
-//        Log.d(TAG, "heartStatus : " + post_HeartStatus);
 
         home = new Home();
 
@@ -241,7 +233,7 @@ public class Post extends AppCompatActivity {
             public void onClick(View view) {
 
                 addComment = post_Comment_Edit.getText().toString();
-                addDateComment = getTime().toString();
+                addDateComment = getTime.getTime().toString();
 
                 Log.d(TAG, "postNum : " + post_Num + "\naccessProfileImage : " + accessProfileImage + "\naccessNickname : " + accessNickname +
                         "\ndateComment : " + addDateComment + "\naddComment : " + addComment + "\ncommentNum : " + post_CommentNum);
@@ -305,48 +297,8 @@ public class Post extends AppCompatActivity {
     } // setView()
 
 
+    // -------------------------------------------------------------------------------------------
 
-    // 시스템 시간 불러오기
-    public Long getTime() {
-
-        long currentTime = System.currentTimeMillis();
-
-        return currentTime;
-
-    } // getTime()
-
-    // DB에 저장되어있는 시스템 시간 불러와서 지난 시간 계산
-    public String lastTime(String dateComment) {
-
-        String msg = null;
-
-        long datePosted = Long.parseLong(dateComment);
-        long currentTime = System.currentTimeMillis();
-        long lastTime = (currentTime - datePosted) / 1000;
-
-        if (lastTime < 60) {
-            msg = "방금 전";
-        } else if ((lastTime /= 60) < 60) {
-            msg = lastTime + "분 전";
-        } else if ((lastTime /= 60) < 24) {
-            msg = lastTime + "시간 전";
-        } else if ((lastTime /= 24) < 7) {
-            msg = lastTime + "일 전";
-        } else if (lastTime < 14) {
-            msg = "1주 전";
-        } else if (lastTime < 21) {
-            msg = "2주 전";
-        } else if (lastTime < 28) {
-            msg = "3주 전";
-        } else if ((lastTime / 30) < 12) {
-            msg = lastTime + "달 전";
-        } else {
-            msg = (lastTime / 365) + "년 전";
-        }
-
-        return msg;
-
-    } // lastTime()
 
     public void insertWhoLike(int postNum, String whoLike, int heart) {
 
@@ -431,7 +383,6 @@ public class Post extends AppCompatActivity {
     } // addComment()
 
 
-
     public void getComment(int num) {
 
         Call<ArrayList<PostData>> call = apiInterface.getComment(num);
@@ -455,7 +406,7 @@ public class Post extends AppCompatActivity {
                             String comment = data.get(i).getComment();
 
                             Log.d(TAG, "dateComment : " + dateComment);
-                            String commentTime = lastTime(dateComment);
+                            String commentTime = getTime.lastTime(dateComment);
 
                             Log.d(TAG, "profileImage : " + profileImage + "\nwhoComment : " + whoComment + "\ndateComment : " + commentTime + "\ncomment : " + comment);
 
@@ -470,7 +421,6 @@ public class Post extends AppCompatActivity {
 
                     }
 
-
                 } else {
                     Log.d(TAG, "responseFail");
                 }
@@ -484,6 +434,7 @@ public class Post extends AppCompatActivity {
         });
 
     } // getComment()
+
 
     public void getPost(String currentNickname, int postNum) {
 
@@ -521,8 +472,8 @@ public class Post extends AppCompatActivity {
 
                             String currentLocation = getAddress.getAddress(getApplicationContext(),latitude,longitude);
 
-                            post_EditDate = lastTime(post_DateCreated);
-                            post_EditLocation = getAddress.editAddress4(currentLocation);
+                            post_EditDate = getTime.lastTime(post_DateCreated);
+                            post_EditLocation = getAddress.editAddress1234(currentLocation);
 
                             setView();
 
@@ -539,7 +490,7 @@ public class Post extends AppCompatActivity {
             }
         });
 
-    }
+    } // getPost()
 
 
 

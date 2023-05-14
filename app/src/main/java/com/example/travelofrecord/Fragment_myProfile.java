@@ -66,8 +66,11 @@ import retrofit2.Response;
 public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     String TAG = "내 프로필 프래그먼트";
-
     View v;
+    GetAdress getAdress = new GetAdress();
+    GetTime getTime = new GetTime();
+
+    int networkStatus;
 
     SharedPreferences sharedPreferences;
     SharedPreferences sharedPreferences_Kakao;
@@ -204,15 +207,138 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     @Override public void onStart() {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
+
         mapView.onStart();
+        setVariable();
         setView();
         getMyPost(user_nickname);
+
+    } // onStart()
+
+    @Override public void onResume() {
+        Log.d(TAG, "onResume() 호출");
+        super.onResume();
+        mapView.onResume();
+    }
+    @Override public void onPause() {
+        Log.d(TAG, "onPause() 호출");
+        super.onPause();
+        mapView.onPause();
+    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+    @Override public void onStop() {
+        Log.d(TAG, "onStop() 호출");
+        super.onStop();
+        mapView.onStop();
+    }
+    @Override public void onDestroyView() {
+        Log.d(TAG, "onDestroyView() 호출");
+        super.onDestroyView();
+        mapView.onDestroy();
+    }
+    @Override public void onDetach() {
+        Log.d(TAG, "onDetach() 호출");
+        super.onDetach();
+    }
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+
+
+    public void setVariable() {
+
+        networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
+
+        scrollView = v.findViewById(R.id.myProfile_ScrollView);
+        drawer_Btn = v.findViewById(R.id.myProfile_drawerBtn);
+        logout_Btn = v.findViewById(R.id.logout_Btn);
+        userQuit_Btn = v.findViewById(R.id.userQuit_Btn);
+        editProfile_Btn = v.findViewById(R.id.editProfile_Btn);
+        editProfileSubmit_Btn = v.findViewById(R.id.editProfileSubmit_Btn);
+
+        profile_Image = v.findViewById(R.id.myProfile_image);
+        editProfile_Image = v.findViewById(R.id.myProfileEdit_image);
+        touchImage_Image = v.findViewById(R.id.myProfileTouchImage_Image);
+
+        profile_Text = v.findViewById(R.id.myProfile_Text);
+        profile_nickname = v.findViewById(R.id.myProfile_nickname);
+        profile_memo = v.findViewById(R.id.myProfile_memo);
+        profile_Edit = v.findViewById(R.id.myProfile_Edit);
+
+        photo_Btn = v.findViewById(R.id.myProfilePhoto_Btn);
+        photo_Block = v.findViewById(R.id.myProfilePhoto_Block);
+        map_Btn = v.findViewById(R.id.myProfileMap_Btn);
+        map_Block = v.findViewById(R.id.myProfileMap_Block);
+
+        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
+        editor_Kakao = sharedPreferences_Kakao.edit();
+
+        user_id = sharedPreferences.getString("id","");
+        user_nickname = sharedPreferences.getString("nickname", "");
+        user_image = sharedPreferences.getString("image", "");
+        user_memo = sharedPreferences.getString("memo", "");
+
+        drawerLayout = v.findViewById(R.id.myProfile_drawerLayout);
+        drawerView = v.findViewById(R.id.myProfile_drawer);
+
+        recyclerView = v.findViewById(R.id.myProfile_RecyclerView);
+        adapter = new MyProfile_Adapter();
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
+
+        post_Data_ArrayList = new ArrayList<>();
+        adapter.setItemMyProfile(post_Data_ArrayList);
+
+        bundle = new Bundle();
+
+    } // setVariable()
+
+
+    public void setView() {
+
+        if (user_memo == null | "".equals(user_memo)) {
+            profile_Edit.setVisibility(View.GONE);
+            profile_memo.setVisibility(View.VISIBLE);
+        } else {
+            profile_memo.setText(user_memo);
+            profile_memo.setVisibility(View.VISIBLE);
+            profile_Edit.setVisibility(View.GONE);
+        }
+
+        profile_nickname.setText(user_nickname);
+
+        Glide.with(getActivity())
+                .load(user_image)
+                .into(profile_Image);
+
+        Glide.with(getActivity())
+                .load(user_image)
+                .into(editProfile_Image);
+
 
         // 햄버거 버튼
         drawer_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawerLayout.openDrawer(drawerView);
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    drawerLayout.openDrawer(drawerView);
+
+                }else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -221,9 +347,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getActivity());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     profile_Text.setText("프로필 수정");
 
@@ -255,9 +379,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getActivity());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     profile_Text.setText("프로필");
                     edit_memo = profile_Edit.getText().toString();
@@ -288,9 +410,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getActivity());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     UserApiClient.getInstance().unlink(error -> {
                         if (error != null) {
@@ -324,9 +444,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getActivity());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     deleteUser(user_id);
 
@@ -343,9 +461,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getActivity());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     photo_Btn.setVisibility(View.GONE);
                     photo_Block.setVisibility(View.VISIBLE);
@@ -369,9 +485,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getActivity());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     map_Btn.setVisibility(View.GONE);
                     map_Block.setVisibility(View.VISIBLE);
@@ -394,9 +508,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getActivity());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     Intent i = new Intent();
                     i.setType("image/*");
@@ -413,20 +525,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
 
+    } // setView()
 
-    } // onStart()
 
-    //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
-    String getRealPathFromUri(Uri uri){
-        String[] proj= {MediaStore.Images.Media.DATA};
-        CursorLoader loader= new CursorLoader(getActivity(), uri, proj, null, null, null);
-        Cursor cursor= loader.loadInBackground();
-        int column_index= cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String result= cursor.getString(column_index);
-        cursor.close();
-        return  result;
-    }
+    // ---------------------------------------------------------------------------------------------
 
 
     @Override
@@ -464,8 +566,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                 double latitude = Double.parseDouble(arrayLocation[0]);
                 double longitude = Double.parseDouble(arrayLocation[1]);
 
-                String currentLocation = getAddress(getActivity(),latitude,longitude);
-                String shortLocation = editAddress2(currentLocation);
+                String currentLocation = getAdress.getAddress(getActivity(),latitude,longitude);
+                String shortLocation = getAdress.editAddress24(currentLocation);
 
                 setMarker(latitude, longitude, shortLocation);
             }
@@ -478,10 +580,6 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         Marker marker = new Marker();
         marker.setPosition(new LatLng(lat,lng));
         marker.setTag(addressHeart);
-//        marker.setCaptionText(addressHeart);
-//        marker.setCaptionAligns(Align.Top);
-//        marker.setCaptionMinZoom(11);
-//        marker.setCaptionOffset(10);
 
         marker.setMap(naverMap);
 
@@ -561,10 +659,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                             latitude = Double.parseDouble(arrayLocation[0]);
                             longitude = Double.parseDouble(arrayLocation[1]);
 
-                            String currentLocation = getAddress(getContext(),latitude,longitude);
-                            String addressPost = editAddress4(currentLocation);
+                            String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
+                            String addressPost = getAdress.editAddress1234(currentLocation);
 
-                            String datePost = lastTime(post_DateCreated);
+                            String datePost = getTime.lastTime(post_DateCreated);
 
                             PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum,
                                     addressPost, post_PostImage, post_Writing, datePost, post_Num, post_WhoLike, heartStatus);
@@ -593,7 +691,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
 
-    }
+    } // getMyPost()
 
 
     // 상태 메시지, 프로필 사진 변경
@@ -640,6 +738,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         });
 
     }  // updateMemo()
+
 
     // 회원 탈퇴
     public void deleteUser(String id) {
@@ -695,195 +794,17 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         });
     }  // deleteUser()
 
-
-    // Geocoder - 위도, 경도 사용해서 주소 구하기.
-    public String getAddress(Context mContext, double lat, double lng) {
-        String nowAddr ="현재 위치를 확인 할 수 없습니다.";
-        Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
-        List<Address> address;
-
-        try
-        {
-            if (geocoder != null)
-            {
-                address = geocoder.getFromLocation(lat, lng, 1);
-                if (address != null && address.size() > 0)
-                {
-                    nowAddr = address.get(0).getAddressLine(0).toString();
-                    Log.d(TAG, "전체 주소 : " + nowAddr);
-
-                }
-            }
-        }
-        catch (IOException e)
-        {
-            Toast.makeText(mContext, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-        return nowAddr;
-    } // getAddress
-
-
-    public String editAddress4(String location) {
-
-        String address = null;
-
-        String[] addressArray = location.split(" ");
-
-        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
-
-//        address = addressArray[2] + " " + addressArray[4];
-
-        return address;
-
-    } // editAddress4()
-
-    public String editAddress2(String location) {
-
-        String address = null;
-        String[] addressArray = location.split(" ");
-//        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
-        address = addressArray[2] + " " + addressArray[4];
-
-        return address;
-
-    } // editAddress2()
-
-
-
-    public String lastTime(String dateCreated) {
-
-        String msg = null;
-
-        long datePosted = Long.parseLong(dateCreated);
-        long currentTime = System.currentTimeMillis();
-        long lastTime = (currentTime - datePosted) / 1000;
-
-        if (lastTime < 60) {
-            msg = "방금 전";
-        } else if ((lastTime /= 60) < 60) {
-            msg = lastTime + "분 전";
-        } else if ((lastTime /= 60) < 24) {
-            msg = lastTime + "시간 전";
-        } else if ((lastTime /= 24) < 7) {
-            msg = lastTime + "일 전";
-        } else if (lastTime < 14) {
-            msg = "1주 전";
-        } else if (lastTime < 21) {
-            msg = "2주 전";
-        } else if (lastTime < 28) {
-            msg = "3주 전";
-        } else if ((lastTime / 30) < 12) {
-            msg = lastTime + "달 전";
-        } else {
-            msg = (lastTime / 365) + "년 전";
-        }
-
-        return msg;
-
-    } // lastTime()
-
-
-    @Override public void onResume() {
-        Log.d(TAG, "onResume() 호출");
-        super.onResume();
-        mapView.onResume();
-    }
-    @Override public void onPause() {
-        Log.d(TAG, "onPause() 호출");
-        super.onPause();
-        mapView.onPause();
-    }
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
-    @Override public void onStop() {
-        Log.d(TAG, "onStop() 호출");
-        super.onStop();
-        mapView.onStop();
-    }
-    @Override public void onDestroyView() {
-        Log.d(TAG, "onDestroyView() 호출");
-        super.onDestroyView();
-        mapView.onDestroy();
-    }
-    @Override public void onDetach() {
-        Log.d(TAG, "onDetach() 호출");
-        super.onDetach();
-    }
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
+    //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
+    String getRealPathFromUri(Uri uri){
+        String[] proj= {MediaStore.Images.Media.DATA};
+        CursorLoader loader= new CursorLoader(getActivity(), uri, proj, null, null, null);
+        Cursor cursor= loader.loadInBackground();
+        int column_index= cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result= cursor.getString(column_index);
+        cursor.close();
+        return  result;
     }
 
-    public void setView() {
-
-        scrollView = v.findViewById(R.id.myProfile_ScrollView);
-//        profileSelect_Layout = v.findViewById(R.id.myProfileSelect_Layout);
-        drawer_Btn = v.findViewById(R.id.myProfile_drawerBtn);
-        logout_Btn = v.findViewById(R.id.logout_Btn);
-        userQuit_Btn = v.findViewById(R.id.userQuit_Btn);
-        editProfile_Btn = v.findViewById(R.id.editProfile_Btn);
-        editProfileSubmit_Btn = v.findViewById(R.id.editProfileSubmit_Btn);
-
-        profile_Image = v.findViewById(R.id.myProfile_image);
-        editProfile_Image = v.findViewById(R.id.myProfileEdit_image);
-        touchImage_Image = v.findViewById(R.id.myProfileTouchImage_Image);
-
-        profile_Text = v.findViewById(R.id.myProfile_Text);
-        profile_nickname = v.findViewById(R.id.myProfile_nickname);
-        profile_memo = v.findViewById(R.id.myProfile_memo);
-        profile_Edit = v.findViewById(R.id.myProfile_Edit);
-
-        photo_Btn = v.findViewById(R.id.myProfilePhoto_Btn);
-        photo_Block = v.findViewById(R.id.myProfilePhoto_Block);
-        map_Btn = v.findViewById(R.id.myProfileMap_Btn);
-        map_Block = v.findViewById(R.id.myProfileMap_Block);
-
-        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
-        editor_Kakao = sharedPreferences_Kakao.edit();
-
-        user_id = sharedPreferences.getString("id","");
-        user_nickname = sharedPreferences.getString("nickname", "");
-        user_image = sharedPreferences.getString("image", "");
-        user_memo = sharedPreferences.getString("memo", "");
-
-        drawerLayout = v.findViewById(R.id.myProfile_drawerLayout);
-        drawerView = v.findViewById(R.id.myProfile_drawer);
-
-
-        if (user_memo == null | "".equals(user_memo)) {
-            profile_Edit.setVisibility(View.GONE);
-            profile_memo.setVisibility(View.VISIBLE);
-        } else {
-            profile_memo.setText(user_memo);
-            profile_memo.setVisibility(View.VISIBLE);
-            profile_Edit.setVisibility(View.GONE);
-        }
-
-        profile_nickname.setText(user_nickname);
-        Glide.with(getActivity())
-                .load(user_image)
-                .into(profile_Image);
-        Glide.with(getActivity())
-                .load(user_image)
-                .into(editProfile_Image);
-
-        recyclerView = v.findViewById(R.id.myProfile_RecyclerView);
-        adapter = new MyProfile_Adapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
-
-        post_Data_ArrayList = new ArrayList<>();
-        adapter.setItemMyProfile(post_Data_ArrayList);
-
-        bundle = new Bundle();
-
-    } // setView()
 
 }

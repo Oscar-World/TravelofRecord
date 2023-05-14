@@ -21,7 +21,9 @@ import java.util.ArrayList;
 public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder> {
 
     String TAG = "하트 어댑터";
+    GetAdress getAdress = new GetAdress();
 
+    int networkStatus;
     ArrayList<PostData> postData;
     Context context;
 
@@ -84,15 +86,15 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
             heart_Location = itemView.findViewById(R.id.heart_LocationText);
             heart_PostImage = itemView.findViewById(R.id.heart_PostImage);
             bundle = new Bundle();
+            networkStatus = NetworkStatus.getConnectivityStatus(context);
 
         }
 
         void onBind(PostData item) {
             Log.d(TAG, "onBind() 호출됨");
 
-            Log.d(TAG, "item.getLocation : " + item.getLocation() + "\n편집 후 : " + editAddress(item.getLocation()));
 
-            heart_Location.setText(editAddress(item.getLocation()));
+            heart_Location.setText(getAdress.editAddress13(item.getLocation()));
 
             Glide.with(context)
                     .load(item.getPostImage())
@@ -102,22 +104,10 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
                 @Override
                 public void onClick(View view) {
 
-                    int status = NetworkStatus.getConnectivityStatus(context);
-                    Log.d(TAG, "NetworkStatus : " + status);
-                    if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                    if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                         Intent i = new Intent(context, Post.class);
                         i.putExtra("num", item.getNum());
-                        i.putExtra("nickname", item.getPostNickname());
-                        i.putExtra("profileImage", item.getProfileImage());
-                        i.putExtra("heart", item.getHeart());
-                        i.putExtra("commentNum", item.getCommentNum());
-                        i.putExtra("location", item.getLocation());
-                        i.putExtra("postImage", item.getPostImage());
-                        i.putExtra("writing", item.getWriting());
-                        i.putExtra("dateCreated", item.getDateCreated());
-                        i.putExtra("whoLike", item.getWhoLike());
-                        i.putExtra("heartStatus", item.getHeartStatus());
 
                         context.startActivity(i);
 
@@ -131,18 +121,6 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
 
         } // onBind
 
-
-
     } // ViewHolder
-
-    public String editAddress(String location) {
-
-        String[] address = location.split(" ");
-        String editAdrress = address[1] + " " + address[3];
-
-        return editAdrress;
-
-    }
-
 
 } // Heart_Adapter

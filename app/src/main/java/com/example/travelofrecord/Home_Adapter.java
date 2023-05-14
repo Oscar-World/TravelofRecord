@@ -351,6 +351,4 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
     } // ViewHolder
 
-
-
 } // Home_Adapter

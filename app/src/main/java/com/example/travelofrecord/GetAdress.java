@@ -43,15 +43,32 @@ public class GetAdress {
     } // getAddress
 
 
-    public String editAddress4(String location) {
+    public String editAddress1234(String location) {
 
         String address = null;
-
         String[] addressArray = location.split(" ");
-
         address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
 
         return address;
+
+    }
+
+    public String editAddress24(String location) {
+
+        String address = null;
+        String[] addressArray = location.split(" ");
+        address = addressArray[2] + " " + addressArray[4];
+
+        return address;
+
+    }
+
+    public String editAddress13(String location) {
+
+        String[] address = location.split(" ");
+        String editAdrress = address[1] + " " + address[3];
+
+        return editAdrress;
 
     }
 

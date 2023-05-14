@@ -47,6 +47,8 @@ import retrofit2.Response;
 public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
     String TAG = "프로필 액티비티";
+    GetAdress getAddress = new GetAdress();
+    GetTime getTime = new GetTime();
 
     MapView mapView;
     ScrollView profileScrollView;
@@ -137,256 +139,9 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         mapView.onLowMemory();
     }
 
+
     // ---------------------------------------------------------------------------------------------------
 
-    @Override
-    public void onMapReady(@NonNull NaverMap naverMap) {
-        Log.d(TAG, "onMapReady() 호출");
-
-        this.naverMap = naverMap;
-        naverMap.setExtent(new LatLngBounds(new LatLng(31.43, 122.37), new LatLng(44.35, 132)));
-
-        naverMap.setMaxZoom(17);
-        naverMap.setMinZoom(5);
-
-        Log.d(TAG, "onMapReady: " + latitude + " " + longitude);
-        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 9);
-        naverMap.setCameraPosition(cameraPosition);
-
-        UiSettings uiSettings = naverMap.getUiSettings();
-        uiSettings.setScaleBarEnabled(false);
-        uiSettings.setZoomControlEnabled(false);
-        uiSettings.setLogoClickEnabled(false);
-
-        addMarker();
-
-    }
-
-    public void addMarker() {
-
-        if (data.size() > 0) {
-            for (int i=0; i < data.size(); i++) {
-                Log.d(TAG, "datasize() : " + data.size());
-                String location = data.get(i).getLocation();
-
-                String[] arrayLocation = location.split(" ");
-                double latitude = Double.parseDouble(arrayLocation[0]);
-                double longitude = Double.parseDouble(arrayLocation[1]);
-
-                String currentLocation = getAddress(this,latitude,longitude);
-                String shortLocation = editAddress2(currentLocation);
-
-                setMarker(latitude, longitude, shortLocation);
-            }
-        }
-
-    } // addMarker()
-
-    public void setMarker(double lat, double lng, String addressHeart) {
-
-        Marker marker = new Marker();
-        marker.setPosition(new LatLng(lat,lng));
-        marker.setTag(addressHeart);
-//        marker.setCaptionText(addressHeart);
-//        marker.setCaptionAligns(Align.Top);
-//        marker.setCaptionMinZoom(11);
-//        marker.setCaptionOffset(10);
-
-        marker.setMap(naverMap);
-
-        setInfoWindow(marker);
-
-    } // setMarker()
-
-    public void setInfoWindow(Marker marker) {
-
-        InfoWindow infoWindow = new InfoWindow();
-        infoWindow.setAdapter(new InfoWindow.DefaultTextAdapter(this) {
-            @NonNull
-            @Override
-            public CharSequence getText(@NonNull InfoWindow infoWindow) {
-                return marker.getTag().toString();
-            }
-        });
-
-        marker.setOnClickListener(new Overlay.OnClickListener() {
-            @Override
-            public boolean onClick(@NonNull Overlay overlay) {
-                if (marker.getInfoWindow() == null) {
-                    // 현재 마커에 정보 창이 열려있지 않을 경우 엶
-                    infoWindow.open(marker);
-                } else {
-                    // 이미 현재 마커에 정보 창이 열려있을 경우 닫음
-                    infoWindow.close();
-                }
-
-                CameraPosition cameraPosition = new CameraPosition(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude), 12);
-                CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,2000);
-                naverMap.moveCamera(cameraUpdate);
-
-                return true;
-            }
-        });
-        naverMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(@NonNull PointF pointF, @NonNull LatLng latLng) {
-
-            }
-        });
-
-    } // setInfoWindow()
-
-    public void getProfile(String nickname) {
-
-        Call<ArrayList<PostData>> call = apiInterface.getProfile(nickname);
-        call.enqueue(new Callback<ArrayList<PostData>>() {
-            @Override
-            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
-
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "getProfile onResponse");
-
-                    data = response.body();
-                    Log.d(TAG, "onResponse: " + data + " " + data.toString());
-
-                    for (int i = 0; i < data.size(); i++) {
-
-                        user_Nickname = data.get(i).getNickname();
-                        user_ImagePath = data.get(i).getImagePath();
-                        user_Memo = data.get(i).getMemo();
-                        int num = data.get(i).getNum();
-                        String postNickname = data.get(i).getPostNickname();
-                        String profileImage = data.get(i).getProfileImage();
-                        int heart = data.get(i).getHeart();
-                        int commentNum = data.get(i).getCommentNum();
-                        String location = data.get(i).getLocation();
-                        String postImage = data.get(i).getPostImage();
-                        String writing = data.get(i).getWriting();
-                        String dateCreated = data.get(i).getDateCreated();
-
-                        String[] arrayLocation = location.split(" ");
-                        latitude = Double.parseDouble(arrayLocation[0]);
-                        longitude = Double.parseDouble(arrayLocation[1]);
-
-                        String currentLocation = getAddress(getApplicationContext(),latitude,longitude);
-                        String addressPost = editAddress4(currentLocation);
-
-                        String datePost = lastTime(dateCreated);
-
-                        PostData postData = new PostData(user_Nickname, user_ImagePath, user_Memo, num, postNickname, profileImage, heart, commentNum, addressPost, postImage, writing, datePost);
-
-                        postData_ArrayList.add(0, postData);
-
-                    }
-                    Log.d(TAG, "nickname : " + user_Nickname + " memo : " + user_Memo);
-                    profileNicknameText.setText(user_Nickname);
-                    profileMemoText.setText(user_Memo);
-
-                    Glide.with(getApplicationContext())
-                            .load(user_ImagePath)
-                            .into(profileImage);
-
-                    adapter.notifyDataSetChanged();
-
-                } else {
-                    Log.d(TAG, "responseFail");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
-                Log.d(TAG, "getProfile onFailure");
-            }
-        });
-
-    } // getProfile()
-
-    // Geocoder - 위도, 경도 사용해서 주소 구하기.
-    public String getAddress(Context mContext, double lat, double lng) {
-        String nowAddr ="현재 위치를 확인 할 수 없습니다.";
-        Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
-        List<Address> address;
-
-        try
-        {
-            if (geocoder != null)
-            {
-                address = geocoder.getFromLocation(lat, lng, 1);
-                if (address != null && address.size() > 0)
-                {
-                    nowAddr = address.get(0).getAddressLine(0).toString();
-                    Log.d(TAG, "전체 주소 : " + nowAddr);
-
-                }
-            }
-        }
-        catch (IOException e)
-        {
-            Toast.makeText(mContext, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-        return nowAddr;
-    } // getAddress
-
-
-    public String editAddress4(String location) {
-
-        String address = null;
-
-        String[] addressArray = location.split(" ");
-
-        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
-
-//        address = addressArray[2] + " " + addressArray[4];
-
-        return address;
-
-    } // editAddress4()
-
-    public String editAddress2(String location) {
-
-        String address = null;
-        String[] addressArray = location.split(" ");
-//        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
-        address = addressArray[2] + " " + addressArray[4];
-
-        return address;
-
-    } // editAddress2()
-
-    public String lastTime(String dateCreated) {
-
-        String msg = null;
-
-        long datePosted = Long.parseLong(dateCreated);
-        long currentTime = System.currentTimeMillis();
-        long lastTime = (currentTime - datePosted) / 1000;
-
-        if (lastTime < 60) {
-            msg = "방금 전";
-        } else if ((lastTime /= 60) < 60) {
-            msg = lastTime + "분 전";
-        } else if ((lastTime /= 60) < 24) {
-            msg = lastTime + "시간 전";
-        } else if ((lastTime /= 24) < 7) {
-            msg = lastTime + "일 전";
-        } else if (lastTime < 14) {
-            msg = "1주 전";
-        } else if (lastTime < 21) {
-            msg = "2주 전";
-        } else if (lastTime < 28) {
-            msg = "3주 전";
-        } else if ((lastTime / 30) < 12) {
-            msg = lastTime + "달 전";
-        } else {
-            msg = (lastTime / 365) + "년 전";
-        }
-
-        return msg;
-
-    } // lastTime()
-
-    // ---------------------------------------------------------------------------------------------
 
     public void setVariable() {
 
@@ -414,7 +169,8 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         postData_ArrayList = new ArrayList<>();
         adapter.setItemProfile(postData_ArrayList);
 
-    }
+    } // setVariable()
+
 
     public void setView() {
 
@@ -455,7 +211,172 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             }
         });
 
+    } // setView()
+
+
+    // ---------------------------------------------------------------------------------------------
+
+
+    @Override
+    public void onMapReady(@NonNull NaverMap naverMap) {
+        Log.d(TAG, "onMapReady() 호출");
+
+        this.naverMap = naverMap;
+        naverMap.setExtent(new LatLngBounds(new LatLng(31.43, 122.37), new LatLng(44.35, 132)));
+
+        naverMap.setMaxZoom(17);
+        naverMap.setMinZoom(5);
+
+        Log.d(TAG, "onMapReady: " + latitude + " " + longitude);
+        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 9);
+        naverMap.setCameraPosition(cameraPosition);
+
+        UiSettings uiSettings = naverMap.getUiSettings();
+        uiSettings.setScaleBarEnabled(false);
+        uiSettings.setZoomControlEnabled(false);
+        uiSettings.setLogoClickEnabled(false);
+
+        addMarker();
 
     }
+
+
+    public void addMarker() {
+
+        if (data.size() > 0) {
+            for (int i=0; i < data.size(); i++) {
+                Log.d(TAG, "datasize() : " + data.size());
+                String location = data.get(i).getLocation();
+
+                String[] arrayLocation = location.split(" ");
+                double latitude = Double.parseDouble(arrayLocation[0]);
+                double longitude = Double.parseDouble(arrayLocation[1]);
+
+                String currentLocation = getAddress.getAddress(this,latitude,longitude);
+                String shortLocation = getAddress.editAddress24(currentLocation);
+
+                setMarker(latitude, longitude, shortLocation);
+            }
+        }
+
+    } // addMarker()
+
+
+    public void setMarker(double lat, double lng, String addressHeart) {
+
+        Marker marker = new Marker();
+        marker.setPosition(new LatLng(lat,lng));
+        marker.setTag(addressHeart);
+
+        marker.setMap(naverMap);
+
+        setInfoWindow(marker);
+
+    } // setMarker()
+
+
+    public void setInfoWindow(Marker marker) {
+
+        InfoWindow infoWindow = new InfoWindow();
+        infoWindow.setAdapter(new InfoWindow.DefaultTextAdapter(this) {
+            @NonNull
+            @Override
+            public CharSequence getText(@NonNull InfoWindow infoWindow) {
+                return marker.getTag().toString();
+            }
+        });
+
+        marker.setOnClickListener(new Overlay.OnClickListener() {
+            @Override
+            public boolean onClick(@NonNull Overlay overlay) {
+                if (marker.getInfoWindow() == null) {
+                    // 현재 마커에 정보 창이 열려있지 않을 경우 엶
+                    infoWindow.open(marker);
+                } else {
+                    // 이미 현재 마커에 정보 창이 열려있을 경우 닫음
+                    infoWindow.close();
+                }
+
+                CameraPosition cameraPosition = new CameraPosition(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude), 12);
+                CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,2000);
+                naverMap.moveCamera(cameraUpdate);
+
+                return true;
+            }
+        });
+        naverMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(@NonNull PointF pointF, @NonNull LatLng latLng) {
+
+            }
+        });
+
+    } // setInfoWindow()
+
+
+    public void getProfile(String nickname) {
+
+        Call<ArrayList<PostData>> call = apiInterface.getProfile(nickname);
+        call.enqueue(new Callback<ArrayList<PostData>>() {
+            @Override
+            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "getProfile onResponse");
+
+                    data = response.body();
+                    Log.d(TAG, "onResponse: " + data + " " + data.toString());
+
+                    for (int i = 0; i < data.size(); i++) {
+
+                        user_Nickname = data.get(i).getNickname();
+                        user_ImagePath = data.get(i).getImagePath();
+                        user_Memo = data.get(i).getMemo();
+                        int num = data.get(i).getNum();
+                        String postNickname = data.get(i).getPostNickname();
+                        String profileImage = data.get(i).getProfileImage();
+                        int heart = data.get(i).getHeart();
+                        int commentNum = data.get(i).getCommentNum();
+                        String location = data.get(i).getLocation();
+                        String postImage = data.get(i).getPostImage();
+                        String writing = data.get(i).getWriting();
+                        String dateCreated = data.get(i).getDateCreated();
+
+                        String[] arrayLocation = location.split(" ");
+                        latitude = Double.parseDouble(arrayLocation[0]);
+                        longitude = Double.parseDouble(arrayLocation[1]);
+
+                        String currentLocation = getAddress.getAddress(getApplicationContext(),latitude,longitude);
+                        String addressPost = getAddress.editAddress1234(currentLocation);
+
+                        String datePost = getTime.lastTime(dateCreated);
+
+                        PostData postData = new PostData(user_Nickname, user_ImagePath, user_Memo, num, postNickname, profileImage, heart, commentNum, addressPost, postImage, writing, datePost);
+
+                        postData_ArrayList.add(0, postData);
+
+                    }
+                    Log.d(TAG, "nickname : " + user_Nickname + " memo : " + user_Memo);
+                    profileNicknameText.setText(user_Nickname);
+                    profileMemoText.setText(user_Memo);
+
+                    Glide.with(getApplicationContext())
+                            .load(user_ImagePath)
+                            .into(profileImage);
+
+                    adapter.notifyDataSetChanged();
+
+                } else {
+                    Log.d(TAG, "responseFail");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
+                Log.d(TAG, "getProfile onFailure");
+            }
+        });
+
+    } // getProfile()
 
 }

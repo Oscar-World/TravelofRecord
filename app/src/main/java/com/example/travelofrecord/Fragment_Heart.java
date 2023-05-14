@@ -66,8 +66,8 @@ import ted.gun0912.clustering.naver.TedNaverClustering;
 public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     String TAG = "하트 프래그먼트";
-
     View v;
+    GetAdress getAdress = new GetAdress();
 
     private Button photo_Btn;
     private Button map_Btn;
@@ -331,8 +331,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 latitude = Double.parseDouble(arrayLocation[0]);
                 longitude = Double.parseDouble(arrayLocation[1]);
 
-                String currentLocation = getAddress(getContext(),latitude,longitude);
-                addressHeart = editAddress2(currentLocation);
+                String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
+                addressHeart = getAdress.editAddress24(currentLocation);
 
                 setMarker(latitude, longitude, addressHeart);
             }
@@ -437,8 +437,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                             Log.d(TAG, "getHeart - latitude : " + latitude);
                             Log.d(TAG, "getHeart - longitude : " + longitude);
 
-                            String currentLocation = getAddress(getContext(),latitude,longitude);
-                            addressHeart = editAddress4(currentLocation);
+                            String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
+                            addressHeart = getAdress.editAddress1234(currentLocation);
 
                             PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum,
                                     addressHeart, post_PostImage, post_Writing, post_DateCreated, post_Num, post_WhoLike, heartStatus);
@@ -475,59 +475,6 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         });
 
     } // getHeart()
-
-
-    // Geocoder - 위도, 경도 사용해서 주소 구하기.
-    public String getAddress(Context mContext, double lat, double lng) {
-        nowAddr ="현재 위치를 확인 할 수 없습니다.";
-        Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
-        List<Address> address;
-
-        try
-        {
-            if (geocoder != null)
-            {
-                address = geocoder.getFromLocation(lat, lng, 1);
-                if (address != null && address.size() > 0)
-                {
-                    nowAddr = address.get(0).getAddressLine(0).toString();
-                    Log.d(TAG, "전체 주소 : " + nowAddr);
-
-                }
-            }
-        }
-        catch (IOException e)
-        {
-            Toast.makeText(mContext, "주소를 가져 올 수 없습니다.", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-        return nowAddr;
-
-    } // getAddress
-
-
-    public String editAddress4(String location) {
-
-        String address = null;
-        String[] addressArray = location.split(" ");
-        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
-//        address = addressArray[2] + " " + addressArray[4];
-
-        return address;
-
-    } // editAddress4()
-
-    public String editAddress2(String location) {
-
-        String address = null;
-        String[] addressArray = location.split(" ");
-//        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
-        address = addressArray[2] + " " + addressArray[4];
-
-        return address;
-
-    } // editAddress2()
-
 
 
 }

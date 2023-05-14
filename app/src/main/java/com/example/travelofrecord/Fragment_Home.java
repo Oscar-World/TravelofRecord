@@ -34,13 +34,9 @@ public class Fragment_Home extends Fragment {
     String TAG = "홈 프래그먼트";
     View v;
     GetAdress getAdress = new GetAdress();
+    GetTime getTime = new GetTime();
 
     SwipeRefreshLayout swipeRefreshLayout;
-
-//    private Button photo_Btn;
-//    private Button map_Btn;
-//    private Button photo_Block;
-//    private Button map_Block;
 
     RecyclerView recyclerView;
     TextView internetText;
@@ -181,8 +177,8 @@ public class Fragment_Home extends Fragment {
 
                             String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
 
-                            String datePost = lastTime(dateCreated);
-                            String addressPost = getAdress.editAddress4(currentLocation);
+                            String datePost = getTime.lastTime(dateCreated);
+                            String addressPost = getAdress.editAddress1234(currentLocation);
                             Log.d(TAG, "i : " + i);
 
                             Log.d(TAG, "num = " + num + "\nnickname = " + nickname + "\npostNum : " + postNum
@@ -215,46 +211,10 @@ public class Fragment_Home extends Fragment {
 
     }
 
-    public String lastTime(String dateCreated) {
-
-        String msg = null;
-
-        long datePosted = Long.parseLong(dateCreated);
-        long currentTime = System.currentTimeMillis();
-        long lastTime = (currentTime - datePosted) / 1000;
-
-        if (lastTime < 60) {
-            msg = "방금 전";
-        } else if ((lastTime /= 60) < 60) {
-            msg = lastTime + "분 전";
-        } else if ((lastTime /= 60) < 24) {
-            msg = lastTime + "시간 전";
-        } else if ((lastTime /= 24) < 7) {
-            msg = lastTime + "일 전";
-        } else if (lastTime < 14) {
-            msg = "1주 전";
-        } else if (lastTime < 21) {
-            msg = "2주 전";
-        } else if (lastTime < 28) {
-            msg = "3주 전";
-        } else if ((lastTime / 30) < 12) {
-            msg = lastTime + "달 전";
-        } else {
-            msg = (lastTime / 365) + "년 전";
-        }
-
-        return msg;
-    }
-
 
     public void setView() {
 
         swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);
-
-//        photo_Btn = v.findViewById(R.id.homePhoto_Btn);
-//        map_Btn = v.findViewById(R.id.homeMap_Btn);
-//        photo_Block = v.findViewById(R.id.homePhoto_Block);
-//        map_Block = v.findViewById(R.id.homeMap_Block);
 
         internetText = v.findViewById(R.id.internetCheck_Text);
         recyclerView = v.findViewById(R.id.home_RecyclerView);

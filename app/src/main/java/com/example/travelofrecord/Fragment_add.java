@@ -58,8 +58,8 @@ import retrofit2.Response;
 public class Fragment_add extends Fragment {
 
     String TAG = "추가 프래그먼트";
-
     View v;
+    GetTime getTime = new GetTime();
 
     Button addUpload_Btn;
     EditText writing_Edit;
@@ -109,14 +109,8 @@ public class Fragment_add extends Fragment {
 
     private FusedLocationProviderClient fusedLocationClient;
 
-    String adminArea; // 광역시, 도
-    String locality; // 시
-    String subLocality; // 구
-    String thoroughfare; // 동
-
     String latitude; // 위도
     String longitude; // 경도
-
 
 
     @Override
@@ -158,52 +152,13 @@ public class Fragment_add extends Fragment {
     } // onCreate()
 
 
-    // ImageFile 생성 후, 경로를 가져올 메서드 선언
-    private File createImageFile() throws IOException {
-        // 파일이름을 세팅 및 저장경로 세팅
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir
-        );
-
-        postImage = image.getAbsolutePath();
-
-        return image;
-    }
-
-
-    // 비트맵 > uri 변환 메서드 (기기 앨범에 사진 저장)
-    private Uri getImageUri(Context context, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-
-
-    // uri 절대경로 리턴 메서드
-    String getRealPathFromUri(Uri uri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        CursorLoader loader = new CursorLoader(getActivity(), uri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String result = cursor.getString(column_index);
-        cursor.close();
-        return result;
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() 호출");
         v = inflater.inflate(R.layout.fragment_add, container, false);
+        setVariable();
         setView();
 
         return v;
@@ -259,93 +214,6 @@ public class Fragment_add extends Fragment {
         });
 
 
-        postImage_Iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                File photoFile = null;
-                try {
-                    photoFile = createImageFile();
-                } catch (IOException ex) {
-                    Log.d(TAG, "파일 생성 실패");
-                }
-                if (photoFile != null) {
-
-                    photoUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getPackageName() + ".fileprovider", photoFile);
-                    i.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-
-                    Log.d(TAG, "사진 찍었을 때 uri : " + photoUri);
-
-                    launcher.launch(i);
-
-                }
-
-
-            }
-        });
-
-
-        addUpload_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (currentLocation == null) {
-                    currentLocation = "someWhere";
-                }
-                writing = writing_Edit.getText().toString();
-                dataCreated = getTime().toString();
-
-                Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + currentLocation +
-                        "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
-
-                if (postImage == null) {
-                    Toast.makeText(getActivity(),"사진을 촬영해주세요",Toast.LENGTH_SHORT).show();
-                } else if (writing.equals("")) {
-                    Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
-                } else {
-                    insertFeed(nickname, profileImage, heart, commentNum, currentLocation, postImage, writing, dataCreated);
-                }
-
-            }
-        });
-
-        writing_Layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-
-                writing_Edit.requestFocus();
-
-            }
-        });
-
-
-
-        writing_Edit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-                int writingCount = writing_Edit.getText().toString().length();
-                Log.d(TAG, "writingLength : " + writingCount);
-                writingCount_Text.setText(String.valueOf(writingCount) + "/100");
-
-            }
-        });
-
-
     } // onStart()
 
 
@@ -383,7 +251,11 @@ public class Fragment_add extends Fragment {
 
     }
 
-    public void setView() {
+
+    // --------------------------------------------------------------------------------------------
+
+
+    public void setVariable() {
 
         addUpload_Btn = v.findViewById(R.id.addUpload_Btn);
         writing_Edit = v.findViewById(R.id.writing_Edit);
@@ -409,23 +281,97 @@ public class Fragment_add extends Fragment {
 
         writing_Edit.setFocusableInTouchMode(true);
 
-    }
+    } // setVariable()
+
+    public void setView() {
+
+        postImage_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                    Log.d(TAG, "파일 생성 실패");
+                }
+                if (photoFile != null) {
+
+                    photoUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getPackageName() + ".fileprovider", photoFile);
+                    i.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+
+                    Log.d(TAG, "사진 찍었을 때 uri : " + photoUri);
+
+                    launcher.launch(i);
+
+                }
+
+
+            }
+        });
+
+
+        addUpload_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (currentLocation == null) {
+                    currentLocation = "someWhere";
+                }
+                writing = writing_Edit.getText().toString();
+                dataCreated = getTime.getTime().toString();
+
+                Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + currentLocation +
+                        "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
+
+                if (postImage == null) {
+                    Toast.makeText(getActivity(),"사진을 촬영해주세요",Toast.LENGTH_SHORT).show();
+                } else if (writing.equals("")) {
+                    Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
+                } else {
+                    insertFeed(nickname, profileImage, heart, commentNum, currentLocation, postImage, writing, dataCreated);
+                }
+
+            }
+        });
+
+        writing_Layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                writing_Edit.requestFocus();
+
+            }
+        });
 
 
 
-    public Long getTime() {
+        writing_Edit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
 
-        long currentTime = System.currentTimeMillis();
-//        Date date = new Date(currentTime);
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm");
-//
-//        String today = format.format(date);
-//
-//        return today;
+                int writingCount = writing_Edit.getText().toString().length();
+                Log.d(TAG, "writingLength : " + writingCount);
+                writingCount_Text.setText(String.valueOf(writingCount) + "/100");
 
-        return currentTime;
+            }
+        });
 
-    }
+    } // setView()
+
+
+    // --------------------------------------------------------------------------------------------
+
 
     // 서버에 게시글 데이터 추가
     public void insertFeed(String nickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated) {
@@ -468,6 +414,45 @@ public class Fragment_add extends Fragment {
 
     }  // insertFeed()
 
+
+    // ImageFile 생성 후, 경로를 가져올 메서드 선언
+    private File createImageFile() throws IOException {
+        // 파일이름을 세팅 및 저장경로 세팅
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
+
+        postImage = image.getAbsolutePath();
+
+        return image;
+    }
+
+
+    // 비트맵 > uri 변환 메서드 (기기 앨범에 사진 저장)
+    private Uri getImageUri(Context context, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+
+    // uri 절대경로 리턴 메서드
+    String getRealPathFromUri(Uri uri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        CursorLoader loader = new CursorLoader(getActivity(), uri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result = cursor.getString(column_index);
+        cursor.close();
+        return result;
+    }
 
 
 }

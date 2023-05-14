@@ -59,6 +59,7 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         ImageView proflie_PostImage;
+        int networkStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +67,7 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
             proflie_PostImage = itemView.findViewById(R.id.profile_PostImage);
             sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
             currentNickname = sharedPreferences.getString("nickname","");
+            networkStatus = NetworkStatus.getConnectivityStatus(context);
 
         }
 
@@ -79,9 +81,7 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
                 @Override
                 public void onClick(View view) {
 
-                    int status = NetworkStatus.getConnectivityStatus(context);
-                    Log.d(TAG, "NetworkStatus : " + status);
-                    if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                    if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                         Intent i = new Intent(context, Post.class);
                         i.putExtra("num", item.getNum());
