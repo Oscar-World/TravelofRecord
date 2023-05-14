@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -90,7 +93,6 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
             comment_CommentText = itemView.findViewById(R.id.commnet_commentText);
             comment_MenuBtn = itemView.findViewById(R.id.comment_menuBtn);
 
-
         }
 
         void onBind(PostData item) {
@@ -134,6 +136,21 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                 @Override
                 public void onClick(View view) {
 
+                    PopupMenu popup = new PopupMenu(context, view);
+                    popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+
+                            if (menuItem.getItemId() == R.id.menu_Delete) {
+                                Toast.makeText(context,"삭제ㄱㄱ",Toast.LENGTH_SHORT).show();
+                            }
+
+                            return false;
+                        }
+                    });
+                    popup.show();
 //                    deleteComment(item.getWhoComment(), item.dateComment, post.post_CommentNum, item.postNum);
 
                 }
