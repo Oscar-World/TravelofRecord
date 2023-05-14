@@ -294,6 +294,15 @@ public class Post extends AppCompatActivity {
             }
         });
 
+        post_PostImage_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Post.this, PhotoView.class);
+                i.putExtra("image",post_PostImage);
+                startActivity(i);
+            }
+        });
+
     } // setView()
 
 

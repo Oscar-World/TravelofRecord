@@ -91,5 +91,8 @@ dependencies {
     // 네이버지도 클러스터링
     implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
 
+    // 포토뷰
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
 
 }

@@ -521,6 +521,17 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
+            }
+        });
+
+        // 프로필 사진 보기
+        profile_Image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent(getActivity(),PhotoView.class);
+                i.putExtra("image",user_image);
+                startActivity(i);
 
             }
         });

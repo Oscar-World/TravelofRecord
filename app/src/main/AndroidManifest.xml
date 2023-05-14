@@ -22,8 +22,13 @@
         android:theme="@style/Theme.TravelOfRecord"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".PhotoView"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".Profile"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"

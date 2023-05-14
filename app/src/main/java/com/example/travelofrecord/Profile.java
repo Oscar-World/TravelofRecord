@@ -211,6 +211,24 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             }
         });
 
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent(Profile.this, PhotoView.class);
+                i.putExtra("image", user_ImagePath);
+                startActivity(i);
+
+            }
+        });
+
+        profileDmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"서비스 준비중입니다",Toast.LENGTH_SHORT).show();
+            }
+        });
+
     } // setView()
 
 
