@@ -56,6 +56,15 @@
                     android:visibility="visible"
                     />
 
+                <ImageView
+                    android:id="@+id/home_Loading"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/loading"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    />
+
                 <TextView
                     android:id="@+id/internetCheck_Text"
                     android:layout_width="wrap_content"

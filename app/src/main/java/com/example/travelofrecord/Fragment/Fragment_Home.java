@@ -14,6 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +46,9 @@ public class Fragment_Home extends Fragment {
 
     RecyclerView recyclerView;
     TextView internetText;
+
+    ImageView loading_Iv;
+    Animation rotate;
 
     ArrayList<PostData> post_Data_ArrayList;
     int itemSize;
@@ -121,7 +127,16 @@ public class Fragment_Home extends Fragment {
         call.enqueue(new Callback<ArrayList<PostData>>() {
             @Override
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
+
+//                recyclerView.setVisibility(View.GONE);
+//                loading_Iv.setVisibility(View.VISIBLE);
+//                loading_Iv.startAnimation(rotate);
+
                 if (response.isSuccessful()) {
+
+//                    loading_Iv.setVisibility(View.GONE);
+//                    recyclerView.setVisibility(View.VISIBLE);
+//                    loading_Iv.clearAnimation();
 
                     ArrayList<PostData> data = response.body();
 
@@ -190,6 +205,9 @@ public class Fragment_Home extends Fragment {
 
 
     public void setView() {
+
+        loading_Iv = v.findViewById(R.id.home_Loading);
+        rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
 
         networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
         swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);

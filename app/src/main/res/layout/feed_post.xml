@@ -25,16 +25,6 @@
             app:civ_border_overlay="false"
             />
 
-
-<!--        <ImageView-->
-<!--            android:id="@+id/item_profileImage"-->
-<!--            android:layout_width="50dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:scaleType="centerCrop"-->
-<!--            android:padding="1dp"-->
-<!--            android:src="@drawable/ic_launcher_foreground"-->
-<!--            android:background="@drawable/round_corner"/>-->
-
         <TextView
             android:id="@+id/item_nickname"
             android:layout_width="wrap_content"
