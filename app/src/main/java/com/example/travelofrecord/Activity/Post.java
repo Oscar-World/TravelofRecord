@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -88,7 +90,10 @@ public class Post extends AppCompatActivity {
     ApiInterface apiInterface;
     LinearLayout post_TopLayout;
 
-    int networkStatus = NetworkStatus.getConnectivityStatus(this);
+    int networkStatus;
+
+    BroadcastReceiver receiver;
+    IntentFilter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,17 +101,32 @@ public class Post extends AppCompatActivity {
         setContentView(R.layout.activity_post);
         Log.d(TAG, "onStart() 호출됨");
 
-
+        setVariable();
+        getPost(accessNickname, post_Num);
+        getComment(post_Num);
 
     }
+
+
 
     @Override
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
-        setVariable();
-        getPost(accessNickname, post_Num);
-        getComment(post_Num);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int heartNum = intent.getIntExtra("heartNum",0);
+                Log.d(TAG, "onReceive: " + heartNum);
+                post_HeartNum_Text.setText(String.valueOf(heartNum));
+            }
+        };
+
+        filter = new IntentFilter("heartSync");
+        
+        registerReceiver(receiver, filter);
+
     }
 
     @Override
@@ -125,6 +145,7 @@ public class Post extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
+        unregisterReceiver(receiver);
     }
 
     @Override
@@ -146,6 +167,7 @@ public class Post extends AppCompatActivity {
     public void setVariable() {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        networkStatus = NetworkStatus.getConnectivityStatus(this);
 
         back_Btn = findViewById(R.id.postBack_Btn);
         post_Nickname_Text = findViewById(R.id.post_nickname);
@@ -163,7 +185,6 @@ public class Post extends AppCompatActivity {
         post_CommentAdd_Btn = findViewById(R.id.post_commentAdd_Btn);
 
         Intent i = getIntent();
-        Log.d(TAG, "getIntent : " + i);
 
         post_Num = i.getIntExtra("num", 0);
 
@@ -295,6 +316,12 @@ public class Post extends AppCompatActivity {
                     post_HeartNum_Text.setText(String.valueOf(post_Heart));
 
                     insertWhoLike(post_Num, accessNickname, post_Heart);
+
+                    Intent i = new Intent("heartSync");
+                    i.putExtra("heartNum", post_Heart);
+                    sendBroadcast(i);
+                    Log.d(TAG, "intent : " + i);
+
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -313,6 +340,12 @@ public class Post extends AppCompatActivity {
                     post_HeartNum_Text.setText(String.valueOf(post_Heart));
 
                     deleteWhoLike(post_Num, accessNickname, post_Heart);
+
+                    Intent i = new Intent("heartSync");
+                    i.putExtra("heartNum", post_Heart);
+                    sendBroadcast(i);
+                    Log.d(TAG, "intent : " + i);
+
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -380,9 +413,9 @@ public class Post extends AppCompatActivity {
             public void onResponse(Call<PostData> call, Response<PostData> response) {
 
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "insertWhoLike_Response 성공");
+                    Log.d(TAG, "deleteWhoLike_Response 성공");
                 } else {
-                    Log.d(TAG, "insertWhoLike_Response 실패");
+                    Log.d(TAG, "deleteWhoLike_Response 실패");
                 }
 
             }
@@ -404,10 +437,8 @@ public class Post extends AppCompatActivity {
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.d(TAG, "insertComment onResponse");
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "response : " + response.body().toString());
 
                     postDataArrayList.clear();
-//                    adapter.setItemComment(postDataArrayList);
                     getComment(post_Num);
 
                 } else {
@@ -432,10 +463,9 @@ public class Post extends AppCompatActivity {
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
                 Log.d(TAG, "getComment onResponse");
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "response : " + response.body().toString());
 
                     ArrayList<PostData> data = response.body();
-                    Log.d(TAG, "data.size() : " + data.size());
+//                    Log.d(TAG, "data.size() : " + data.size());
 
                     if (data.size() > 0) {
 
@@ -446,10 +476,10 @@ public class Post extends AppCompatActivity {
                             String dateComment = data.get(i).getDateComment();
                             String comment = data.get(i).getComment();
 
-                            Log.d(TAG, "dateComment : " + dateComment);
+//                            Log.d(TAG, "dateComment : " + dateComment);
                             String commentTime = getTime.lastTime(dateComment);
 
-                            Log.d(TAG, "profileImage : " + profileImage + "\nwhoComment : " + whoComment + "\ndateComment : " + commentTime + "\ncomment : " + comment);
+//                            Log.d(TAG, "profileImage : " + profileImage + "\nwhoComment : " + whoComment + "\ndateComment : " + commentTime + "\ncomment : " + comment);
 
                             PostData postData = new PostData(profileImage, whoComment, commentTime, comment);
 
@@ -489,7 +519,7 @@ public class Post extends AppCompatActivity {
                     ArrayList<PostData> data = response.body();
 
                     if (data.size() > 0) {
-                        Log.d(TAG, "data.size : " + data.size());
+//                        Log.d(TAG, "data.size : " + data.size());
 
                             post_Num = data.get(0).getNum();
                             post_Nickname = data.get(0).getPostNickname();

@@ -64,7 +64,7 @@ public class Fragment_Home extends Fragment {
     SharedPreferences sharedPreferences;
     String loginNickname;
 
-    int networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
+    int networkStatus;
 
 
     @Override public void onAttach(Context context) {
@@ -191,6 +191,7 @@ public class Fragment_Home extends Fragment {
 
     public void setView() {
 
+        networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
         swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);
 
         internetText = v.findViewById(R.id.internetCheck_Text);

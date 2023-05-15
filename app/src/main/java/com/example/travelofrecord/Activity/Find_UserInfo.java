@@ -103,7 +103,7 @@ public class Find_UserInfo extends AppCompatActivity {
     Animation right_out;
     Animation right_in;
 
-    int networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
+    int networkStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -576,6 +576,8 @@ public class Find_UserInfo extends AppCompatActivity {
 
 
     public void setView() {
+
+        networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
 
         findInfoFrame = findViewById(R.id.findInfo_Frame);
         findIdFrame1 = findViewById(R.id.findInfo_idFrame1);

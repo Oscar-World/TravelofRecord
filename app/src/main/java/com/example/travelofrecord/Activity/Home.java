@@ -56,7 +56,7 @@ public class Home extends AppCompatActivity {
 
     Bundle bundle;
 
-    int networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
+    int networkStatus;
 
 
     @Override
@@ -68,6 +68,7 @@ public class Home extends AppCompatActivity {
         setVariable();
         setView();
         Log.d(TAG, "쉐어드 정보 : " + sharedInfo);
+        networkStatus = NetworkStatus.getConnectivityStatus(this);
 
     }
 

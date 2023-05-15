@@ -66,7 +66,7 @@ public class Login extends AppCompatActivity {
 
     public static Context context;
 
-    int networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
+    int networkStatus;
 
 
     // 갤러리 접근 권한
@@ -433,6 +433,8 @@ public class Login extends AppCompatActivity {
 
 
     public void setView() {
+
+        networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
 
         login_Btn = findViewById(R.id.login_Btn);
         back_Btn = findViewById(R.id.loginBack_Btn);

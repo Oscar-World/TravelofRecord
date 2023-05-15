@@ -105,7 +105,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
     MapView mapView;
     NaverMap naverMap;
     private FusedLocationProviderClient fusedLocationClient;
-    int networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
+    int networkStatus;
 
 
     @Override
@@ -184,6 +184,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     public void setVariable() {
 
+        networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
         photo_Btn = v.findViewById(R.id.heartPhoto_Btn);
         map_Btn = v.findViewById(R.id.heartMap_Btn);
         photo_Block = v.findViewById(R.id.heartPhoto_Block);

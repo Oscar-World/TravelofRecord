@@ -79,7 +79,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     double latitude;
     double longitude;
 
-    int networkStatus = NetworkStatus.getConnectivityStatus(this);
+    int networkStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +147,8 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
 
     public void setVariable() {
+
+        networkStatus = NetworkStatus.getConnectivityStatus(this);
 
         profileScrollView = findViewById(R.id.profile_ScrollView);
         profileNicknameText = findViewById(R.id.profile_nickname);
