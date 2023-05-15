@@ -10,7 +10,10 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -62,6 +65,10 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     ImageView profileImage;
     ImageButton profileDmBtn;
     ImageButton profileBackBtn;
+
+    FrameLayout loadingFrame;
+    ImageView loading_Iv;
+    Animation rotate;
 
     String getNickname;
     ApiInterface apiInterface;
@@ -148,6 +155,10 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
     public void setVariable() {
 
+        loadingFrame = findViewById(R.id.profileLoading_Frame);
+        loading_Iv = findViewById(R.id.profile_Loading);
+        rotate = AnimationUtils.loadAnimation(this, R.anim.loading);
+
         networkStatus = NetworkStatus.getConnectivityStatus(this);
 
         profileScrollView = findViewById(R.id.profile_ScrollView);
@@ -178,6 +189,9 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
 
     public void setView() {
+
+        loadingFrame.setVisibility(View.VISIBLE);
+        loading_Iv.startAnimation(rotate);
 
         profileBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,6 +230,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                     profileInfoBlock.setVisibility(View.GONE);
 
                     profileScrollView.setVisibility(View.GONE);
+                    loadingFrame.setVisibility(View.GONE);
                     mapView.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -364,6 +379,10 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
                 if (response.isSuccessful()) {
                     Log.d(TAG, "getProfile onResponse");
+
+                    loadingFrame.setVisibility(View.GONE);
+                    profileScrollView.setVisibility(View.VISIBLE);
+                    loading_Iv.clearAnimation();
 
                     data = response.body();
                     Log.d(TAG, "onResponse: " + data + " " + data.toString());

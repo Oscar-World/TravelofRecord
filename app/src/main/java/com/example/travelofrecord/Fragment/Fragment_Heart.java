@@ -19,8 +19,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelofrecord.Network.ApiClient;
@@ -64,8 +68,11 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
     private Button photo_Block;
     private Button map_Block;
 
-    FrameLayout noHeartFrameLayout;
     RecyclerView recyclerView;
+    TextView noHeartText;
+    ImageView loadingIv;
+    Animation rotate;
+
     ArrayList<PostData> post_Data_ArrayList;
     Heart_Adapter adapter;
     ArrayList<PostData> data;
@@ -190,7 +197,10 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         photo_Block = v.findViewById(R.id.heartPhoto_Block);
         map_Block = v.findViewById(R.id.heartMap_Block);
 
-        noHeartFrameLayout = v.findViewById(R.id.noHeart_FrameLayout);
+        noHeartText = v.findViewById(R.id.noHeart_Text);
+        loadingIv = v.findViewById(R.id.heart_Loading);
+        rotate = AnimationUtils.loadAnimation(getActivity(), R.anim.loading);
+
         recyclerView = v.findViewById(R.id.heart_RecyclerView);
         adapter = new Heart_Adapter();
 
@@ -208,6 +218,9 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     public void setView() {
 
+        loadingIv.setVisibility(View.VISIBLE);
+        loadingIv.startAnimation(rotate);
+
         photo_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -219,10 +232,10 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                     map_Block.setVisibility(View.GONE);
 
                     if (post_Data_ArrayList.size() == 0) {
-                        noHeartFrameLayout.setVisibility(View.VISIBLE);
+                        noHeartText.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.GONE);
                     } else {
-                        noHeartFrameLayout.setVisibility(View.GONE);
+                        noHeartText.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
                     }
 
@@ -244,8 +257,9 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                     photo_Btn.setVisibility(View.VISIBLE);
                     photo_Block.setVisibility(View.GONE);
 
-                    noHeartFrameLayout.setVisibility(View.GONE);
+                    noHeartText.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.GONE);
+                    loadingIv.setVisibility(View.GONE);
                     mapView.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -289,6 +303,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+
 
     } //setView()
 
@@ -408,11 +423,19 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
                 if (response.isSuccessful()) {
                     Log.d(TAG, "onResponse 호출");
+
+                    recyclerView.setVisibility(View.VISIBLE);
+                    loadingIv.setVisibility(View.GONE);
+                    loadingIv.clearAnimation();
+
                     data = response.body();
 
                     Log.d(TAG, "data.size : " + data.size());
 
                     if (data.size() > 0) {
+
+                        noHeartText.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
 
                         for (int i = 0; i < data.size(); i++) {
 
@@ -455,14 +478,11 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
                         adapter.notifyDataSetChanged();
 
-                    }
-
-                    if (data.size() == 0) {
-                        noHeartFrameLayout.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.GONE);
                     } else {
-                        noHeartFrameLayout.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
+
+                        noHeartText.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+
                     }
 
                 } else {

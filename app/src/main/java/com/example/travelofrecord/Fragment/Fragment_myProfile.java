@@ -27,6 +27,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -82,7 +84,6 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     SharedPreferences.Editor editor;
     SharedPreferences.Editor editor_Kakao;
 
-    LinearLayout profileSelect_Layout;
     ImageButton drawer_Btn;
     Button logout_Btn;
     Button userQuit_Btn;
@@ -92,6 +93,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     ImageView profile_Image;
     ImageView editProfile_Image;
     ImageView touchImage_Image;
+    ImageView loading_Iv;
+    Animation rotate;
 
     TextView profile_Text;
     TextView profile_nickname;
@@ -260,6 +263,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     public void setVariable() {
 
+        loading_Iv = v.findViewById(R.id.myProfile_Loading);
+        rotate = AnimationUtils.loadAnimation(getActivity(), R.anim.loading);
+
         networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
 
         scrollView = v.findViewById(R.id.myProfile_ScrollView);
@@ -310,6 +316,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
 
     public void setView() {
+
+        loading_Iv.setVisibility(View.VISIBLE);
+        loading_Iv.startAnimation(rotate);
 
         if (user_memo == null | "".equals(user_memo)) {
             profile_Edit.setVisibility(View.GONE);
@@ -645,6 +654,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
 
                 if (response.isSuccessful()) {
+
+                    loading_Iv.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    loading_Iv.clearAnimation();
 
                     data = response.body();
 

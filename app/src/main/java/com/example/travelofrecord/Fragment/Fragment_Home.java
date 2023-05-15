@@ -128,15 +128,11 @@ public class Fragment_Home extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
 
-//                recyclerView.setVisibility(View.GONE);
-//                loading_Iv.setVisibility(View.VISIBLE);
-//                loading_Iv.startAnimation(rotate);
-
                 if (response.isSuccessful()) {
 
-//                    loading_Iv.setVisibility(View.GONE);
-//                    recyclerView.setVisibility(View.VISIBLE);
-//                    loading_Iv.clearAnimation();
+                    loading_Iv.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    loading_Iv.clearAnimation();
 
                     ArrayList<PostData> data = response.body();
 
@@ -245,6 +241,10 @@ public class Fragment_Home extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+
+        recyclerView.setVisibility(View.GONE);
+        loading_Iv.setVisibility(View.VISIBLE);
+        loading_Iv.startAnimation(rotate);
 
     }
 
