@@ -66,6 +66,8 @@ public class Login extends AppCompatActivity {
 
     public static Context context;
 
+    int networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
+
 
     // 갤러리 접근 권한
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -115,11 +117,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Log.d(TAG, "버튼 클릭");
-
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     edit_id = login_id.getText().toString();
                     edit_pw = login_pw.getText().toString();
@@ -145,9 +143,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     Intent i = new Intent(Login.this, Find_UserInfo.class);
                     startActivity(i);
@@ -163,9 +159,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     Intent i = new Intent(signup_Btn.getContext(), Signup.class);
                     startActivity(i);
@@ -181,9 +175,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     kakao_Dialog();
 
@@ -194,16 +186,11 @@ public class Login extends AppCompatActivity {
             }
         });
 
-
-
-
         google_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
 
 
@@ -218,9 +205,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
 
 

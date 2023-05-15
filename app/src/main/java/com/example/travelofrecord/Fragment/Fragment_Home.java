@@ -48,8 +48,6 @@ public class Fragment_Home extends Fragment {
     int itemSize;
     Home_Adapter adapter;
 
-    Bundle getData;
-
     String nickname;
     String profileImage;
     int heart;
@@ -65,6 +63,8 @@ public class Fragment_Home extends Fragment {
 
     SharedPreferences sharedPreferences;
     String loginNickname;
+
+    int networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
 
 
     @Override public void onAttach(Context context) {
@@ -94,16 +94,13 @@ public class Fragment_Home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출됨");
 
-        int status = NetworkStatus.getConnectivityStatus(getActivity());
-        Log.d(TAG, "NetworkStatus : " + status);
-        if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+        if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
             internetText.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
             getPost(loginNickname);
         }else {
             internetText.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
-            Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -111,30 +108,7 @@ public class Fragment_Home extends Fragment {
         Log.d(TAG, "onStart() 호출됨");
         super.onStart();
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
 
-                int status = NetworkStatus.getConnectivityStatus(getActivity());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
-                    internetText.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    post_Data_ArrayList = new ArrayList<>();
-                    adapter.setItemPost(post_Data_ArrayList);
-                    getPost(loginNickname);
-
-                    swipeRefreshLayout.setRefreshing(false);
-                }else {
-                    internetText.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-
-            }
-        });
 
     } // onStart()
 
@@ -230,12 +204,28 @@ public class Fragment_Home extends Fragment {
 
         adapter.setItemPost(post_Data_ArrayList);
 
-        getData = getArguments();
-
-        Log.d(TAG, "getData : " + getData);
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         loginNickname = sharedPreferences.getString("nickname","");
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    internetText.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    post_Data_ArrayList = new ArrayList<>();
+                    adapter.setItemPost(post_Data_ArrayList);
+                    getPost(loginNickname);
+                }else {
+                    internetText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
     }
 
@@ -251,9 +241,6 @@ public class Fragment_Home extends Fragment {
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출됨");
         super.onStop();
-
-        getData = null;
-
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출됨");

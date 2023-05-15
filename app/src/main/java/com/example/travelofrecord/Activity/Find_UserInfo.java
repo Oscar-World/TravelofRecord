@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
+import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 
 import java.util.regex.Matcher;
@@ -102,6 +103,8 @@ public class Find_UserInfo extends AppCompatActivity {
     Animation right_out;
     Animation right_in;
 
+    int networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,25 +119,34 @@ public class Find_UserInfo extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onResume() 호출됨");
 
-
-        // 회원 정보 찾기
         findId_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findInfoFrame.setVisibility(View.INVISIBLE);
-                findInfoFrame.startAnimation(left_out);
-                findIdFrame1.setVisibility(View.VISIBLE);
-                findIdFrame1.startAnimation(left_in);
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    findInfoFrame.setVisibility(View.INVISIBLE);
+                    findInfoFrame.startAnimation(left_out);
+                    findIdFrame1.setVisibility(View.VISIBLE);
+                    findIdFrame1.startAnimation(left_in);
+            }else {
+                Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+            }
+
             }
         });
 
         findPw_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findInfoFrame.setVisibility(View.INVISIBLE);
-                findInfoFrame.startAnimation(left_out);
-                findPwFrame1.setVisibility(View.VISIBLE);
-                findPwFrame1.startAnimation(left_in);
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    findInfoFrame.setVisibility(View.INVISIBLE);
+                    findInfoFrame.startAnimation(left_out);
+                    findPwFrame1.setVisibility(View.VISIBLE);
+                    findPwFrame1.startAnimation(left_in);
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -145,79 +157,31 @@ public class Find_UserInfo extends AppCompatActivity {
             }
         });
 
-
-//        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-//
-//            @Override
-//            public void onVerificationCompleted(PhoneAuthCredential credential) { // 검증 성공
-//                // 이 콜백은 다음 2가지 상황에서 호출된다.
-//                // 1. 즉각적인 확인. 경우에 따라서, 확인 코드를 입력 & 전송할 필요 없이 전화 번호를 즉시 확인할 수 있다.
-//                // 2. 자동 검색. 일부 장치에서 구글플레이 서비스가 sms를 자동 탐지하여 사용자 작업 없이 확인을 수행할 수 있다.
-//                Log.d(TAG, "onVerificationCompleted:" + credential);
-//
-//                signInWithPhoneAuthCredential(credential);
-//            }
-//
-//            @Override
-//            public void onVerificationFailed(FirebaseException e) { // 검증 실패
-//                // 이 콜백은 전화번호 형식이 올바르지 않은 경우 호출된다.
-//                Log.w(TAG, "onVerificationFailed", e);
-//
-//                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-//                    // 잘못된 요청
-//                } else if (e instanceof FirebaseTooManyRequestsException) {
-//                    // 해당 프로젝트의 sms 할당량 초과
-//                }
-//
-//                // 해당 에러를 UI로 표시해 줄 것.
-//            }
-//
-//            @Override
-//            public void onCodeSent(@NonNull String verificationId,
-//                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
-//                // 제공된 전화번호로 sms 인증 코드가 전송되었다. 사용자가 코드를 입력하면 자격 증명을 구성한다.
-//                Log.d(TAG, "onCodeSent:" + verificationId);
-//
-//                // 나중에 사용될 수 있도록 검증ID를 저장해놓고, 토큰은 다시 보낸다.
-//                mVerificationId = verificationId;
-//                mResendToken = token;
-//            }
-//        };
-
-
         // 아이디 찾기
         findId_sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                findCode = 1;
-                user_phoneNum = findId_phone.getText().toString();
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    findCode = 1;
+                    user_phoneNum = findId_phone.getText().toString();
 
-                smsTimeThread = new SmsTimeThread();
-                smsTimeThread.start();
+                    smsTimeThread = new SmsTimeThread();
+                    smsTimeThread.start();
 
-                findId_sendText.setVisibility(View.VISIBLE);
-                findId_sendBtn.setVisibility(View.INVISIBLE);
-                findId_sendBlock.setVisibility(View.VISIBLE);
-                findId_checkBtn.setVisibility(View.VISIBLE);
-                findId_checkBlock.setVisibility(View.INVISIBLE);
-                findId_smsTimeText.setVisibility(View.VISIBLE);
-                findId_smsErrorText.setVisibility(View.INVISIBLE);
-                findId_smsTimeoutText.setVisibility(View.INVISIBLE);
+                    findId_sendText.setVisibility(View.VISIBLE);
+                    findId_sendBtn.setVisibility(View.INVISIBLE);
+                    findId_sendBlock.setVisibility(View.VISIBLE);
+                    findId_checkBtn.setVisibility(View.VISIBLE);
+                    findId_checkBlock.setVisibility(View.INVISIBLE);
+                    findId_smsTimeText.setVisibility(View.VISIBLE);
+                    findId_smsErrorText.setVisibility(View.INVISIBLE);
+                    findId_smsTimeoutText.setVisibility(View.INVISIBLE);
 
-                smsCheckNumber = 1;
-
-
-//                PhoneAuthOptions options =
-//                        PhoneAuthOptions.newBuilder(mAuth)
-//                                .setPhoneNumber(phoneNumber)       // 검증을 위한 핸드폰 번호
-//                                .setTimeout(60L, TimeUnit.SECONDS) // 제한 시간과 단위
-//                                .setActivity(this)                 // 콜백 바인딩용 액티비티
-//                                .setCallbacks(mCallbacks)          // 확인 상태 변경 콜백
-//                                .build();
-//                PhoneAuthProvider.verifyPhoneNumber(options);
-//                auth.setLanguageCode("fr");
-
+                    smsCheckNumber = 1;
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -226,32 +190,32 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                idCheckNum_value = findId_checkNum.getText().toString();
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    idCheckNum_value = findId_checkNum.getText().toString();
 
-                smsCheckNumber = 2;
-                smsTime = 0;
+                    smsCheckNumber = 2;
+                    smsTime = 0;
 
-                if (idCheckNum_value.equals("7777")) {
+                    if (idCheckNum_value.equals("7777")) {
+                        findIdFrame1.setVisibility(View.INVISIBLE);
+                        findIdFrame1.startAnimation(left_out);
+                        findIdFrame2.setVisibility(View.VISIBLE);
+                        findIdFrame2.startAnimation(left_in);
 
-                    findIdFrame1.setVisibility(View.INVISIBLE);
-                    findIdFrame1.startAnimation(left_out);
-                    findIdFrame2.setVisibility(View.VISIBLE);
-                    findIdFrame2.startAnimation(left_in);
+                        phoneCheck(user_phoneNum);
+                    } else {
+                        findId_smsTimeText.setVisibility(View.INVISIBLE);
+                        findId_smsErrorText.setVisibility(View.VISIBLE);
+                        findId_sendText.setVisibility(View.INVISIBLE);
+                        findId_checkBlock.setVisibility(View.VISIBLE);
+                        findId_checkBtn.setVisibility(View.INVISIBLE);
+                        findId_sendBtn.setVisibility(View.VISIBLE);
+                        findId_sendBlock.setVisibility(View.INVISIBLE);
 
-                    phoneCheck(user_phoneNum);
-
-                } else {
-
-                    findId_smsTimeText.setVisibility(View.INVISIBLE);
-                    findId_smsErrorText.setVisibility(View.VISIBLE);
-                    findId_sendText.setVisibility(View.INVISIBLE);
-                    findId_checkBlock.setVisibility(View.VISIBLE);
-                    findId_checkBtn.setVisibility(View.INVISIBLE);
-                    findId_sendBtn.setVisibility(View.VISIBLE);
-                    findId_sendBlock.setVisibility(View.INVISIBLE);
-
-                    findId_checkNum.setText("");
-
+                        findId_checkNum.setText("");
+                    }
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -260,9 +224,6 @@ public class Find_UserInfo extends AppCompatActivity {
         findId_submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-//                Intent i = new Intent(Find_UserInfo.this,Login.class);
-//                startActivity(i);
                 finish();
             }
         });
@@ -270,13 +231,19 @@ public class Find_UserInfo extends AppCompatActivity {
         findId_backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findInfoFrame.setVisibility(View.VISIBLE);
-                findInfoFrame.startAnimation(right_in);
-                findIdFrame1.setVisibility(View.INVISIBLE);
-                findIdFrame1.startAnimation(right_out);
 
-                findId_phone.setText("");
-                findId_checkNum.setText("");
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    findInfoFrame.setVisibility(View.VISIBLE);
+                    findInfoFrame.startAnimation(right_in);
+                    findIdFrame1.setVisibility(View.INVISIBLE);
+                    findIdFrame1.startAnimation(right_out);
+
+                    findId_phone.setText("");
+                    findId_checkNum.setText("");
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -287,22 +254,26 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                findCode = 2;
-                user_email = findPw_email.getText().toString();
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    findCode = 2;
+                    user_email = findPw_email.getText().toString();
 
-                smsTimeThread = new SmsTimeThread();
-                smsTimeThread.start();
+                    smsTimeThread = new SmsTimeThread();
+                    smsTimeThread.start();
 
-                findPw_sendText.setVisibility(View.VISIBLE);
-                findPw_smsTimeText.setVisibility(View.VISIBLE);
-                findPw_sendBtn.setVisibility(View.INVISIBLE);
-                findPw_sendBlock.setVisibility(View.VISIBLE);
-                findPw_checkBtn.setVisibility(View.VISIBLE);
-                findPw_checkBlock.setVisibility(View.INVISIBLE);
-                findPw_smsErrorText.setVisibility(View.INVISIBLE);
-                findPw_smsTimeoutText.setVisibility(View.INVISIBLE);
+                    findPw_sendText.setVisibility(View.VISIBLE);
+                    findPw_smsTimeText.setVisibility(View.VISIBLE);
+                    findPw_sendBtn.setVisibility(View.INVISIBLE);
+                    findPw_sendBlock.setVisibility(View.VISIBLE);
+                    findPw_checkBtn.setVisibility(View.VISIBLE);
+                    findPw_checkBlock.setVisibility(View.INVISIBLE);
+                    findPw_smsErrorText.setVisibility(View.INVISIBLE);
+                    findPw_smsTimeoutText.setVisibility(View.INVISIBLE);
 
-                smsCheckNumber = 1;
+                    smsCheckNumber = 1;
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -312,32 +283,36 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                pwCheckNum_value = findPw_checkNum.getText().toString();
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    pwCheckNum_value = findPw_checkNum.getText().toString();
 
-                smsCheckNumber = 2;
-                smsTime = 0;
+                    smsCheckNumber = 2;
+                    smsTime = 0;
 
-                if (pwCheckNum_value.equals("7777")) {
+                    if (pwCheckNum_value.equals("7777")) {
 
-                    idCheck(user_email);
+                        idCheck(user_email);
 
-                    findPwFrame1.setVisibility(View.INVISIBLE);
-                    findPwFrame1.startAnimation(left_out);
-                    findPwFrame2.setVisibility(View.VISIBLE);
-                    findPwFrame2.startAnimation(left_in);
+                        findPwFrame1.setVisibility(View.INVISIBLE);
+                        findPwFrame1.startAnimation(left_out);
+                        findPwFrame2.setVisibility(View.VISIBLE);
+                        findPwFrame2.startAnimation(left_in);
 
-                } else {
+                    } else {
 
-                    findPw_smsTimeText.setVisibility(View.INVISIBLE);
-                    findPw_smsErrorText.setVisibility(View.VISIBLE);
-                    findPw_sendText.setVisibility(View.INVISIBLE);
-                    findPw_sendBlock.setVisibility(View.INVISIBLE);
-                    findPw_sendBtn.setVisibility(View.VISIBLE);
-                    findPw_checkBlock.setVisibility(View.VISIBLE);
-                    findPw_checkBtn.setVisibility(View.INVISIBLE);
+                        findPw_smsTimeText.setVisibility(View.INVISIBLE);
+                        findPw_smsErrorText.setVisibility(View.VISIBLE);
+                        findPw_sendText.setVisibility(View.INVISIBLE);
+                        findPw_sendBlock.setVisibility(View.INVISIBLE);
+                        findPw_sendBtn.setVisibility(View.VISIBLE);
+                        findPw_checkBlock.setVisibility(View.VISIBLE);
+                        findPw_checkBtn.setVisibility(View.INVISIBLE);
 
-                    findPw_checkNum.setText("");
+                        findPw_checkNum.setText("");
 
+                    }
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -356,7 +331,6 @@ public class Find_UserInfo extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
 
                 if (pwRuleCheck()) {
-
                     findPw_Ok.setVisibility(View.VISIBLE);
                     findPw_RuleError.setVisibility(View.INVISIBLE);
                     findPw_submitBtn.setVisibility(View.VISIBLE);
@@ -368,7 +342,6 @@ public class Find_UserInfo extends AppCompatActivity {
                     findPw_RuleError.setVisibility(View.VISIBLE);
                     findPw_submitBtn.setVisibility(View.INVISIBLE);
                     findPw_submitBlock.setVisibility(View.VISIBLE);
-
                 }
 
             }
@@ -380,14 +353,14 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Log.d(TAG, "id_code: " + id_Code);
-
-                if (id_Code.equals("usingId")) {
-                    getNewPw(user_email, new_Pw);
-                } else {
-//                    Intent i = new Intent(Find_UserInfo.this,Login.class);
-//                    startActivity(i);
-                    finish();
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    if (id_Code.equals("usingId")) {
+                        getNewPw(user_email, new_Pw);
+                    } else {
+                        finish();
+                    }
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -396,13 +369,19 @@ public class Find_UserInfo extends AppCompatActivity {
         findPw_backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findInfoFrame.setVisibility(View.VISIBLE);
-                findInfoFrame.startAnimation(right_in);
-                findPwFrame1.setVisibility(View.INVISIBLE);
-                findPwFrame1.startAnimation(right_out);
 
-                findPw_email.setText("");
-                findPw_checkNum.setText("");
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    findInfoFrame.setVisibility(View.VISIBLE);
+                    findInfoFrame.startAnimation(right_in);
+                    findPwFrame1.setVisibility(View.INVISIBLE);
+                    findPwFrame1.startAnimation(right_out);
+
+                    findPw_email.setText("");
+                    findPw_checkNum.setText("");
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 

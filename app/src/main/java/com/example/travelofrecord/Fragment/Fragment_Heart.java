@@ -21,12 +21,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Function.GetAdress;
 import com.example.travelofrecord.Adapter.Heart_Adapter;
 import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,6 +47,7 @@ import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -102,6 +105,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
     MapView mapView;
     NaverMap naverMap;
     private FusedLocationProviderClient fusedLocationClient;
+    int networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
+
 
     @Override
     public void onAttach(Context context) {
@@ -206,20 +211,25 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                photo_Btn.setVisibility(View.GONE);
-                photo_Block.setVisibility(View.VISIBLE);
-                map_Btn.setVisibility(View.VISIBLE);
-                map_Block.setVisibility(View.GONE);
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    photo_Btn.setVisibility(View.GONE);
+                    photo_Block.setVisibility(View.VISIBLE);
+                    map_Btn.setVisibility(View.VISIBLE);
+                    map_Block.setVisibility(View.GONE);
 
-                if (post_Data_ArrayList.size() == 0) {
-                    noHeartFrameLayout.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
+                    if (post_Data_ArrayList.size() == 0) {
+                        noHeartFrameLayout.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        noHeartFrameLayout.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
+
+                    mapView.setVisibility(View.GONE);
                 } else {
-                    noHeartFrameLayout.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
-                mapView.setVisibility(View.GONE);
             }
         });
 
@@ -227,17 +237,22 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                map_Btn.setVisibility(View.GONE);
-                map_Block.setVisibility(View.VISIBLE);
-                photo_Btn.setVisibility(View.VISIBLE);
-                photo_Block.setVisibility(View.GONE);
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    map_Btn.setVisibility(View.GONE);
+                    map_Block.setVisibility(View.VISIBLE);
+                    photo_Btn.setVisibility(View.VISIBLE);
+                    photo_Block.setVisibility(View.GONE);
 
-                noHeartFrameLayout.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
-                mapView.setVisibility(View.VISIBLE);
+                    noHeartFrameLayout.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.GONE);
+                    mapView.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
+
 
         // 위치 권한 확인
         int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);

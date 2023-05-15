@@ -56,6 +56,8 @@ public class Home extends AppCompatActivity {
 
     Bundle bundle;
 
+    int networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,9 +156,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     fragmentChange(0);
 
@@ -184,9 +184,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     fragmentChange(1);
 
@@ -214,9 +212,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     fragmentChange(2);
 
@@ -244,9 +240,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     fragmentChange(3);
 
@@ -274,9 +268,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     fragmentChange(4);
 

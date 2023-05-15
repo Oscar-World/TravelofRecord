@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.travelofrecord.Network.ApiClient;
@@ -25,6 +26,7 @@ import com.example.travelofrecord.Adapter.Comment_Adapter;
 import com.example.travelofrecord.Function.GetAdress;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class Post extends AppCompatActivity {
     ApiInterface apiInterface;
     LinearLayout post_TopLayout;
 
-
+    int networkStatus = NetworkStatus.getConnectivityStatus(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +96,7 @@ public class Post extends AppCompatActivity {
         setContentView(R.layout.activity_post);
         Log.d(TAG, "onStart() 호출됨");
 
-        setVariable();
-        getPost(accessNickname, post_Num);
-        getComment(post_Num);
+
 
     }
 
@@ -104,6 +104,9 @@ public class Post extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
+        setVariable();
+        getPost(accessNickname, post_Num);
+        getComment(post_Num);
     }
 
     @Override
@@ -193,6 +196,9 @@ public class Post extends AppCompatActivity {
         post_DateCreated_Text.setText(post_EditDate);
         post_Writing_Text.setText(post_Writing);
 
+        post_Comment_Iv.setFocusableInTouchMode(true);
+        recyclerView.setFocusableInTouchMode(true);
+
         if (post_HeartStatus) {
             post_Heart_Iv.setVisibility(View.GONE);
             post_HeartFull_Iv.setVisibility(View.VISIBLE);
@@ -217,9 +223,13 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(getApplicationContext(), Profile.class);
-                i.putExtra("nickname",post_Nickname);
-                startActivity(i);
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    Intent i = new Intent(getApplicationContext(), Profile.class);
+                    i.putExtra("nickname",post_Nickname);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -228,9 +238,13 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(getApplicationContext(),Profile.class);
-                i.putExtra("nickname",post_Nickname);
-                startActivity(i);
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    Intent i = new Intent(getApplicationContext(),Profile.class);
+                    i.putExtra("nickname",post_Nickname);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -239,18 +253,19 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                addComment = post_Comment_Edit.getText().toString();
-                addDateComment = getTime.getTime().toString();
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    addComment = post_Comment_Edit.getText().toString();
+                    addDateComment = getTime.getTime().toString();
 
-                Log.d(TAG, "postNum : " + post_Num + "\naccessProfileImage : " + accessProfileImage + "\naccessNickname : " + accessNickname +
-                        "\ndateComment : " + addDateComment + "\naddComment : " + addComment + "\ncommentNum : " + post_CommentNum);
+                    post_CommentNum += 1;
+                    post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
 
-                post_CommentNum += 1;
-                post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
+                    addComment(post_Num, accessProfileImage, accessNickname, addDateComment, addComment, post_CommentNum);
 
-                addComment(post_Num, accessProfileImage, accessNickname, addDateComment, addComment, post_CommentNum);
-
-                post_Comment_Edit.setText("");
+                    post_Comment_Edit.setText("");
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -258,14 +273,10 @@ public class Post extends AppCompatActivity {
         post_TopLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 scrollView.fullScroll(ScrollView.FOCUS_UP);
-
             }
         });
 
-        post_Comment_Iv.setFocusableInTouchMode(true);
-        recyclerView.setFocusableInTouchMode(true);
         post_Comment_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -277,12 +288,16 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                post_Heart_Iv.setVisibility(View.GONE);
-                post_HeartFull_Iv.setVisibility(View.VISIBLE);
-                post_Heart += 1;
-                post_HeartNum_Text.setText(String.valueOf(post_Heart));
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    post_Heart_Iv.setVisibility(View.GONE);
+                    post_HeartFull_Iv.setVisibility(View.VISIBLE);
+                    post_Heart += 1;
+                    post_HeartNum_Text.setText(String.valueOf(post_Heart));
 
-                insertWhoLike(post_Num, accessNickname, post_Heart);
+                    insertWhoLike(post_Num, accessNickname, post_Heart);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -291,12 +306,16 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                post_HeartFull_Iv.setVisibility(View.GONE);
-                post_Heart_Iv.setVisibility(View.VISIBLE);
-                post_Heart -= 1;
-                post_HeartNum_Text.setText(String.valueOf(post_Heart));
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    post_HeartFull_Iv.setVisibility(View.GONE);
+                    post_Heart_Iv.setVisibility(View.VISIBLE);
+                    post_Heart -= 1;
+                    post_HeartNum_Text.setText(String.valueOf(post_Heart));
 
-                deleteWhoLike(post_Num, accessNickname, post_Heart);
+                    deleteWhoLike(post_Num, accessNickname, post_Heart);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -304,9 +323,15 @@ public class Post extends AppCompatActivity {
         post_PostImage_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Post.this, PhotoView.class);
-                i.putExtra("image",post_PostImage);
-                startActivity(i);
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    Intent i = new Intent(Post.this, PhotoView.class);
+                    i.putExtra("image",post_PostImage);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 

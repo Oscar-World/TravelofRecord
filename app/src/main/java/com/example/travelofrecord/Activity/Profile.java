@@ -24,6 +24,7 @@ import com.example.travelofrecord.Function.GetAdress;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Adapter.Profile_Adapter;
+import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.geometry.LatLngBounds;
@@ -77,6 +78,8 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     NaverMap naverMap;
     double latitude;
     double longitude;
+
+    int networkStatus = NetworkStatus.getConnectivityStatus(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,13 +188,17 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                profileInfoBtn.setVisibility(View.GONE);
-                profileInfoBlock.setVisibility(View.VISIBLE);
-                profileMapBtn.setVisibility(View.VISIBLE);
-                profileMapBlock.setVisibility(View.GONE);
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    profileInfoBtn.setVisibility(View.GONE);
+                    profileInfoBlock.setVisibility(View.VISIBLE);
+                    profileMapBtn.setVisibility(View.VISIBLE);
+                    profileMapBlock.setVisibility(View.GONE);
 
-                mapView.setVisibility(View.GONE);
-                profileScrollView.setVisibility(View.VISIBLE);
+                    mapView.setVisibility(View.GONE);
+                    profileScrollView.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -200,13 +207,17 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                profileMapBtn.setVisibility(View.GONE);
-                profileMapBlock.setVisibility(View.VISIBLE);
-                profileInfoBtn.setVisibility(View.VISIBLE);
-                profileInfoBlock.setVisibility(View.GONE);
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    profileMapBtn.setVisibility(View.GONE);
+                    profileMapBlock.setVisibility(View.VISIBLE);
+                    profileInfoBtn.setVisibility(View.VISIBLE);
+                    profileInfoBlock.setVisibility(View.GONE);
 
-                profileScrollView.setVisibility(View.GONE);
-                mapView.setVisibility(View.VISIBLE);
+                    profileScrollView.setVisibility(View.GONE);
+                    mapView.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -215,9 +226,13 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(Profile.this, PhotoView.class);
-                i.putExtra("image", user_ImagePath);
-                startActivity(i);
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    Intent i = new Intent(Profile.this, PhotoView.class);
+                    i.putExtra("image", user_ImagePath);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -225,7 +240,13 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         profileDmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"서비스 준비중입니다",Toast.LENGTH_SHORT).show();
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    Toast.makeText(getApplicationContext(),"서비스 준비중입니다",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
