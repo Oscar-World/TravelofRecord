@@ -76,8 +76,8 @@ public class Fragment_Home extends Fragment {
 
     int networkStatus;
 
-    BroadcastReceiver heartReceiver;
     IntentFilter heartFilter;
+    IntentFilter commentFilter;
 
 
     @Override public void onAttach(Context context) {
@@ -215,6 +215,7 @@ public class Fragment_Home extends Fragment {
     public void setView() {
 
         heartFilter = new IntentFilter("homeHeartSync");
+        commentFilter = new IntentFilter("homeCommentSync");
 
         loading_Iv = v.findViewById(R.id.home_Loading);
         rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
@@ -276,11 +277,13 @@ public class Fragment_Home extends Fragment {
         Log.d(TAG, "onStop() 호출됨");
         super.onStop();
         getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
+        getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출됨");
         super.onDestroyView();
         getActivity().unregisterReceiver(adapter.heartReceiver);
+        getActivity().unregisterReceiver(adapter.commentReceiver);
     }
     @Override public void onDetach() {
         Log.d(TAG, "onDetach() 호출됨");

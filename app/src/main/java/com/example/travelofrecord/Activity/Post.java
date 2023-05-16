@@ -313,9 +313,12 @@ public class Post extends AppCompatActivity {
                     post_Comment_Edit.setText("");
 
                     Intent i = new Intent("commentSync");
-                    Log.d(TAG, "보낸개수 : " + post_CommentNum);
                     i.putExtra("commentNum", post_CommentNum);
                     sendBroadcast(i);
+
+                    Intent i2 = new Intent("homeCommentSync");
+                    i2.putExtra("commentNum", post_CommentNum);
+                    sendBroadcast(i2);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();

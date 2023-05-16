@@ -50,7 +50,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     Home home;
 
     public BroadcastReceiver heartReceiver;
-    public IntentFilter heartFilter;
+    public BroadcastReceiver commentReceiver;
 
     // 레이아웃을 실체화 해줌 - inflate
     @Override
@@ -323,6 +323,16 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                                     post_Heart.setVisibility(View.VISIBLE);
                                 }
 
+                            }
+                        };
+
+                        commentReceiver = new BroadcastReceiver() {
+                            @Override
+                            public void onReceive(Context context, Intent intent) {
+
+                                int commentNum = intent.getIntExtra("commentNum", 0);
+                                Log.d(TAG, "받은개수 : " + commentNum);
+                                post_CommentNum.setText(String.valueOf(commentNum));
 
                             }
                         };
