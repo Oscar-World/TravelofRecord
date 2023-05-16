@@ -236,7 +236,10 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="8.5"
             android:background="@color/none"
-            android:hint="댓글을 입력해 주세요" />
+            android:hint="댓글을 입력해 주세요"
+            android:maxLength="30"
+            android:maxLines="3"
+            />
 
         <ImageButton
             android:id="@+id/post_commentAdd_Btn"
