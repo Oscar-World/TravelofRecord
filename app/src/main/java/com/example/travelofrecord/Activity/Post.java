@@ -110,26 +110,10 @@ public class Post extends AppCompatActivity {
 
     }
 
-
-
     @Override
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
-
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int heartNum = intent.getIntExtra("heartNum",0);
-                Log.d(TAG, "onReceive: " + heartNum);
-                post_HeartNum_Text.setText(String.valueOf(heartNum));
-            }
-        };
-
-        filter = new IntentFilter("heartSync");
-
-        registerReceiver(receiver, filter);
-
     }
 
     @Override
@@ -148,7 +132,8 @@ public class Post extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
-        unregisterReceiver(receiver);
+        registerReceiver(receiver, filter);
+
     }
 
     @Override
@@ -161,6 +146,7 @@ public class Post extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
+        unregisterReceiver(receiver);
     }
 
 
@@ -212,6 +198,30 @@ public class Post extends AppCompatActivity {
     } // setVariable()
 
     public void setView() {
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int heartNum = intent.getIntExtra("heartNum",0);
+                int commentNum = intent.getIntExtra("commentNum", 0);
+                boolean heartStatus = intent.getBooleanExtra("", false);
+                Log.d(TAG, "onReceive: " + heartNum + " " + heartStatus + " " + commentNum);
+
+                post_HeartNum_Text.setText(String.valueOf(heartNum));
+                post_CommentNum_Text.setText(String.valueOf(commentNum));
+
+                if (heartStatus) {
+                    post_Heart_Iv.setVisibility(View.GONE);
+                    post_HeartFull_Iv.setVisibility(View.VISIBLE);
+                } else {
+                    post_HeartFull_Iv.setVisibility(View.GONE);
+                    post_Heart_Iv.setVisibility(View.VISIBLE);
+                }
+
+            }
+        };
+
+        filter = new IntentFilter("postSync");
 
         post_Nickname_Text.setText(post_Nickname);
         post_Location_Text.setText(post_EditLocation);
@@ -287,6 +297,11 @@ public class Post extends AppCompatActivity {
                     addComment(post_Num, accessProfileImage, accessNickname, addDateComment, addComment, post_CommentNum);
 
                     post_Comment_Edit.setText("");
+
+                    Intent i = new Intent("postSync");
+                    i.putExtra("commentNum", post_CommentNum);
+                    sendBroadcast(i);
+
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -320,10 +335,10 @@ public class Post extends AppCompatActivity {
 
                     insertWhoLike(post_Num, accessNickname, post_Heart);
 
-                    Intent i = new Intent("heartSync");
+                    Intent i = new Intent("postSync");
                     i.putExtra("heartNum", post_Heart);
+                    i.putExtra("heartStatus", true);
                     sendBroadcast(i);
-                    Log.d(TAG, "intent : " + i);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -344,10 +359,10 @@ public class Post extends AppCompatActivity {
 
                     deleteWhoLike(post_Num, accessNickname, post_Heart);
 
-                    Intent i = new Intent("heartSync");
+                    Intent i = new Intent("postSync");
                     i.putExtra("heartNum", post_Heart);
+                    i.putExtra("heartStatus", false);
                     sendBroadcast(i);
-                    Log.d(TAG, "intent : " + i);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();

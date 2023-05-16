@@ -1,7 +1,9 @@
 package com.example.travelofrecord.Adapter;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -108,6 +110,9 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
         LinearLayout linearLayout;
 
+        BroadcastReceiver receiver;
+        IntentFilter filter;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -129,6 +134,16 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             bundle = new Bundle();
 
             linearLayout = itemView.findViewById(R.id.post_LinearLayout);
+
+            receiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+
+                }
+            };
+
+            filter = new IntentFilter("heartSync");
+
         }
 
         void onBind(PostData item) {
