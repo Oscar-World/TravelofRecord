@@ -16,6 +16,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.loader.content.CursorLoader;
@@ -107,7 +108,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     Button map_Btn;
     Button map_Block;
 
-    ScrollView scrollView;
+    NestedScrollView scrollView;
 
     String edit_memo;
 

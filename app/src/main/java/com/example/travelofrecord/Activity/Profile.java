@@ -2,6 +2,7 @@ package com.example.travelofrecord.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -55,7 +56,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     GetTime getTime = new GetTime();
 
     MapView mapView;
-    ScrollView profileScrollView;
+    NestedScrollView profileScrollView;
     TextView profileNicknameText;
     TextView profileMemoText;
     Button profileInfoBtn;

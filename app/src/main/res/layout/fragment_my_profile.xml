@@ -118,7 +118,7 @@
 
         </LinearLayout>
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/myProfile_ScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -236,7 +236,7 @@
                     android:id="@+id/myProfile_RecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="true"
+                    android:nestedScrollingEnabled="false"
                     android:visibility="gone"
                     />
 
@@ -251,7 +251,7 @@
 
             </LinearLayout>
 
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
         <com.naver.maps.map.MapView
             android:id="@+id/myProfile_MapView"
