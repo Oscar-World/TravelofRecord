@@ -95,8 +95,10 @@ public class Post extends AppCompatActivity {
 
     int networkStatus;
 
-    BroadcastReceiver receiver;
-    IntentFilter filter;
+    BroadcastReceiver heartReceiver;
+    IntentFilter heartFilter;
+    BroadcastReceiver commentReceiver;
+    IntentFilter commentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +134,8 @@ public class Post extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
-        registerReceiver(receiver, filter);
+        registerReceiver(heartReceiver, heartFilter);
+        registerReceiver(commentReceiver, commentFilter);
 
     }
 
@@ -146,7 +149,8 @@ public class Post extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
-        unregisterReceiver(receiver);
+        unregisterReceiver(heartReceiver);
+        unregisterReceiver(commentReceiver);
     }
 
 
@@ -199,16 +203,14 @@ public class Post extends AppCompatActivity {
 
     public void setView() {
 
-        receiver = new BroadcastReceiver() {
+        heartReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int heartNum = intent.getIntExtra("heartNum",0);
-                int commentNum = intent.getIntExtra("commentNum", 0);
-                boolean heartStatus = intent.getBooleanExtra("", false);
-                Log.d(TAG, "onReceive: " + heartNum + " " + heartStatus + " " + commentNum);
+                boolean heartStatus = intent.getBooleanExtra("heartStatus", false);
+                Log.d(TAG, "onReceive: " + heartNum + " " + heartStatus);
 
                 post_HeartNum_Text.setText(String.valueOf(heartNum));
-                post_CommentNum_Text.setText(String.valueOf(commentNum));
 
                 if (heartStatus) {
                     post_Heart_Iv.setVisibility(View.GONE);
@@ -221,7 +223,19 @@ public class Post extends AppCompatActivity {
             }
         };
 
-        filter = new IntentFilter("postSync");
+        commentReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                int commentNum = intent.getIntExtra("commentNum", 0);
+                Log.d(TAG, "받은개수 : " + commentNum);
+                post_CommentNum_Text.setText(String.valueOf(commentNum));
+
+            }
+        };
+
+        heartFilter = new IntentFilter("heartSync");
+        commentFilter = new IntentFilter("commentSync");
 
         post_Nickname_Text.setText(post_Nickname);
         post_Location_Text.setText(post_EditLocation);
@@ -298,7 +312,8 @@ public class Post extends AppCompatActivity {
 
                     post_Comment_Edit.setText("");
 
-                    Intent i = new Intent("postSync");
+                    Intent i = new Intent("commentSync");
+                    Log.d(TAG, "보낸개수 : " + post_CommentNum);
                     i.putExtra("commentNum", post_CommentNum);
                     sendBroadcast(i);
 
@@ -335,10 +350,16 @@ public class Post extends AppCompatActivity {
 
                     insertWhoLike(post_Num, accessNickname, post_Heart);
 
-                    Intent i = new Intent("postSync");
+                    Intent i = new Intent("heartSync");
                     i.putExtra("heartNum", post_Heart);
                     i.putExtra("heartStatus", true);
                     sendBroadcast(i);
+
+                    Intent i2 = new Intent("homeHeartSync");
+                    i2.putExtra("heartNum", post_Heart);
+                    i2.putExtra("heartStatus", true);
+                    i2.putExtra("postNum", post_Num);
+                    sendBroadcast(i2);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -359,10 +380,16 @@ public class Post extends AppCompatActivity {
 
                     deleteWhoLike(post_Num, accessNickname, post_Heart);
 
-                    Intent i = new Intent("postSync");
+                    Intent i = new Intent("heartSync");
                     i.putExtra("heartNum", post_Heart);
                     i.putExtra("heartStatus", false);
                     sendBroadcast(i);
+
+                    Intent i2 = new Intent("homeHeartSync");
+                    i2.putExtra("heartNum", post_Heart);
+                    i2.putExtra("heartStatus", false);
+                    i2.putExtra("postNum", post_Num);
+                    sendBroadcast(i2);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();

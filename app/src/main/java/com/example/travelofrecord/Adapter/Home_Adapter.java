@@ -1,5 +1,6 @@
 package com.example.travelofrecord.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Profile;
+import com.example.travelofrecord.Fragment.Fragment_Home;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Activity.Home;
@@ -47,6 +49,9 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     Bundle bundle;
     Home home;
 
+    public BroadcastReceiver heartReceiver;
+    public IntentFilter heartFilter;
+
     // 레이아웃을 실체화 해줌 - inflate
     @Override
     public Home_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -66,6 +71,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     public void onBindViewHolder(@NonNull Home_Adapter.ViewHolder holder,int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
         holder.onBind(postData.get(holder.getAdapterPosition()));
+
     }
 
     // 뷰와 데이터를 연결해줌
@@ -110,9 +116,6 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
         LinearLayout linearLayout;
 
-        BroadcastReceiver receiver;
-        IntentFilter filter;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -135,20 +138,13 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
             linearLayout = itemView.findViewById(R.id.post_LinearLayout);
 
-            receiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-
-                }
-            };
-
-            filter = new IntentFilter("heartSync");
 
         }
 
+
         void onBind(PostData item) {
             Log.d(TAG, "onBind() 호출됨");
-            Log.d(TAG, "item.heartStatus : " + item.heartStatus);
+
             if (item.heartStatus) {
                 post_HeartFull.setVisibility(View.VISIBLE);
                 post_Heart.setVisibility(View.GONE);
@@ -304,6 +300,32 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                         i.putExtra("num", item.getNum());
 
                         context.startActivity(i);
+
+                        heartReceiver = new BroadcastReceiver() {
+                            @Override
+                            public void onReceive(Context context, Intent intent) {
+                                Log.d(TAG, "어댑터 onReceive호출");
+
+                                int heartNum = intent.getIntExtra("heartNum", 0);
+                                boolean heartStatus = intent.getBooleanExtra("heartStatus", false);
+                                int postNum = intent.getIntExtra("postNum", 0);
+
+                                Log.d(TAG, "onReceive()\nheartNum : " + heartNum + "\nheartStatus : " + heartStatus + "\npostNum : " + postNum);
+
+
+                                post_HeartNum.setText(String.valueOf(heartNum));
+
+                                if (heartStatus) {
+                                    post_Heart.setVisibility(View.GONE);
+                                    post_HeartFull.setVisibility(View.VISIBLE);
+                                } else {
+                                    post_HeartFull.setVisibility(View.GONE);
+                                    post_Heart.setVisibility(View.VISIBLE);
+                                }
+
+
+                            }
+                        };
 
                     }else {
                         Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();

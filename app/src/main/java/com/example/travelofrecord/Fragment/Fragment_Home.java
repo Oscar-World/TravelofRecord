@@ -1,6 +1,9 @@
 package com.example.travelofrecord.Fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -30,6 +33,7 @@ import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,6 +76,9 @@ public class Fragment_Home extends Fragment {
 
     int networkStatus;
 
+    BroadcastReceiver heartReceiver;
+    IntentFilter heartFilter;
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -94,6 +101,7 @@ public class Fragment_Home extends Fragment {
         setView();
 
         return v;
+
     }
 
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -108,6 +116,8 @@ public class Fragment_Home extends Fragment {
             internetText.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
+
+
 
     }
     @Override public void onStart() {
@@ -197,10 +207,14 @@ public class Fragment_Home extends Fragment {
             }
         });
 
+
+
     }
 
 
     public void setView() {
+
+        heartFilter = new IntentFilter("homeHeartSync");
 
         loading_Iv = v.findViewById(R.id.home_Loading);
         rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
@@ -248,22 +262,25 @@ public class Fragment_Home extends Fragment {
 
     }
 
-
     @Override public void onResume() {
         Log.d(TAG, "onResume() 호출됨");
         super.onResume();
+
     }
     @Override public void onPause() {
         Log.d(TAG, "onPause() 호출됨");
         super.onPause();
+
     }
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출됨");
         super.onStop();
+        getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출됨");
         super.onDestroyView();
+        getActivity().unregisterReceiver(adapter.heartReceiver);
     }
     @Override public void onDetach() {
         Log.d(TAG, "onDetach() 호출됨");
