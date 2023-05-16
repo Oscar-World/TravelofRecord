@@ -1,6 +1,7 @@
 package com.example.travelofrecord.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -83,7 +84,7 @@ public class Post extends AppCompatActivity {
 
     Home home;
 
-    ScrollView scrollView;
+    NestedScrollView scrollView;
     RecyclerView recyclerView;
     Comment_Adapter adapter;
     ArrayList<PostData> postDataArrayList;

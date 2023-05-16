@@ -201,6 +201,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         v = inflater.inflate(R.layout.fragment_my_profile, container, false);
         Log.d(TAG, "onCreateView() 호출");
 
+        setVariable();
+        setView();
+        getMyPost(user_nickname);
+
         return v;
     }
 
@@ -217,9 +221,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         super.onStart();
 
         mapView.onStart();
-        setVariable();
-        setView();
-        getMyPost(user_nickname);
+
 
     } // onStart()
 
