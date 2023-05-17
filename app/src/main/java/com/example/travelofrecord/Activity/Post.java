@@ -100,6 +100,9 @@ public class Post extends AppCompatActivity {
     BroadcastReceiver commentReceiver;
     IntentFilter commentFilter;
 
+    BroadcastReceiver commentReceiver2;
+    IntentFilter commentFilter2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +119,7 @@ public class Post extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
+
     }
 
     @Override
@@ -134,6 +138,7 @@ public class Post extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
+        unregisterReceiver(commentReceiver2);
         registerReceiver(heartReceiver, heartFilter);
         registerReceiver(commentReceiver, commentFilter);
 
@@ -203,6 +208,8 @@ public class Post extends AppCompatActivity {
 
     public void setView() {
 
+
+
         heartReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -234,8 +241,22 @@ public class Post extends AppCompatActivity {
             }
         };
 
+        commentReceiver2 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                int commentNum = intent.getIntExtra("commentNum2", 0);
+                Log.d(TAG, "받은개수2 : " + commentNum);
+                post_CommentNum_Text.setText(String.valueOf(commentNum));
+
+            }
+        };
+
         heartFilter = new IntentFilter("heartSync");
         commentFilter = new IntentFilter("commentSync");
+        commentFilter2 = new IntentFilter("commentSync2");
+
+        registerReceiver(commentReceiver2, commentFilter2);
 
         post_Nickname_Text.setText(post_Nickname);
         post_Location_Text.setText(post_EditLocation);
@@ -302,23 +323,32 @@ public class Post extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
                     addComment = post_Comment_Edit.getText().toString();
                     addDateComment = getTime.getTime().toString();
 
-                    post_CommentNum += 1;
-                    post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
+                    if (!addComment.equals("")) {
 
-                    addComment(post_Num, accessProfileImage, accessNickname, addDateComment, addComment, post_CommentNum);
+                        post_CommentNum += 1;
+                        post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
 
-                    post_Comment_Edit.setText("");
+                        addComment(post_Num, accessProfileImage, accessNickname, addDateComment, addComment, post_CommentNum);
 
-                    Intent i = new Intent("commentSync");
-                    i.putExtra("commentNum", post_CommentNum);
-                    sendBroadcast(i);
+                        post_Comment_Edit.setText("");
 
-                    Intent i2 = new Intent("homeCommentSync");
-                    i2.putExtra("commentNum", post_CommentNum);
-                    sendBroadcast(i2);
+                        Intent i = new Intent("commentSync");
+                        i.putExtra("commentNum", post_CommentNum);
+                        sendBroadcast(i);
+
+                        Intent i2 = new Intent("homeCommentSync");
+                        i2.putExtra("commentNum", post_CommentNum);
+                        sendBroadcast(i2);
+
+                    } else {
+                        Toast.makeText(Post.this, "댓글을 입력해 주세요.", Toast.LENGTH_SHORT).show();
+                    }
+
+
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -524,12 +554,12 @@ public class Post extends AppCompatActivity {
                             String dateComment = data.get(i).getDateComment();
                             String comment = data.get(i).getComment();
 
-//                            Log.d(TAG, "dateComment : " + dateComment);
-                            String commentTime = getTime.lastTime(dateComment);
+                            Log.d(TAG, "dateComment : " + dateComment);
+
 
 //                            Log.d(TAG, "profileImage : " + profileImage + "\nwhoComment : " + whoComment + "\ndateComment : " + commentTime + "\ncomment : " + comment);
 
-                            PostData postData = new PostData(profileImage, whoComment, commentTime, comment);
+                            PostData postData = new PostData(profileImage, whoComment, dateComment, comment, post_Num, post_CommentNum);
 
                             postDataArrayList.add(postData);
 

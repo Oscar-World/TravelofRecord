@@ -162,7 +162,8 @@ public interface ApiInterface {
     Call<String> deleteComment(
             @Query("whoComment") String whoComment,
             @Query("dateComment") String dateComment,
-            @Query("commentNum") int commentNum
+            @Query("commentNum") int commentNum,
+            @Query("postNum") int postNum
     );
 
     @GET("mysql_GetProfileInfo.php")

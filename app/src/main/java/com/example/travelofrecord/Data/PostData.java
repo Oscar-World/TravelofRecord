@@ -104,12 +104,15 @@ public class PostData {
 
     }
 
-    public PostData(String profileImage, String whoComment, String dateComment, String comment) {
+    // getComment()
+    public PostData(String profileImage, String whoComment, String dateComment, String comment, int postNum, int commentNum) {
 
         this.commentProfileImage = profileImage;
         this.whoComment = whoComment;
         this.dateComment = dateComment;
         this.comment = comment;
+        this.postNum = postNum;
+        this.commentNum = commentNum;
 
     }
 

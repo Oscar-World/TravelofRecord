@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.travelofrecord.Activity.Profile;
+import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Data.PostData;
@@ -84,6 +86,9 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         SharedPreferences sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         String currentNickname = sharedPreferences.getString("nickname","");
 
+        GetAdress getAddress = new GetAdress();
+        GetTime getTime = new GetTime();
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -97,14 +102,21 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
         void onBind(PostData item) {
             Log.d(TAG, "onBind() 호출됨");
+            String commentTime = getTime.lastTime(item.getDateComment());
 
             comment_NicknameText.setText(item.getWhoComment());
-            comment_DateCreatedText.setText(item.getDateComment());
+            comment_DateCreatedText.setText(commentTime);
             comment_CommentText.setText(item.getComment());
 
             Glide.with(context)
                     .load(item.getCommentProfileImage())
                     .into(comment_ProfileImage);
+
+            if (currentNickname.equals(item.getWhoComment())) {
+                comment_MenuBtn.setVisibility(View.VISIBLE);
+            } else {
+                comment_MenuBtn.setVisibility(View.GONE);
+            }
 
             comment_ProfileImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -145,16 +157,18 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
                             if (menuItem.getItemId() == R.id.menu_Delete) {
                                 Toast.makeText(context,"삭제ㄱㄱ",Toast.LENGTH_SHORT).show();
+
+                                item.commentNum -= 1;
+                                deleteComment(item.whoComment, item.dateComment, item.commentNum, item.postNum);
+
                             }
 
                             return false;
                         }
                     });
                     popup.show();
-//                    deleteComment(item.getWhoComment(), item.dateComment, post.post_CommentNum, item.postNum);
-                    // commentNum -1 처리
-                    // php에서 getComment 할 때 postNum 받아서 ArrayList에 같이 넘겨주기
-                    Log.d(TAG, "who : " + item.getWhoComment() + " / date : " + item.getDateComment() + "postNum : " + item.getPostNum() + " / dataSize : " + postData.size());
+
+                    Log.d(TAG, "who : " + item.whoComment + " / date : " + item.dateComment + " / postNum : " + item.postNum + " / commentNum : " + item.commentNum + " / 포지션 : " + getAdapterPosition());
 
                 }
             });
@@ -165,13 +179,21 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         public void deleteComment(String whoComment, String dateComment, int commentNum, int postNum) {
 
             apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<String> call = apiInterface.deleteComment(whoComment, dateComment, commentNum);
+            Call<String> call = apiInterface.deleteComment(whoComment, dateComment, commentNum, postNum);
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     Log.d(TAG, "deleteComment onResponse");
                     if (response.isSuccessful()) {
 
+                        String rpCode = response.body();
+                        Log.d(TAG, "onResponse: " + rpCode + " / position : " + getAdapterPosition());
+                        postData.remove(getAdapterPosition());
+                        notifyDataSetChanged();
+
+                        Intent i = new Intent("commentSync2");
+                        i.putExtra("commentNum2", commentNum);
+                        context.sendBroadcast(i);
 
                     }
                     Log.d(TAG, "responseFail");
