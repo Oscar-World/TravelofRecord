@@ -76,8 +76,13 @@ public class Fragment_Home extends Fragment {
 
     int networkStatus;
 
+    BroadcastReceiver heartReceiver;
+    BroadcastReceiver commentReceiver;
+
     IntentFilter heartFilter;
     IntentFilter commentFilter;
+
+    boolean receiverStatus = false;
 
 
     @Override public void onAttach(Context context) {
@@ -87,7 +92,6 @@ public class Fragment_Home extends Fragment {
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() 호출됨");
-
     }
 
 
@@ -98,8 +102,7 @@ public class Fragment_Home extends Fragment {
 
         v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        setView();
-
+        Log.d(TAG, "receiverStatus : " + receiverStatus);
         return v;
 
     }
@@ -108,6 +111,15 @@ public class Fragment_Home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출됨");
 
+
+
+
+
+    }
+    @Override public void onStart() {
+        Log.d(TAG, "onStart() 호출됨");
+        super.onStart();
+        setView();
         if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
             internetText.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
@@ -116,15 +128,6 @@ public class Fragment_Home extends Fragment {
             internetText.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
-
-
-
-    }
-    @Override public void onStart() {
-        Log.d(TAG, "onStart() 호출됨");
-        super.onStart();
-
-
 
     } // onStart()
 
@@ -196,6 +199,7 @@ public class Fragment_Home extends Fragment {
 
                     }
 
+
                 } else {
                     Log.d(TAG, "getPost : 실패");
                 }
@@ -213,9 +217,6 @@ public class Fragment_Home extends Fragment {
 
 
     public void setView() {
-
-        heartFilter = new IntentFilter("homeHeartSync");
-        commentFilter = new IntentFilter("homeCommentSync");
 
         loading_Iv = v.findViewById(R.id.home_Loading);
         rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
@@ -261,7 +262,15 @@ public class Fragment_Home extends Fragment {
         loading_Iv.setVisibility(View.VISIBLE);
         loading_Iv.startAnimation(rotate);
 
+
+//        this.heartReceiver = adapter.heartReceiver;
+//        this.commentReceiver = adapter.commentReceiver;
+        heartFilter = new IntentFilter("homeHeartSync");
+        commentFilter = new IntentFilter("homeCommentSync");
+
     }
+
+
 
     @Override public void onResume() {
         Log.d(TAG, "onResume() 호출됨");
@@ -276,14 +285,19 @@ public class Fragment_Home extends Fragment {
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출됨");
         super.onStop();
-        getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
-        getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
+        if(!receiverStatus) {
+            getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
+            getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
+            receiverStatus = true;
+        }
+
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출됨");
         super.onDestroyView();
-        getActivity().unregisterReceiver(adapter.heartReceiver);
-        getActivity().unregisterReceiver(adapter.commentReceiver);
+//        getActivity().unregisterReceiver(adapter.heartReceiver);
+//        getActivity().unregisterReceiver(adapter.commentReceiver);
+
     }
     @Override public void onDetach() {
         Log.d(TAG, "onDetach() 호출됨");

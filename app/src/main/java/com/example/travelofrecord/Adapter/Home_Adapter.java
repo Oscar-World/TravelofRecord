@@ -310,7 +310,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                                 boolean heartStatus = intent.getBooleanExtra("heartStatus", false);
                                 int postNum = intent.getIntExtra("postNum", 0);
 
-                                Log.d(TAG, "onReceive()\nheartNum : " + heartNum + "\nheartStatus : " + heartStatus + "\npostNum : " + postNum);
+                                Log.d(TAG, "onReceive()\nheartNum : " + heartNum + "\nheartStatus : " + heartStatus + "\npostNum : " + postNum + "\nposition : " + getAdapterPosition());
 
 
                                 post_HeartNum.setText(String.valueOf(heartNum));
@@ -322,6 +322,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                                     post_HeartFull.setVisibility(View.GONE);
                                     post_Heart.setVisibility(View.VISIBLE);
                                 }
+
 
                             }
                         };

@@ -152,6 +152,9 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                     });
                     popup.show();
 //                    deleteComment(item.getWhoComment(), item.dateComment, post.post_CommentNum, item.postNum);
+                    // commentNum -1 처리
+                    // php에서 getComment 할 때 postNum 받아서 ArrayList에 같이 넘겨주기
+                    Log.d(TAG, "who : " + item.getWhoComment() + " / date : " + item.getDateComment() + "postNum : " + item.getPostNum() + " / dataSize : " + postData.size());
 
                 }
             });
