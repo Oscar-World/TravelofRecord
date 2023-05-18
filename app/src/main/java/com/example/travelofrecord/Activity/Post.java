@@ -110,6 +110,7 @@ public class Post extends AppCompatActivity {
         Log.d(TAG, "onStart() 호출됨");
 
         setVariable();
+        setView();
         getPost(accessNickname, post_Num);
         getComment(post_Num);
 
@@ -119,7 +120,7 @@ public class Post extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
-
+        registerReceiver(commentReceiver2, commentFilter2);
     }
 
     @Override
@@ -256,30 +257,10 @@ public class Post extends AppCompatActivity {
         commentFilter = new IntentFilter("commentSync");
         commentFilter2 = new IntentFilter("commentSync2");
 
-        registerReceiver(commentReceiver2, commentFilter2);
-
-        post_Nickname_Text.setText(post_Nickname);
-        post_Location_Text.setText(post_EditLocation);
-        post_HeartNum_Text.setText(String.valueOf(post_Heart));
-        post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
-        post_DateCreated_Text.setText(post_EditDate);
-        post_Writing_Text.setText(post_Writing);
 
         post_Comment_Iv.setFocusableInTouchMode(true);
         recyclerView.setFocusableInTouchMode(true);
 
-        if (post_HeartStatus) {
-            post_Heart_Iv.setVisibility(View.GONE);
-            post_HeartFull_Iv.setVisibility(View.VISIBLE);
-        }
-
-        Glide.with(getApplicationContext())
-                .load(post_ProfileImage)
-                .into(post_ProfileImage_Iv);
-
-        Glide.with(getApplicationContext())
-                .load(post_PostImage)
-                .into(post_PostImage_Iv);
 
         back_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -624,7 +605,25 @@ public class Post extends AppCompatActivity {
                             post_EditDate = getTime.lastTime(post_DateCreated);
                             post_EditLocation = getAddress.editAddress1234(currentLocation);
 
-                            setView();
+                        post_Nickname_Text.setText(post_Nickname);
+                        post_Location_Text.setText(post_EditLocation);
+                        post_HeartNum_Text.setText(String.valueOf(post_Heart));
+                        post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
+                        post_DateCreated_Text.setText(post_EditDate);
+                        post_Writing_Text.setText(post_Writing);
+
+                        if (post_HeartStatus) {
+                            post_Heart_Iv.setVisibility(View.GONE);
+                            post_HeartFull_Iv.setVisibility(View.VISIBLE);
+                        }
+
+                        Glide.with(getApplicationContext())
+                                .load(post_ProfileImage)
+                                .into(post_ProfileImage_Iv);
+
+                        Glide.with(getApplicationContext())
+                                .load(post_PostImage)
+                                .into(post_PostImage_Iv);
 
                     }
 

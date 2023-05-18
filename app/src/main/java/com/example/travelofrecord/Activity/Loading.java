@@ -32,32 +32,8 @@ public class Loading extends AppCompatActivity {
 
         setView();
 
-
-
-
-//        Log.d(TAG, "키해시 : " + getKeyHash());
-
     }
 
-//    // 키해시 얻기
-//    public String getKeyHash(){
-//        try{
-//            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(),PackageManager.GET_SIGNATURES);
-//            if(packageInfo == null) return null;
-//            for(Signature signature: packageInfo.signatures){
-//                try{
-//                    MessageDigest md = MessageDigest.getInstance("SHA");
-//                    md.update(signature.toByteArray());
-//                    return android.util.Base64.encodeToString(md.digest(), Base64.NO_WRAP);
-//                }catch (NoSuchAlgorithmException e){
-//                    Log.w("getKeyHash", "Unable to get MessageDigest. signature="+signature, e);
-//                }
-//            }
-//        }catch(PackageManager.NameNotFoundException e){
-//            Log.w("getPackageInfo", "Unable to getPackageInfo");
-//        }
-//        return null;
-//    } // getKeyHash
 
     public class InThread extends Thread {
         public void run() {
@@ -109,12 +85,6 @@ public class Loading extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출");
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
 
         if (!shared.equals("")) {
             inthread.start();
@@ -122,6 +92,12 @@ public class Loading extends AppCompatActivity {
             outthread.start();
         }
 
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.d(TAG, "onResume() 호출됨");
     }
 
     @Override
