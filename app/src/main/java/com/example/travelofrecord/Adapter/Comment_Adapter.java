@@ -149,13 +149,13 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                 public void onClick(View view) {
 
                     PopupMenu popup = new PopupMenu(context, view);
-                    popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+                    popup.getMenuInflater().inflate(R.menu.comment_delete, popup.getMenu());
 
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
 
-                            if (menuItem.getItemId() == R.id.menu_Delete) {
+                            if (menuItem.getItemId() == R.id.menu_CommentDelete) {
                                 Toast.makeText(context,"삭제ㄱㄱ",Toast.LENGTH_SHORT).show();
 
                                 item.commentNum -= 1;

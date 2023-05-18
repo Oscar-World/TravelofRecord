@@ -15,8 +15,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -439,12 +437,13 @@ public class Post extends AppCompatActivity {
             public void onClick(View view) {
 
                 PopupMenu popup = new PopupMenu(Post.this,view);
-                popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+                popup.getMenuInflater().inflate(R.menu.post_delete, popup.getMenu());
+                popup.show();
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
 
-                        if (menuItem.getItemId() == R.id.menu_Delete) {
+                        if (menuItem.getItemId() == R.id.menu_PostDelete) {
                             Intent i = new Intent("deletePostSync");
                             i.putExtra("position", getPosition);
                             sendBroadcast(i);
@@ -456,7 +455,7 @@ public class Post extends AppCompatActivity {
                     }
                 });
 
-                popup.show();
+
 
             }
         });
