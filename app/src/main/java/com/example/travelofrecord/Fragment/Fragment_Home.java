@@ -76,13 +76,10 @@ public class Fragment_Home extends Fragment {
 
     int networkStatus;
 
-    BroadcastReceiver heartReceiver;
-    BroadcastReceiver commentReceiver;
-
     IntentFilter heartFilter;
     IntentFilter commentFilter;
 
-    boolean receiverStatus = false;
+    boolean receiverStatus;
 
 
     @Override public void onAttach(Context context) {
@@ -92,6 +89,7 @@ public class Fragment_Home extends Fragment {
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() 호출됨");
+        receiverStatus = false;
     }
 
 
@@ -111,14 +109,7 @@ public class Fragment_Home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출됨");
 
-
-
-
-
-    }
-    @Override public void onStart() {
-        Log.d(TAG, "onStart() 호출됨");
-        super.onStart();
+        setVariable();
         setView();
         if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
             internetText.setVisibility(View.GONE);
@@ -127,6 +118,18 @@ public class Fragment_Home extends Fragment {
         }else {
             internetText.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
+        }
+
+
+    }
+    @Override public void onStart() {
+        Log.d(TAG, "onStart() 호출됨");
+        super.onStart();
+
+        Log.d(TAG, "onStart receiverStatus : " + receiverStatus);
+        if (receiverStatus) {
+            getActivity().unregisterReceiver(adapter.heartReceiver);
+            getActivity().unregisterReceiver(adapter.commentReceiver);
         }
 
     } // onStart()
@@ -212,11 +215,9 @@ public class Fragment_Home extends Fragment {
         });
 
 
-
     }
 
-
-    public void setView() {
+    public void setVariable() {
 
         loading_Iv = v.findViewById(R.id.home_Loading);
         rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
@@ -235,9 +236,12 @@ public class Fragment_Home extends Fragment {
 
         adapter.setItemPost(post_Data_ArrayList);
 
-
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         loginNickname = sharedPreferences.getString("nickname","");
+
+    }
+
+    public void setView() {
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -285,19 +289,18 @@ public class Fragment_Home extends Fragment {
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출됨");
         super.onStop();
-        if(!receiverStatus) {
+        Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
+
             getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
             getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
             receiverStatus = true;
-        }
+            Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
+
 
     }
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출됨");
         super.onDestroyView();
-//        getActivity().unregisterReceiver(adapter.heartReceiver);
-//        getActivity().unregisterReceiver(adapter.commentReceiver);
-
     }
     @Override public void onDetach() {
         Log.d(TAG, "onDetach() 호출됨");

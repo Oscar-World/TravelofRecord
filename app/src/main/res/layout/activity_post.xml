@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="@color/main"
+        android:orientation="horizontal"
         >
 
         <ImageButton
@@ -25,6 +26,23 @@
             android:backgroundTint="@color/none"
             android:scaleType="fitXY"
             app:srcCompat="?attr/actionModeCloseDrawable" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/postMenu_Btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/point_menu"
+            android:scaleType="centerCrop"
+            android:background="@color/none"
+            android:padding="11dp"
+            android:layout_gravity="center_vertical"
+            />
 
     </LinearLayout>
 

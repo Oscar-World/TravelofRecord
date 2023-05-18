@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +62,7 @@ public class Post extends AppCompatActivity {
     TextView post_CommentNum_Text;
     EditText post_Comment_Edit;
     ImageButton post_CommentAdd_Btn;
+    ImageButton post_Menu_Btn;
 
     int post_Num;
     String post_Nickname;
@@ -182,6 +185,7 @@ public class Post extends AppCompatActivity {
         post_Location_Text = findViewById(R.id.post_location);
         post_Comment_Edit = findViewById(R.id.post_commentEdit);
         post_CommentAdd_Btn = findViewById(R.id.post_commentAdd_Btn);
+        post_Menu_Btn = findViewById(R.id.postMenu_Btn);
 
         Intent i = getIntent();
 
@@ -426,6 +430,32 @@ public class Post extends AppCompatActivity {
 
             }
         });
+
+        post_Menu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                PopupMenu popup = new PopupMenu(Post.this,view);
+                popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        if (menuItem.getItemId() == R.id.menu_Delete) {
+
+
+
+                        }
+
+                        return false;
+                    }
+                });
+
+                popup.show();
+
+            }
+        });
+
 
     } // setView()
 
