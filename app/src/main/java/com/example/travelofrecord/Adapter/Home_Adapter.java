@@ -298,6 +298,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
                         Intent i = new Intent(context, Post.class);
                         i.putExtra("num", item.getNum());
+                        i.putExtra("position", getAdapterPosition());
 
                         context.startActivity(i);
 

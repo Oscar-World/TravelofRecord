@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +79,8 @@ public class Fragment_Home extends Fragment {
 
     IntentFilter heartFilter;
     IntentFilter commentFilter;
+    BroadcastReceiver deleteReceiver;
+    IntentFilter deleteFilter;
 
     boolean receiverStatus;
 
@@ -128,6 +131,7 @@ public class Fragment_Home extends Fragment {
 
         Log.d(TAG, "onStart receiverStatus : " + receiverStatus);
         if (receiverStatus) {
+            getActivity().unregisterReceiver(deleteReceiver);
             getActivity().unregisterReceiver(adapter.heartReceiver);
             getActivity().unregisterReceiver(adapter.commentReceiver);
         }
@@ -215,6 +219,30 @@ public class Fragment_Home extends Fragment {
         });
 
 
+    } // getPost()
+
+
+    public void deletePost(int num) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.deletePost(num);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, "deletePost : onResponse");
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse : " + response.body());
+                } else {
+                    Log.d(TAG, "onResponse : fail");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "deletePost : onFailure");
+            }
+        });
+
     }
 
     public void setVariable() {
@@ -243,6 +271,22 @@ public class Fragment_Home extends Fragment {
 
     public void setView() {
 
+        deleteReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "onReceiveDelete");
+
+                int position = intent.getIntExtra("position", 0);
+                int deleteNum = post_Data_ArrayList.get(position).num;
+                Log.d(TAG, "postion : " + position + "\nnum : " + deleteNum);
+                post_Data_ArrayList.remove(position);
+                adapter.notifyDataSetChanged();
+
+                deletePost(deleteNum);
+
+            }
+        };
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -269,6 +313,7 @@ public class Fragment_Home extends Fragment {
 
 //        this.heartReceiver = adapter.heartReceiver;
 //        this.commentReceiver = adapter.commentReceiver;
+        deleteFilter = new IntentFilter("deletePostSync");
         heartFilter = new IntentFilter("homeHeartSync");
         commentFilter = new IntentFilter("homeCommentSync");
 
@@ -291,10 +336,11 @@ public class Fragment_Home extends Fragment {
         super.onStop();
         Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
 
-            getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
-            getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
-            receiverStatus = true;
-            Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
+        getActivity().registerReceiver(deleteReceiver, deleteFilter);
+        getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
+        getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
+        receiverStatus = true;
+        Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
 
 
     }

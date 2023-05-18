@@ -112,6 +112,11 @@ public interface ApiInterface {
             @Query("num") int num
     );
 
+    @GET("mysql_Post_Delete.php")
+    Call<String> deletePost(
+            @Query("num") int num
+    );
+
     // 좋아요 눌렀을 때 추가
     @GET("mysql_Heart_Insert.php")
     Call<PostData> insertWhoLike(

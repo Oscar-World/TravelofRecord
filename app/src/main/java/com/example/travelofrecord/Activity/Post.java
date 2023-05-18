@@ -64,6 +64,8 @@ public class Post extends AppCompatActivity {
     ImageButton post_CommentAdd_Btn;
     ImageButton post_Menu_Btn;
 
+    int getPosition;
+
     int post_Num;
     String post_Nickname;
     String post_ProfileImage;
@@ -190,6 +192,7 @@ public class Post extends AppCompatActivity {
         Intent i = getIntent();
 
         post_Num = i.getIntExtra("num", 0);
+        getPosition = i.getIntExtra("position", 0);
 
         home = new Home();
 
@@ -442,8 +445,10 @@ public class Post extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem menuItem) {
 
                         if (menuItem.getItemId() == R.id.menu_Delete) {
-
-
+                            Intent i = new Intent("deletePostSync");
+                            i.putExtra("position", getPosition);
+                            sendBroadcast(i);
+                            finish();
 
                         }
 
@@ -641,6 +646,12 @@ public class Post extends AppCompatActivity {
                         post_CommentNum_Text.setText(String.valueOf(post_CommentNum));
                         post_DateCreated_Text.setText(post_EditDate);
                         post_Writing_Text.setText(post_Writing);
+
+                        if (!accessNickname.equals(post_Nickname)) {
+                            post_Menu_Btn.setVisibility(View.GONE);
+                        } else {
+                            post_Menu_Btn.setVisibility(View.VISIBLE);
+                        }
 
                         if (post_HeartStatus) {
                             post_Heart_Iv.setVisibility(View.GONE);
