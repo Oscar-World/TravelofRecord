@@ -70,6 +70,8 @@ public class PostData {
     @Expose
     @SerializedName("dateMessage") public String dateMessage;
 
+    public int viewType;
+
 
 
     public PostData(int num, String postNickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus) {
@@ -169,6 +171,7 @@ public class PostData {
     public String getCommentProfileImage() { return commentProfileImage; }
     public String getMessage() { return message; }
     public String getDateMessage() { return dateMessage; }
+    public int getViewType() { return viewType; }
 
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
@@ -206,5 +209,6 @@ public class PostData {
     public void setCommentProfileImage(String commentProfileImage) { this.commentProfileImage = commentProfileImage; }
     public void setMessage(String message) { this.message = message; }
     public void setDateMessage(String dateMessage) { this.dateMessage = dateMessage; }
+    public void setViewType(int viewType) { this.viewType = viewType; }
 
 }

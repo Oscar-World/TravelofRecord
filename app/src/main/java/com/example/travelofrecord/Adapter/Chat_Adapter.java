@@ -1,7 +1,6 @@
 package com.example.travelofrecord.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,31 +16,47 @@ import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
 
-public class Chat_Adapter extends RecyclerView.Adapter<Chat_Adapter.ViewHolder> {
+public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     String TAG = "채팅 어댑터";
     Context context;
     ArrayList<PostData> arrayList;
 
     @Override
-    public Chat_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_box, parent, false);
-        Chat_Adapter.ViewHolder viewHolder = new Chat_Adapter.ViewHolder(view);
+        View view;
 
-        return viewHolder;
+        if (viewType == 0) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_left, parent, false);
+            return new LeftViewHolder(view);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_left, parent, false);
+            return new RightViewHolder(view);
+        }
+
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Chat_Adapter.ViewHolder holder,int position) {
-        Log.d(TAG, "onBindViewHolder() 호출됨");
-        holder.onBind(arrayList.get(holder.getAdapterPosition()));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder,int position) {
+
+        if (holder instanceof LeftViewHolder) {
+            ((LeftViewHolder) holder).onBind(arrayList.get(holder.getAdapterPosition()));
+        } else {
+            ((RightViewHolder) holder).onBind(arrayList.get(holder.getAdapterPosition()));
+        }
+
     }
 
     @Override
     public int getItemCount() {
         return arrayList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return arrayList.get(position).getViewType();
     }
 
     public void setItemChat(ArrayList<PostData> arrayList) {
@@ -51,31 +66,49 @@ public class Chat_Adapter extends RecyclerView.Adapter<Chat_Adapter.ViewHolder> 
 
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class LeftViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView chatProfileImage;
-        TextView chatNicknameText;
-        TextView chatMessageText;
-        TextView chatDateText;
+        ImageView leftChatProfileImage;
+        TextView leftChatNicknameText;
+        TextView leftChatMessageText;
+        TextView leftChatDateText;
 
-        public ViewHolder(View view) {
+        public LeftViewHolder(View view) {
             super(view);
-
-            chatProfileImage = view.findViewById(R.id.chatProfile_Image);
-            chatNicknameText = view.findViewById(R.id.chatNickname_Text);
-            chatMessageText = view.findViewById(R.id.chatMessage_Text);
-            chatDateText = view.findViewById(R.id.chatDate_Text);
-
+            leftChatProfileImage = view.findViewById(R.id.leftChatProfile_Image);
+            leftChatNicknameText = view.findViewById(R.id.leftChatNickname_Text);
+            leftChatMessageText = view.findViewById(R.id.leftChatMessage_Text);
+            leftChatDateText = view.findViewById(R.id.leftChatDate_Text);
         }
 
         void onBind(PostData item) {
 
-//            chatNicknameText.setText();
-//            chatMessageText.setText();
-//            chatDateText.setText();
-//            Glide.with(context)
-//                    .load()
-//                    .into(chatProfileImage);
+            leftChatNicknameText.setText(item.getNickname());
+            leftChatMessageText.setText(item.getMessage());
+            leftChatDateText.setText(item.getDateMessage());
+            Glide.with(context)
+                    .load(item.getProfileImage())
+                    .into(leftChatProfileImage);
+
+        }
+
+    }
+
+    public class RightViewHolder extends RecyclerView.ViewHolder {
+
+        TextView rightChatMessageText;
+        TextView rightChatDateText;
+
+        public RightViewHolder(View view) {
+            super(view);
+            rightChatMessageText = view.findViewById(R.id.rightChatMessage_Text);
+            rightChatDateText = view.findViewById(R.id.rightChatDate_Text);
+        }
+
+        void onBind(PostData item) {
+
+            rightChatMessageText.setText(item.getMessage());
+            rightChatDateText.setText(item.getDateMessage());
 
         }
 

@@ -1,5 +1,7 @@
 package com.example.travelofrecord.Function;
 
+import java.text.SimpleDateFormat;
+
 public class GetTime {
 
     public String lastTime(String dateCreated) {
@@ -36,15 +38,16 @@ public class GetTime {
     public Long getTime() {
 
         long currentTime = System.currentTimeMillis();
-//        Date date = new Date(currentTime);
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm");
-//
-//        String today = format.format(date);
-//
-//        return today;
 
         return currentTime;
+    }
 
+    public String getFormatTime(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        String formatTime = simpleDateFormat.format(time);
+
+        return formatTime;
     }
 
 }

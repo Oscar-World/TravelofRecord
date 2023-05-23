@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:layout_gravity="end"
+    >
+
+
+    <TextView
+        android:id="@+id/rightChatMessage_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="message"
+        android:textSize="15dp"
+        android:background="@color/yellow"
+        android:padding="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="end"
+        />
+
+    <TextView
+        android:id="@+id/rightChatDate_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오후 08:00"
+        android:textSize="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="end"
+        />
+
+</LinearLayout>

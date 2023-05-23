@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.ImageButton;
 
 import com.example.travelofrecord.Adapter.Chat_Adapter;
 import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
@@ -27,6 +29,13 @@ public class DirectMessage extends AppCompatActivity {
     RecyclerView chatRecyclerView;
     ArrayList<PostData> arrayList;
     Chat_Adapter adapter;
+    SharedPreferences sharedPreferences;
+    String currentNickname;
+    String currentImage;
+
+    GetTime getTime;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +98,14 @@ public class DirectMessage extends AppCompatActivity {
         chatRecyclerView.setAdapter(adapter);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter.setItemChat(arrayList);
+
+        sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        currentNickname = sharedPreferences.getString("nickname","");
+        currentImage = sharedPreferences.getString("image", "");
+
+        getTime = new GetTime();
+
+
 
     }
 
