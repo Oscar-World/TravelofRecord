@@ -64,6 +64,12 @@ public class PostData {
     @Expose
     @SerializedName("memo") public String memo;
 
+    @Expose
+    @SerializedName("message") public String message;
+
+    @Expose
+    @SerializedName("dateMessage") public String dateMessage;
+
 
 
     public PostData(int num, String postNickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus) {
@@ -161,6 +167,8 @@ public class PostData {
     public String getComment() { return comment; }
     public int getCommentNum() { return commentNum; }
     public String getCommentProfileImage() { return commentProfileImage; }
+    public String getMessage() { return message; }
+    public String getDateMessage() { return dateMessage; }
 
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
@@ -196,5 +204,7 @@ public class PostData {
     public void setComment(String comment) { this.comment = comment; }
     public void setCommentNum(int commentNum) { this.commentNum = commentNum; }
     public void setCommentProfileImage(String commentProfileImage) { this.commentProfileImage = commentProfileImage; }
+    public void setMessage(String message) { this.message = message; }
+    public void setDateMessage(String dateMessage) { this.dateMessage = dateMessage; }
 
 }

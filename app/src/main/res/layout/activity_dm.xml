@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.DirectMessage"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/main"
+        >
+
+        <ImageButton
+            android:id="@+id/chatBack_Btn"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:backgroundTint="@color/none"
+            android:scaleType="fitXY"
+            app:srcCompat="?attr/actionModeCloseDrawable" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/primary3"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:background="@color/main"
+        >
+
+
+        <EditText
+            android:id="@+id/chatMessage_Edit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="8.5"
+            android:background="@color/none"
+            android:hint="메시지를 입력해 주세요"
+            android:maxLength="40"
+            android:maxLines="3"
+            />
+
+        <ImageButton
+            android:id="@+id/chatSend_Btn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1.5"
+            android:background="@color/none"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/commentup" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

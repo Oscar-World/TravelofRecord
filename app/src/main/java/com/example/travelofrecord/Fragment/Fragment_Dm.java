@@ -16,7 +16,7 @@ import com.example.travelofrecord.R;
 
 public class Fragment_Dm extends Fragment {
 
-    String TAG = "Dm 프래그먼트";
+    String TAG = "DirectMessage 프래그먼트";
     View v;
 
     FrameLayout noChatRoomFrameLayout;

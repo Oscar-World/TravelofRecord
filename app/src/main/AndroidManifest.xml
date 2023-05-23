@@ -22,6 +22,9 @@
         android:theme="@style/Theme.TravelOfRecord"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".Activity.DirectMessage"
+            android:exported="false" />
+        <activity
             android:name=".Activity.PhotoView"
             android:exported="false"
             android:screenOrientation="portrait" />
