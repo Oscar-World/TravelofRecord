@@ -32,7 +32,7 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_left, parent, false);
             return new LeftViewHolder(view);
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_left, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_right, parent, false);
             return new RightViewHolder(view);
         }
 

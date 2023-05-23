@@ -23,6 +23,18 @@
             android:layout_marginLeft="15dp"
             />
 
+        <ImageButton
+            android:id="@+id/chatRoomAdd_Btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center|end"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/add"
+            android:scaleType="centerInside"
+            android:background="@color/none"
+            android:padding="5dp"
+            />
+
     </FrameLayout>
 
     <FrameLayout

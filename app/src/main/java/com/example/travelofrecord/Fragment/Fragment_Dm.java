@@ -1,6 +1,7 @@
 package com.example.travelofrecord.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
+import com.example.travelofrecord.Activity.DirectMessage;
 import com.example.travelofrecord.R;
 
 public class Fragment_Dm extends Fragment {
@@ -21,6 +24,7 @@ public class Fragment_Dm extends Fragment {
 
     FrameLayout noChatRoomFrameLayout;
     RecyclerView recyclerView;
+    ImageButton addChatBtn;
 
     @Override
     public void onAttach(Context context) {
@@ -43,6 +47,10 @@ public class Fragment_Dm extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출");
+
+        setVariable();
+        setView();
+
     }
     @Override
     public void onStart() {
@@ -79,6 +87,7 @@ public class Fragment_Dm extends Fragment {
 
         noChatRoomFrameLayout = v.findViewById(R.id.noChatRoom_FrameLayout);
         recyclerView = v.findViewById(R.id.chatRoom_RecyclerView);
+        addChatBtn = v.findViewById(R.id.chatRoomAdd_Btn);
 
     }
 
@@ -92,6 +101,15 @@ public class Fragment_Dm extends Fragment {
             noChatRoomFrameLayout.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         }
+
+        addChatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent(getActivity(), DirectMessage.class);
+                startActivity(i);
+            }
+        });
 
     }
 

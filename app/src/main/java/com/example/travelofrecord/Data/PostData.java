@@ -91,6 +91,7 @@ public class PostData {
 
     }
 
+    // getHeartFeed()
     public PostData(String location, String postImage) {
 
         this.location = location;
@@ -138,6 +139,16 @@ public class PostData {
         this.postImage = postImage;
         this.writing = writing;
         this.dateCreated = dateCreated;
+
+    }
+
+    public PostData(String profileImage, String nickname, String message, String dateMessage, int viewType) {
+
+        this.imagePath = profileImage;
+        this.nickname = nickname;
+        this.message = message;
+        this.dateMessage = dateMessage;
+        this.viewType = viewType;
 
     }
 

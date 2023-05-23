@@ -125,11 +125,17 @@ public class DirectMessage extends AppCompatActivity {
             public void onClick(View view) {
 
                 String message = chatEdit.getText().toString();
-
-
+                Log.d(TAG, "onClick: " + message);
+                chatEdit.setText("");
 
             }
         });
+
+
+
+        arrayList.add(new PostData(null, "testNickname", "hi Oscar ~.~", String.valueOf(getTime.getFormatTime(getTime.getTime())), 0));
+        arrayList.add(new PostData(null, "testNickname", "hello Oscar ~.~", String.valueOf(getTime.getFormatTime(getTime.getTime())), 1));
+        adapter.notifyDataSetChanged();
 
     }
 
