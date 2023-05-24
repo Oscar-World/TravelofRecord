@@ -8,36 +8,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <LinearLayout
+<!--    <LinearLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        >-->
+
+<!--        <de.hdodenhof.circleimageview.CircleImageView-->
+<!--            android:id="@+id/leftChatProfile_Image"-->
+<!--            android:layout_width="40dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:src="@color/primary"-->
+<!--            app:civ_border_color="@color/primary"-->
+<!--            app:civ_border_width="2dp"-->
+<!--            app:civ_border_overlay="false"-->
+<!--            />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/leftChatNickname_Text"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Oscar"-->
+<!--            android:textSize="15dp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:layout_gravity="bottom"-->
+<!--            android:layout_marginLeft="5dp"-->
+<!--            android:layout_marginBottom="2dp"-->
+<!--            />-->
+
+<!--    </LinearLayout>-->
+
+    <TextView
+        android:id="@+id/leftChatNickname_Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/leftChatProfile_Image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@color/primary"
-            app:civ_border_color="@color/primary"
-            app:civ_border_width="2dp"
-            app:civ_border_overlay="false"
-            />
-
-        <TextView
-            android:id="@+id/leftChatNickname_Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Oscar"
-            android:textSize="13dp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="5dp"
-            android:layout_marginBottom="2dp"
-            />
-
-    </LinearLayout>
+        android:text="Oscar"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="2dp"
+        />
 
     <TextView
         android:id="@+id/leftChatMessage_Text"
@@ -50,7 +63,7 @@
         android:background="@color/white"
         android:padding="8dp"
         android:layout_marginTop="2dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="5dp"
         />
 
     <TextView
@@ -59,7 +72,7 @@
         android:layout_height="wrap_content"
         android:text="오후 08:00"
         android:textSize="10dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         />
 

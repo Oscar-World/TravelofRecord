@@ -224,7 +224,7 @@ public class DirectMessage extends AppCompatActivity {
                 viewType = 1;
             }
 
-            PostData postData = new PostData(currentImage, currentNickname, message, time, viewType);
+            PostData postData = new PostData(currentImage, nickname, message, time, viewType);
 
             arrayList.add(postData);
             adapter.notifyDataSetChanged();

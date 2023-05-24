@@ -68,14 +68,14 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public class LeftViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView leftChatProfileImage;
+//        ImageView leftChatProfileImage;
         TextView leftChatNicknameText;
         TextView leftChatMessageText;
         TextView leftChatDateText;
 
         public LeftViewHolder(View view) {
             super(view);
-            leftChatProfileImage = view.findViewById(R.id.leftChatProfile_Image);
+//            leftChatProfileImage = view.findViewById(R.id.leftChatProfile_Image);
             leftChatNicknameText = view.findViewById(R.id.leftChatNickname_Text);
             leftChatMessageText = view.findViewById(R.id.leftChatMessage_Text);
             leftChatDateText = view.findViewById(R.id.leftChatDate_Text);
@@ -86,9 +86,9 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             leftChatNicknameText.setText(item.getNickname());
             leftChatMessageText.setText(item.getMessage());
             leftChatDateText.setText(item.getDateMessage());
-            Glide.with(context)
-                    .load(item.getProfileImage())
-                    .into(leftChatProfileImage);
+//            Glide.with(context)
+//                    .load(item.getProfileImage())
+//                    .into(leftChatProfileImage);
 
         }
 
