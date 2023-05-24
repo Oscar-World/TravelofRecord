@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,12 @@ import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.R;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class DirectMessage extends AppCompatActivity {
@@ -35,6 +42,13 @@ public class DirectMessage extends AppCompatActivity {
 
     GetTime getTime;
 
+    Handler handler;
+    Socket socket;
+    PrintWriter printWriter;
+    String ip = "3.34.246.77";
+    int port = 8888;
+
+    String sendMessage;
 
 
     @Override
@@ -45,6 +59,10 @@ public class DirectMessage extends AppCompatActivity {
 
         setVariable();
         setView();
+
+        SocketThread thread = new SocketThread();
+        thread.start();
+
     }
 
     @Override
@@ -105,9 +123,10 @@ public class DirectMessage extends AppCompatActivity {
 
         getTime = new GetTime();
 
+        handler = new Handler();
 
+    } // setVariable()
 
-    }
 
     public void setView() {
 
@@ -124,21 +143,95 @@ public class DirectMessage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String message = chatEdit.getText().toString();
-                Log.d(TAG, "onClick: " + message);
-                chatEdit.setText("");
+                sendMessage = chatEdit.getText().toString();
+                PrintWriterThread thread = new PrintWriterThread();
+                thread.start();
 
             }
         });
 
 
+    } // setView()
 
-        arrayList.add(new PostData(null, "testNickname", "hi Oscar ~.~", String.valueOf(getTime.getFormatTime(getTime.getTime())), 0));
-        arrayList.add(new PostData(null, "testNickname", "hello Oscar ~.~", String.valueOf(getTime.getFormatTime(getTime.getTime())), 1));
-        adapter.notifyDataSetChanged();
+
+    // ========================================================================================
+
+    class SocketThread extends Thread {
+
+        public void run() {
+
+            try{
+
+                InetAddress inetAddress = InetAddress.getByName(ip);
+                socket = new Socket(inetAddress, port);
+                printWriter = new PrintWriter(socket.getOutputStream());
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                while (true) {
+
+                    String readLine = bufferedReader.readLine();
+                    Log.d(TAG, "readLine : " + readLine);
+
+                    if (readLine != null) {
+                        handler.post(new messageUpdate(readLine));
+                    }
+
+                }
+
+            } catch (IOException e) {
+                Log.d(TAG, "exception : " + e);
+                e.printStackTrace();
+            }
+
+        }
+
+    } // SocketThread
+
+
+    class PrintWriterThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            try {
+                printWriter.println(currentNickname + "↖" + sendMessage);
+                printWriter.flush();
+                chatEdit.setText("");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
+    class messageUpdate implements Runnable {
+
+        String message;
+
+        public messageUpdate(String msg) {
+            this.message = msg;
+        }
+
+        @Override
+        public void run() {
+
+            String[] array = message.split("↖");
+            String nickname = array[0];
+            String message = array[1];
+            String time = String.valueOf(getTime.getFormatTime(getTime.getTime()));
+            int viewType = 0;
+            if(nickname.equals(currentNickname)) {
+                viewType = 1;
+            }
+
+            PostData postData = new PostData(currentImage, currentNickname, message, time, viewType);
+
+            arrayList.add(postData);
+            adapter.notifyDataSetChanged();
+
+        }
+
+    } // messageUpdate
 
 
 }
