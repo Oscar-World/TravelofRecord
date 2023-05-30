@@ -1,5 +1,6 @@
 package com.example.travelofrecord.Network;
 
+import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Data.User;
 
@@ -174,6 +175,12 @@ public interface ApiInterface {
     @GET("mysql_GetProfileInfo.php")
     Call<ArrayList<PostData>> getProfile(
             @Query("postNickname") String nickname
+    );
+
+    @GET("mysql_GetRoomNum.php")
+    Call<Chat> getRoomNum(
+            @Query("roomNum1") String roomNum1,
+            @Query("roomNum2") String roomNum2
     );
 
 

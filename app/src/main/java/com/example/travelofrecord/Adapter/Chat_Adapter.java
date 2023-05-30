@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
 
@@ -20,7 +21,7 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     String TAG = "채팅 어댑터";
     Context context;
-    ArrayList<PostData> arrayList;
+    ArrayList<Chat> arrayList;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -59,7 +60,7 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return arrayList.get(position).getViewType();
     }
 
-    public void setItemChat(ArrayList<PostData> arrayList) {
+    public void setItemChat(ArrayList<Chat> arrayList) {
         this.arrayList = arrayList;
         notifyDataSetChanged();
     }
@@ -81,9 +82,9 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             leftChatDateText = view.findViewById(R.id.leftChatDate_Text);
         }
 
-        void onBind(PostData item) {
+        void onBind(Chat item) {
 
-            leftChatNicknameText.setText(item.getNickname());
+            leftChatNicknameText.setText(item.getSender());
             leftChatMessageText.setText(item.getMessage());
             leftChatDateText.setText(item.getDateMessage());
 //            Glide.with(context)
@@ -105,7 +106,7 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             rightChatDateText = view.findViewById(R.id.rightChatDate_Text);
         }
 
-        void onBind(PostData item) {
+        void onBind(Chat item) {
 
             rightChatMessageText.setText(item.getMessage());
             rightChatDateText.setText(item.getDateMessage());

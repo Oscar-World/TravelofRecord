@@ -14,8 +14,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.example.travelofrecord.Adapter.Chat_Adapter;
+import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Function.GetTime;
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.R;
 
 import java.io.BufferedReader;
@@ -26,6 +29,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class DirectMessage extends AppCompatActivity {
 
     String TAG = "채팅";
@@ -34,7 +41,7 @@ public class DirectMessage extends AppCompatActivity {
     ImageButton sendBtn;
     EditText chatEdit;
     RecyclerView chatRecyclerView;
-    ArrayList<PostData> arrayList;
+    ArrayList<Chat> arrayList;
     Chat_Adapter adapter;
     SharedPreferences sharedPreferences;
     String currentNickname;
@@ -49,6 +56,7 @@ public class DirectMessage extends AppCompatActivity {
     int port = 8888;
 
     String sendMessage;
+    String roomNum;
 
 
     @Override
@@ -99,6 +107,11 @@ public class DirectMessage extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -130,6 +143,8 @@ public class DirectMessage extends AppCompatActivity {
 
     public void setView() {
 
+        // DB에 저장된 채팅 내용 불러와서 ArrayList.add 해주고 리사이클러뷰에 반영
+
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,6 +161,8 @@ public class DirectMessage extends AppCompatActivity {
                 sendMessage = chatEdit.getText().toString();
                 PrintWriterThread thread = new PrintWriterThread();
                 thread.start();
+
+                // DB에 채팅 내용 저장
 
             }
         });
@@ -224,14 +241,39 @@ public class DirectMessage extends AppCompatActivity {
                 viewType = 1;
             }
 
-            PostData postData = new PostData(currentImage, nickname, message, time, viewType);
+            Chat chat = new Chat(roomNum, nickname, currentImage, message, time, viewType);
 
-            arrayList.add(postData);
+            arrayList.add(chat);
             adapter.notifyDataSetChanged();
 
         }
 
     } // messageUpdate
+
+    public void getRoomNum(String roomNum1, String roomNum2) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<Chat> call = apiInterface.getRoomNum(roomNum1, roomNum2);
+        call.enqueue(new Callback<Chat>() {
+            @Override
+            public void onResponse(Call<Chat> call, Response<Chat> response) {
+                if(response.isSuccessful()) {
+                    Log.d(TAG, "getRoomNum - onResponse isSuccessful");
+
+                    roomNum = response.body().getRoomNum();
+
+                } else {
+                    Log.d(TAG, "getRoomNum - onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Chat> call, Throwable t) {
+                Log.d(TAG, "onFailure : " + t);
+            }
+        });
+
+    }
 
 
 }
