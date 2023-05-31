@@ -183,5 +183,10 @@ public interface ApiInterface {
             @Query("roomNum2") String roomNum2
     );
 
+    @GET("mysql_GetChatting.php")
+    Call<Chat> getChatting(
+            @Query("roomNum") String roomNum
+    );
+
 
 }

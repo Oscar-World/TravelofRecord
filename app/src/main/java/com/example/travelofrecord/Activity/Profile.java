@@ -260,7 +260,11 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             public void onClick(View view) {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-                    Toast.makeText(getApplicationContext(),"서비스 준비중입니다",Toast.LENGTH_SHORT).show();
+
+                    Intent i = new Intent(Profile.this, DirectMessage.class);
+                    i.putExtra("postNickname", user_Nickname);
+                    startActivity(i);
+
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }

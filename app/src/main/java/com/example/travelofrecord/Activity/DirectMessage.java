@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,6 +58,10 @@ public class DirectMessage extends AppCompatActivity {
 
     String sendMessage;
     String roomNum;
+    boolean roomCheck = false;
+    String getNickname;
+    String nicknameSum1;
+    String nicknameSum2;
 
 
     @Override
@@ -68,6 +73,8 @@ public class DirectMessage extends AppCompatActivity {
         setVariable();
         setView();
 
+        getRoomNum(nicknameSum1, nicknameSum2);
+
         SocketThread thread = new SocketThread();
         thread.start();
 
@@ -77,6 +84,7 @@ public class DirectMessage extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
+
     }
 
     @Override
@@ -133,6 +141,13 @@ public class DirectMessage extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         currentNickname = sharedPreferences.getString("nickname","");
         currentImage = sharedPreferences.getString("image", "");
+
+        Intent i = getIntent();
+        getNickname = i.getStringExtra("postNickname");
+
+        nicknameSum1 = currentNickname + getNickname;
+        nicknameSum2 = getNickname + currentNickname;
+
 
         getTime = new GetTime();
 
@@ -260,7 +275,12 @@ public class DirectMessage extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     Log.d(TAG, "getRoomNum - onResponse isSuccessful");
 
+                    roomCheck = response.body().getRoomCheck();
                     roomNum = response.body().getRoomNum();
+
+                    if (roomCheck) {
+                        getChatting(roomNum);
+                    }
 
                 } else {
                     Log.d(TAG, "getRoomNum - onResponse isFailure");
@@ -269,11 +289,52 @@ public class DirectMessage extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Chat> call, Throwable t) {
-                Log.d(TAG, "onFailure : " + t);
+                Log.d(TAG, "getRoomNum - onFailure : " + t);
             }
         });
 
-    }
+    } // getRoomNum()
+
+
+    public void getChatting(String roomNum) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<Chat> call = apiInterface.getChatting(roomNum);
+        call.enqueue(new Callback<Chat>() {
+            @Override
+            public void onResponse(Call<Chat> call, Response<Chat> response) {
+                if(response.isSuccessful()) {
+                    Log.d(TAG, "getChatting - onResponse isSuccessful");
+
+                    String roomNumber = response.body().getRoomNum();
+                    String sender = response.body().getSender();
+                    String senderImage = response.body().getSenderImage();
+                    String message = response.body().getMessage();
+                    String dateMessage = response.body().getDateMessage();
+                    String time = String.valueOf(getTime.getFormatTime(Long.valueOf(dateMessage)));
+
+                    int viewType = 0;
+                    if(sender.equals(currentNickname)) {
+                        viewType = 1;
+                    }
+
+                    Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType);
+                    arrayList.add(chat);
+                    adapter.notifyDataSetChanged();
+
+                } else {
+                    Log.d(TAG, "getChatting - onResponse isFailure");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Chat> call, Throwable t) {
+                Log.d(TAG, "getChatting - onFailure : " + t);
+            }
+        });
+
+    } // getChatting()
 
 
 }

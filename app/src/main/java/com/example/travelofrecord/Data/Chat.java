@@ -22,6 +22,8 @@ public class Chat {
 
     public int viewType;
 
+    public boolean roomCheck;
+
 
     public Chat (String roomNum, String sender, String senderImage, String message, String dateMessage, int viewType) {
 
@@ -82,5 +84,9 @@ public class Chat {
     public void setViewType(int viewType) {
         this.viewType = viewType;
     }
+
+    public boolean getRoomCheck() { return roomCheck; }
+
+    public void setRoomCheck(boolean roomCheck) { this.roomCheck = roomCheck; }
 
 }
