@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.travelofrecord.Adapter.Chat_Adapter;
 import com.example.travelofrecord.Data.Chat;
@@ -174,10 +175,17 @@ public class DirectMessage extends AppCompatActivity {
             public void onClick(View view) {
 
                 sendMessage = chatEdit.getText().toString();
-                PrintWriterThread thread = new PrintWriterThread();
-                thread.start();
 
-                // DB에 채팅 내용 저장
+                if (sendMessage.equals("") | sendMessage.equals(" ")) {
+                    Toast.makeText(DirectMessage.this, "메시지를 입력하세요", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    PrintWriterThread thread = new PrintWriterThread();
+                    thread.start();
+
+                    insertChat(roomNum, currentNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()));
+
+                }
 
             }
         });
@@ -226,7 +234,7 @@ public class DirectMessage extends AppCompatActivity {
         public void run() {
             super.run();
             try {
-                printWriter.println(currentNickname + "↖" + sendMessage);
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + sendMessage);
                 printWriter.flush();
                 chatEdit.setText("");
             } catch (Exception e) {
@@ -248,15 +256,16 @@ public class DirectMessage extends AppCompatActivity {
         public void run() {
 
             String[] array = message.split("↖");
-            String nickname = array[0];
-            String message = array[1];
+            String nickname = array[1];
+            String senderImage = array[2];
+            String message = array[3];
             String time = String.valueOf(getTime.getFormatTime(getTime.getTime()));
             int viewType = 0;
             if(nickname.equals(currentNickname)) {
                 viewType = 1;
             }
 
-            Chat chat = new Chat(roomNum, nickname, currentImage, message, time, viewType);
+            Chat chat = new Chat(roomNum, nickname, senderImage, message, time, viewType);
 
             arrayList.add(chat);
             adapter.notifyDataSetChanged();
@@ -279,7 +288,10 @@ public class DirectMessage extends AppCompatActivity {
                     roomNum = response.body().getRoomNum();
 
                     if (roomCheck) {
+                        Log.d(TAG, "이미 만들어진 채팅방 있음");
                         getChatting(roomNum);
+                    } else {
+                        Log.d(TAG, "이미 만들어진 채팅방 없음");
                     }
 
                 } else {
@@ -299,28 +311,39 @@ public class DirectMessage extends AppCompatActivity {
     public void getChatting(String roomNum) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<Chat> call = apiInterface.getChatting(roomNum);
-        call.enqueue(new Callback<Chat>() {
+        Call<ArrayList<Chat>> call = apiInterface.getChatting(roomNum);
+        call.enqueue(new Callback<ArrayList<Chat>>() {
             @Override
-            public void onResponse(Call<Chat> call, Response<Chat> response) {
+            public void onResponse(Call<ArrayList<Chat>> call, Response<ArrayList<Chat>> response) {
                 if(response.isSuccessful()) {
                     Log.d(TAG, "getChatting - onResponse isSuccessful");
 
-                    String roomNumber = response.body().getRoomNum();
-                    String sender = response.body().getSender();
-                    String senderImage = response.body().getSenderImage();
-                    String message = response.body().getMessage();
-                    String dateMessage = response.body().getDateMessage();
-                    String time = String.valueOf(getTime.getFormatTime(Long.valueOf(dateMessage)));
+                    ArrayList<Chat> list = response.body();
 
-                    int viewType = 0;
-                    if(sender.equals(currentNickname)) {
-                        viewType = 1;
+                    if (list.size() > 0) {
+
+                        for (int i = 0; i < list.size(); i++) {
+
+                            String roomNumber = response.body().get(i).getRoomNum();
+                            String sender = response.body().get(i).getSender();
+                            String senderImage = response.body().get(i).getSenderImage();
+                            String message = response.body().get(i).getMessage();
+                            String dateMessage = response.body().get(i).getDateMessage();
+                            String time = String.valueOf(getTime.getFormatTime(Long.valueOf(dateMessage)));
+
+                            int viewType = 0;
+                            if(sender.equals(currentNickname)) {
+                                viewType = 1;
+                            }
+
+                            Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType);
+                            arrayList.add(chat);
+
+                        }
+
+                        adapter.notifyDataSetChanged();
+
                     }
-
-                    Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType);
-                    arrayList.add(chat);
-                    adapter.notifyDataSetChanged();
 
                 } else {
                     Log.d(TAG, "getChatting - onResponse isFailure");
@@ -329,12 +352,41 @@ public class DirectMessage extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Chat> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Chat>> call, Throwable t) {
                 Log.d(TAG, "getChatting - onFailure : " + t);
             }
         });
 
     } // getChatting()
+
+
+    public void insertChat(String roomNum, String sender, String senderImage, String message, String dateMessage) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.insertChatting(roomNum, sender, senderImage, message, dateMessage);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "insertChat - onResponse isSuccessful");
+
+                    String rpCode = response.body().toString();
+
+                    Log.d(TAG, "insertChat - onResponse : " + rpCode);
+
+                } else {
+                    Log.d(TAG, "insertChat - onResponse isfailure");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "insertChat - onFailure : " + t);
+            }
+        });
+
+    } // insertChat()
 
 
 }
