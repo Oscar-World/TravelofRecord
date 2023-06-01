@@ -286,6 +286,7 @@ public class DirectMessage extends AppCompatActivity {
 
                     roomCheck = response.body().getRoomCheck();
                     roomNum = response.body().getRoomNum();
+                    Log.d(TAG, "roomCheck : " + roomCheck + " roomNum : " + roomNum);
 
                     if (roomCheck) {
                         Log.d(TAG, "이미 만들어진 채팅방 있음");
@@ -370,7 +371,7 @@ public class DirectMessage extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "insertChat - onResponse isSuccessful");
 
-                    String rpCode = response.body().toString();
+                    String rpCode = response.body();
 
                     Log.d(TAG, "insertChat - onResponse : " + rpCode);
 

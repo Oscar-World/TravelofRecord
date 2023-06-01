@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -15,7 +16,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import com.example.travelofrecord.Activity.DirectMessage;
+import com.example.travelofrecord.Adapter.ChatRoom_Adapter;
+import com.example.travelofrecord.Data.Chat;
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.R;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Fragment_Dm extends Fragment {
 
@@ -25,6 +36,8 @@ public class Fragment_Dm extends Fragment {
     FrameLayout noChatRoomFrameLayout;
     RecyclerView recyclerView;
     ImageButton addChatBtn;
+    ChatRoom_Adapter adapter;
+    ArrayList<Chat> arrayList;
 
     @Override
     public void onAttach(Context context) {
@@ -88,6 +101,12 @@ public class Fragment_Dm extends Fragment {
         noChatRoomFrameLayout = v.findViewById(R.id.noChatRoom_FrameLayout);
         recyclerView = v.findViewById(R.id.chatRoom_RecyclerView);
         addChatBtn = v.findViewById(R.id.chatRoomAdd_Btn);
+        adapter = new ChatRoom_Adapter();
+        arrayList = new ArrayList<>();
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        adapter.setItemChatRoom(arrayList);
 
     }
 
@@ -102,12 +121,44 @@ public class Fragment_Dm extends Fragment {
             recyclerView.setVisibility(View.VISIBLE);
         }
 
-        addChatBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+// 채팅 상대 검색하는 액티비티 추가 예정.
+//        addChatBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                Intent i = new Intent(getActivity(), DirectMessage.class);
+//                startActivity(i);
+//            }
+//        });
 
-                Intent i = new Intent(getActivity(), DirectMessage.class);
-                startActivity(i);
+
+    }
+
+
+    // --------------------------------------------------------------------------------------
+
+
+    public void getRoom() {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<ArrayList<Chat>> call = apiInterface.getRoom();
+        call.enqueue(new Callback<ArrayList<Chat>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Chat>> call, Response<ArrayList<Chat>> response) {
+                if(response.isSuccessful()) {
+                    Log.d(TAG, "getRoom - onResponse isSuccessful");
+
+
+
+                } else {
+                    Log.d(TAG, "getRoom - onResponse isFailure");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Chat>> call, Throwable t) {
+                Log.d(TAG, "getRoom - onFailure");
             }
         });
 

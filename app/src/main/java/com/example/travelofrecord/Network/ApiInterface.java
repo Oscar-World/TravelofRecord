@@ -197,5 +197,8 @@ public interface ApiInterface {
             @Query("dateMessage") String dateMessage
     );
 
+    @GET("mysql_GetRoomInfo.php")
+    Call<ArrayList<Chat>> getRoom();
+
 
 }
