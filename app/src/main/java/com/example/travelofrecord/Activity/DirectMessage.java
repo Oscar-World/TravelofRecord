@@ -146,8 +146,8 @@ public class DirectMessage extends AppCompatActivity {
         Intent i = getIntent();
         getNickname = i.getStringExtra("postNickname");
 
-        nicknameSum1 = currentNickname + getNickname;
-        nicknameSum2 = getNickname + currentNickname;
+        nicknameSum1 = currentNickname + "↘" + getNickname;
+        nicknameSum2 = getNickname + "↘" + currentNickname;
 
 
         getTime = new GetTime();
@@ -210,9 +210,9 @@ public class DirectMessage extends AppCompatActivity {
                 while (true) {
 
                     String readLine = bufferedReader.readLine();
-                    Log.d(TAG, "readLine : " + readLine);
 
                     if (readLine != null) {
+                        Log.d(TAG, "readLine : " + readLine);
                         handler.post(new messageUpdate(readLine));
                     }
 
@@ -267,8 +267,10 @@ public class DirectMessage extends AppCompatActivity {
 
             Chat chat = new Chat(roomNum, nickname, senderImage, message, time, viewType);
 
-            arrayList.add(chat);
-            adapter.notifyDataSetChanged();
+            if (roomNum.equals(array[0])) {
+                arrayList.add(chat);
+                adapter.notifyDataSetChanged();
+            }
 
         }
 

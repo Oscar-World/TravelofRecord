@@ -2,6 +2,7 @@ package com.example.travelofrecord.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,6 +19,7 @@ import android.widget.ImageButton;
 import com.example.travelofrecord.Activity.DirectMessage;
 import com.example.travelofrecord.Adapter.ChatRoom_Adapter;
 import com.example.travelofrecord.Data.Chat;
+import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.R;
@@ -30,7 +32,7 @@ import retrofit2.Response;
 
 public class Fragment_Dm extends Fragment {
 
-    String TAG = "DirectMessage 프래그먼트";
+    String TAG = "채팅 프래그먼트";
     View v;
 
     FrameLayout noChatRoomFrameLayout;
@@ -38,6 +40,11 @@ public class Fragment_Dm extends Fragment {
     ImageButton addChatBtn;
     ChatRoom_Adapter adapter;
     ArrayList<Chat> arrayList;
+
+    GetTime getTime;
+
+    SharedPreferences sharedPreferences;
+    String currentNickname;
 
     @Override
     public void onAttach(Context context) {
@@ -63,6 +70,7 @@ public class Fragment_Dm extends Fragment {
 
         setVariable();
         setView();
+        getRoom();
 
     }
     @Override
@@ -108,18 +116,14 @@ public class Fragment_Dm extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter.setItemChatRoom(arrayList);
 
+        getTime = new GetTime();
+
+        sharedPreferences = getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
+        currentNickname = sharedPreferences.getString("nickname", "");
     }
 
     public void setView() {
 
-        int a = 1;
-        if (a == 1) {
-            noChatRoomFrameLayout.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            noChatRoomFrameLayout.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-        }
 
 // 채팅 상대 검색하는 액티비티 추가 예정.
 //        addChatBtn.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +152,57 @@ public class Fragment_Dm extends Fragment {
                 if(response.isSuccessful()) {
                     Log.d(TAG, "getRoom - onResponse isSuccessful");
 
+                    ArrayList<Chat> data = response.body();
+
+                    for (int i = 0; i < data.size(); i ++) {
+
+                        String roomNum = data.get(i).getRoomNum();
+//                        String sender = data.get(i).getSender();
+//                        String senderImage = data.get(i).getSenderImage();
+//                        String message = data.get(i).getMessage();
+//                        String dateMessage = data.get(i).getDateMessage();
+
+                        String[] array = roomNum.split("↘");
+                        String nickname1 = array[0];
+                        String nickname2 = array[1];
+                        Log.d(TAG, "nickname1: " + nickname1 + " nickname2 " + nickname2 + " current : " + currentNickname);
+
+                        if (currentNickname.equals(nickname1)) {
+
+                                Chat chat = new Chat(nickname2);
+
+                                arrayList.add(0, chat);
+
+                                noChatRoomFrameLayout.setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+
+                                adapter.notifyDataSetChanged();
+                                Log.d(TAG, i + "nickname1 들어옴");
+
+
+                        } else if (currentNickname.equals(nickname2)) {
+
+                                Chat chat = new Chat(nickname1);
+
+                                arrayList.add(0, chat);
+
+                                noChatRoomFrameLayout.setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+
+                                adapter.notifyDataSetChanged();
+                                Log.d(TAG,i + "nickname2 들어옴");
+
+
+                        } else {
+
+//                            noChatRoomFrameLayout.setVisibility(View.VISIBLE);
+//                            recyclerView.setVisibility(View.GONE);
+
+                        }
+
+
+                    }
+
 
 
                 } else {
@@ -162,7 +217,7 @@ public class Fragment_Dm extends Fragment {
             }
         });
 
-    }
+    } // getRoom()
 
 
 }

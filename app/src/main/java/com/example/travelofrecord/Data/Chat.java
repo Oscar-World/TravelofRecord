@@ -36,6 +36,22 @@ public class Chat {
 
     }
 
+    public Chat (String roomNum, String sender, String senderImage, String message, String dateMessage) {
+
+        this.roomNum = roomNum;
+        this.sender = sender;
+        this.senderImage = senderImage;
+        this.message = message;
+        this.dateMessage = dateMessage;
+
+    }
+
+    public Chat (String roomNum) {
+
+        this.roomNum = roomNum;
+
+    }
+
 
     public String getRoomNum() {
         return roomNum;

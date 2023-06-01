@@ -129,12 +129,12 @@ public class Fragment_Home extends Fragment {
         Log.d(TAG, "onStart() 호출됨");
         super.onStart();
 
-        Log.d(TAG, "onStart receiverStatus : " + receiverStatus);
-        if (receiverStatus) {
-            getActivity().unregisterReceiver(deleteReceiver);
-            getActivity().unregisterReceiver(adapter.heartReceiver);
-            getActivity().unregisterReceiver(adapter.commentReceiver);
-        }
+//        Log.d(TAG, "onStart receiverStatus : " + receiverStatus);
+//        if (receiverStatus) {
+//            getActivity().unregisterReceiver(deleteReceiver);
+//            getActivity().unregisterReceiver(adapter.heartReceiver);
+//            getActivity().unregisterReceiver(adapter.commentReceiver);
+//        }
 
     } // onStart()
 
@@ -336,11 +336,11 @@ public class Fragment_Home extends Fragment {
         super.onStop();
         Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
 
-        getActivity().registerReceiver(deleteReceiver, deleteFilter);
-        getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
-        getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
-        receiverStatus = true;
-        Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
+//        getActivity().registerReceiver(deleteReceiver, deleteFilter);
+//        getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
+//        getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
+//        receiverStatus = true;
+//        Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
 
 
     }

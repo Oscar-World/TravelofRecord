@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.travelofrecord.Activity.DirectMessage;
 import com.example.travelofrecord.Activity.Profile;
 import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Data.PostData;
@@ -83,22 +84,32 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
             super(itemView);
 
             nicknameText = itemView.findViewById(R.id.chatRoomNickname_Text);
-            messageText = itemView.findViewById(R.id.chatRoomMessage_Text);
-            dateText = itemView.findViewById(R.id.chatRoomDate_Text);
+//            messageText = itemView.findViewById(R.id.chatRoomMessage_Text);
+//            dateText = itemView.findViewById(R.id.chatRoomDate_Text);
 
         }
 
         void onBind(Chat item) {
             Log.d(TAG, "onBind() 호출됨");
-            String dateMessage = item.getDateMessage();
-            long parseTime = Long.parseLong(dateMessage);
-            String time = String.valueOf(getTime.getFormatTime(parseTime));
+//            String dateMessage = item.getDateMessage();
+//            long parseTime = Long.parseLong(dateMessage);
+//            String time = String.valueOf(getTime.getFormatTime(parseTime));
 
 
-            nicknameText.setText(item.getSender());
-            messageText.setText(item.getMessage());
-            dateText.setText(time);
+            nicknameText.setText(item.getRoomNum() + " 채팅방");
+//            messageText.setText(item.getMessage());
+//            dateText.setText(time);
 
+            nicknameText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Intent i = new Intent(context, DirectMessage.class);
+                    i.putExtra("postNickname", item.getRoomNum());
+                    context.startActivity(i);
+
+                }
+            });
 
         } // onBind
 
