@@ -185,6 +185,8 @@ public class DirectMessage extends AppCompatActivity {
 
                     insertChat(roomNum, currentNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()));
 
+                    chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+
                 }
 
             }
