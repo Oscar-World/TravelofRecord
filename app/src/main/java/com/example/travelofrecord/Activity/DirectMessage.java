@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,6 +49,7 @@ public class DirectMessage extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String currentNickname;
     String currentImage;
+    HashMap<String, String> map;
 
     GetTime getTime;
 
@@ -76,8 +78,7 @@ public class DirectMessage extends AppCompatActivity {
 
         getRoomNum(nicknameSum1, nicknameSum2);
 
-        SocketThread thread = new SocketThread();
-        thread.start();
+
 
     }
 
@@ -85,7 +86,6 @@ public class DirectMessage extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
-
     }
 
     @Override
@@ -116,8 +116,13 @@ public class DirectMessage extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
+
+        LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
+        thread.start();
+
         try {
             socket.close();
+            Log.d(TAG, "onDestroy : logout & socket.close()");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -185,8 +190,6 @@ public class DirectMessage extends AppCompatActivity {
 
                     insertChat(roomNum, currentNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()));
 
-                    chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
-
                 }
 
             }
@@ -208,6 +211,9 @@ public class DirectMessage extends AppCompatActivity {
                 socket = new Socket(inetAddress, port);
                 printWriter = new PrintWriter(socket.getOutputStream());
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                LoginPrintWriterThread thread = new LoginPrintWriterThread();
+                thread.start();
 
                 while (true) {
 
@@ -238,7 +244,45 @@ public class DirectMessage extends AppCompatActivity {
             try {
                 printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + sendMessage);
                 printWriter.flush();
+
                 chatEdit.setText("");
+                chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+                Log.d(TAG, "MessagePrintWriter : 실행 완료");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    class LoginPrintWriterThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            try {
+
+                printWriter.println(roomNum + "↖" + currentNickname + "ⓐloginⓐ");
+                printWriter.flush();
+                Log.d(TAG, "LoginPrintWriter : 실행 완료");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    class LogoutPrintWriterThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            try {
+
+                printWriter.println(roomNum + "↖" + currentNickname + "ⓐlogoutⓐ");
+                printWriter.flush();
+                Log.d(TAG, "LogoutPrintWriter : 실행 완료");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -256,7 +300,7 @@ public class DirectMessage extends AppCompatActivity {
 
         @Override
         public void run() {
-
+            Log.d(TAG, "message : " + message);
             String[] array = message.split("↖");
             String nickname = array[1];
             String senderImage = array[2];
@@ -267,12 +311,15 @@ public class DirectMessage extends AppCompatActivity {
                 viewType = 1;
             }
 
-            Chat chat = new Chat(roomNum, nickname, senderImage, message, time, viewType);
+            Chat chat = new Chat(array[0], nickname, senderImage, message, time, viewType);
 
-            if (roomNum.equals(array[0])) {
-                arrayList.add(chat);
-                adapter.notifyDataSetChanged();
-            }
+            arrayList.add(chat);
+            adapter.notifyDataSetChanged();
+
+//            if (roomNum.equals(array[0])) {
+//                arrayList.add(chat);
+//                adapter.notifyDataSetChanged();
+//            }
 
         }
 
@@ -296,6 +343,10 @@ public class DirectMessage extends AppCompatActivity {
                         Log.d(TAG, "이미 만들어진 채팅방 있음");
                         getChatting(roomNum);
                     } else {
+
+                        SocketThread thread = new SocketThread();
+                        thread.start();
+
                         Log.d(TAG, "이미 만들어진 채팅방 없음");
                     }
 
@@ -347,8 +398,12 @@ public class DirectMessage extends AppCompatActivity {
                         }
 
                         adapter.notifyDataSetChanged();
+                        chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
 
                     }
+
+                    SocketThread thread = new SocketThread();
+                    thread.start();
 
                 } else {
                     Log.d(TAG, "getChatting - onResponse isFailure");
