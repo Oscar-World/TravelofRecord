@@ -154,54 +154,56 @@ public class Fragment_Dm extends Fragment {
 
                     ArrayList<Chat> data = response.body();
 
-                    for (int i = 0; i < data.size(); i ++) {
+                    if (data.size() > 0) {
 
-                        String roomNum = data.get(i).getRoomNum();
+                        for (int i = 0; i < data.size(); i ++) {
+
+                            String roomNum = data.get(i).getRoomNum();
 //                        String sender = data.get(i).getSender();
 //                        String senderImage = data.get(i).getSenderImage();
 //                        String message = data.get(i).getMessage();
 //                        String dateMessage = data.get(i).getDateMessage();
 
-                        String[] array = roomNum.split("↘");
-                        String nickname1 = array[0];
-                        String nickname2 = array[1];
-                        Log.d(TAG, "nickname1: " + nickname1 + " nickname2 " + nickname2 + " current : " + currentNickname);
+                            String[] array = roomNum.split("↘");
+                            String nickname1 = array[0];
+                            String nickname2 = array[1];
+                            Log.d(TAG, "nickname1: " + nickname1 + " nickname2 " + nickname2 + " current : " + currentNickname);
 
-                        if (currentNickname.equals(nickname1)) {
+                            if (currentNickname.equals(nickname1)) {
 
                                 Chat chat = new Chat(nickname2);
 
                                 arrayList.add(0, chat);
 
-                                noChatRoomFrameLayout.setVisibility(View.GONE);
-                                recyclerView.setVisibility(View.VISIBLE);
-
-                                adapter.notifyDataSetChanged();
                                 Log.d(TAG, i + "nickname1 들어옴");
 
 
-                        } else if (currentNickname.equals(nickname2)) {
+                            } else if (currentNickname.equals(nickname2)) {
 
                                 Chat chat = new Chat(nickname1);
 
                                 arrayList.add(0, chat);
 
-                                noChatRoomFrameLayout.setVisibility(View.GONE);
-                                recyclerView.setVisibility(View.VISIBLE);
-
-                                adapter.notifyDataSetChanged();
                                 Log.d(TAG,i + "nickname2 들어옴");
 
 
-                        } else {
+                            }
 
-//                            noChatRoomFrameLayout.setVisibility(View.VISIBLE);
-//                            recyclerView.setVisibility(View.GONE);
+                        } // for()
 
-                        }
+                        noChatRoomFrameLayout.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
 
+                        adapter.notifyDataSetChanged();
+
+                    } else {
+
+                        noChatRoomFrameLayout.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
 
                     }
+
+
 
 
 

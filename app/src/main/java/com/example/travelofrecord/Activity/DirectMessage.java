@@ -76,16 +76,13 @@ public class DirectMessage extends AppCompatActivity {
         setVariable();
         setView();
 
-        getRoomNum(nicknameSum1, nicknameSum2);
-
-
-
     }
 
     @Override
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
+        getRoomNum(nicknameSum1, nicknameSum2);
     }
 
     @Override
@@ -104,6 +101,10 @@ public class DirectMessage extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
+
+        LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
+        thread.start();
+
     }
 
     @Override
@@ -116,16 +117,6 @@ public class DirectMessage extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
-
-        LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
-        thread.start();
-
-        try {
-            socket.close();
-            Log.d(TAG, "onDestroy : logout & socket.close()");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -263,7 +254,7 @@ public class DirectMessage extends AppCompatActivity {
             super.run();
             try {
 
-                printWriter.println(roomNum + "↖" + currentNickname + "ⓐloginⓐ");
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + "ⓐloginⓐ");
                 printWriter.flush();
                 Log.d(TAG, "LoginPrintWriter : 실행 완료");
             } catch (Exception e) {
@@ -280,9 +271,13 @@ public class DirectMessage extends AppCompatActivity {
             super.run();
             try {
 
-                printWriter.println(roomNum + "↖" + currentNickname + "ⓐlogoutⓐ");
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + "ⓐlogoutⓐ");
                 printWriter.flush();
                 Log.d(TAG, "LogoutPrintWriter : 실행 완료");
+
+                socket.close();
+                Log.d(TAG, "onStop : logout & socket.close()");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
