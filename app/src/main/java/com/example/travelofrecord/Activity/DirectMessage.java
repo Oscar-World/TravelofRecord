@@ -179,7 +179,7 @@ public class DirectMessage extends AppCompatActivity {
                     PrintWriterThread thread = new PrintWriterThread();
                     thread.start();
 
-                    insertChat(roomNum, currentNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()));
+                    insertChat(roomNum, currentNickname, getNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()));
 
                 }
 
@@ -415,10 +415,10 @@ public class DirectMessage extends AppCompatActivity {
     } // getChatting()
 
 
-    public void insertChat(String roomNum, String sender, String senderImage, String message, String dateMessage) {
+    public void insertChat(String roomNum, String sender, String receiver, String senderImage, String message, String dateMessage) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.insertChatting(roomNum, sender, senderImage, message, dateMessage);
+        Call<String> call = apiInterface.insertChatting(roomNum, sender, receiver, senderImage, message, dateMessage);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

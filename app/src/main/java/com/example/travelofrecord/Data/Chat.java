@@ -12,6 +12,9 @@ public class Chat {
     @SerializedName("sender") public String sender;
 
     @Expose
+    @SerializedName("receiver") public String receiver;
+
+    @Expose
     @SerializedName("senderImage") public String senderImage;
 
     @Expose
@@ -46,9 +49,12 @@ public class Chat {
 
     }
 
-    public Chat (String roomNum) {
+    public Chat (String roomNum, String message, String dateMessage) {
 
         this.roomNum = roomNum;
+        this.message = message;
+        this.dateMessage = dateMessage;
+
 
     }
 
@@ -67,6 +73,14 @@ public class Chat {
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
     public String getSenderImage() {

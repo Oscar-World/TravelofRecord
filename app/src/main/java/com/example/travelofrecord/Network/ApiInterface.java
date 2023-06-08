@@ -192,13 +192,16 @@ public interface ApiInterface {
     Call<String> insertChatting(
             @Query("roomNum") String roomNum,
             @Query("sender") String sender,
+            @Query("receiver") String receiver,
             @Query("senderImage") String senderImage,
             @Query("message") String message,
             @Query("dateMessage") String dateMessage
     );
 
     @GET("mysql_GetRoomInfo.php")
-    Call<ArrayList<Chat>> getRoom();
+    Call<ArrayList<Chat>> getRoom(
+            @Query("nickname") String nickname
+    );
 
 
 }

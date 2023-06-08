@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +77,7 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        LinearLayout chatRoomLayout;
         TextView nicknameText;
         TextView messageText;
         TextView dateText;
@@ -83,24 +85,28 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            chatRoomLayout = itemView.findViewById(R.id.chatRoom_Layout);
             nicknameText = itemView.findViewById(R.id.chatRoomNickname_Text);
-//            messageText = itemView.findViewById(R.id.chatRoomMessage_Text);
-//            dateText = itemView.findViewById(R.id.chatRoomDate_Text);
+            messageText = itemView.findViewById(R.id.chatRoomMessage_Text);
+            dateText = itemView.findViewById(R.id.chatRoomDate_Text);
+
+            getTime = new GetTime();
 
         }
 
         void onBind(Chat item) {
             Log.d(TAG, "onBind() 호출됨");
-//            String dateMessage = item.getDateMessage();
-//            long parseTime = Long.parseLong(dateMessage);
-//            String time = String.valueOf(getTime.getFormatTime(parseTime));
+            String dateMessage = item.getDateMessage();
+            Log.d(TAG, "onBind: " + dateMessage);
+            long parseTime = Long.parseLong(dateMessage);
+            String time = getTime.getFormatTime(parseTime);
 
 
             nicknameText.setText(item.getRoomNum() + " 채팅방");
-//            messageText.setText(item.getMessage());
-//            dateText.setText(time);
+            messageText.setText(item.getMessage());
+            dateText.setText(time);
 
-            nicknameText.setOnClickListener(new View.OnClickListener() {
+            chatRoomLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 

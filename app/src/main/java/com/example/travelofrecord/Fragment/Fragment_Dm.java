@@ -25,6 +25,8 @@ import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,6 +47,8 @@ public class Fragment_Dm extends Fragment {
 
     SharedPreferences sharedPreferences;
     String currentNickname;
+
+    HashMap<String, String> map;
 
     @Override
     public void onAttach(Context context) {
@@ -70,7 +74,7 @@ public class Fragment_Dm extends Fragment {
 
         setVariable();
         setView();
-        getRoom();
+        getRoom(currentNickname);
 
     }
     @Override
@@ -120,6 +124,7 @@ public class Fragment_Dm extends Fragment {
 
         sharedPreferences = getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         currentNickname = sharedPreferences.getString("nickname", "");
+        map = new HashMap<>();
     }
 
     public void setView() {
@@ -142,10 +147,10 @@ public class Fragment_Dm extends Fragment {
     // --------------------------------------------------------------------------------------
 
 
-    public void getRoom() {
+    public void getRoom(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<Chat>> call = apiInterface.getRoom();
+        Call<ArrayList<Chat>> call = apiInterface.getRoom(nickname);
         call.enqueue(new Callback<ArrayList<Chat>>() {
             @Override
             public void onResponse(Call<ArrayList<Chat>> call, Response<ArrayList<Chat>> response) {
@@ -161,35 +166,34 @@ public class Fragment_Dm extends Fragment {
                             String roomNum = data.get(i).getRoomNum();
 //                        String sender = data.get(i).getSender();
 //                        String senderImage = data.get(i).getSenderImage();
-//                        String message = data.get(i).getMessage();
-//                        String dateMessage = data.get(i).getDateMessage();
+                        String message = data.get(i).getMessage();
+                        String dateMessage = data.get(i).getDateMessage();
 
-                            String[] array = roomNum.split("↘");
-                            String nickname1 = array[0];
-                            String nickname2 = array[1];
-                            Log.d(TAG, "nickname1: " + nickname1 + " nickname2 " + nickname2 + " current : " + currentNickname);
+                        String value = message + "◐" + dateMessage;
 
-                            if (currentNickname.equals(nickname1)) {
-
-                                Chat chat = new Chat(nickname2);
-
-                                arrayList.add(0, chat);
-
-                                Log.d(TAG, i + "nickname1 들어옴");
-
-
-                            } else if (currentNickname.equals(nickname2)) {
-
-                                Chat chat = new Chat(nickname1);
-
-                                arrayList.add(0, chat);
-
-                                Log.d(TAG,i + "nickname2 들어옴");
-
-
-                            }
+                            map.put(roomNum, value);
 
                         } // for()
+
+                        Log.d(TAG, "해시맵 : " + map);
+
+                        for (Map.Entry<String, String> entry : map.entrySet()) {
+                            String value[] = entry.getValue().split("◐");
+                            String message = value[0];
+                            String dateMessage = value[1];
+                            String roomName;
+
+                            String room[] = entry.getKey().split("↘");
+                            if(currentNickname.equals(room[0])) {
+                                roomName = room[1];
+                            } else {
+                                roomName = room[0];
+                            }
+
+                            Log.d(TAG, "어레이리스트 : " + roomName + " " + message + " " + dateMessage);
+                            Chat chat = new Chat(roomName, message, dateMessage);
+                            arrayList.add(0, chat);
+                        }
 
                         noChatRoomFrameLayout.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
@@ -202,9 +206,6 @@ public class Fragment_Dm extends Fragment {
                         recyclerView.setVisibility(View.GONE);
 
                     }
-
-
-
 
 
                 } else {
