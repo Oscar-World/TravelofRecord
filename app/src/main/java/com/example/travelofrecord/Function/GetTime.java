@@ -27,7 +27,7 @@ public class GetTime {
         } else if (lastTime < 28) {
             msg = "3주 전";
         } else if ((lastTime / 30) < 12) {
-            msg = lastTime + "달 전";
+            msg = (lastTime / 30) + "달 전";
         } else {
             msg = (lastTime / 365) + "년 전";
         }

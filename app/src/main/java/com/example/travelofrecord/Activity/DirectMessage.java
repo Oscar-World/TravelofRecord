@@ -237,7 +237,7 @@ public class DirectMessage extends AppCompatActivity {
                 printWriter.flush();
 
                 chatEdit.setText("");
-                chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+
                 Log.d(TAG, "MessagePrintWriter : 실행 완료");
 
             } catch (Exception e) {
@@ -310,6 +310,8 @@ public class DirectMessage extends AppCompatActivity {
 
             arrayList.add(chat);
             adapter.notifyDataSetChanged();
+
+            chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
 
 //            if (roomNum.equals(array[0])) {
 //                arrayList.add(chat);

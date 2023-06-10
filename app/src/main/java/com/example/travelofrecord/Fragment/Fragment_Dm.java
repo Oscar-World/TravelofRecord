@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.travelofrecord.Activity.DirectMessage;
 import com.example.travelofrecord.Adapter.ChatRoom_Adapter;
@@ -131,14 +132,14 @@ public class Fragment_Dm extends Fragment {
 
 
 // 채팅 상대 검색하는 액티비티 추가 예정.
-//        addChatBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                Intent i = new Intent(getActivity(), DirectMessage.class);
-//                startActivity(i);
-//            }
-//        });
+        addChatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(getActivity(), "서비스 준비중입니다.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
 
     }
@@ -192,7 +193,7 @@ public class Fragment_Dm extends Fragment {
 
                             Log.d(TAG, "어레이리스트 : " + roomName + " " + message + " " + dateMessage);
                             Chat chat = new Chat(roomName, message, dateMessage);
-                            arrayList.add(0, chat);
+                            arrayList.add(chat);
                         }
 
                         noChatRoomFrameLayout.setVisibility(View.GONE);
