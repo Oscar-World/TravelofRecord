@@ -68,7 +68,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, CHANNEL_IMPROTANCE);
 
                 channel.enableLights(true);
-                channel.setLightColor(Color.RED);
                 channel.enableVibration(true);
 
 
@@ -89,17 +88,20 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         Intent i = new Intent(getApplicationContext(), DirectMessage.class);
         i.putExtra("postNickname", title);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0, i, 0);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0, i,PendingIntent.FLAG_IMMUTABLE);
 
-        builder.setContentTitle(title)
+        builder.setSmallIcon(R.drawable.dm)
+                .setContentTitle(title)
                 .setContentText(body)
-                .setSmallIcon(R.drawable.dm);
-//                .setContentIntent(pendingIntent)
-//                .setAutoCancel(true);
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setVibrate(new long[]{1,1000})
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
 
 
         Notification notification = builder.build();
-        notificationManagerCompat.notify(0, notification);
+        notificationManagerCompat.notify(1, notification);
 
     } // onMessageReceived()
 
