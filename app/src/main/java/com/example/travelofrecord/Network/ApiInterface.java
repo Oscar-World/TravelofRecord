@@ -196,7 +196,8 @@ public interface ApiInterface {
             @Query("receiver") String receiver,
             @Query("senderImage") String senderImage,
             @Query("message") String message,
-            @Query("dateMessage") String dateMessage
+            @Query("dateMessage") String dateMessage,
+            @Query("messageStatus") String messageStatus
     );
 
     @GET("mysql_GetRoomInfo.php")
@@ -207,6 +208,11 @@ public interface ApiInterface {
     @GET("mysql_GetFcmToken.php")
     Call<String> getFcmToken(
             @Query("nickname") String nickname
+    );
+
+    @GET("mysql_UpdateMessageStatus.php")
+    Call<String> updateMessageStatus(
+            @Query("roomNum") String roomNum
     );
 
 

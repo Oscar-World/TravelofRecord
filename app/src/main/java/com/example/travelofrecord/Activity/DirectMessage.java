@@ -65,6 +65,7 @@ public class DirectMessage extends AppCompatActivity {
     String getNickname;
     String nicknameSum1;
     String nicknameSum2;
+    String otherFcmToken;
 
 
     @Override
@@ -83,6 +84,7 @@ public class DirectMessage extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
         getRoomNum(nicknameSum1, nicknameSum2);
+        getFcmToken(getNickname);
     }
 
     @Override
@@ -179,7 +181,7 @@ public class DirectMessage extends AppCompatActivity {
                     PrintWriterThread thread = new PrintWriterThread();
                     thread.start();
 
-                    insertChat(roomNum, currentNickname, getNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()));
+                    insertChat(roomNum, currentNickname, getNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()), "false");
 
                 }
 
@@ -233,7 +235,7 @@ public class DirectMessage extends AppCompatActivity {
         public void run() {
             super.run();
             try {
-                printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + sendMessage);
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + sendMessage + "↖" + otherFcmToken);
                 printWriter.flush();
 
                 chatEdit.setText("");
@@ -300,23 +302,19 @@ public class DirectMessage extends AppCompatActivity {
             String nickname = array[1];
             String senderImage = array[2];
             String message = array[3];
+            String messageStatus = array[5];
             String time = String.valueOf(getTime.getFormatTime(getTime.getTime()));
             int viewType = 0;
             if(nickname.equals(currentNickname)) {
                 viewType = 1;
             }
 
-            Chat chat = new Chat(array[0], nickname, senderImage, message, time, viewType);
+            Chat chat = new Chat(array[0], nickname, senderImage, message, time, viewType, messageStatus);
 
             arrayList.add(chat);
             adapter.notifyDataSetChanged();
 
             chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
-
-//            if (roomNum.equals(array[0])) {
-//                arrayList.add(chat);
-//                adapter.notifyDataSetChanged();
-//            }
 
         }
 
@@ -335,6 +333,8 @@ public class DirectMessage extends AppCompatActivity {
                     roomCheck = response.body().getRoomCheck();
                     roomNum = response.body().getRoomNum();
                     Log.d(TAG, "roomCheck : " + roomCheck + " roomNum : " + roomNum);
+
+                    updateMessageStatus(roomNum);
 
                     if (roomCheck) {
                         Log.d(TAG, "이미 만들어진 채팅방 있음");
@@ -383,13 +383,14 @@ public class DirectMessage extends AppCompatActivity {
                             String message = response.body().get(i).getMessage();
                             String dateMessage = response.body().get(i).getDateMessage();
                             String time = String.valueOf(getTime.getFormatTime(Long.valueOf(dateMessage)));
+                            String messageStatus = response.body().get(i).getMessageStatus();
 
                             int viewType = 0;
                             if(sender.equals(currentNickname)) {
                                 viewType = 1;
                             }
 
-                            Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType);
+                            Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType, messageStatus);
                             arrayList.add(chat);
 
                         }
@@ -417,10 +418,10 @@ public class DirectMessage extends AppCompatActivity {
     } // getChatting()
 
 
-    public void insertChat(String roomNum, String sender, String receiver, String senderImage, String message, String dateMessage) {
+    public void insertChat(String roomNum, String sender, String receiver, String senderImage, String message, String dateMessage, String messageStatus) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.insertChatting(roomNum, sender, receiver, senderImage, message, dateMessage);
+        Call<String> call = apiInterface.insertChatting(roomNum, sender, receiver, senderImage, message, dateMessage, messageStatus);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -444,6 +445,57 @@ public class DirectMessage extends AppCompatActivity {
         });
 
     } // insertChat()
+
+    public void getFcmToken(String nickname) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.getFcmToken(nickname);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse isSuccessful");
+                    Log.d(TAG, "onResponse: " + response.body());
+                    otherFcmToken = response.body();
+
+                } else {
+                    Log.d(TAG, "onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+
+    } // getFcmToken()
+
+
+    public void updateMessageStatus(String roomNum) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.updateMessageStatus(roomNum);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.isSuccessful()) {
+                    Log.d(TAG, "onResponse isSuccessful");
+                    Log.d(TAG, "response.body() : " + response.body());
+
+
+                } else {
+                    Log.d(TAG, "onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "onFailure");
+            }
+        });
+
+    }
 
 
 }

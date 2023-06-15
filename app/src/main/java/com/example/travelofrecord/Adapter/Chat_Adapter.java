@@ -99,14 +99,22 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         TextView rightChatMessageText;
         TextView rightChatDateText;
+        TextView rightChatStatusText;
 
         public RightViewHolder(View view) {
             super(view);
             rightChatMessageText = view.findViewById(R.id.rightChatMessage_Text);
             rightChatDateText = view.findViewById(R.id.rightChatDate_Text);
+            rightChatStatusText = view.findViewById(R.id.rightChatStatus_Text);
         }
 
         void onBind(Chat item) {
+
+            if (item.getMessageStatus().equals("true")) {
+                rightChatStatusText.setVisibility(View.GONE);
+            } else if (item.getMessageStatus().equals("false")) {
+                rightChatStatusText.setVisibility(View.VISIBLE);
+            }
 
             rightChatMessageText.setText(item.getMessage());
             rightChatDateText.setText(item.getDateMessage());

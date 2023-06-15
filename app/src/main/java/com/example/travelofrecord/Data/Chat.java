@@ -23,12 +23,17 @@ public class Chat {
     @Expose
     @SerializedName("dateMessage") public String dateMessage;
 
+    @Expose
+    @SerializedName("messageStatus") public String messageStatus;
+
     public int viewType;
 
     public boolean roomCheck;
 
+    public int notCheckMessage;
 
-    public Chat (String roomNum, String sender, String senderImage, String message, String dateMessage, int viewType) {
+
+    public Chat (String roomNum, String sender, String senderImage, String message, String dateMessage, int viewType, String messageStatus) {
 
         this.roomNum = roomNum;
         this.sender = sender;
@@ -36,24 +41,16 @@ public class Chat {
         this.message = message;
         this.dateMessage = dateMessage;
         this.viewType = viewType;
+        this.messageStatus = messageStatus;
 
     }
 
-    public Chat (String roomNum, String sender, String senderImage, String message, String dateMessage) {
-
-        this.roomNum = roomNum;
-        this.sender = sender;
-        this.senderImage = senderImage;
-        this.message = message;
-        this.dateMessage = dateMessage;
-
-    }
-
-    public Chat (String roomNum, String message, String dateMessage) {
+    public Chat (String roomNum, String message, String dateMessage, int notCheckMessage) {
 
         this.roomNum = roomNum;
         this.message = message;
         this.dateMessage = dateMessage;
+        this.notCheckMessage = notCheckMessage;
 
 
     }
@@ -118,5 +115,13 @@ public class Chat {
     public boolean getRoomCheck() { return roomCheck; }
 
     public void setRoomCheck(boolean roomCheck) { this.roomCheck = roomCheck; }
+
+    public String getMessageStatus() { return messageStatus; }
+
+    public void setMessageStatus(String messageStatus) { this.messageStatus = messageStatus; }
+
+    public int getNotCheckMessage() { return notCheckMessage; }
+
+    public void setNotCheckMessage(int notCheckMessage) { this.notCheckMessage = notCheckMessage; }
 
 }

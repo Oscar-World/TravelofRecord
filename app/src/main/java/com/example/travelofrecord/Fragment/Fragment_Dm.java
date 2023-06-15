@@ -182,6 +182,7 @@ public class Fragment_Dm extends Fragment {
                     Log.d(TAG, "getRoom - onResponse isSuccessful");
 
                     ArrayList<Chat> data = response.body();
+                    int notCheckMessage = 0;
 
                     if (data.size() > 0) {
 
@@ -192,6 +193,12 @@ public class Fragment_Dm extends Fragment {
 //                        String senderImage = data.get(i).getSenderImage();
                         String message = data.get(i).getMessage();
                         String dateMessage = data.get(i).getDateMessage();
+                        String messageStatus = data.get(i).getMessageStatus();
+
+
+//                        if (messageStatus.equals("false")) {
+//                            notCheckMessage += 1;
+//                        }
 
                         String value = message + "◐" + dateMessage;
 
@@ -215,7 +222,7 @@ public class Fragment_Dm extends Fragment {
                             }
 
                             Log.d(TAG, "어레이리스트 : " + roomName + " " + message + " " + dateMessage);
-                            Chat chat = new Chat(roomName, message, dateMessage);
+                            Chat chat = new Chat(roomName, message, dateMessage, notCheckMessage);
                             arrayList.add(chat);
                         }
 
