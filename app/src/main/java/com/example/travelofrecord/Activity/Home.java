@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +19,14 @@ import com.example.travelofrecord.Fragment.Fragment_Heart;
 import com.example.travelofrecord.Fragment.Fragment_Home;
 import com.example.travelofrecord.Fragment.Fragment_add;
 import com.example.travelofrecord.Fragment.Fragment_myProfile;
+import com.example.travelofrecord.Network.ApiClient;
+import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Home extends AppCompatActivity {
 
@@ -42,6 +49,7 @@ public class Home extends AppCompatActivity {
     SharedPreferences.Editor editor;
     SharedPreferences.Editor editor_Kakao;
     String sharedInfo;
+    String currentNickname;
 
     FragmentManager fragmentManager;
     FragmentTransaction transaction;
@@ -58,6 +66,8 @@ public class Home extends AppCompatActivity {
 
     int networkStatus;
 
+    String postNickname;
+    String fcmToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +77,9 @@ public class Home extends AppCompatActivity {
 
         setVariable();
         setView();
+
+        getFcmToken(currentNickname);
+
         Log.d(TAG, "쉐어드 정보 : " + sharedInfo);
         networkStatus = NetworkStatus.getConnectivityStatus(this);
 
@@ -76,6 +89,19 @@ public class Home extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출");
+
+        if (postNickname != null) {
+            Log.d(TAG, "getIntent : " + postNickname);
+            bundle.putString("postNickname", postNickname);
+            fragment_dm.setArguments(bundle);
+            fragmentChange(3);
+
+            postNickname = null;
+
+        } else {
+            Log.d(TAG, "getIntent : null");
+        }
+
     }
 
     @Override
@@ -129,6 +155,7 @@ public class Home extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         sharedInfo = sharedPreferences.getString("id","");
+        currentNickname = sharedPreferences.getString("nickname","");
 
         sharedPreferences_Kakao = getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
@@ -148,6 +175,9 @@ public class Home extends AppCompatActivity {
 
         homeFootLayout = findViewById(R.id.homeFoot_Layout);
         homeBodyLayout = findViewById(R.id.homeBody_Frame);
+
+        Intent i = getIntent();
+        postNickname = i.getStringExtra("postNickname");
 
     }
 
@@ -332,6 +362,33 @@ public class Home extends AppCompatActivity {
         heartFull_Btn.setVisibility(View.GONE);
         addFull_Btn.setVisibility(View.GONE);
         myProfileFull_Btn.setVisibility(View.GONE);
+
+    }
+
+    public void getFcmToken(String nickname) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.getFcmToken(nickname);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse isSuccessful");
+
+                    fcmToken = response.body();
+                    editor.putString("fcmToken", fcmToken);
+                    editor.commit();
+
+                } else {
+                    Log.d(TAG, "onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "onFailure: " + t);
+            }
+        });
 
     }
 

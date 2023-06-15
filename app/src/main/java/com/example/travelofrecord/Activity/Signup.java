@@ -538,15 +538,17 @@ public class Signup extends AppCompatActivity {
                     edit_phone = signup_phone.getText().toString();
                     edit_nickname = signup_nickname.getText().toString();
 
+                    String fcmToken = sharedPreferences.getString("fcmToken","");
+
                     if (kakaoId != null) {
                         if (signupCheck2()) {
                             login_Type = "Kakao";
-                            getSignup(login_Type,kakaoId,"",edit_phone,edit_nickname,imagePath);
+                            getSignup(login_Type,kakaoId,"",edit_phone,edit_nickname,imagePath,fcmToken);
                         }
                     } else {
                         if (signupCheck()) {
                             login_Type = "Basic";
-                            getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,imagePath);
+                            getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,imagePath,fcmToken);
                         }
                     }
 
@@ -985,9 +987,9 @@ public class Signup extends AppCompatActivity {
 
 
     // ▼ 3페이지 submit 시, 마지막 검사 ▼
-    public void getSignup(String loginType, String id, String pw, String phone, String nickname, String image) {
+    public void getSignup(String loginType, String id, String pw, String phone, String nickname, String image, String fcmToken) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.insertInfo(loginType,id,pw,phone,nickname,image);
+        Call<String> call = apiInterface.insertInfo(loginType,id,pw,phone,nickname,image,fcmToken);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

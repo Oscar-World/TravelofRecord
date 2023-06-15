@@ -50,6 +50,8 @@ public class Fragment_Dm extends Fragment {
     String currentNickname;
 
     HashMap<String, String> map;
+    Bundle bundle;
+    String postNickname;
 
     @Override
     public void onAttach(Context context) {
@@ -126,6 +128,27 @@ public class Fragment_Dm extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         currentNickname = sharedPreferences.getString("nickname", "");
         map = new HashMap<>();
+
+
+        bundle = getArguments();
+
+        try {
+
+            if (bundle.getString("postNickname") != null) {
+                Log.d(TAG, "getArguments : " + bundle.getString("postNickname"));
+                postNickname = bundle.getString("postNickname");
+            } else {
+                Log.d(TAG, "getArguments : null");
+            }
+
+        } catch (NullPointerException e) {
+            Log.d(TAG, "NullPointerException : " + e);
+            Log.d(TAG, "getArguments : null");
+        }
+
+
+
+
     }
 
     public void setView() {
@@ -206,6 +229,19 @@ public class Fragment_Dm extends Fragment {
                         noChatRoomFrameLayout.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.GONE);
 
+                    }
+
+                    if (postNickname != null) {
+                        Log.d(TAG, "postNickname : " + postNickname);
+
+                        Intent i = new Intent(getActivity(), DirectMessage.class);
+                        i.putExtra("postNickname", postNickname);
+                        startActivity(i);
+
+                        bundle = null;
+
+                    } else {
+                        Log.d(TAG, "postNickname : null");
                     }
 
 

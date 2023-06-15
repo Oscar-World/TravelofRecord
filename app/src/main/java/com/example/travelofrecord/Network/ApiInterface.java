@@ -26,7 +26,8 @@ public interface ApiInterface {
             @Query("password") String password,
             @Query("phone") String phone,
             @Query("nickname") String nickname,
-            @Query("imagePath") String imagePath
+            @Query("imagePath") String imagePath,
+            @Query("fcmToken") String fcmToken
     );
 
     // 로그인
@@ -200,6 +201,11 @@ public interface ApiInterface {
 
     @GET("mysql_GetRoomInfo.php")
     Call<ArrayList<Chat>> getRoom(
+            @Query("nickname") String nickname
+    );
+
+    @GET("mysql_GetFcmToken.php")
+    Call<String> getFcmToken(
             @Query("nickname") String nickname
     );
 

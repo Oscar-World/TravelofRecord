@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
@@ -17,6 +18,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.travelofrecord.Activity.DirectMessage;
 import com.example.travelofrecord.Activity.Home;
+import com.example.travelofrecord.Activity.Loading;
 import com.example.travelofrecord.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -26,13 +28,32 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     String TAG = "파이어베이스 메세지 서비스";
 
+
+
     // 토큰을 서버로 전송
     // fcm 서버에 등록되었을 때 호출됨
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        Log.d(TAG, "onNewToken : " + token);
-        Log.d(TAG, "onNewToken: " + FirebaseMessaging.getInstance().getToken().getResult());
+        Log.d(TAG, "token : " + token);
+        Log.d(TAG, "FirebaseMessaging.getInstance().getToken().getResult() : " + FirebaseMessaging.getInstance().getToken().getResult());
+
+        SharedPreferences sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        String fcmToken = sharedPreferences.getString("fcmToken", "");
+
+        if (fcmToken.equals("")) {
+            Log.d(TAG, "fcmToken in Shared : 없음");
+
+            editor.putString("fcmToken", token);
+            editor.commit();
+
+        } else {
+            Log.d(TAG, "fcmToken in Shared : 있음");
+        }
+
+
 
         // 토큰을 성공적으로 확인했을 때 호출됨
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
@@ -86,7 +107,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         String body = remoteMessage.getNotification().getBody();
         Log.d(TAG, "수신한 메시지 : " + title + " / " + body);
 
-        Intent i = new Intent(getApplicationContext(), DirectMessage.class);
+        Intent i = new Intent(getApplicationContext(), Loading.class);
         i.putExtra("postNickname", title);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0, i,PendingIntent.FLAG_IMMUTABLE);
