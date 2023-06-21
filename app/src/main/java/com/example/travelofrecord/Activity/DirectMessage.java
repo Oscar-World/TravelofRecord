@@ -66,6 +66,7 @@ public class DirectMessage extends AppCompatActivity {
     String nicknameSum1;
     String nicknameSum2;
     String otherFcmToken;
+    boolean chatRoomStatus = false;
 
 
     @Override
@@ -182,6 +183,11 @@ public class DirectMessage extends AppCompatActivity {
                     thread.start();
 
                     insertChat(roomNum, currentNickname, getNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()), "false");
+                    if (!chatRoomStatus) {
+
+                        insertChatRoom(roomNum, currentNickname, getNickname, sendMessage, String.valueOf(getTime.getTime()), 0);
+                        chatRoomStatus = true;
+                    }
 
                 }
 
@@ -332,13 +338,15 @@ public class DirectMessage extends AppCompatActivity {
 
                     roomCheck = response.body().getRoomCheck();
                     roomNum = response.body().getRoomNum();
-                    Log.d(TAG, "roomCheck : " + roomCheck + " roomNum : " + roomNum);
+                    String sender = response.body().getSender();
+                    Log.d(TAG, "roomCheck : " + roomCheck + " roomNum : " + roomNum + " sender : " + sender);
 
-                    updateMessageStatus(roomNum);
+
 
                     if (roomCheck) {
                         Log.d(TAG, "이미 만들어진 채팅방 있음");
-                        getChatting(roomNum);
+                        chatRoomStatus = true;
+                        getChatting(roomNum, getNickname);
                     } else {
 
                         SocketThread thread = new SocketThread();
@@ -361,10 +369,10 @@ public class DirectMessage extends AppCompatActivity {
     } // getRoomNum()
 
 
-    public void getChatting(String roomNum) {
+    public void getChatting(String roomNum, String sender) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<Chat>> call = apiInterface.getChatting(roomNum);
+        Call<ArrayList<Chat>> call = apiInterface.getChatting(roomNum, sender);
         call.enqueue(new Callback<ArrayList<Chat>>() {
             @Override
             public void onResponse(Call<ArrayList<Chat>> call, Response<ArrayList<Chat>> response) {
@@ -472,26 +480,24 @@ public class DirectMessage extends AppCompatActivity {
     } // getFcmToken()
 
 
-    public void updateMessageStatus(String roomNum) {
+    public void insertChatRoom(String chatRoomNum, String chatRoomUser1, String chatRoomUser2, String chatRoomMessage, String chatRoomDateMessage, int chatRoomNotRead) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.updateMessageStatus(roomNum);
+        Call<String> call = apiInterface.insertChatRoom(chatRoomNum, chatRoomUser1, chatRoomUser2, chatRoomMessage, chatRoomDateMessage, chatRoomNotRead);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if(response.isSuccessful()) {
-                    Log.d(TAG, "onResponse isSuccessful");
-                    Log.d(TAG, "response.body() : " + response.body());
-
-
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "insertChatRoom onResponse isSuccessful");
+                    Log.d(TAG, "onResponse : " + response.body());
                 } else {
-                    Log.d(TAG, "onResponse isFailure");
+                    Log.d(TAG, "insertChatRoom onResponse isFailure");
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d(TAG, "onFailure");
+                Log.d(TAG, "insertChatRoom onFailure");
             }
         });
 

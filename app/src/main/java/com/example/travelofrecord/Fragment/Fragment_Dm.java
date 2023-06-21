@@ -49,7 +49,6 @@ public class Fragment_Dm extends Fragment {
     SharedPreferences sharedPreferences;
     String currentNickname;
 
-    HashMap<String, String> map;
     Bundle bundle;
     String postNickname;
 
@@ -127,8 +126,6 @@ public class Fragment_Dm extends Fragment {
 
         sharedPreferences = getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         currentNickname = sharedPreferences.getString("nickname", "");
-        map = new HashMap<>();
-
 
         bundle = getArguments();
 
@@ -182,49 +179,22 @@ public class Fragment_Dm extends Fragment {
                     Log.d(TAG, "getRoom - onResponse isSuccessful");
 
                     ArrayList<Chat> data = response.body();
-                    int notCheckMessage = 0;
 
                     if (data.size() > 0) {
 
                         for (int i = 0; i < data.size(); i ++) {
 
-                            String roomNum = data.get(i).getRoomNum();
-//                        String sender = data.get(i).getSender();
-//                        String senderImage = data.get(i).getSenderImage();
+                        String roomName = data.get(i).getRoomNum();
                         String message = data.get(i).getMessage();
                         String dateMessage = data.get(i).getDateMessage();
-                        String messageStatus = data.get(i).getMessageStatus();
+                        int notReadMessage = data.get(i).getNotReadMessage();
 
+                            Log.d(TAG, "채팅방 정보 : " + roomName + " / " + message + " / " + dateMessage + " / " + notReadMessage);
 
-//                        if (messageStatus.equals("false")) {
-//                            notCheckMessage += 1;
-//                        }
-
-                        String value = message + "◐" + dateMessage;
-
-                            map.put(roomNum, value);
+                        Chat chat = new Chat(roomName, message, dateMessage, notReadMessage);
+                        arrayList.add(chat);
 
                         } // for()
-
-                        Log.d(TAG, "해시맵 : " + map);
-
-                        for (Map.Entry<String, String> entry : map.entrySet()) {
-                            String value[] = entry.getValue().split("◐");
-                            String message = value[0];
-                            String dateMessage = value[1];
-                            String roomName;
-
-                            String room[] = entry.getKey().split("↘");
-                            if(currentNickname.equals(room[0])) {
-                                roomName = room[1];
-                            } else {
-                                roomName = room[0];
-                            }
-
-                            Log.d(TAG, "어레이리스트 : " + roomName + " " + message + " " + dateMessage);
-                            Chat chat = new Chat(roomName, message, dateMessage, notCheckMessage);
-                            arrayList.add(chat);
-                        }
 
                         noChatRoomFrameLayout.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);

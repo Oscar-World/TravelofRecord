@@ -68,14 +68,14 @@
             />
 
         <TextView
-            android:id="@+id/chatRoomBeforeRead_Text"
+            android:id="@+id/chatRoomNotRead_Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
+            android:textColor="@color/white"
             android:layout_marginRight="5dp"
             android:background="@color/red"
             android:padding="5dp"
-            android:visibility="gone"
             />
 
 

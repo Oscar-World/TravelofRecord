@@ -186,7 +186,8 @@ public interface ApiInterface {
 
     @GET("mysql_GetChatting.php")
     Call<ArrayList<Chat>> getChatting(
-            @Query("roomNum") String roomNum
+            @Query("roomNum") String roomNum,
+            @Query("sender") String sender
     );
 
     @GET("mysql_Chat_Insert.php")
@@ -212,7 +213,18 @@ public interface ApiInterface {
 
     @GET("mysql_UpdateMessageStatus.php")
     Call<String> updateMessageStatus(
-            @Query("roomNum") String roomNum
+            @Query("roomNum") String roomNum,
+            @Query("sender") String sender
+    );
+
+    @GET("mysql_ChatRoom_Insert.php")
+    Call<String> insertChatRoom(
+            @Query("chatRoomNum") String chatRoomNum,
+            @Query("chatRoomUser1") String chatRoomUser1,
+            @Query("chatRoomUser2") String chatRoomUser2,
+            @Query("chatRoomMessage") String chatRoomMessage,
+            @Query("chatRoomDateMessage") String chatRoomDateMessage,
+            @Query("chatRoomNotRead") int chatRoomNotRead
     );
 
 

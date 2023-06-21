@@ -26,11 +26,21 @@ public class Chat {
     @Expose
     @SerializedName("messageStatus") public String messageStatus;
 
+    @Expose
+    @SerializedName("roomName") public String roomName;
+
+    @Expose
+    @SerializedName("lastMessage") public String lastMessage;
+
+    @Expose
+    @SerializedName("lastDate") public String lastDate;
+
+    @Expose
+    @SerializedName("notReadMessage") public int notReadMessage;
+
     public int viewType;
 
     public boolean roomCheck;
-
-    public int notCheckMessage;
 
 
     public Chat (String roomNum, String sender, String senderImage, String message, String dateMessage, int viewType, String messageStatus) {
@@ -45,12 +55,12 @@ public class Chat {
 
     }
 
-    public Chat (String roomNum, String message, String dateMessage, int notCheckMessage) {
+    public Chat (String roomNum, String message, String dateMessage, int notReadMessage) {
 
         this.roomNum = roomNum;
         this.message = message;
         this.dateMessage = dateMessage;
-        this.notCheckMessage = notCheckMessage;
+        this.notReadMessage = notReadMessage;
 
 
     }
@@ -120,8 +130,20 @@ public class Chat {
 
     public void setMessageStatus(String messageStatus) { this.messageStatus = messageStatus; }
 
-    public int getNotCheckMessage() { return notCheckMessage; }
+    public String getRoomName() { return roomName; }
 
-    public void setNotCheckMessage(int notCheckMessage) { this.notCheckMessage = notCheckMessage; }
+    public void setRoomName(String roomName) { this.roomName = roomName; }
+
+    public String getLastMessage() { return lastMessage; }
+
+    public void setLastMessage(String lastMessage) { this.lastMessage = lastMessage; }
+
+    public String getLastDate() { return lastDate; }
+
+    public void setLastDate(String lastDate) { this.lastDate = lastDate; }
+
+    public int getNotReadMessage() { return notReadMessage; }
+
+    public void setNotReadMessage(int notReadMessage) { this.notReadMessage = notReadMessage; }
 
 }

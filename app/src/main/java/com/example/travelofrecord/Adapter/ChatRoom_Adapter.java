@@ -81,6 +81,7 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
         TextView nicknameText;
         TextView messageText;
         TextView dateText;
+        TextView notReadText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -89,6 +90,7 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
             nicknameText = itemView.findViewById(R.id.chatRoomNickname_Text);
             messageText = itemView.findViewById(R.id.chatRoomMessage_Text);
             dateText = itemView.findViewById(R.id.chatRoomDate_Text);
+            notReadText = itemView.findViewById(R.id.chatRoomNotRead_Text);
 
             getTime = new GetTime();
 
@@ -105,6 +107,13 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
             nicknameText.setText(item.getRoomNum() + " 채팅방");
             messageText.setText(item.getMessage());
             dateText.setText(time);
+
+            if (item.getNotReadMessage() == 0) {
+                notReadText.setVisibility(View.GONE);
+            } else {
+                notReadText.setVisibility(View.VISIBLE);
+                notReadText.setText(item.getNotReadMessage());
+            }
 
             chatRoomLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
