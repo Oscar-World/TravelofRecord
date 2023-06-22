@@ -55,13 +55,12 @@ public class Chat {
 
     }
 
-    public Chat (String roomNum, String message, String dateMessage, int notReadMessage) {
+    public Chat (String roomName, String lastMessage, String lastDate, int notReadMessage) {
 
-        this.roomNum = roomNum;
-        this.message = message;
-        this.dateMessage = dateMessage;
+        this.roomName = roomName;
+        this.lastMessage = lastMessage;
+        this.lastDate = lastDate;
         this.notReadMessage = notReadMessage;
-
 
     }
 

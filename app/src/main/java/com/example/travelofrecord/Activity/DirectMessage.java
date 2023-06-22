@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -67,6 +68,7 @@ public class DirectMessage extends AppCompatActivity {
     String nicknameSum2;
     String otherFcmToken;
     boolean chatRoomStatus = false;
+    String messageStatus;
 
 
     @Override
@@ -145,6 +147,7 @@ public class DirectMessage extends AppCompatActivity {
         Intent i = getIntent();
         getNickname = i.getStringExtra("postNickname");
 
+        Log.d(TAG, "currentNickname : " + currentNickname + " / getNickname : " + getNickname);
         nicknameSum1 = currentNickname + "↘" + getNickname;
         nicknameSum2 = getNickname + "↘" + currentNickname;
 
@@ -181,13 +184,6 @@ public class DirectMessage extends AppCompatActivity {
 
                     PrintWriterThread thread = new PrintWriterThread();
                     thread.start();
-
-                    insertChat(roomNum, currentNickname, getNickname, currentImage, sendMessage, String.valueOf(getTime.getTime()), "false");
-                    if (!chatRoomStatus) {
-
-                        insertChatRoom(roomNum, currentNickname, getNickname, sendMessage, String.valueOf(getTime.getTime()), 0);
-                        chatRoomStatus = true;
-                    }
 
                 }
 
@@ -262,7 +258,7 @@ public class DirectMessage extends AppCompatActivity {
             super.run();
             try {
 
-                printWriter.println(roomNum + "↖" + currentNickname + "↖" + "ⓐloginⓐ");
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + "ⓐloginⓐ" + "↖" + otherFcmToken);
                 printWriter.flush();
                 Log.d(TAG, "LoginPrintWriter : 실행 완료");
             } catch (Exception e) {
@@ -279,7 +275,7 @@ public class DirectMessage extends AppCompatActivity {
             super.run();
             try {
 
-                printWriter.println(roomNum + "↖" + currentNickname + "↖" + "ⓐlogoutⓐ");
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + "ⓐlogoutⓐ" + "↖" + otherFcmToken);
                 printWriter.flush();
                 Log.d(TAG, "LogoutPrintWriter : 실행 완료");
 
@@ -308,19 +304,48 @@ public class DirectMessage extends AppCompatActivity {
             String nickname = array[1];
             String senderImage = array[2];
             String message = array[3];
-            String messageStatus = array[5];
+            messageStatus = array[5];
             String time = String.valueOf(getTime.getFormatTime(getTime.getTime()));
             int viewType = 0;
-            if(nickname.equals(currentNickname)) {
+
+            if(nickname.equals(currentNickname) & !message.equals("ⓐloginⓐ") & !message.equals("ⓐlogoutⓐ")) {
                 viewType = 1;
+
+                insertChat(roomNum, currentNickname, getNickname, currentImage, sendMessage, String.valueOf(System.currentTimeMillis()), messageStatus, otherFcmToken);
+                if (!chatRoomStatus) {
+
+                    insertChatRoom(roomNum, currentNickname, getNickname, sendMessage, String.valueOf(System.currentTimeMillis()));
+                    chatRoomStatus = true;
+                }
+
             }
 
-            Chat chat = new Chat(array[0], nickname, senderImage, message, time, viewType, messageStatus);
+            // login & logout 응답 받을 때는 예외처리.
+            // 상대방 status == true 응답 시 전체 리스트 status 수정.
 
-            arrayList.add(chat);
+            if (message.equals("ⓐloginⓐ")) {
+
+                if (!currentNickname.equals(nickname) & messageStatus.equals("true")) {
+                    for ( int i = 0; i < arrayList.size(); i++) {
+
+                        arrayList.set(i, new Chat(arrayList.get(i).getRoomNum(),arrayList.get(i).getSender(),arrayList.get(i).getSenderImage(),arrayList.get(i).getMessage(),
+                                arrayList.get(i).getDateMessage(),arrayList.get(i).getViewType(), "true"));
+
+                    }
+
+                }
+
+            } else if (!message.equals("ⓐlogoutⓐ")) {
+
+                Chat chat = new Chat(array[0], nickname, senderImage, message, time, viewType, messageStatus);
+                arrayList.add(chat);
+
+            }
+
             adapter.notifyDataSetChanged();
-
-            chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+            if (arrayList.size()>0) {
+                chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+            }
 
         }
 
@@ -426,10 +451,10 @@ public class DirectMessage extends AppCompatActivity {
     } // getChatting()
 
 
-    public void insertChat(String roomNum, String sender, String receiver, String senderImage, String message, String dateMessage, String messageStatus) {
+    public void insertChat(String roomNum, String sender, String receiver, String senderImage, String message, String dateMessage, String messageStatus, String fcmToken) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.insertChatting(roomNum, sender, receiver, senderImage, message, dateMessage, messageStatus);
+        Call<String> call = apiInterface.insertChatting(roomNum, sender, receiver, senderImage, message, dateMessage, messageStatus, fcmToken);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -462,34 +487,34 @@ public class DirectMessage extends AppCompatActivity {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "onResponse isSuccessful");
-                    Log.d(TAG, "onResponse: " + response.body());
+                    Log.d(TAG, "getFcmToken onResponse isSuccessful");
+                    Log.d(TAG, "getFcmToken onResponse: " + response.body());
                     otherFcmToken = response.body();
 
                 } else {
-                    Log.d(TAG, "onResponse isFailure");
+                    Log.d(TAG, "getFcmToken onResponse isFailure");
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                Log.d(TAG, "getFcmToken onFailure");
             }
         });
 
     } // getFcmToken()
 
 
-    public void insertChatRoom(String chatRoomNum, String chatRoomUser1, String chatRoomUser2, String chatRoomMessage, String chatRoomDateMessage, int chatRoomNotRead) {
+    public void insertChatRoom(String chatRoomNum, String chatRoomUser1, String chatRoomUser2, String chatRoomMessage, String chatRoomDateMessage) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.insertChatRoom(chatRoomNum, chatRoomUser1, chatRoomUser2, chatRoomMessage, chatRoomDateMessage, chatRoomNotRead);
+        Call<String> call = apiInterface.insertChatRoom(chatRoomNum, chatRoomUser1, chatRoomUser2, chatRoomMessage, chatRoomDateMessage);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "insertChatRoom onResponse isSuccessful");
-                    Log.d(TAG, "onResponse : " + response.body());
+                    Log.d(TAG, "insertChatRoom onResponse : " + response.body());
                 } else {
                     Log.d(TAG, "insertChatRoom onResponse isFailure");
                 }

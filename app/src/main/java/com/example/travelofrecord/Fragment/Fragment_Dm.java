@@ -184,12 +184,22 @@ public class Fragment_Dm extends Fragment {
 
                         for (int i = 0; i < data.size(); i ++) {
 
-                        String roomName = data.get(i).getRoomNum();
-                        String message = data.get(i).getMessage();
-                        String dateMessage = data.get(i).getDateMessage();
+                        String roomName = data.get(i).getRoomName();
+                        String message = data.get(i).getLastMessage();
+                        String dateMessage = data.get(i).getLastDate();
                         int notReadMessage = data.get(i).getNotReadMessage();
 
-                            Log.d(TAG, "채팅방 정보 : " + roomName + " / " + message + " / " + dateMessage + " / " + notReadMessage);
+                        Log.d(TAG, "채팅방 정보 : " + roomName + " / " + message + " / " + dateMessage + " / " + notReadMessage);
+
+                        String[] array = roomName.split("↘");
+                        String user1 = array[0];
+                        String user2 = array[1];
+
+                        if (currentNickname.equals(user1)) {
+                            roomName = user2;
+                        } else {
+                            roomName = user1;
+                        }
 
                         Chat chat = new Chat(roomName, message, dateMessage, notReadMessage);
                         arrayList.add(chat);
@@ -218,7 +228,7 @@ public class Fragment_Dm extends Fragment {
                         bundle = null;
 
                     } else {
-                        Log.d(TAG, "postNickname : null");
+                        Log.d(TAG, "postNickname is null");
                     }
 
 

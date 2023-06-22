@@ -198,7 +198,8 @@ public interface ApiInterface {
             @Query("senderImage") String senderImage,
             @Query("message") String message,
             @Query("dateMessage") String dateMessage,
-            @Query("messageStatus") String messageStatus
+            @Query("messageStatus") String messageStatus,
+            @Query("fcmToken") String fcmToken
     );
 
     @GET("mysql_GetRoomInfo.php")
@@ -211,20 +212,13 @@ public interface ApiInterface {
             @Query("nickname") String nickname
     );
 
-    @GET("mysql_UpdateMessageStatus.php")
-    Call<String> updateMessageStatus(
-            @Query("roomNum") String roomNum,
-            @Query("sender") String sender
-    );
-
     @GET("mysql_ChatRoom_Insert.php")
     Call<String> insertChatRoom(
             @Query("chatRoomNum") String chatRoomNum,
             @Query("chatRoomUser1") String chatRoomUser1,
             @Query("chatRoomUser2") String chatRoomUser2,
             @Query("chatRoomMessage") String chatRoomMessage,
-            @Query("chatRoomDateMessage") String chatRoomDateMessage,
-            @Query("chatRoomNotRead") int chatRoomNotRead
+            @Query("chatRoomDateMessage") String chatRoomDateMessage
     );
 
 

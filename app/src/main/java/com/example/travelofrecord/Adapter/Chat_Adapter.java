@@ -112,6 +112,7 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             if (item.getMessageStatus().equals("true")) {
                 rightChatStatusText.setVisibility(View.GONE);
+
             } else if (item.getMessageStatus().equals("false")) {
                 rightChatStatusText.setVisibility(View.VISIBLE);
             }

@@ -83,6 +83,9 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
         TextView dateText;
         TextView notReadText;
 
+        SharedPreferences sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
+        String currentNickname = sharedPreferences.getString("nickname", "");
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -98,29 +101,32 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
         void onBind(Chat item) {
             Log.d(TAG, "onBind() 호출됨");
-            String dateMessage = item.getDateMessage();
+            String dateMessage = item.getLastDate();
             Log.d(TAG, "onBind: " + dateMessage);
             long parseTime = Long.parseLong(dateMessage);
             String time = getTime.getFormatTime(parseTime);
 
 
-            nicknameText.setText(item.getRoomNum() + " 채팅방");
-            messageText.setText(item.getMessage());
+            nicknameText.setText(item.getRoomName() + " 채팅방");
+            messageText.setText(item.getLastMessage());
             dateText.setText(time);
 
             if (item.getNotReadMessage() == 0) {
                 notReadText.setVisibility(View.GONE);
             } else {
                 notReadText.setVisibility(View.VISIBLE);
-                notReadText.setText(item.getNotReadMessage());
+                notReadText.setText(String.valueOf(item.getNotReadMessage()));
             }
 
             chatRoomLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
+                    Log.d(TAG, "onClick : " + item.getRoomName());
+
+
                     Intent i = new Intent(context, DirectMessage.class);
-                    i.putExtra("postNickname", item.getRoomNum());
+                    i.putExtra("postNickname", item.getRoomName());
                     context.startActivity(i);
 
                 }
