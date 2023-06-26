@@ -107,7 +107,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         String body = remoteMessage.getNotification().getBody();
         Log.d(TAG, "수신한 메시지 : " + title + " / " + body);
 
-        Intent i = new Intent(getApplicationContext(), Loading.class);
+        Intent i = new Intent(getApplicationContext(), DirectMessage.class);
         i.putExtra("postNickname", title);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0, i,PendingIntent.FLAG_IMMUTABLE);

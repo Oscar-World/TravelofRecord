@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelofrecord.Activity.DirectMessage;
@@ -38,7 +40,8 @@ public class Fragment_Dm extends Fragment {
     String TAG = "채팅 프래그먼트";
     View v;
 
-    FrameLayout noChatRoomFrameLayout;
+    TextView noChatRoomText;
+    ImageView chatRoomLoadingIv;
     RecyclerView recyclerView;
     ImageButton addChatBtn;
     ChatRoom_Adapter adapter;
@@ -112,7 +115,8 @@ public class Fragment_Dm extends Fragment {
 
     public void setVariable() {
 
-        noChatRoomFrameLayout = v.findViewById(R.id.noChatRoom_FrameLayout);
+        noChatRoomText = v.findViewById(R.id.noChatRoom_Text);
+        chatRoomLoadingIv = v.findViewById(R.id.chatRoom_Loading);
         recyclerView = v.findViewById(R.id.chatRoom_RecyclerView);
         addChatBtn = v.findViewById(R.id.chatRoomAdd_Btn);
         adapter = new ChatRoom_Adapter();
@@ -206,14 +210,16 @@ public class Fragment_Dm extends Fragment {
 
                         } // for()
 
-                        noChatRoomFrameLayout.setVisibility(View.GONE);
+                        noChatRoomText.setVisibility(View.GONE);
+                        chatRoomLoadingIv.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
 
                         adapter.notifyDataSetChanged();
 
                     } else {
 
-                        noChatRoomFrameLayout.setVisibility(View.VISIBLE);
+                        noChatRoomText.setVisibility(View.VISIBLE);
+                        chatRoomLoadingIv.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.GONE);
 
                     }

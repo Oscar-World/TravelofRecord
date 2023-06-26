@@ -257,7 +257,6 @@ public class DirectMessage extends AppCompatActivity {
         public void run() {
             super.run();
             try {
-
                 printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + "ⓐloginⓐ" + "↖" + otherFcmToken);
                 printWriter.flush();
                 Log.d(TAG, "LoginPrintWriter : 실행 완료");
