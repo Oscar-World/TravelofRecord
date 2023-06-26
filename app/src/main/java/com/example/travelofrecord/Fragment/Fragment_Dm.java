@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -42,6 +44,7 @@ public class Fragment_Dm extends Fragment {
 
     TextView noChatRoomText;
     ImageView chatRoomLoadingIv;
+    Animation rotate;
     RecyclerView recyclerView;
     ImageButton addChatBtn;
     ChatRoom_Adapter adapter;
@@ -117,6 +120,8 @@ public class Fragment_Dm extends Fragment {
 
         noChatRoomText = v.findViewById(R.id.noChatRoom_Text);
         chatRoomLoadingIv = v.findViewById(R.id.chatRoom_Loading);
+        rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
+        chatRoomLoadingIv.startAnimation(rotate);
         recyclerView = v.findViewById(R.id.chatRoom_RecyclerView);
         addChatBtn = v.findViewById(R.id.chatRoomAdd_Btn);
         adapter = new ChatRoom_Adapter();
@@ -212,6 +217,7 @@ public class Fragment_Dm extends Fragment {
 
                         noChatRoomText.setVisibility(View.GONE);
                         chatRoomLoadingIv.setVisibility(View.GONE);
+                        chatRoomLoadingIv.clearAnimation();
                         recyclerView.setVisibility(View.VISIBLE);
 
                         adapter.notifyDataSetChanged();
@@ -220,6 +226,7 @@ public class Fragment_Dm extends Fragment {
 
                         noChatRoomText.setVisibility(View.VISIBLE);
                         chatRoomLoadingIv.setVisibility(View.GONE);
+                        chatRoomLoadingIv.clearAnimation();
                         recyclerView.setVisibility(View.GONE);
 
                     }
