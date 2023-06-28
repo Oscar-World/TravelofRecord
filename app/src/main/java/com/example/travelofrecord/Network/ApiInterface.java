@@ -212,6 +212,12 @@ public interface ApiInterface {
             @Query("nickname") String nickname
     );
 
+    @GET("mysql_UpdateFcmToken.php")
+    Call<String> updateFcmToken(
+            @Query("nickname") String nickname,
+            @Query("fcmToken") String fcmToken
+    );
+
     @GET("mysql_ChatRoom_Insert.php")
     Call<String> insertChatRoom(
             @Query("chatRoomNum") String chatRoomNum,
@@ -219,6 +225,11 @@ public interface ApiInterface {
             @Query("chatRoomUser2") String chatRoomUser2,
             @Query("chatRoomMessage") String chatRoomMessage,
             @Query("chatRoomDateMessage") String chatRoomDateMessage
+    );
+
+    @GET("mysql_GetNoti.php")
+    Call<String> getNoti(
+            @Query("nickname") String nickname
     );
 
 

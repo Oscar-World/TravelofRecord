@@ -95,5 +95,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:23.1.2'
     implementation 'com.google.firebase:firebase-auth'
 
+    // 이벤트 버스
+    implementation("org.greenrobot:eventbus:3.3.1")
+
 
 }

@@ -42,11 +42,6 @@ public class Loading extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart() 호출");
 
-        if (postNickname != null) {
-            Log.d(TAG, "getIntent : " + postNickname);
-            dmthread.start();
-        } else {
-            Log.d(TAG, "getIntent : null");
             if (!shared.equals("")) {
                 Log.d(TAG, "메인으로 진입");
                 inthread.start();
@@ -54,7 +49,7 @@ public class Loading extends AppCompatActivity {
                 Log.d(TAG, "시작화면 진입");
                 outthread.start();
             }
-        }
+
 
     }
 
@@ -151,8 +146,8 @@ public class Loading extends AppCompatActivity {
         editor = sharedPreferences.edit();
         shared = sharedPreferences.getString("id","");
 
-        Intent i = getIntent();
-        postNickname = i.getStringExtra("postNickname");
+//        Intent i = getIntent();
+//        postNickname = i.getStringExtra("postNickname");
 
     }
 

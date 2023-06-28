@@ -130,6 +130,20 @@
             />
 
         <ImageButton
+            android:id="@+id/dmred_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="@color/main"
+            android:stateListAnimator="@null"
+            android:src="@drawable/dmred"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:padding="18dp"
+            />
+
+        <ImageButton
             android:id="@+id/dmfull_Btn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -137,6 +151,20 @@
             android:backgroundTint="@color/main"
             android:stateListAnimator="@null"
             android:src="@drawable/dmfull"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:padding="18dp"
+            />
+
+        <ImageButton
+            android:id="@+id/dmredfull_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="@color/main"
+            android:stateListAnimator="@null"
+            android:src="@drawable/dmfullred"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="gone"

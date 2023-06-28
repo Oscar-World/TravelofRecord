@@ -39,7 +39,7 @@ import retrofit2.Response;
 
 public class DirectMessage extends AppCompatActivity {
 
-    String TAG = "채팅";
+    String TAG = "채팅액티비티";
 
     ImageButton backBtn;
     ImageButton sendBtn;
@@ -100,16 +100,15 @@ public class DirectMessage extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         Log.d(TAG, "onPause() 호출됨");
+
     }
 
     @Override
     protected void onStop(){
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
-
         LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
         thread.start();
-
     }
 
     @Override
@@ -134,22 +133,22 @@ public class DirectMessage extends AppCompatActivity {
         chatEdit = findViewById(R.id.chatMessage_Edit);
         chatRecyclerView = findViewById(R.id.chat_RecyclerView);
 
-        arrayList = new ArrayList<>();
-        adapter = new Chat_Adapter();
-        chatRecyclerView.setAdapter(adapter);
-        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter.setItemChat(arrayList);
+        Intent i = getIntent();
+        getNickname = i.getStringExtra("postNickname");
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         currentNickname = sharedPreferences.getString("nickname","");
         currentImage = sharedPreferences.getString("image", "");
 
-        Intent i = getIntent();
-        getNickname = i.getStringExtra("postNickname");
-
         Log.d(TAG, "currentNickname : " + currentNickname + " / getNickname : " + getNickname);
         nicknameSum1 = currentNickname + "↘" + getNickname;
         nicknameSum2 = getNickname + "↘" + currentNickname;
+
+        arrayList = new ArrayList<>();
+        adapter = new Chat_Adapter();
+        chatRecyclerView.setAdapter(adapter);
+        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter.setItemChat(arrayList);
 
 
         getTime = new GetTime();

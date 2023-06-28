@@ -1,6 +1,7 @@
 package com.example.travelofrecord.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -43,6 +44,8 @@ public class Home extends AppCompatActivity {
     ImageButton addFull_Btn;
     ImageButton dmFull_Btn;
     ImageButton myProfileFull_Btn;
+    ImageButton dmRed_Btn;
+    ImageButton dmRedFull_Btn;
 
     SharedPreferences sharedPreferences;
     SharedPreferences sharedPreferences_Kakao;
@@ -69,6 +72,43 @@ public class Home extends AppCompatActivity {
     String postNickname;
     String fcmToken;
 
+    boolean messageStatus = false;
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        processIntent(intent);
+        super.onNewIntent(intent);
+    }
+    private void processIntent(Intent intent) {
+        if (intent != null) {
+
+            messageStatus = true;
+
+            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                if (fragment.isVisible()) {
+                    if (fragment instanceof Fragment_Dm) {
+                        Log.d(TAG, "fragment : Fragment_Dm");
+
+                        dm_Btn.setVisibility(View.GONE);
+                        dmFull_Btn.setVisibility(View.GONE);
+                        dmRed_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.VISIBLE);
+
+                    } else {
+                        Log.d(TAG, "fragment : else");
+
+                        dm_Btn.setVisibility(View.GONE);
+                        dmFull_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+                        dmRed_Btn.setVisibility(View.VISIBLE);
+
+                    }
+                }
+            }
+
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,8 +117,7 @@ public class Home extends AppCompatActivity {
 
         setVariable();
         setView();
-
-        getFcmToken(currentNickname);
+        updateFcmToken(currentNickname, fcmToken);
 
         Log.d(TAG, "쉐어드 정보 : " + sharedInfo);
         networkStatus = NetworkStatus.getConnectivityStatus(this);
@@ -90,17 +129,19 @@ public class Home extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart() 호출");
 
-        if (postNickname != null) {
-            Log.d(TAG, "getIntent : " + postNickname);
-            bundle.putString("postNickname", postNickname);
-            fragment_dm.setArguments(bundle);
-            fragmentChange(3);
+        getNoti(currentNickname);
 
-            postNickname = null;
-
-        } else {
-            Log.d(TAG, "getIntent : null");
-        }
+//        if (postNickname != null) {
+//            Log.d(TAG, "getIntent : " + postNickname);
+//            bundle.putString("postNickname", postNickname);
+//            fragment_dm.setArguments(bundle);
+//            fragmentChange(3);
+//
+//            postNickname = null;
+//
+//        } else {
+//            Log.d(TAG, "getIntent : null");
+//        }
 
     }
 
@@ -145,6 +186,8 @@ public class Home extends AppCompatActivity {
         add_Btn = findViewById(R.id.add_Btn);
         dm_Btn = findViewById(R.id.dm_Btn);
         myProfile_Btn = findViewById(R.id.myProfile_Btn);
+        dmRed_Btn = findViewById(R.id.dmred_Btn);
+        dmRedFull_Btn = findViewById(R.id.dmredfull_Btn);
 
         homeFull_Btn = findViewById(R.id.homefull_Btn);
         heartFull_Btn = findViewById(R.id.heartfull_Btn);
@@ -156,6 +199,7 @@ public class Home extends AppCompatActivity {
         editor = sharedPreferences.edit();
         sharedInfo = sharedPreferences.getString("id","");
         currentNickname = sharedPreferences.getString("nickname","");
+        fcmToken = sharedPreferences.getString("fcmToken","");
 
         sharedPreferences_Kakao = getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
@@ -176,8 +220,8 @@ public class Home extends AppCompatActivity {
         homeFootLayout = findViewById(R.id.homeFoot_Layout);
         homeBodyLayout = findViewById(R.id.homeBody_Frame);
 
-        Intent i = getIntent();
-        postNickname = i.getStringExtra("postNickname");
+//        Intent i = getIntent();
+//        postNickname = i.getStringExtra("postNickname");
 
     }
 
@@ -191,12 +235,21 @@ public class Home extends AppCompatActivity {
 
                     fragmentChange(0);
 
+                    if (messageStatus) {
+                        dmRed_Btn.setVisibility(View.VISIBLE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+                        dm_Btn.setVisibility(View.GONE);
+                    } else {
+                        dm_Btn.setVisibility(View.VISIBLE);
+                        dmRed_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+                    }
+
                     home_Btn.setVisibility(View.GONE);
                     homeFull_Btn.setVisibility(View.VISIBLE);
 
                     heart_Btn.setVisibility(View.VISIBLE);
                     add_Btn.setVisibility(View.VISIBLE);
-                    dm_Btn.setVisibility(View.VISIBLE);
                     myProfile_Btn.setVisibility(View.VISIBLE);
 
                     heartFull_Btn.setVisibility(View.GONE);
@@ -219,12 +272,21 @@ public class Home extends AppCompatActivity {
 
                     fragmentChange(1);
 
+                    if (messageStatus) {
+                        dmRed_Btn.setVisibility(View.VISIBLE);
+                        dm_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+                    } else {
+                        dm_Btn.setVisibility(View.VISIBLE);
+                        dmRed_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+                    }
+
                     heart_Btn.setVisibility(View.GONE);
                     heartFull_Btn.setVisibility(View.VISIBLE);
 
                     home_Btn.setVisibility(View.VISIBLE);
                     add_Btn.setVisibility(View.VISIBLE);
-                    dm_Btn.setVisibility(View.VISIBLE);
                     myProfile_Btn.setVisibility(View.VISIBLE);
 
                     homeFull_Btn.setVisibility(View.GONE);
@@ -247,12 +309,22 @@ public class Home extends AppCompatActivity {
 
                     fragmentChange(2);
 
+                    if (messageStatus) {
+                        dmRed_Btn.setVisibility(View.VISIBLE);
+                        dm_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+
+                    } else {
+                        dm_Btn.setVisibility(View.VISIBLE);
+                        dmRed_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+                    }
+
                     add_Btn.setVisibility(View.GONE);
                     addFull_Btn.setVisibility(View.VISIBLE);
 
                     home_Btn.setVisibility(View.VISIBLE);
                     heart_Btn.setVisibility(View.VISIBLE);
-                    dm_Btn.setVisibility(View.VISIBLE);
                     myProfile_Btn.setVisibility(View.VISIBLE);
 
                     homeFull_Btn.setVisibility(View.GONE);
@@ -295,6 +367,36 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        dmRed_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    fragmentChange(3);
+
+                    dm_Btn.setVisibility(View.GONE);
+                    dmRed_Btn.setVisibility(View.GONE);
+                    dmRedFull_Btn.setVisibility(View.VISIBLE);
+
+                    home_Btn.setVisibility(View.VISIBLE);
+                    heart_Btn.setVisibility(View.VISIBLE);
+                    add_Btn.setVisibility(View.VISIBLE);
+                    myProfile_Btn.setVisibility(View.VISIBLE);
+
+                    homeFull_Btn.setVisibility(View.GONE);
+                    heartFull_Btn.setVisibility(View.GONE);
+                    addFull_Btn.setVisibility(View.GONE);
+                    myProfileFull_Btn.setVisibility(View.GONE);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
         myProfile_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -303,13 +405,22 @@ public class Home extends AppCompatActivity {
 
                     fragmentChange(4);
 
+                    if (messageStatus) {
+                        dmRed_Btn.setVisibility(View.VISIBLE);
+                        dm_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+                    } else {
+                        dm_Btn.setVisibility(View.VISIBLE);
+                        dmRed_Btn.setVisibility(View.GONE);
+                        dmRedFull_Btn.setVisibility(View.GONE);
+                    }
+
                     myProfile_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.VISIBLE);
 
                     home_Btn.setVisibility(View.VISIBLE);
                     heart_Btn.setVisibility(View.VISIBLE);
                     add_Btn.setVisibility(View.VISIBLE);
-                    dm_Btn.setVisibility(View.VISIBLE);
 
                     homeFull_Btn.setVisibility(View.GONE);
                     heartFull_Btn.setVisibility(View.GONE);
@@ -365,28 +476,100 @@ public class Home extends AppCompatActivity {
 
     }
 
-    public void getFcmToken(String nickname) {
+    public void updateFcmToken(String nickname, String fcmToken) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.getFcmToken(nickname);
+        Call<String> call = apiInterface.updateFcmToken(nickname, fcmToken);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "onResponse isSuccessful");
+                    Log.d(TAG, "updateFcmToken - onResponse isSuccessful");
 
-                    fcmToken = response.body();
-                    editor.putString("fcmToken", fcmToken);
-                    editor.commit();
+                    String rpCode = response.body();
+                    Log.d(TAG, "rpCode: " + rpCode);
 
                 } else {
-                    Log.d(TAG, "onResponse isFailure");
+                    Log.d(TAG, "updateFcmToken - onResponse isFailure");
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d(TAG, "onFailure: " + t);
+                Log.d(TAG, "updateFcmToken - onFailure: " + t);
+            }
+        });
+
+    }
+
+    public void getNoti(String currentNickname) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.getNoti(currentNickname);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "getNoti - onResponse : isSuccessful");
+
+                    String rpCode = response.body().toString();
+                    Log.d(TAG, "rpCode : " + rpCode);
+
+
+
+                    if (rpCode.equals("is")) {
+
+                        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                            if (fragment.isVisible()) {
+                                if (fragment instanceof Fragment_Dm) {
+                                    Log.d(TAG, "fragment : Fragment_Dm");
+                                    dm_Btn.setVisibility(View.GONE);
+                                    dmRed_Btn.setVisibility(View.GONE);
+                                    dmFull_Btn.setVisibility(View.GONE);
+                                    dmRedFull_Btn.setVisibility(View.VISIBLE);
+                                } else {
+                                    Log.d(TAG, "fragment : else");
+                                    dmRed_Btn.setVisibility(View.VISIBLE);
+                                    dmFull_Btn.setVisibility(View.GONE);
+                                    dm_Btn.setVisibility(View.GONE);
+                                    dmRedFull_Btn.setVisibility(View.GONE);
+                                }
+                            }
+                        }
+
+                        messageStatus = true;
+
+                    } else if (rpCode.equals("isNot")) {
+
+                        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                            if (fragment.isVisible()) {
+                                if (fragment instanceof Fragment_Dm) {
+                                    Log.d(TAG, "fragment : Fragment_Dm");
+                                    dm_Btn.setVisibility(View.GONE);
+                                    dmRed_Btn.setVisibility(View.GONE);
+                                    dmRedFull_Btn.setVisibility(View.GONE);
+                                    dmFull_Btn.setVisibility(View.VISIBLE);
+                                } else {
+                                    Log.d(TAG, "fragment : else");
+                                    dmRed_Btn.setVisibility(View.GONE);
+                                    dmFull_Btn.setVisibility(View.GONE);
+                                    dmRedFull_Btn.setVisibility(View.GONE);
+                                    dm_Btn.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+
+                        messageStatus = false;
+
+                    }
+
+                } else {
+                    Log.d(TAG, "getNoti - onResponse : isFailure");
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "getNoti - onFailure");
             }
         });
 

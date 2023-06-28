@@ -34,32 +34,18 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     String TAG = "파이어베이스 메세지 서비스";
 
-
-
     // 토큰을 서버로 전송
     // fcm 서버에 등록되었을 때 호출됨
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
         Log.d(TAG, "token : " + token);
-        Log.d(TAG, "FirebaseMessaging.getInstance().getToken().getResult() : " + FirebaseMessaging.getInstance().getToken().getResult());
 
         SharedPreferences sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        String fcmToken = sharedPreferences.getString("fcmToken", "");
-
-        if (fcmToken.equals("")) {
-            Log.d(TAG, "fcmToken in Shared : 없음");
-
-            editor.putString("fcmToken", token);
-            editor.commit();
-
-        } else {
-            Log.d(TAG, "fcmToken in Shared : 있음");
-        }
-
-
+        editor.putString("fcmToken", token);
+        editor.commit();
 
         // 토큰을 성공적으로 확인했을 때 호출됨
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
@@ -128,7 +114,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
         Notification notification = builder.build();
-        notificationManagerCompat.notify(1, notification);
+        notificationManagerCompat.notify(0, notification);
 
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> info = manager.getRunningTasks(1);
@@ -138,7 +124,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         if (activityName.equals("Activity.Home")) {
 
-
+            Intent intent = new Intent(getApplicationContext(), Home.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("noti","noti");
+            startActivity(intent);
 
         }
 

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelofrecord.Activity.DirectMessage;
+import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Adapter.ChatRoom_Adapter;
 import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Function.GetTime;
@@ -71,6 +72,12 @@ public class Fragment_Dm extends Fragment {
     String ip = "3.34.246.77";
     int port = 8888;
 
+    String roomName;
+    String message;
+    String dateMessage;
+    int notReadMessage;
+    Chat chat;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -103,6 +110,8 @@ public class Fragment_Dm extends Fragment {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
         getRoom(currentNickname);
+        SocketThread thread = new SocketThread();
+        thread.start();
     }
     @Override
     public void onResume() {
@@ -113,13 +122,16 @@ public class Fragment_Dm extends Fragment {
     public void onPause() {
         Log.d(TAG, "onPause() 호출");
         super.onPause();
+
     }
     @Override
     public void onStop() {
         Log.d(TAG, "onStop() 호출");
         super.onStop();
+
         LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
         thread.start();
+
     }
     @Override
     public void onDestroyView() {
@@ -154,23 +166,21 @@ public class Fragment_Dm extends Fragment {
 
         bundle = getArguments();
 
-        try {
-
-            if (bundle.getString("postNickname") != null) {
-                Log.d(TAG, "getArguments : " + bundle.getString("postNickname"));
-                postNickname = bundle.getString("postNickname");
-            } else {
-                Log.d(TAG, "getArguments : null");
-            }
-
-        } catch (NullPointerException e) {
-            Log.d(TAG, "NullPointerException : " + e);
-            Log.d(TAG, "getArguments : null");
-        }
+//        try {
+//
+//            if (bundle.getString("postNickname") != null) {
+//                Log.d(TAG, "getArguments : " + bundle.getString("postNickname"));
+//                postNickname = bundle.getString("postNickname");
+//            } else {
+//                Log.d(TAG, "getArguments : null");
+//            }
+//
+//        } catch (NullPointerException e) {
+//            Log.d(TAG, "NullPointerException : " + e);
+//            Log.d(TAG, "getArguments : null");
+//        }
 
         handler = new Handler();
-        SocketThread thread = new SocketThread();
-        thread.start();
 
 
     } // setVariable()
@@ -215,7 +225,7 @@ public class Fragment_Dm extends Fragment {
 
                     if (readLine != null) {
                         Log.d(TAG, "readLine : " + readLine);
-                        handler.post(new messageUpdate());
+                        handler.post(new messageUpdate(readLine));
                     }
 
                 }
@@ -232,7 +242,19 @@ public class Fragment_Dm extends Fragment {
 
     class messageUpdate implements Runnable {
 
+        String message;
+
+        public messageUpdate(String msg) {
+            this.message = msg;
+        }
+
         public void run() {
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             getRoom(currentNickname);
 
@@ -298,10 +320,10 @@ public class Fragment_Dm extends Fragment {
 
                         for (int i = 0; i < data.size(); i ++) {
 
-                        String roomName = data.get(i).getRoomName();
-                        String message = data.get(i).getLastMessage();
-                        String dateMessage = data.get(i).getLastDate();
-                        int notReadMessage = data.get(i).getNotReadMessage();
+                        roomName = data.get(i).getRoomName();
+                        message = data.get(i).getLastMessage();
+                        dateMessage = data.get(i).getLastDate();
+                        notReadMessage = data.get(i).getNotReadMessage();
 
                         Log.d(TAG, "채팅방 정보 : " + roomName + " / " + message + " / " + dateMessage + " / " + notReadMessage);
 
@@ -315,7 +337,7 @@ public class Fragment_Dm extends Fragment {
                             roomName = user1;
                         }
 
-                        Chat chat = new Chat(roomName, message, dateMessage, notReadMessage);
+                        chat = new Chat(roomName, message, dateMessage, notReadMessage);
 
                         arrayList.add(chat);
 
@@ -337,18 +359,19 @@ public class Fragment_Dm extends Fragment {
 
                     }
 
-                    if (postNickname != null) {
-                        Log.d(TAG, "postNickname : " + postNickname);
+//                    if (postNickname != null) {
+//                        Log.d(TAG, "postNickname : " + postNickname);
+//
+//                        Intent i = new Intent(getActivity(), DirectMessage.class);
+//                        i.putExtra("postNickname", postNickname);
+//                        startActivity(i);
+//
+//                        bundle = null;
+//
+//                    } else {
+//                        Log.d(TAG, "postNickname is null");
+//                    }
 
-                        Intent i = new Intent(getActivity(), DirectMessage.class);
-                        i.putExtra("postNickname", postNickname);
-                        startActivity(i);
-
-                        bundle = null;
-
-                    } else {
-                        Log.d(TAG, "postNickname is null");
-                    }
 
 
                 } else {
