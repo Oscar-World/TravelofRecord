@@ -1,9 +1,13 @@
 package com.example.travelofrecord.Service;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.Fragment;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +27,8 @@ import com.example.travelofrecord.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.List;
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
 
@@ -123,6 +129,35 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         Notification notification = builder.build();
         notificationManagerCompat.notify(1, notification);
+
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> info = manager.getRunningTasks(1);
+        ComponentName componentName = info.get(0).topActivity;
+        String activityName = componentName.getShortClassName().substring(1);
+        Log.d(TAG, "activityName : " + activityName);
+
+        if (activityName.equals("Activity.Home")) {
+
+
+
+        }
+
+//        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//        List<ActivityManager.RunningAppProcessInfo> info = manager.getRunningAppProcesses();
+//        ComponentName componentName = info.get(0).importanceReasonComponent;
+//        String activityName = componentName.getPackageName();
+//        Log.d(TAG, "activityName : " + activityName);
+
+//        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//        assert activityManager != null;
+//        List<ActivityManager.AppTask> info = activityManager.getAppTasks();
+//        String activityName = null;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//            activityName = info.get(0).getTaskInfo().topActivity.getShortClassName();
+//        }
+//        Log.d(TAG, "activityName : " + activityName);
+
+
 
     } // onMessageReceived()
 

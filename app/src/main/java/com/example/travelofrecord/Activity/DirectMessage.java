@@ -237,7 +237,7 @@ public class DirectMessage extends AppCompatActivity {
         public void run() {
             super.run();
             try {
-                printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + sendMessage + "↖" + otherFcmToken);
+                printWriter.println(roomNum+ "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + sendMessage + "↖" + otherFcmToken);
                 printWriter.flush();
 
                 chatEdit.setText("");
@@ -257,7 +257,7 @@ public class DirectMessage extends AppCompatActivity {
         public void run() {
             super.run();
             try {
-                printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + "ⓐloginⓐ" + "↖" + otherFcmToken);
+                printWriter.println(roomNum+ "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + "ⓐloginⓐ" + "↖" + otherFcmToken);
                 printWriter.flush();
                 Log.d(TAG, "LoginPrintWriter : 실행 완료");
             } catch (Exception e) {
@@ -274,7 +274,7 @@ public class DirectMessage extends AppCompatActivity {
             super.run();
             try {
 
-                printWriter.println(roomNum + "↖" + currentNickname + "↖" + currentImage + "↖" + "ⓐlogoutⓐ" + "↖" + otherFcmToken);
+                printWriter.println(roomNum+ "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + "ⓐlogoutⓐ" + "↖" + otherFcmToken);
                 printWriter.flush();
                 Log.d(TAG, "LogoutPrintWriter : 실행 완료");
 
@@ -301,9 +301,9 @@ public class DirectMessage extends AppCompatActivity {
             Log.d(TAG, "message : " + message);
             String[] array = message.split("↖");
             String nickname = array[1];
-            String senderImage = array[2];
-            String message = array[3];
-            messageStatus = array[5];
+            String senderImage = array[3];
+            String message = array[4];
+            messageStatus = array[6];
             String time = String.valueOf(getTime.getFormatTime(getTime.getTime()));
             int viewType = 0;
 
@@ -346,7 +346,7 @@ public class DirectMessage extends AppCompatActivity {
                 chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
             }
 
-        }
+        } // run()
 
     } // messageUpdate
 

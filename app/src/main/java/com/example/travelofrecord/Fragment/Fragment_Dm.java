@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,12 @@ import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.R;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +64,12 @@ public class Fragment_Dm extends Fragment {
 
     Bundle bundle;
     String postNickname;
+
+    Handler handler;
+    Socket socket;
+    PrintWriter printWriter;
+    String ip = "3.34.246.77";
+    int port = 8888;
 
     @Override
     public void onAttach(Context context) {
@@ -104,6 +117,8 @@ public class Fragment_Dm extends Fragment {
     public void onStop() {
         Log.d(TAG, "onStop() 호출");
         super.onStop();
+        LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
+        thread.start();
     }
     @Override
     public void onDestroyView() {
@@ -152,13 +167,15 @@ public class Fragment_Dm extends Fragment {
             Log.d(TAG, "getArguments : null");
         }
 
+        SocketThread thread = new SocketThread();
+        thread.start();
 
 
+    } // setVariable()
 
-    }
+
 
     public void setView() {
-
 
 // 채팅 상대 검색하는 액티비티 추가 예정.
         addChatBtn.setOnClickListener(new View.OnClickListener() {
@@ -170,6 +187,90 @@ public class Fragment_Dm extends Fragment {
             }
         });
 
+
+    } // setView()
+
+
+    // --------------------------------------------------------------------------------------
+
+    class SocketThread extends Thread {
+
+        public void run() {
+
+            try{
+
+                InetAddress inetAddress = InetAddress.getByName(ip);
+                socket = new Socket(inetAddress, port);
+                printWriter = new PrintWriter(socket.getOutputStream());
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                LoginPrintWriterThread thread = new LoginPrintWriterThread();
+                thread.start();
+
+                while (true) {
+
+                    String readLine = bufferedReader.readLine();
+
+                    if (readLine != null) {
+                        Log.d(TAG, "readLine : " + readLine);
+                        handler.post(new messageUpdate());
+                    }
+
+                }
+
+            } catch (IOException e) {
+                Log.d(TAG, "exception : " + e);
+                e.printStackTrace();
+            }
+
+        }
+
+    } // SocketThread
+
+
+    class messageUpdate implements Runnable {
+
+        public void run() {
+
+            getRoom(currentNickname);
+
+        }
+    }
+
+    class LoginPrintWriterThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            try {
+                printWriter.println(currentNickname + "↖" + "ⓐloginRoomⓐ");
+                printWriter.flush();
+                Log.d(TAG, "LoginPrintWriter : 실행 완료");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    class LogoutPrintWriterThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            try {
+
+                printWriter.println(currentNickname + "↖" + "ⓐlogoutRoomⓐ");
+                printWriter.flush();
+                Log.d(TAG, "LogoutPrintWriter : 실행 완료");
+
+                socket.close();
+                Log.d(TAG, "onStop : logout & socket.close()");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
