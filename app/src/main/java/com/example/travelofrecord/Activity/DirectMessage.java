@@ -344,6 +344,7 @@ public class DirectMessage extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             if (arrayList.size()>0) {
                 chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+//                chatRecyclerView.scrollToPosition(arrayList.size()-1);
             }
 
         } // run()
@@ -428,7 +429,8 @@ public class DirectMessage extends AppCompatActivity {
                         }
 
                         adapter.notifyDataSetChanged();
-                        chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+//                        chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+                        chatRecyclerView.scrollToPosition(arrayList.size()-1);
 
                     }
 

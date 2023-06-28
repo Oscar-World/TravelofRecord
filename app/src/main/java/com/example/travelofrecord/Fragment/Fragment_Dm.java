@@ -95,13 +95,14 @@ public class Fragment_Dm extends Fragment {
 
         setVariable();
         setView();
-        getRoom(currentNickname);
+
 
     }
     @Override
     public void onStart() {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
+        getRoom(currentNickname);
     }
     @Override
     public void onResume() {
@@ -167,6 +168,7 @@ public class Fragment_Dm extends Fragment {
             Log.d(TAG, "getArguments : null");
         }
 
+        handler = new Handler();
         SocketThread thread = new SocketThread();
         thread.start();
 
@@ -280,6 +282,8 @@ public class Fragment_Dm extends Fragment {
 
     public void getRoom(String nickname) {
 
+        arrayList.clear();
+
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<ArrayList<Chat>> call = apiInterface.getRoom(nickname);
         call.enqueue(new Callback<ArrayList<Chat>>() {
@@ -312,6 +316,7 @@ public class Fragment_Dm extends Fragment {
                         }
 
                         Chat chat = new Chat(roomName, message, dateMessage, notReadMessage);
+
                         arrayList.add(chat);
 
                         } // for()
