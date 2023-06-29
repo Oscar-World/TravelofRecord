@@ -1,5 +1,10 @@
 package com.example.travelofrecord.Activity;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -24,6 +29,13 @@ import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 import com.example.travelofrecord.Data.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.kakao.sdk.user.UserApiClient;
 
 import retrofit2.Call;
@@ -68,6 +80,14 @@ public class Login extends AppCompatActivity {
 
     int networkStatus;
 
+    ActivityResultLauncher<Intent> launcher;
+
+    GoogleSignInOptions gso;
+    GoogleSignInClient googleSignInClient;
+    GoogleSignInAccount account;
+    Task<GoogleSignInAccount> task;
+    String googleEmail;
+
 
     // 갤러리 접근 권한
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -100,6 +120,31 @@ public class Login extends AppCompatActivity {
         setView();
 
         verifyStoragePermissions(Login.this);
+
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                Log.d(TAG, "onActivityResult : 대기");
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Log.d(TAG, "onActivityResult : ok");
+                    task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+
+                    try {
+
+                        account = task.getResult(ApiException.class);
+                        googleEmail = account.getEmail();
+
+                        googleLogin(googleEmail, "");
+
+                    } catch (ApiException e) {
+                        Log.d(TAG, "onActivityResult Exception : " + e);
+                    }
+
+                }
+
+            }
+        });
 
     }
 
@@ -187,6 +232,14 @@ public class Login extends AppCompatActivity {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
+                    gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestEmail()
+                            .build();
+
+                    googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
+
+                    Intent i = googleSignInClient.getSignInIntent();
+                    launcher.launch(i);
 
 
                 }else {
@@ -202,7 +255,7 @@ public class Login extends AppCompatActivity {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
-
+                    Toast.makeText(getApplicationContext(), "서비스 준비중입니다.", Toast.LENGTH_SHORT).show();
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -218,8 +271,11 @@ public class Login extends AppCompatActivity {
             }
         });
 
+
+
     }  // onStart()
 
+    
 
     public void kakao_Dialog() {
 
@@ -310,7 +366,67 @@ public class Login extends AppCompatActivity {
         });
         dlg.show();
 
+    } // kakaoDialog()
+
+
+    public void googleLogin(String id, String pw) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getLoginInfo(id,pw);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "googleLogin - onResponse isSuccessful");
+
+                    String rpCode = response.body().getResponse();
+
+                    if (rpCode.equals("noId")) {
+
+                        Intent i = new Intent(getApplicationContext(), Signup.class);
+                        i.putExtra("googleId", googleEmail);
+                        startActivity(i);
+                        finish();
+
+                    } else if (rpCode.equals("ok")) {
+
+                        Toast.makeText(getApplicationContext(),"환영합니다!",Toast.LENGTH_SHORT).show();
+
+                        user_type = response.body().getType();
+                        user_id = response.body().getId();
+                        user_pw = response.body().getPw();
+                        user_phone = response.body().getPhone();
+                        user_nickname = response.body().getNickname();
+                        user_image = response.body().getImage();
+                        user_memo = response.body().getMemo();
+
+                        editor.putString("loginType", user_type);
+                        editor.putString("id", user_id);
+                        editor.putString("nickname", user_nickname);
+                        editor.putString("image", user_image);
+                        editor.putString("memo", user_memo);
+                        editor.commit();
+                        Intent i = new Intent(Login.this, Home.class);
+                        startActivity(i);
+                        finish();
+
+                    }
+
+                } else {
+                    Log.d(TAG, "googleLogin - onResponse isFailure");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "googleLogin - onFailure");
+            }
+        });
+
     }
+
 
     // ▼ DB 로그인 정보 확인 ▼
     public void getLogin(String id, String pw) {
@@ -347,6 +463,7 @@ public class Login extends AppCompatActivity {
                     Log.d(TAG, "서버에서 전달 받은 코드 - 타입 : " + user_type + "\n아이디 : " + user_id + "\n비번 : "
                             + user_pw + "\n전화번호 : " + user_phone + "\n닉네임 : " + user_nickname + "\n이미지 : " + user_image);
 
+                    editor.putString("loginType", user_type);
                     editor.putString("id", user_id);
                     editor.putString("nickname", user_nickname);
                     editor.putString("image", user_image);
@@ -403,6 +520,7 @@ public class Login extends AppCompatActivity {
 
                         Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
 
+                        editor.putString("loginType", user_type);
                         editor.putString("id", kakaoId);
                         editor.putString("nickname", user_nickname);
                         editor.putString("image", kakaoImage);

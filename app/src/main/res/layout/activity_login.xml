@@ -189,6 +189,7 @@
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/google" />
 
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView

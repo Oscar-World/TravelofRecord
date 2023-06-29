@@ -102,7 +102,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         Intent i = new Intent(getApplicationContext(), DirectMessage.class);
         i.putExtra("postNickname", title);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0, i,PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0, i,PendingIntent.FLAG_MUTABLE);
 
         builder.setSmallIcon(R.drawable.dm)
                 .setContentTitle(title)

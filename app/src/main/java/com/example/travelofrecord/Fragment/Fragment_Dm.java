@@ -164,7 +164,7 @@ public class Fragment_Dm extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         currentNickname = sharedPreferences.getString("nickname", "");
 
-        bundle = getArguments();
+//        bundle = getArguments();
 
 //        try {
 //

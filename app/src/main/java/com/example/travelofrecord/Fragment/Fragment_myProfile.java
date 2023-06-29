@@ -51,6 +51,11 @@ import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
 import com.example.travelofrecord.Data.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.kakao.sdk.user.UserApiClient;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.geometry.LatLngBounds;
@@ -66,6 +71,7 @@ import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -112,6 +118,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     String edit_memo;
 
+    String loginType;
     String user_id;
     String user_nickname;
     String user_memo;
@@ -149,6 +156,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     MapView mapView;
     NaverMap naverMap;
+
+    GoogleSignInOptions gso;
+    GoogleSignInClient googleSignInClient;
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -297,6 +307,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
 
+        loginType = sharedPreferences.getString("loginType", "");
         user_id = sharedPreferences.getString("id","");
         user_nickname = sharedPreferences.getString("nickname", "");
         user_image = sharedPreferences.getString("image", "");
@@ -428,18 +439,36 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             public void onClick(View view) {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    Log.d(TAG, "로그아웃 : " + loginType);
+                    if (loginType.equals("Kakao")) {
 
-                    UserApiClient.getInstance().unlink(error -> {
-                        if (error != null) {
-                            Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
-                        }else{
-                            Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
-                        }
-                        return null;
-                    });
+                        UserApiClient.getInstance().unlink(error -> {
+                            if (error != null) {
+                                Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
+                            }else{
+                                Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
+                            }
+                            return null;
+                        });
 
-                    editor_Kakao.clear();
-                    editor_Kakao.commit();
+                        editor_Kakao.clear();
+                        editor_Kakao.commit();
+
+                    } else if (loginType.equals("Google")) {
+
+                        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
+
+                        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
+
+                        googleSignInClient.signOut().addOnCompleteListener(requireActivity(), new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(getActivity(), "구글 로그아웃 완료", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+
 
                     editor.clear();
                     editor.commit();
@@ -555,6 +584,12 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     } // setView()
 
+
+    public void method() {
+
+
+
+    }
 
     // ---------------------------------------------------------------------------------------------
 

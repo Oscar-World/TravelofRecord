@@ -113,6 +113,9 @@ public class Signup extends AppCompatActivity {
     String kakaoId;
     String kakaoImage;
 
+    String googleId;
+    String naverId;
+
     Pattern pattern_id;
     Matcher matcher_id;
 
@@ -185,9 +188,11 @@ public class Signup extends AppCompatActivity {
         Intent i = getIntent();
         kakaoId = i.getStringExtra("kakaoId");
         kakaoImage = i.getStringExtra("kakaoImage");
+        googleId = i.getStringExtra("googleId");
+        naverId = i.getStringExtra("naverId");
 
         if (kakaoId != null) {
-            Log.d(TAG, "인텐트 있음 : " + kakaoId);
+            Log.d(TAG, "카카오 로그인 : " + kakaoId);
 
             backBtn_2.setVisibility(View.INVISIBLE);
             frameLayout_1.setVisibility(View.INVISIBLE);
@@ -200,6 +205,20 @@ public class Signup extends AppCompatActivity {
             imagePath = kakaoImage;
 
             infoDlg();
+
+        } else if (googleId != null) {
+            Log.d(TAG, "구글 로그인 : " + googleId);
+
+            backBtn_2.setVisibility(View.GONE);
+            frameLayout_1.setVisibility(View.GONE);
+            frameLayout_2.setVisibility(View.VISIBLE);
+
+        } else if (naverId != null) {
+            Log.d(TAG, "네이버 로그인 : " + naverId);
+
+            backBtn_2.setVisibility(View.GONE);
+            frameLayout_1.setVisibility(View.GONE);
+            frameLayout_2.setVisibility(View.VISIBLE);
 
         } else {
             Log.d(TAG, "인텐트 없음 : " + kakaoId);
@@ -544,6 +563,16 @@ public class Signup extends AppCompatActivity {
                         if (signupCheck2()) {
                             login_Type = "Kakao";
                             getSignup(login_Type,kakaoId,"",edit_phone,edit_nickname,imagePath,fcmToken);
+                        }
+                    } else if (googleId != null) {
+                        if (signupCheck2()) {
+                            login_Type = "Google";
+                            getSignup(login_Type,googleId,"",edit_phone,edit_nickname,imagePath,fcmToken);
+                        }
+                    } else if (naverId != null) {
+                        if (signupCheck2()) {
+                            login_Type = "Naver";
+                            getSignup(login_Type,naverId,"",edit_phone,edit_nickname,imagePath,fcmToken);
                         }
                     } else {
                         if (signupCheck()) {
@@ -1015,6 +1044,7 @@ public class Signup extends AppCompatActivity {
 
 //                    자동로그인 기능 활성화 시 주석 해제. (회원가입 > 메인화면)
 
+                    editor.putString("loginType", loginType);
                     editor.putString("id", id);
                     editor.putString("nickname", nickname);
                     editor.putString("image", image);
