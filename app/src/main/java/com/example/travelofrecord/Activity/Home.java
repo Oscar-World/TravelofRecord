@@ -24,6 +24,9 @@ import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -197,6 +200,19 @@ public class Home extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String token) {
+
+                Log.d(TAG, "토큰 확인 성공 : " + token);
+                editor.putString("fcmToken", token);
+                editor.commit();
+
+            }
+        });
+
         sharedInfo = sharedPreferences.getString("id","");
         currentNickname = sharedPreferences.getString("nickname","");
         fcmToken = sharedPreferences.getString("fcmToken","");
