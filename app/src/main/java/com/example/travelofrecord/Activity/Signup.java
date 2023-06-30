@@ -213,12 +213,16 @@ public class Signup extends AppCompatActivity {
             frameLayout_1.setVisibility(View.GONE);
             frameLayout_2.setVisibility(View.VISIBLE);
 
+            infoDlg();
+
         } else if (naverId != null) {
             Log.d(TAG, "네이버 로그인 : " + naverId);
 
             backBtn_2.setVisibility(View.GONE);
             frameLayout_1.setVisibility(View.GONE);
             frameLayout_2.setVisibility(View.VISIBLE);
+
+            infoDlg();
 
         } else {
             Log.d(TAG, "인텐트 없음 : " + kakaoId);
@@ -820,7 +824,7 @@ public class Signup extends AppCompatActivity {
     public void infoDlg() {
         AlertDialog.Builder reset = new AlertDialog.Builder(Signup.this);
         reset.setTitle("추가 정보 수집");
-        reset.setMessage("이 앱에서는 한 사용자의 다중 계정 사용 방지를 위해 휴대폰 인증을 진행합니다.");
+        reset.setMessage("본 앱에서는 한 사용자의 다중 계정 사용 방지를 위해 휴대폰 인증을 진행합니다.");
         reset.setPositiveButton("확인",new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which) {
             }

@@ -214,6 +214,11 @@
             android:backgroundTint="@color/none"
             app:srcCompat="@drawable/naver" />
 
+<!--        <com.navercorp.nid.oauth.view.NidOAuthLoginButton-->
+<!--            android:id="@+id/buttonOAuthLoginImg"-->
+<!--            android:layout_width="320dp"-->
+<!--            android:layout_height="42dp" />-->
+
     </androidx.cardview.widget.CardView>
 
 

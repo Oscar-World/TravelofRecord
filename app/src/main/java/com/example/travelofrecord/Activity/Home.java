@@ -120,7 +120,6 @@ public class Home extends AppCompatActivity {
 
         setVariable();
         setView();
-        updateFcmToken(currentNickname, fcmToken);
 
         Log.d(TAG, "쉐어드 정보 : " + sharedInfo);
         networkStatus = NetworkStatus.getConnectivityStatus(this);
@@ -209,6 +208,8 @@ public class Home extends AppCompatActivity {
                 Log.d(TAG, "토큰 확인 성공 : " + token);
                 editor.putString("fcmToken", token);
                 editor.commit();
+
+                updateFcmToken(currentNickname, fcmToken);
 
             }
         });

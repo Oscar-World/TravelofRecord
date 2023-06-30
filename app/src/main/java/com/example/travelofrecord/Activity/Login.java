@@ -37,6 +37,11 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.kakao.sdk.user.UserApiClient;
+import com.navercorp.nid.NaverIdLoginSDK;
+import com.navercorp.nid.oauth.NidOAuthLogin;
+import com.navercorp.nid.oauth.OAuthLoginCallback;
+import com.navercorp.nid.profile.NidProfileCallback;
+import com.navercorp.nid.profile.data.NidProfileResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -80,13 +85,18 @@ public class Login extends AppCompatActivity {
 
     int networkStatus;
 
-    ActivityResultLauncher<Intent> launcher;
+    ActivityResultLauncher<Intent> launcher_Google;
 
     GoogleSignInOptions gso;
     GoogleSignInClient googleSignInClient;
     GoogleSignInAccount account;
     Task<GoogleSignInAccount> task;
     String googleEmail;
+    String naverEmail;
+
+    ActivityResultLauncher<Intent> launcher_Naver;
+    NaverIdLoginSDK naverLoginSDK;
+    NidOAuthLogin nidOAuthLogin;
 
 
     // 갤러리 접근 권한
@@ -121,13 +131,12 @@ public class Login extends AppCompatActivity {
 
         verifyStoragePermissions(Login.this);
 
-        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
+        launcher_Google = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
-                Log.d(TAG, "onActivityResult : 대기");
+
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    Log.d(TAG, "onActivityResult : ok");
+                    Log.d(TAG, "googleLogin - onActivityResult : ok");
                     task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
 
                     try {
@@ -138,10 +147,59 @@ public class Login extends AppCompatActivity {
                         googleLogin(googleEmail, "");
 
                     } catch (ApiException e) {
-                        Log.d(TAG, "onActivityResult Exception : " + e);
+                        Log.d(TAG, "googleLogin - onActivityResult Exception : " + e);
                     }
 
+                } else {
+                    Log.d(TAG, "googleLogin - onActivityResult : fail");
                 }
+
+            }
+        });
+
+        launcher_Naver = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Log.d(TAG, "naverLogin - onActivityResult: ok");
+
+                    String naverToken = naverLoginSDK.getAccessToken();
+                    Log.d(TAG, "launcher naverToken : " + naverToken);
+
+                    nidOAuthLogin.callProfileApi(new NidProfileCallback<NidProfileResponse>() {
+                        @Override
+                        public void onSuccess(NidProfileResponse nidProfileResponse) {
+
+                            String email = nidProfileResponse.getProfile().getEmail();
+                            Log.d(TAG, "onSuccess : " + nidProfileResponse.getProfile().toString());
+
+                            naverEmail = email;
+
+                            naverLogin(naverEmail, "");
+
+                        }
+                        @Override
+                        public void onFailure(int i, @NonNull String s) {
+                            Log.d(TAG, "onFailure : " + i);
+                            Log.d(TAG, "onFailure : " + s);
+                        }
+                        @Override
+                        public void onError(int i, @NonNull String s) {
+
+                            Log.d(TAG, "onError : " + i);
+                            Log.d(TAG, "onError : " + s);
+                            onFailure(i, s);
+                        }
+                    });
+
+
+                } else {
+                    Log.d(TAG, "naverLogin - onActivityResult: fail");
+                    Log.d(TAG, "Error Code: " + naverLoginSDK.getLastErrorCode().toString());
+                    Log.d(TAG, "Error Description : " + naverLoginSDK.getLastErrorDescription());
+                }
+
 
             }
         });
@@ -239,8 +297,7 @@ public class Login extends AppCompatActivity {
                     googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
 
                     Intent i = googleSignInClient.getSignInIntent();
-                    launcher.launch(i);
-
+                    launcher_Google.launch(i);
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -255,8 +312,26 @@ public class Login extends AppCompatActivity {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
-                    Toast.makeText(getApplicationContext(), "서비스 준비중입니다.", Toast.LENGTH_SHORT).show();
+                    naverLoginSDK.authenticate(getApplicationContext(), launcher_Naver);
 
+//                    nidOAuthLogin.callDeleteTokenApi(getApplicationContext(), new OAuthLoginCallback() {
+//                        @Override
+//                        public void onSuccess() {
+//                            Log.d(TAG, "onSuccess: DeleteToken");
+//                        }
+//
+//                        @Override
+//                        public void onFailure(int i, @NonNull String s) {
+//                            Log.d(TAG, "onFailure : DeleteToken");
+//                        }
+//
+//                        @Override
+//                        public void onError(int i, @NonNull String s) {
+//                            Log.d(TAG, "onError : DeleteToken");
+//                        }
+//                    });
+
+                    Log.d(TAG, "onClick");
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -425,7 +500,66 @@ public class Login extends AppCompatActivity {
             }
         });
 
-    }
+    } // googleLogin()
+
+    public void naverLogin(String id, String pw) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getLoginInfo(id,pw);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "naverLogin - onResponse isSuccessful");
+
+                    String rpCode = response.body().getResponse();
+                    Log.d(TAG, "naverLogin - onResponse : " + rpCode);
+
+                    if (rpCode.equals("noId")) {
+
+                        Intent i = new Intent(getApplicationContext(), Signup.class);
+                        i.putExtra("naverId", naverEmail);
+                        startActivity(i);
+                        finish();
+
+                    } else if (rpCode.equals("ok")) {
+
+                        Toast.makeText(getApplicationContext(),"환영합니다!",Toast.LENGTH_SHORT).show();
+
+                        user_type = response.body().getType();
+                        user_id = response.body().getId();
+                        user_pw = response.body().getPw();
+                        user_phone = response.body().getPhone();
+                        user_nickname = response.body().getNickname();
+                        user_image = response.body().getImage();
+                        user_memo = response.body().getMemo();
+
+                        editor.putString("loginType", user_type);
+                        editor.putString("id", user_id);
+                        editor.putString("nickname", user_nickname);
+                        editor.putString("image", user_image);
+                        editor.putString("memo", user_memo);
+                        editor.commit();
+                        Intent i = new Intent(Login.this, Home.class);
+                        startActivity(i);
+                        finish();
+
+                    }
+
+                } else {
+                    Log.d(TAG, "naverLogin - onResponse isFailure");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "naverLogin - onFailure");
+            }
+        });
+
+    } // naverLogin()
 
 
     // ▼ DB 로그인 정보 확인 ▼
@@ -561,6 +695,13 @@ public class Login extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        naverLoginSDK = NaverIdLoginSDK.INSTANCE;
+        naverLoginSDK.initialize(getApplicationContext(),
+                getString(R.string.naver_client_id),
+                getString(R.string.naver_client_secret),
+                getString(R.string.naver_client_name));
+        nidOAuthLogin = new NidOAuthLogin();
 
     }  // setView()
 

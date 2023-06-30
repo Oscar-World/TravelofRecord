@@ -69,6 +69,9 @@ import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
+import com.navercorp.nid.NaverIdLoginSDK;
+import com.navercorp.nid.oauth.NidOAuthLogin;
+import com.navercorp.nid.oauth.OAuthLoginCallback;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -159,6 +162,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     GoogleSignInOptions gso;
     GoogleSignInClient googleSignInClient;
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -439,7 +443,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             public void onClick(View view) {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
                     Log.d(TAG, "로그아웃 : " + loginType);
+
                     if (loginType.equals("Kakao")) {
 
                         UserApiClient.getInstance().unlink(error -> {
@@ -467,16 +473,40 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                             }
                         });
 
-                    }
+                    } else if (loginType.equals("Naver")) {
 
+                        NaverIdLoginSDK naverLoginSDK = NaverIdLoginSDK.INSTANCE;
+                        naverLoginSDK.initialize(requireActivity(),
+                                getString(R.string.naver_client_id),
+                                getString(R.string.naver_client_secret),
+                                getString(R.string.naver_client_name));
+
+                        NidOAuthLogin nidOAuthLogin = new NidOAuthLogin();
+
+                        nidOAuthLogin.callDeleteTokenApi(requireActivity(), new OAuthLoginCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d(TAG, "onSuccess: DeleteToken");
+                            }
+
+                            @Override
+                            public void onFailure(int i, @NonNull String s) {
+                                Log.d(TAG, "onFailure: DeleteToken");
+                            }
+
+                            @Override
+                            public void onError(int i, @NonNull String s) {
+                                Log.d(TAG, "onError: DeleteToken");
+                            }
+                        });
+
+
+                    }
 
                     editor.clear();
                     editor.commit();
 
-                    Intent i = new Intent(getActivity(), Start.class);
-                    startActivity(i);
-
-                    getActivity().finish();
+                    updateToken(user_id, null);
 
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -860,6 +890,39 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
     }  // deleteUser()
+
+
+    public void updateToken(String nickname, String fcmToken) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.updateFcmToken(nickname, fcmToken);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "updateFcmToken - onResponse isSuccessful");
+
+                    String rpCode = response.body();
+                    Log.d(TAG, "rpCode: " + rpCode);
+
+                    Intent i = new Intent(getActivity(), Start.class);
+                    startActivity(i);
+
+                    getActivity().finish();
+
+                } else {
+                    Log.d(TAG, "updateFcmToken - onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "updateFcmToken - onFailure: " + t);
+            }
+        });
+
+    }
+
 
     //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
     String getRealPathFromUri(Uri uri){
