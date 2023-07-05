@@ -113,9 +113,12 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
             if (item.getNotReadMessage() == 0) {
                 notReadText.setVisibility(View.GONE);
-            } else {
+            } else if (item.getNotReadMessage() > 0){
                 notReadText.setVisibility(View.VISIBLE);
                 notReadText.setText(String.valueOf(item.getNotReadMessage()));
+            } else if (item.getNotReadMessage() > 100) {
+                notReadText.setVisibility(View.VISIBLE);
+                notReadText.setText("100+");
             }
 
             chatRoomLayout.setOnClickListener(new View.OnClickListener() {
