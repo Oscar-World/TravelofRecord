@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -38,8 +39,17 @@ import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -173,6 +183,8 @@ public class Signup extends AppCompatActivity {
     String imagePath;
     File profile_Imagefile;
 
+    FirebaseAuth auth;
+    String smsCode;
 
 
     @Override
@@ -230,6 +242,68 @@ public class Signup extends AppCompatActivity {
 
 
     }
+
+
+    public void sendSms(String phoneNumber) {
+
+//        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, Find_UserInfo.class), PendingIntent.FLAG_MUTABLE);
+//
+//        SmsManager smsManager = SmsManager.getDefault();
+//        smsManager.sendTextMessage(phoneNumber, null, smsMessage, pi, null);
+//
+//        Toast.makeText(this, "전송 완료", Toast.LENGTH_SHORT).show();
+        auth = FirebaseAuth.getInstance();
+
+        PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+
+                Log.d(TAG, "onVerificationCompleted: " + phoneAuthCredential.getSmsCode());
+                smsCode = phoneAuthCredential.getSmsCode();
+
+            }
+            @Override
+            public void onVerificationFailed(@NonNull FirebaseException e) {
+
+                Log.d(TAG, "onVerificationFailed: " + e);
+
+                if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    Log.d(TAG, "onVerificationFailed : 잘못된 요청");
+                } else if (e instanceof FirebaseTooManyRequestsException) {
+                    Log.d(TAG, "onVerificationFailed : sms 할당량 초과");
+                } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
+                    Log.d(TAG, "onVerificationFailed : 확인된 reCAPTCHA 없음");
+                }
+
+            }
+
+            @Override
+            public void onCodeSent(@NonNull String verificationId,
+                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
+
+                Log.d(TAG, "onCodeSent:" + verificationId);
+                String mVerificationId = verificationId;
+                String mResendToken = token.toString();
+
+                Log.d(TAG, "onCodeSent - token : " + mResendToken);
+            }
+
+        };
+
+        auth = FirebaseAuth.getInstance();
+        auth.setLanguageCode("ko");
+
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(auth)
+                        .setPhoneNumber(phoneNumber)
+                        .setTimeout(120L, TimeUnit.SECONDS)
+                        .setActivity(this)
+                        .setCallbacks(callbacks)
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+
+    } // smsSend()
+
 
     @Override
     protected void onStart(){
@@ -668,7 +742,11 @@ public class Signup extends AppCompatActivity {
 
                         smsCheckNumber = 1;
 
-                        Log.d(TAG, "smsCheckNumber : " + smsCheckNumber);
+                        String phoneNum = "+82" + edit_phone.substring(1,edit_phone.length());
+                        Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
+
+                        sendSms(phoneNum);
+
 
                     }
 
@@ -702,14 +780,16 @@ public class Signup extends AppCompatActivity {
 
                     edit_phoneCheck = signup_phoneCheck.getText().toString();
 
-                    if (edit_phoneCheck.equals("7777")) {
+                    if (edit_phoneCheck.equals(smsCode)) {
                         phone_SmsOk.setVisibility(View.VISIBLE);
                         nextBlock_2.setVisibility(View.INVISIBLE);
                         nextBtn_2.setVisibility(View.VISIBLE);
+                        auth.signOut();
                     } else {
                         phone_SmsError.setVisibility(View.VISIBLE);
                         smsSend_Btn.setVisibility(View.VISIBLE);
                         smsSend_Block.setVisibility(View.INVISIBLE);
+                        auth.signOut();
                     }
 
                 }else {
@@ -848,7 +928,7 @@ public class Signup extends AppCompatActivity {
     public class SmsTimeThread extends Thread {
 
         public void run() {
-            smsTime = 180;
+            smsTime = 120;
 
             while (smsTime >= 0) {
                 smsTime_min = smsTime / 60;

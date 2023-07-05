@@ -316,6 +316,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         user_nickname = sharedPreferences.getString("nickname", "");
         user_image = sharedPreferences.getString("image", "");
         user_memo = sharedPreferences.getString("memo", "");
+        Log.d(TAG, "setVariable: " + user_image);
 
         drawerLayout = v.findViewById(R.id.myProfile_drawerLayout);
         drawerView = v.findViewById(R.id.myProfile_drawer);
@@ -348,12 +349,13 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         }
 
         profile_nickname.setText(user_nickname);
+        Log.d(TAG, "setView userImage : " + user_image);
 
-        Glide.with(getActivity())
+        Glide.with(requireActivity())
                 .load(user_image)
                 .into(profile_Image);
 
-        Glide.with(getActivity())
+        Glide.with(requireActivity())
                 .load(user_image)
                 .into(editProfile_Image);
 
@@ -506,7 +508,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     editor.clear();
                     editor.commit();
 
-                    updateToken(user_id, null);
+                    updateToken(user_nickname, "");
 
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();

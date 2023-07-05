@@ -209,7 +209,7 @@ public class Home extends AppCompatActivity {
                 editor.putString("fcmToken", token);
                 editor.commit();
 
-                updateFcmToken(currentNickname, fcmToken);
+                updateFcmToken(currentNickname, token);
 
             }
         });

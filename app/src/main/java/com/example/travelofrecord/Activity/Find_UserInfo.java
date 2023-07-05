@@ -1,9 +1,17 @@
 package com.example.travelofrecord.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,7 +29,22 @@ import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.ActionCodeSettings;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException;
+import com.google.firebase.auth.FirebaseAuthSettings;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,14 +128,99 @@ public class Find_UserInfo extends AppCompatActivity {
 
     int networkStatus;
 
+    Button emailTestBtn;
+
+    FirebaseAuth auth;
+    String smsCode;
+
+    // 갤러리 접근 권한
+    private static final int SMS_SEND_PERMISSION = 1;
+    private static String[] PERMISSIONS = {
+            Manifest.permission.SEND_SMS
+    };
+
+    public static void verifySmsSendPermissions(Activity activity){
+
+        int SMS_PERMISSION = ActivityCompat.checkSelfPermission(activity, Manifest.permission.SEND_SMS);
+
+        if (SMS_PERMISSION != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, PERMISSIONS, SMS_SEND_PERMISSION);
+        }
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_user_info);
 
         setView();
+//        verifySmsSendPermissions(Find_UserInfo.this);
 
     }
+
+    public void sendSms(String phoneNumber) {
+
+//        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, Find_UserInfo.class), PendingIntent.FLAG_MUTABLE);
+//
+//        SmsManager smsManager = SmsManager.getDefault();
+//        smsManager.sendTextMessage(phoneNumber, null, smsMessage, pi, null);
+//
+//        Toast.makeText(this, "전송 완료", Toast.LENGTH_SHORT).show();
+        auth = FirebaseAuth.getInstance();
+
+        PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+
+                Log.d(TAG, "onVerificationCompleted: " + phoneAuthCredential.getSmsCode());
+                smsCode = phoneAuthCredential.getSmsCode();
+
+            }
+            @Override
+            public void onVerificationFailed(@NonNull FirebaseException e) {
+
+                Log.d(TAG, "onVerificationFailed: " + e);
+
+                if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    Log.d(TAG, "onVerificationFailed : 잘못된 요청");
+                } else if (e instanceof FirebaseTooManyRequestsException) {
+                    Log.d(TAG, "onVerificationFailed : sms 할당량 초과");
+                } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
+                    Log.d(TAG, "onVerificationFailed : 확인된 reCAPTCHA 없음");
+                }
+
+            }
+
+            @Override
+            public void onCodeSent(@NonNull String verificationId,
+                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
+
+                Log.d(TAG, "onCodeSent:" + verificationId);
+                String mVerificationId = verificationId;
+                String mResendToken = token.toString();
+
+                Log.d(TAG, "onCodeSent - token : " + mResendToken);
+            }
+
+        };
+
+        auth = FirebaseAuth.getInstance();
+        auth.setLanguageCode("ko");
+
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(auth)
+                        .setPhoneNumber(phoneNumber)
+                        .setTimeout(120L, TimeUnit.SECONDS)
+                        .setActivity(this)
+                        .setCallbacks(callbacks)
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+
+    }
+
+
 
     @Override
     protected void onStart(){
@@ -179,6 +287,13 @@ public class Find_UserInfo extends AppCompatActivity {
                     findId_smsTimeoutText.setVisibility(View.INVISIBLE);
 
                     smsCheckNumber = 1;
+
+                    String phoneNum = "+82" + user_phoneNum.substring(1,user_phoneNum.length());
+                    Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
+                    sendSms(phoneNum);
+
+
+
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -196,13 +311,16 @@ public class Find_UserInfo extends AppCompatActivity {
                     smsCheckNumber = 2;
                     smsTime = 0;
 
-                    if (idCheckNum_value.equals("7777")) {
+                    Log.d(TAG, "입력한 값 : " + idCheckNum_value + " / 인증번호 : " + smsCode);
+
+                    if (idCheckNum_value.equals(smsCode)) {
                         findIdFrame1.setVisibility(View.INVISIBLE);
                         findIdFrame1.startAnimation(left_out);
                         findIdFrame2.setVisibility(View.VISIBLE);
                         findIdFrame2.startAnimation(left_in);
 
                         phoneCheck(user_phoneNum);
+                        auth.signOut();
                     } else {
                         findId_smsTimeText.setVisibility(View.INVISIBLE);
                         findId_smsErrorText.setVisibility(View.VISIBLE);
@@ -213,6 +331,8 @@ public class Find_UserInfo extends AppCompatActivity {
                         findId_sendBlock.setVisibility(View.INVISIBLE);
 
                         findId_checkNum.setText("");
+
+                        auth.signOut();
                     }
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -385,6 +505,55 @@ public class Find_UserInfo extends AppCompatActivity {
             }
         });
 
+
+        emailTestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+//                ActionCodeSettings actionCodeSettings = ActionCodeSettings.newBuilder()
+//                        .setUrl("https://console.firebase.google.com")
+//                        .setHandleCodeInApp(true)
+//                        .setAndroidPackageName("com.example.travelofrecord", true, "12")
+//                        .build();
+//
+//                FirebaseAuth auth = FirebaseAuth.getInstance();
+//                auth.sendSignInLinkToEmail("rkdgjdl@naver.com", actionCodeSettings)
+//                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//
+//                                Log.d(TAG, "onComplete : Email sent");
+//
+//                                Intent i = getIntent();
+//                                String emailLink = i.getData().toString();
+//
+//                                if (auth.isSignInWithEmailLink(emailLink)) {
+//
+//                                    String email = "rkdgdjl@naver.com";
+//
+//                                    auth.signInWithEmailLink(email, emailLink)
+//                                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                                                @Override
+//                                                public void onComplete(@NonNull Task<AuthResult> task) {
+//
+//                                                    Log.d(TAG, "onComplete: success emailLink");
+//
+//                                                }
+//                                            });
+//
+//                                }
+//
+//                            }
+//                        });
+
+//                sendSms("+821082435284");
+
+
+
+            }
+        });
+
+
     } // onStart()
 
 
@@ -392,13 +561,13 @@ public class Find_UserInfo extends AppCompatActivity {
     public class SmsTimeThread extends Thread {
 
         public void run() {
-            smsTime = 180;
+            smsTime = 120;
 
             while (smsTime >= 0) {
                 smsTime_min = smsTime / 60;
                 smsTime_sec = smsTime % 60;
-                Log.d(TAG, "남은 시간 : " + smsTime);
-                Log.d(TAG, "표시 : " + setTime);
+//                Log.d(TAG, "남은 시간 : " + smsTime);
+//                Log.d(TAG, "표시 : " + setTime);
 
                 if (smsTime_sec < 10) {
                     setTime = "남은시간 : 0" + smsTime_min + ":0" + smsTime_sec;
@@ -627,6 +796,9 @@ public class Find_UserInfo extends AppCompatActivity {
         left_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftin);
         right_out = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_rightout);
         right_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_rightin);
+
+        emailTestBtn = findViewById(R.id.emailTest_Btn);
+
 
     }
 

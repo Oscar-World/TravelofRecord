@@ -4,7 +4,9 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -107,6 +109,9 @@ public class Fragment_add extends Fragment {
     InputMethodManager imm;
     InputMethodManager immhide;
 
+    SharedPreferences writeShared;
+    SharedPreferences.Editor writeEditor;
+
     // 위치 정보 권한 상수
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -156,6 +161,7 @@ public class Fragment_add extends Fragment {
                     }
                 });
 
+
     } // onCreate()
 
 
@@ -175,8 +181,26 @@ public class Fragment_add extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출");
+
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d(TAG, "onViewStateRestored() 호출");
+
         postImage = null;
         writing_Edit.setText("");
+        
+        String tempWriteCheck = writeShared.getString("write", "");
+        String tempImageCheck = writeShared.getString("image", "");
+
+        Log.d(TAG, "onViewCreated : " + tempWriteCheck + " / " + tempImageCheck);
+
+        if (!tempWriteCheck.equals("") | !tempImageCheck.equals("")) {
+            tempDialog();
+        }
+
     }
 
     @Override
@@ -221,6 +245,8 @@ public class Fragment_add extends Fragment {
         });
 
 
+
+
     } // onStart()
 
 
@@ -247,6 +273,14 @@ public class Fragment_add extends Fragment {
     public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출");
         super.onDestroyView();
+
+        String tempImage = postImage;
+        String tempWrite = writing_Edit.getText().toString();
+
+        writeEditor.putString("image", tempImage);
+        writeEditor.putString("write", tempWrite);
+        writeEditor.commit();
+
     }
 
     @Override
@@ -270,6 +304,7 @@ public class Fragment_add extends Fragment {
         writing_Layout = v.findViewById(R.id.writing_FrameLayout);
         writingCount_Text = v.findViewById(R.id.writingCount_Text);
 
+
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
 
@@ -277,6 +312,8 @@ public class Fragment_add extends Fragment {
         editor = sharedPreferences.edit();
         sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
         editor_Kakao = sharedPreferences_Kakao.edit();
+        writeShared = this.getActivity().getSharedPreferences("임시저장", MODE_PRIVATE);
+        writeEditor = writeShared.edit();
 
         nickname = sharedPreferences.getString("nickname", "");
         profileImage = sharedPreferences.getString("image", "");
@@ -338,6 +375,8 @@ public class Fragment_add extends Fragment {
                 } else if (writing.equals("")) {
                     Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
                 } else {
+                    writeEditor.clear();
+                    writeEditor.commit();
                     insertFeed(nickname, profileImage, heart, commentNum, currentLocation, postImage, writing, dataCreated);
                 }
 
@@ -378,6 +417,45 @@ public class Fragment_add extends Fragment {
 
 
     // --------------------------------------------------------------------------------------------
+
+
+    public void tempDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("작성중인 게시글이 존재합니다.")
+                .setMessage("이어서 작성하시겠습니까?")
+                .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        String tempWrite = writeShared.getString("write","");
+                        String tempImage = writeShared.getString("image", "");
+
+                        if (!tempWrite.equals("")) {
+                            writing_Edit.setText(tempWrite);
+                        }
+                        if (!tempImage.equals("")) {
+                            Glide.with(getActivity())
+                                    .load(tempImage)
+                                    .into(postImage_Iv);
+                        }
+
+
+                    }
+                })
+                .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        writeEditor.clear();
+                        writeEditor.commit();
+
+                    }
+                })
+                .create()
+                .show();
+
+    }
 
 
     // 서버에 게시글 데이터 추가
