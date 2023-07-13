@@ -14,6 +14,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class ApiClient {
 
     private static final String BASE_URL = "http://3.34.246.77/";
+    public static String serverProfileImagePath = "http://3.34.246.77/profileImage/";
+    public static String serverPostImagePath = "http://3.34.246.77/postImage/";
     private static Retrofit retrofit;
 
     public static Retrofit getApiClient() {

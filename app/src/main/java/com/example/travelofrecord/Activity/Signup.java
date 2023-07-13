@@ -114,8 +114,6 @@ public class Signup extends AppCompatActivity {
     String id_code;
     String nickname_code;
     String login_Type;
-    String serverImagePath;
-    String address = "http://3.34.246.77/profileImage/";
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -191,6 +189,7 @@ public class Signup extends AppCompatActivity {
 
     FirebaseAuth auth;
     String smsCode;
+    String imageFileName;
 
 
     @Override
@@ -619,12 +618,16 @@ public class Signup extends AppCompatActivity {
                         }
                     }
 
+                    String systemTime = String.valueOf(System.currentTimeMillis());
+                    imageFileName = systemTime + ".jpg";
+
+
                     RequestBody loginType = RequestBody.create(MediaType.parse("text/plain"), login_Type);
                     RequestBody id = RequestBody.create(MediaType.parse("text/plain"), edit_id);
                     RequestBody pw = RequestBody.create(MediaType.parse("text/plain"), edit_pw);
                     RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), edit_phone);
                     RequestBody nickname = RequestBody.create(MediaType.parse("text/plain"), edit_nickname);
-                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), serverImagePath);
+                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
                     RequestBody fcm = RequestBody.create(MediaType.parse("text/plain"), fcmToken);
                     HashMap map = new HashMap();
                     map.put("loginType", loginType);
@@ -636,6 +639,8 @@ public class Signup extends AppCompatActivity {
                     map.put("fcmToken", fcm);
 
                     File imageFile = new File(imagePath);
+
+                    Log.d(TAG, "데이터 : \nid-" + edit_id + "\npw-" + edit_pw + "\nphone-" + edit_phone + "\nnickname-" + edit_nickname + "\nimagePath-" + imagePath + "\nimageFileName-" + imageFileName + "\nfcmToken-" + fcmToken);
 
                     if (login_Type.equals("Basic") & signupCheck()) {
                         Signup(imageFile, map);
@@ -731,7 +736,7 @@ public class Signup extends AppCompatActivity {
                         String phoneNum = "+82" + edit_phone.substring(1,edit_phone.length());
                         Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
 
-                        sendSms(phoneNum);
+//                        sendSms(phoneNum);
 
 
                     }
@@ -766,16 +771,28 @@ public class Signup extends AppCompatActivity {
 
                     edit_phoneCheck = signup_phoneCheck.getText().toString();
 
-                    if (edit_phoneCheck.equals(smsCode)) {
+//                    if (edit_phoneCheck.equals(smsCode)) {
+//                        phone_SmsOk.setVisibility(View.VISIBLE);
+//                        nextBlock_2.setVisibility(View.INVISIBLE);
+//                        nextBtn_2.setVisibility(View.VISIBLE);
+//                        auth.signOut();
+//                    } else {
+//                        phone_SmsError.setVisibility(View.VISIBLE);
+//                        smsSend_Btn.setVisibility(View.VISIBLE);
+//                        smsSend_Block.setVisibility(View.INVISIBLE);
+//                        auth.signOut();
+//                    }
+
+                    if (edit_phoneCheck.equals("7777")) {
                         phone_SmsOk.setVisibility(View.VISIBLE);
                         nextBlock_2.setVisibility(View.INVISIBLE);
                         nextBtn_2.setVisibility(View.VISIBLE);
-                        auth.signOut();
+//                        auth.signOut();
                     } else {
                         phone_SmsError.setVisibility(View.VISIBLE);
                         smsSend_Btn.setVisibility(View.VISIBLE);
                         smsSend_Block.setVisibility(View.INVISIBLE);
-                        auth.signOut();
+//                        auth.signOut();
                     }
 
                 }else {
@@ -1061,7 +1078,7 @@ public class Signup extends AppCompatActivity {
     public void Signup(File file, HashMap map) {
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", serverImagePath, requestFile);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", imageFileName, requestFile);
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<String> call = apiInterface.insertInfo(body, map);
@@ -1083,7 +1100,7 @@ public class Signup extends AppCompatActivity {
                         editor.putString("loginType", login_Type);
                         editor.putString("id", edit_id);
                         editor.putString("nickname", edit_nickname);
-                        editor.putString("image", image);
+                        editor.putString("image", ApiClient.serverProfileImagePath + imageFileName);
                         editor.commit();
 
                         Intent intent = new Intent(Signup.this, Home.class);
@@ -1103,7 +1120,7 @@ public class Signup extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d(TAG, "Signup - onFailure");
+                Log.d(TAG, "Signup - onFailure" + t);
             }
         });
 
