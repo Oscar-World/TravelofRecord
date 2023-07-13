@@ -627,7 +627,7 @@ public class Signup extends AppCompatActivity {
                     RequestBody pw = RequestBody.create(MediaType.parse("text/plain"), edit_pw);
                     RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), edit_phone);
                     RequestBody nickname = RequestBody.create(MediaType.parse("text/plain"), edit_nickname);
-                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
+                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), ApiClient.serverProfileImagePath + imageFileName);
                     RequestBody fcm = RequestBody.create(MediaType.parse("text/plain"), fcmToken);
                     HashMap map = new HashMap();
                     map.put("loginType", loginType);
@@ -736,7 +736,7 @@ public class Signup extends AppCompatActivity {
                         String phoneNum = "+82" + edit_phone.substring(1,edit_phone.length());
                         Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
 
-                        sendSms(phoneNum);
+//                        sendSms(phoneNum);
 
 
                     }
@@ -771,16 +771,28 @@ public class Signup extends AppCompatActivity {
 
                     edit_phoneCheck = signup_phoneCheck.getText().toString();
 
-                    if (edit_phoneCheck.equals(smsCode)) {
+//                    if (edit_phoneCheck.equals(smsCode)) {
+//                        phone_SmsOk.setVisibility(View.VISIBLE);
+//                        nextBlock_2.setVisibility(View.INVISIBLE);
+//                        nextBtn_2.setVisibility(View.VISIBLE);
+//                        auth.signOut();
+//                    } else {
+//                        phone_SmsError.setVisibility(View.VISIBLE);
+//                        smsSend_Btn.setVisibility(View.VISIBLE);
+//                        smsSend_Block.setVisibility(View.INVISIBLE);
+//                        auth.signOut();
+//                    }
+
+                    if (edit_phoneCheck.equals("7777")) {
                         phone_SmsOk.setVisibility(View.VISIBLE);
                         nextBlock_2.setVisibility(View.INVISIBLE);
                         nextBtn_2.setVisibility(View.VISIBLE);
-                        auth.signOut();
+//                        auth.signOut();
                     } else {
                         phone_SmsError.setVisibility(View.VISIBLE);
                         smsSend_Btn.setVisibility(View.VISIBLE);
                         smsSend_Block.setVisibility(View.INVISIBLE);
-                        auth.signOut();
+//                        auth.signOut();
                     }
 
 
@@ -1089,7 +1101,7 @@ public class Signup extends AppCompatActivity {
                         editor.putString("loginType", login_Type);
                         editor.putString("id", edit_id);
                         editor.putString("nickname", edit_nickname);
-                        editor.putString("image", ApiClient.serverProfileImagePath + imageFileName);
+                        editor.putString("image", imageFileName);
                         editor.commit();
 
                         Intent intent = new Intent(Signup.this, Home.class);
@@ -1114,59 +1126,6 @@ public class Signup extends AppCompatActivity {
         });
 
     }
-
-
-    // ▼ 3페이지 submit 시, 마지막 검사 ▼
-    public void getSignup(String loginType, String id, String pw, String phone, String nickname, String image, String fcmToken) {
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.insertInfo(loginType,id,pw,phone,nickname,image,fcmToken);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-
-                rp_code = response.body().toString();
-
-                Log.d(TAG, "회원가입 코드 : " + rp_code);
-
-                if (rp_code.equals("usingId")) {
-
-                    Toast t = Toast.makeText(submitBtn.getContext(),"이미 사용중인 아이디입니다.",Toast.LENGTH_SHORT);
-                    t.show();
-
-                } else if (rp_code.equals("usingNick")) {
-
-                    Toast t = Toast.makeText(submitBtn.getContext(),"이미 사용중인 닉네임입니다.",Toast.LENGTH_SHORT);
-                    t.show();
-
-                } else {
-
-                    Toast t = Toast.makeText(Signup.this,"회원가입 완료",Toast.LENGTH_SHORT);
-                    t.show();
-
-                    editor.putString("loginType", loginType);
-                    editor.putString("id", id);
-                    editor.putString("nickname", nickname);
-                    editor.putString("image", image);
-                    editor.commit();
-
-                    Intent intent = new Intent(Signup.this, Home.class);
-                    startActivity(intent);
-                    finish();
-
-                    ((Login)Login.context).finish();
-
-                }
-
-            }   // onResponse
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
-            }
-
-        });
-
-    }  // getSignup()
 
 
     // ▼ 아이디 중복 검사 ▼

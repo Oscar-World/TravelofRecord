@@ -74,9 +74,13 @@ import com.navercorp.nid.NaverIdLoginSDK;
 import com.navercorp.nid.oauth.NidOAuthLogin;
 import com.navercorp.nid.oauth.OAuthLoginCallback;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -165,6 +169,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     GoogleSignInOptions gso;
     GoogleSignInClient googleSignInClient;
 
+    String imageFileName;
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -203,9 +209,6 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                             user_image = getRealPathFromUri(uri);
 
                             Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + user_image);
-
-                            editor.putString("image",user_image);
-                            editor.commit();
 
                         }
 
@@ -358,11 +361,15 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         Log.d(TAG, "setView userImage : " + user_image);
 
         Glide.with(requireActivity())
-                .load(user_image)
+                .load(ApiClient.serverProfileImagePath + user_image)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(profile_Image);
 
         Glide.with(requireActivity())
-                .load(user_image)
+                .load(ApiClient.serverProfileImagePath + user_image)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(editProfile_Image);
 
 
@@ -436,7 +443,21 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     photo_Btn.setVisibility(View.GONE);
                     photo_Block.setVisibility(View.VISIBLE);
 
-                    updateProfile(user_nickname,edit_memo, user_image);
+                    String systemTime = String.valueOf(System.currentTimeMillis());
+                    imageFileName = systemTime + ".jpg";
+
+                    RequestBody nickname = RequestBody.create(MediaType.parse("text/plain"), user_nickname);
+                    RequestBody memo = RequestBody.create(MediaType.parse("text/plain"), edit_memo);
+                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), ApiClient.serverProfileImagePath + imageFileName);
+                    RequestBody beforeImage = RequestBody.create(MediaType.parse("text/plain"), sharedPreferences.getString("image", ""));
+
+                    HashMap map = new HashMap();
+                    map.put("nickname", nickname);
+                    map.put("memo", memo);
+                    map.put("imagePath", image);
+                    map.put("beforeImage", beforeImage);
+                    File file = new File(user_image);
+                    updateProfile(file, map);
 
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -614,7 +635,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             public void onClick(View view) {
 
                 Intent i = new Intent(getActivity(), PhotoView.class);
-                i.putExtra("image",user_image);
+                i.putExtra("image",ApiClient.serverProfileImagePath + user_image);
                 startActivity(i);
 
             }
@@ -798,51 +819,54 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     } // getMyPost()
 
-
     // 상태 메시지, 프로필 사진 변경
-    public void updateProfile(String nickname, String memo, String image) {
+    public void updateProfile(File file, HashMap map) {
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", imageFileName, requestFile);
+
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.updateProfile(nickname, memo, image);
-        call.enqueue(new Callback<User>() {
+        Call<String> call = apiInterface.updateProfile(body, map);
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
+            public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
+                    String rpCode = response.body();
+                    Log.d(TAG, "updateProfile - onResponse isSuccessful : " + rpCode);
 
-                    user_memo = response.body().getMemo();
-                    user_image = response.body().getImage();
+                    if (rpCode.equals("uploadOk")) {
 
-                    Log.d(TAG, "수정된 메모 : " + user_memo);
-                    Log.d(TAG, "수정된 이미지 : " + user_image);
-
-                    editor.putString("memo", user_memo);
-                    editor.commit();
+                        editor.putString("memo", edit_memo);
+                        editor.putString("image", imageFileName);
+                        editor.commit();
 
 
-                    if (user_memo == null | "".equals(user_memo)) {
-                        profile_Edit.setVisibility(View.GONE);
-                        profile_memo.setVisibility(View.VISIBLE);
+                        if (edit_memo == null | "".equals(edit_memo)) {
+                            profile_Edit.setVisibility(View.GONE);
+                            profile_memo.setVisibility(View.VISIBLE);
+                        } else {
+                            profile_memo.setText(edit_memo);
+                            profile_memo.setVisibility(View.VISIBLE);
+                            profile_Edit.setVisibility(View.GONE);
+                        }
+
                     } else {
-                        profile_memo.setVisibility(View.VISIBLE);
-                        profile_memo.setText(edit_memo);
-                        profile_Edit.setVisibility(View.GONE);
+                        Toast.makeText(getActivity(), "프로필 수정 실패", Toast.LENGTH_SHORT).show();
                     }
 
 
                 } else {
-                    Log.d(TAG, "onResponse: 리스폰스 실패");
+                    Log.d(TAG, "updateProfile - onResponse isFailure");
                 }
-
-            }   // onResponse
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
             }
 
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "updateProfile - onFailure : " + t);
+            }
         });
 
-    }  // updateMemo()
+    } //updateProfile()
 
 
     // 회원 탈퇴

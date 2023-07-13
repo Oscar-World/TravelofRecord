@@ -5,6 +5,9 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -26,10 +29,13 @@ public class ApiClient {
 
         if (retrofit == null) {
 
-            Log.d("레트로핏", "getApiClient: 레트로핏 재생성");
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(50, TimeUnit.SECONDS)
+                    .readTimeout(50, TimeUnit.SECONDS).build();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .client(client)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();

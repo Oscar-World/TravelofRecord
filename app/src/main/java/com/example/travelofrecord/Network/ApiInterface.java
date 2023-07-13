@@ -22,23 +22,11 @@ import retrofit2.http.Query;
 public interface ApiInterface {
 
     // 회원가입
-
     @Multipart
     @POST("mysql_UserInfo_Insert.php")
     Call<String> insertInfo (
             @Part MultipartBody.Part uploaded_file,
             @PartMap Map<String, RequestBody> map
-    );
-
-    @GET("mysql_UserInfo_Insert.php")
-    Call<String> insertInfo (
-            @Query("loginType") String loginType,
-            @Query("id") String id,
-            @Query("password") String password,
-            @Query("phone") String phone,
-            @Query("nickname") String nickname,
-            @Query("imagePath") String imagePath,
-            @Query("fcmToken") String fcmToken
     );
 
     // 로그인
@@ -85,6 +73,13 @@ public interface ApiInterface {
             @Query("nickname") String nickname,
             @Query("memo") String memo,
             @Query("imagePath") String imagePath
+    );
+
+    @Multipart
+    @POST("mysql_UserInfo_UpdateProfile.php")
+    Call<String> updateProfile (
+            @Part MultipartBody.Part uploaded_file,
+            @PartMap Map<String, RequestBody> map
     );
 
     // 회원 탈퇴
