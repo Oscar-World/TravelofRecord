@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.Data.PostData;
@@ -79,6 +80,8 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
 
             Glide.with(context)
                     .load(item.getPostImage())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .into(proflie_PostImage);
 
             proflie_PostImage.setOnClickListener(new View.OnClickListener() {

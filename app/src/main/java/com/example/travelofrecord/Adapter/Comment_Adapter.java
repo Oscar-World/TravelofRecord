@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Activity.Profile;
 import com.example.travelofrecord.Function.GetAdress;
 import com.example.travelofrecord.Function.GetTime;
@@ -110,6 +111,8 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
             Glide.with(context)
                     .load(item.getCommentProfileImage())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .into(comment_ProfileImage);
 
             if (currentNickname.equals(item.getWhoComment())) {

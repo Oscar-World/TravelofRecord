@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Function.GetAdress;
 import com.example.travelofrecord.Activity.Home;
@@ -104,6 +105,8 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
 
             Glide.with(context)
                     .load(item.getPostImage())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .into(heart_PostImage);
 
             heart_PostImage.setOnClickListener(new View.OnClickListener() {

@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Activity.PhotoView;
 import com.example.travelofrecord.Activity.Start;
 import com.example.travelofrecord.Network.ApiClient;
@@ -189,10 +190,14 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                             Glide.with(getActivity())
                                     .load(uri)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .skipMemoryCache(true)
                                     .into(profile_Image);
 
                             Glide.with(getActivity())
                                     .load(uri)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .skipMemoryCache(true)
                                     .into(editProfile_Image);
 
                             user_image = getRealPathFromUri(uri);
