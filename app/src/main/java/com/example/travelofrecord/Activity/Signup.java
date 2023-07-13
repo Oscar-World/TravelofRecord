@@ -736,7 +736,7 @@ public class Signup extends AppCompatActivity {
                         String phoneNum = "+82" + edit_phone.substring(1,edit_phone.length());
                         Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
 
-//                        sendSms(phoneNum);
+                        sendSms(phoneNum);
 
 
                     }
@@ -771,29 +771,18 @@ public class Signup extends AppCompatActivity {
 
                     edit_phoneCheck = signup_phoneCheck.getText().toString();
 
-//                    if (edit_phoneCheck.equals(smsCode)) {
-//                        phone_SmsOk.setVisibility(View.VISIBLE);
-//                        nextBlock_2.setVisibility(View.INVISIBLE);
-//                        nextBtn_2.setVisibility(View.VISIBLE);
-//                        auth.signOut();
-//                    } else {
-//                        phone_SmsError.setVisibility(View.VISIBLE);
-//                        smsSend_Btn.setVisibility(View.VISIBLE);
-//                        smsSend_Block.setVisibility(View.INVISIBLE);
-//                        auth.signOut();
-//                    }
-
-                    if (edit_phoneCheck.equals("7777")) {
+                    if (edit_phoneCheck.equals(smsCode)) {
                         phone_SmsOk.setVisibility(View.VISIBLE);
                         nextBlock_2.setVisibility(View.INVISIBLE);
                         nextBtn_2.setVisibility(View.VISIBLE);
-//                        auth.signOut();
+                        auth.signOut();
                     } else {
                         phone_SmsError.setVisibility(View.VISIBLE);
                         smsSend_Btn.setVisibility(View.VISIBLE);
                         smsSend_Block.setVisibility(View.INVISIBLE);
-//                        auth.signOut();
+                        auth.signOut();
                     }
+
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
