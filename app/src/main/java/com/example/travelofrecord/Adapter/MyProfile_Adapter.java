@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Home;
+import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
@@ -88,7 +89,7 @@ public class MyProfile_Adapter extends RecyclerView.Adapter<MyProfile_Adapter.Vi
             Log.d(TAG, "onBind() 호출됨");
 
             Glide.with(context)
-                    .load(item.getPostImage())
+                    .load(ApiClient.serverPostImagePath + item.getPostImage())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
                     .into(proflie_PostImage);

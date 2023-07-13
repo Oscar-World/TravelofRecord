@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Function.GetAdress;
@@ -426,7 +427,9 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                     profileMemoText.setText(user_Memo);
 
                     Glide.with(getApplicationContext())
-                            .load(user_ImagePath)
+                            .load(ApiClient.serverProfileImagePath + user_ImagePath)
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(profileImage);
 
                     adapter.notifyDataSetChanged();

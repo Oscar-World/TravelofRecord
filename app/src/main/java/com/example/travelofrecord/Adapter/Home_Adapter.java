@@ -162,6 +162,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_Writing.setText(item.getWriting());
             post_DateCreated.setText(item.getDateCreated());
 
+
             post_ProfileImage.setClipToOutline(true);
 
             if (!itemView.isLaidOut()) {
@@ -180,15 +181,14 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                             post_SeeMore.setVisibility(View.VISIBLE);
                         }
 
-
                         Glide.with(context)
-                                .load(item.getProfileImage())
+                                .load(ApiClient.serverProfileImagePath + item.getProfileImage())
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .skipMemoryCache(true)
                                 .into(post_ProfileImage);
 
                         Glide.with(context)
-                                .load(item.getPostImage())
+                                .load(ApiClient.serverPostImagePath + item.getPostImage())
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .skipMemoryCache(true)
                                 .into(post_PostImage);

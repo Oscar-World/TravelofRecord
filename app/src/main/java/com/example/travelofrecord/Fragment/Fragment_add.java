@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Other.BitmapConverter;
@@ -59,7 +60,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -85,7 +90,7 @@ public class Fragment_add extends Fragment {
     String currentLocation;
     String postImage;
     String writing;
-    String dataCreated;
+    String dateCreated;
 
     ActivityResultLauncher<Intent> launcher;
 
@@ -124,6 +129,10 @@ public class Fragment_add extends Fragment {
     String latitude; // 위도
     String longitude; // 경도
 
+    String imageFileName;
+    String tempWrite;
+    String tempImage;
+
 
     @Override
     public void onAttach(Context context) {
@@ -148,12 +157,10 @@ public class Fragment_add extends Fragment {
 
                         if (result.getResultCode() == RESULT_OK) {
 
-                            Log.d(TAG, "경로! : " + photoUri);
-                            Log.d(TAG, "절대경로! : " + postImage);
-
-
                             Glide.with(getActivity())
                                     .load(postImage)
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                                     .into(postImage_Iv);
 
                         }
@@ -365,10 +372,7 @@ public class Fragment_add extends Fragment {
                     currentLocation = "someWhere";
                 }
                 writing = writing_Edit.getText().toString();
-                dataCreated = getTime.getTime().toString();
-
-                Log.d(TAG, "서버로 보낼 데이터 : 닉네임 : " + nickname + "\n프로필사진 : " + profileImage + "\n주소 : " + currentLocation +
-                        "\n업로드할사진 : " + postImage + "\n작성한글 : " + writing + "\n오늘날짜 : " + dataCreated);
+                dateCreated = getTime.getTime().toString();
 
                 if (postImage == null) {
                     Toast.makeText(getActivity(),"사진을 촬영해주세요",Toast.LENGTH_SHORT).show();
@@ -377,7 +381,35 @@ public class Fragment_add extends Fragment {
                 } else {
                     writeEditor.clear();
                     writeEditor.commit();
-                    insertFeed(nickname, profileImage, heart, commentNum, currentLocation, postImage, writing, dataCreated);
+
+                    String systemTime = String.valueOf(System.currentTimeMillis());
+                    imageFileName = systemTime + ".jpg";
+
+                    RequestBody addNickname = RequestBody.create(MediaType.parse("text/plain"), nickname);
+                    RequestBody addProfileImage = RequestBody.create(MediaType.parse("text/plain"), profileImage);
+                    RequestBody addHeart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(heart));
+                    RequestBody addCommentNum = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(commentNum));
+                    RequestBody addLocation = RequestBody.create(MediaType.parse("text/plain"), currentLocation);
+                    RequestBody addPostImage = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
+                    RequestBody addWriting = RequestBody.create(MediaType.parse("text/plain"), writing);
+                    RequestBody addDateCreated = RequestBody.create(MediaType.parse("text/plain"), dateCreated);
+
+                    HashMap map = new HashMap();
+                    map.put("nickname", addNickname);
+                    map.put("profileImage", addProfileImage);
+                    map.put("heart", addHeart);
+                    map.put("commentNum", addCommentNum);
+                    map.put("location", addLocation);
+                    map.put("postImage", addPostImage);
+                    map.put("writing", addWriting);
+                    map.put("dateCreated", addDateCreated);
+
+                    Log.d(TAG, "onClick : " + postImage);
+                    Log.d(TAG, "onClick: " + imageFileName);
+                    File file = new File(postImage);
+                    insertFeed(file, map);
+
+//                    insertFeed(nickname, profileImage, heart, commentNum, currentLocation, postImage, writing, dateCreated);
                 }
 
             }
@@ -428,8 +460,9 @@ public class Fragment_add extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        String tempWrite = writeShared.getString("write","");
-                        String tempImage = writeShared.getString("image", "");
+                        tempWrite = writeShared.getString("write","");
+                        tempImage = writeShared.getString("image", "");
+                        postImage = tempImage;
 
                         if (!tempWrite.equals("")) {
                             writing_Edit.setText(tempWrite);
@@ -437,6 +470,8 @@ public class Fragment_add extends Fragment {
                         if (!tempImage.equals("")) {
                             Glide.with(getActivity())
                                     .load(tempImage)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .skipMemoryCache(true)
                                     .into(postImage_Iv);
                         }
 
@@ -454,6 +489,52 @@ public class Fragment_add extends Fragment {
                 })
                 .create()
                 .show();
+
+    } // tempDialog()
+
+
+    public void insertFeed(File file, HashMap map) {
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", imageFileName, requestFile);
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.insertFeed(body, map);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String rpCode = response.body();
+                    Log.d(TAG, "insertFeed - onResponse isSuccessful : " + rpCode);
+
+                    if (rpCode.equals("uploadOk")) {
+
+                        sendData.putString("nickname", nickname);
+                        sendData.putString("profileImage", profileImage);
+                        sendData.putInt("heart", heart);
+                        sendData.putString("location", currentLocation);
+                        sendData.putString("postImage", postImage);
+                        sendData.putString("writing", writing);
+                        sendData.putString("dateCreated", dateCreated);
+
+                        homeActivity.goHomeFragment(sendData);
+                        Log.d(TAG, "보낸 번들 데이터 : " + sendData);
+
+                    } else {
+                        Toast.makeText(getActivity(), "업로드 실패", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else {
+                    Log.d(TAG, "insertFeed - onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "insertFeed - onFailure");
+            }
+        });
 
     }
 
@@ -515,28 +596,6 @@ public class Fragment_add extends Fragment {
         postImage = image.getAbsolutePath();
 
         return image;
-    }
-
-
-    // 비트맵 > uri 변환 메서드 (기기 앨범에 사진 저장)
-    private Uri getImageUri(Context context, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-
-    // uri 절대경로 리턴 메서드
-    String getRealPathFromUri(Uri uri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        CursorLoader loader = new CursorLoader(getActivity(), uri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String result = cursor.getString(column_index);
-        cursor.close();
-        return result;
     }
 
 

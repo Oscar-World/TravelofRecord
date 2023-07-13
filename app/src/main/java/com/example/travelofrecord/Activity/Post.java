@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Adapter.Comment_Adapter;
@@ -656,11 +657,15 @@ public class Post extends AppCompatActivity {
                         }
 
                         Glide.with(getApplicationContext())
-                                .load(post_ProfileImage)
+                                .load(ApiClient.serverProfileImagePath + post_ProfileImage)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
                                 .into(post_ProfileImage_Iv);
 
                         Glide.with(getApplicationContext())
-                                .load(post_PostImage)
+                                .load(ApiClient.serverPostImagePath + post_PostImage)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
                                 .into(post_PostImage_Iv);
 
                     }

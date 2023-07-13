@@ -67,14 +67,6 @@ public interface ApiInterface {
             @Query("id") String id
     );
 
-    // 내 프로필 수정하기
-    @GET("mysql_UserInfo_UpdateProfile.php")
-    Call<User> updateProfile (
-            @Query("nickname") String nickname,
-            @Query("memo") String memo,
-            @Query("imagePath") String imagePath
-    );
-
     @Multipart
     @POST("mysql_UserInfo_UpdateProfile.php")
     Call<String> updateProfile (
@@ -89,9 +81,10 @@ public interface ApiInterface {
     );
 
     @Multipart
-    @POST("mysql_uploadFile.php")
-    Call<String> uploadFile(
-            @Part MultipartBody.Part uploaded_file
+    @POST("mysql_Post_Insert.php")
+    Call<String> insertFeed(
+            @Part MultipartBody.Part uploaded_file,
+            @PartMap Map<String, RequestBody> map
     );
 
     // 게시글 추가

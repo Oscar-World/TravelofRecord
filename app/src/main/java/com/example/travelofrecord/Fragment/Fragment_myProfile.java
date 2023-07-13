@@ -448,7 +448,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                     RequestBody nickname = RequestBody.create(MediaType.parse("text/plain"), user_nickname);
                     RequestBody memo = RequestBody.create(MediaType.parse("text/plain"), edit_memo);
-                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), ApiClient.serverProfileImagePath + imageFileName);
+                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
                     RequestBody beforeImage = RequestBody.create(MediaType.parse("text/plain"), sharedPreferences.getString("image", ""));
 
                     HashMap map = new HashMap();

@@ -627,7 +627,7 @@ public class Signup extends AppCompatActivity {
                     RequestBody pw = RequestBody.create(MediaType.parse("text/plain"), edit_pw);
                     RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), edit_phone);
                     RequestBody nickname = RequestBody.create(MediaType.parse("text/plain"), edit_nickname);
-                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), ApiClient.serverProfileImagePath + imageFileName);
+                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
                     RequestBody fcm = RequestBody.create(MediaType.parse("text/plain"), fcmToken);
                     HashMap map = new HashMap();
                     map.put("loginType", loginType);

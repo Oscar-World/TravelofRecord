@@ -110,7 +110,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
             comment_CommentText.setText(item.getComment());
 
             Glide.with(context)
-                    .load(item.getCommentProfileImage())
+                    .load(ApiClient.serverProfileImagePath + item.getCommentProfileImage())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
                     .into(comment_ProfileImage);
