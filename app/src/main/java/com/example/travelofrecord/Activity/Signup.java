@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
@@ -49,10 +50,14 @@ import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -109,6 +114,8 @@ public class Signup extends AppCompatActivity {
     String id_code;
     String nickname_code;
     String login_Type;
+    String serverImagePath;
+    String address = "http://3.34.246.77/profileImage/";
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -181,7 +188,6 @@ public class Signup extends AppCompatActivity {
     ActivityResultLauncher<Intent> launcher;
     Uri uri;
     String imagePath;
-    File profile_Imagefile;
 
     FirebaseAuth auth;
     String smsCode;
@@ -194,54 +200,9 @@ public class Signup extends AppCompatActivity {
         Log.d(TAG, "onCreate() 호출");
 
         setView();
+        checkLoginType();
 
-
-        // ▼ 일반 회원가입 or 소셜 로그인 경로의 회원가입 구분 ▼
-        Intent i = getIntent();
-        kakaoId = i.getStringExtra("kakaoId");
-        kakaoImage = i.getStringExtra("kakaoImage");
-        googleId = i.getStringExtra("googleId");
-        naverId = i.getStringExtra("naverId");
-
-        if (kakaoId != null) {
-            Log.d(TAG, "카카오 로그인 : " + kakaoId);
-
-            backBtn_2.setVisibility(View.INVISIBLE);
-            frameLayout_1.setVisibility(View.INVISIBLE);
-            frameLayout_2.setVisibility(View.VISIBLE);
-
-            Glide.with(getApplicationContext())
-                    .load(kakaoImage)
-                    .into(photo_Btn);
-
-            imagePath = kakaoImage;
-
-            infoDlg();
-
-        } else if (googleId != null) {
-            Log.d(TAG, "구글 로그인 : " + googleId);
-
-            backBtn_2.setVisibility(View.GONE);
-            frameLayout_1.setVisibility(View.GONE);
-            frameLayout_2.setVisibility(View.VISIBLE);
-
-            infoDlg();
-
-        } else if (naverId != null) {
-            Log.d(TAG, "네이버 로그인 : " + naverId);
-
-            backBtn_2.setVisibility(View.GONE);
-            frameLayout_1.setVisibility(View.GONE);
-            frameLayout_2.setVisibility(View.VISIBLE);
-
-            infoDlg();
-
-        } else {
-            Log.d(TAG, "인텐트 없음 : " + kakaoId);
-        }
-
-
-    }
+    } // onCreate()
 
 
     public void sendSms(String phoneNumber) {
@@ -640,22 +601,47 @@ public class Signup extends AppCompatActivity {
                     if (kakaoId != null) {
                         if (signupCheck2()) {
                             login_Type = "Kakao";
-                            getSignup(login_Type,kakaoId,"",edit_phone,edit_nickname,imagePath,fcmToken);
+                            edit_id = kakaoId;
                         }
                     } else if (googleId != null) {
                         if (signupCheck2()) {
                             login_Type = "Google";
-                            getSignup(login_Type,googleId,"",edit_phone,edit_nickname,imagePath,fcmToken);
+                            edit_id = googleId;
                         }
                     } else if (naverId != null) {
                         if (signupCheck2()) {
                             login_Type = "Naver";
-                            getSignup(login_Type,naverId,"",edit_phone,edit_nickname,imagePath,fcmToken);
+                            edit_id = naverId;
                         }
                     } else {
                         if (signupCheck()) {
                             login_Type = "Basic";
-                            getSignup(login_Type,edit_id,edit_pw,edit_phone,edit_nickname,imagePath,fcmToken);
+                        }
+                    }
+
+                    RequestBody loginType = RequestBody.create(MediaType.parse("text/plain"), login_Type);
+                    RequestBody id = RequestBody.create(MediaType.parse("text/plain"), edit_id);
+                    RequestBody pw = RequestBody.create(MediaType.parse("text/plain"), edit_pw);
+                    RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), edit_phone);
+                    RequestBody nickname = RequestBody.create(MediaType.parse("text/plain"), edit_nickname);
+                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), serverImagePath);
+                    RequestBody fcm = RequestBody.create(MediaType.parse("text/plain"), fcmToken);
+                    HashMap map = new HashMap();
+                    map.put("loginType", loginType);
+                    map.put("id", id);
+                    map.put("pw", pw);
+                    map.put("phone", phone);
+                    map.put("nickname", nickname);
+                    map.put("imagePath", image);
+                    map.put("fcmToken", fcm);
+
+                    File imageFile = new File(imagePath);
+
+                    if (login_Type.equals("Basic") & signupCheck()) {
+                        Signup(imageFile, map);
+                    } else {
+                        if (signupCheck2()) {
+                            Signup(imageFile, map);
                         }
                     }
 
@@ -843,48 +829,21 @@ public class Signup extends AppCompatActivity {
                          Intent intent = result.getData();
                          uri = intent.getData();
 
-                         Log.d(TAG, "result : " + result);
-                         Log.d(TAG, "intent : " + intent);
-                         Log.d(TAG, "uri : " + uri);
-
                          Glide.with(getApplicationContext())
                                  .load(uri)
+                                 .skipMemoryCache(true)
+                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                  .into(photo_Btn);
 
                          imagePath = getRealPathFromUri(uri);
 
-                         Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + imagePath);
-
                      }
-
                     }
         });
 
 
-
-
-
     } // onStart()
 
-
-//    // 파일 업로드
-//    private void uploadFile(){
-//        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), profile_Imagefile);
-//        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", edit_id, requestFile);
-//        ApiInterface apiInterface=ApiClient.getApiClient().create(ApiInterface.class);
-//        Call<String> call=apiInterface.uploadFile(body);
-//        call.enqueue(new Callback<String>() {
-//            @Override
-//            public void onResponse(Call<String> call, Response<String> response) {
-//                Log.e(TAG, "성공 : " + response.body());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<String> call, Throwable t) {
-//                Log.e(TAG, "에러 : " + t.getMessage());
-//            }
-//        });
-//    }
 
 
      //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
@@ -1099,6 +1058,58 @@ public class Signup extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+    public void Signup(File file, HashMap map) {
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", serverImagePath, requestFile);
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.insertInfo(body, map);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "Signup - onResponse isSuccessful");
+
+                    String rpCode = response.body();
+
+                    if (rpCode.equals("usingId")) {
+                        Toast.makeText(getApplicationContext(), "이미 사용중인 아이디입니다.", Toast.LENGTH_SHORT).show();
+                    } else if (rpCode.equals("usingNick")) {
+                        Toast.makeText(getApplicationContext(), "이미 사용중인 닉네임입니다.", Toast.LENGTH_SHORT).show();
+                    } else if (rpCode.equals("uploadOk")){
+                        Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        editor.putString("loginType", login_Type);
+                        editor.putString("id", edit_id);
+                        editor.putString("nickname", edit_nickname);
+                        editor.putString("image", image);
+                        editor.commit();
+
+                        Intent intent = new Intent(Signup.this, Home.class);
+                        startActivity(intent);
+                        finish();
+
+                        ((Login)Login.context).finish();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "회원가입 실패. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Log.d(TAG, "Signup - onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "Signup - onFailure");
+            }
+        });
+
+    }
+
+
     // ▼ 3페이지 submit 시, 마지막 검사 ▼
     public void getSignup(String loginType, String id, String pw, String phone, String nickname, String image, String fcmToken) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -1125,8 +1136,6 @@ public class Signup extends AppCompatActivity {
 
                     Toast t = Toast.makeText(Signup.this,"회원가입 완료",Toast.LENGTH_SHORT);
                     t.show();
-
-//                    자동로그인 기능 활성화 시 주석 해제. (회원가입 > 메인화면)
 
                     editor.putString("loginType", loginType);
                     editor.putString("id", id);
@@ -1438,6 +1447,65 @@ public class Signup extends AppCompatActivity {
         }
 
     }
+
+
+    public void checkLoginType() {
+
+        // ▼ 일반 회원가입 or 소셜 로그인 경로의 회원가입 구분 ▼
+        Intent i = getIntent();
+        kakaoId = i.getStringExtra("kakaoId");
+        kakaoImage = i.getStringExtra("kakaoImage");
+        googleId = i.getStringExtra("googleId");
+        naverId = i.getStringExtra("naverId");
+
+        if (kakaoId != null) {
+            Log.d(TAG, "카카오 로그인 : " + kakaoId);
+
+            backBtn_2.setVisibility(View.INVISIBLE);
+            frameLayout_1.setVisibility(View.INVISIBLE);
+            frameLayout_2.setVisibility(View.VISIBLE);
+
+            Glide.with(getApplicationContext())
+                    .load(kakaoImage)
+                    .into(photo_Btn);
+
+            imagePath = kakaoImage;
+            edit_id = kakaoId;
+
+            infoDlg();
+
+            login_Type = "Kakao";
+
+        } else if (googleId != null) {
+            Log.d(TAG, "구글 로그인 : " + googleId);
+
+            backBtn_2.setVisibility(View.GONE);
+            frameLayout_1.setVisibility(View.GONE);
+            frameLayout_2.setVisibility(View.VISIBLE);
+
+            infoDlg();
+            edit_id = googleId;
+
+            login_Type = "Google";
+
+        } else if (naverId != null) {
+            Log.d(TAG, "네이버 로그인 : " + naverId);
+
+            backBtn_2.setVisibility(View.GONE);
+            frameLayout_1.setVisibility(View.GONE);
+            frameLayout_2.setVisibility(View.VISIBLE);
+
+            infoDlg();
+            edit_id = naverId;
+
+            login_Type = "Naver";
+
+        } else {
+            Log.d(TAG, "확인된 로그인 타입 없음 : " + kakaoId + " " + googleId + " " + naverId);
+            login_Type = "Basic";
+        }
+
+    } // checkLoginType()
 
 
     @Override

@@ -9,12 +9,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.example.travelofrecord"
         minSdk 21
-        targetSdk 33
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -103,6 +103,6 @@ dependencies {
 
     // 네이버 로그인
 //    implementation 'com.navercorp.nid:oauth-jdk8:5.6.0'
-    implementation 'com.navercorp.nid:oauth:5.6.0'
+    implementation 'com.navercorp.nid:oauth:5.5.0'
 
 }

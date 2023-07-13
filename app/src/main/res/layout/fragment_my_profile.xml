@@ -132,6 +132,14 @@
                 android:orientation="vertical"
                 >
 
+                <LinearLayout
+                    android:id="@+id/myProfile_TopLayout"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    >
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -224,6 +232,31 @@
                         />
 
                 </LinearLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/myProfile_medalLayout"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="25dp"
+                        android:text="메달 현황"
+                        android:gravity="center"
+                        android:layout_marginVertical="20dp"
+                        />
+
+
+
+                </LinearLayout>
+
 
                 <View
                     android:layout_width="match_parent"

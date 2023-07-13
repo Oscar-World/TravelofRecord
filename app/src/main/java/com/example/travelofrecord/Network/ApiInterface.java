@@ -5,13 +5,16 @@ import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Data.User;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 
 
@@ -19,6 +22,14 @@ import retrofit2.http.Query;
 public interface ApiInterface {
 
     // 회원가입
+
+    @Multipart
+    @POST("mysql_UserInfo_Insert.php")
+    Call<String> insertInfo (
+            @Part MultipartBody.Part uploaded_file,
+            @PartMap Map<String, RequestBody> map
+    );
+
     @GET("mysql_UserInfo_Insert.php")
     Call<String> insertInfo (
             @Query("loginType") String loginType,
