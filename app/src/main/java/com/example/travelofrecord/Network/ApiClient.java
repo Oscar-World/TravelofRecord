@@ -40,6 +40,7 @@ public class ApiClient {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
+
         return retrofit;
 
     }

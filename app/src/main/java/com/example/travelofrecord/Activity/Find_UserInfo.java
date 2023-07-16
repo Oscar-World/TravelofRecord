@@ -133,6 +133,7 @@ public class Find_UserInfo extends AppCompatActivity {
 
     FirebaseAuth auth;
     String smsCode;
+    String emailCode;
 
     // 갤러리 접근 권한
     private static final int SMS_SEND_PERMISSION = 1;
