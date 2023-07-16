@@ -44,6 +44,7 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -741,6 +742,44 @@ public class Find_UserInfo extends AppCompatActivity {
         }
 
     }
+
+    // 랜덤 문자열 생성
+    public String getRandomResult() {
+
+        Random ran = new Random();
+        String result = "";
+        int type;
+        char c;
+        int i;
+
+        for (int j = 0; j < 6; j++) {
+
+            type = ran.nextInt(2);
+
+            if (type == 0) {
+
+                i = 0;
+
+                while(i < 64) {
+
+                    i = ran.nextInt(91);
+
+                }
+
+                c = (char) i;
+                result += c;
+
+            } else {
+
+                i = ran.nextInt(9);
+                result += String.valueOf(i+1);
+
+            }
+        }
+
+        return result;
+
+    } // getRandomResult()
 
 
 
