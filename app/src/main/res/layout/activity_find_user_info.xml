@@ -71,18 +71,6 @@
             android:textStyle="bold"
             />
 
-        <Button
-            android:id="@+id/emailTest_Btn"
-            android:layout_width="300dp"
-            android:layout_height="80dp"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="30dp"
-            android:backgroundTint="@color/primary"
-            android:text="이메일 인증"
-            android:textSize="22dp"
-            android:textStyle="bold"
-            />
-
 
     </FrameLayout>
 
@@ -484,7 +472,6 @@
             android:layout_marginLeft="-58dp"
             android:hint="인증 번호를 입력하세요"
             android:textSize="15dp"
-            android:inputType="number"
             android:maxLength="6"/>
 
         <Button
@@ -635,6 +622,24 @@
             android:textSize="26dp"
             android:textStyle="bold"
             android:visibility="visible"
+            />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/findInfo_loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/loading"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:id="@+id/findInfo_loadingImage"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:src="@drawable/loading"
+            android:layout_gravity="center"
             />
 
     </FrameLayout>

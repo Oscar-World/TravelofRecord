@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -22,11 +23,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.travelofrecord.Function.RandomResult;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
+import com.example.travelofrecord.Network.GmailSender;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 import com.google.android.gms.auth.api.Auth;
@@ -48,6 +52,9 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -129,27 +136,14 @@ public class Find_UserInfo extends AppCompatActivity {
 
     int networkStatus;
 
-    Button emailTestBtn;
-
     FirebaseAuth auth;
     String smsCode;
     String emailCode;
 
-    // 갤러리 접근 권한
-    private static final int SMS_SEND_PERMISSION = 1;
-    private static String[] PERMISSIONS = {
-            Manifest.permission.SEND_SMS
-    };
-
-    public static void verifySmsSendPermissions(Activity activity){
-
-        int SMS_PERMISSION = ActivityCompat.checkSelfPermission(activity, Manifest.permission.SEND_SMS);
-
-        if (SMS_PERMISSION != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, PERMISSIONS, SMS_SEND_PERMISSION);
-        }
-
-    }
+    RandomResult randomResult;
+    FrameLayout loadingLayout;
+    ImageView loadingImage;
+    Animation rotate;
 
 
     @Override
@@ -158,70 +152,8 @@ public class Find_UserInfo extends AppCompatActivity {
         setContentView(R.layout.activity_find_user_info);
 
         setView();
-//        verifySmsSendPermissions(Find_UserInfo.this);
 
     }
-
-    public void sendSms(String phoneNumber) {
-
-//        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, Find_UserInfo.class), PendingIntent.FLAG_MUTABLE);
-//
-//        SmsManager smsManager = SmsManager.getDefault();
-//        smsManager.sendTextMessage(phoneNumber, null, smsMessage, pi, null);
-//
-//        Toast.makeText(this, "전송 완료", Toast.LENGTH_SHORT).show();
-        auth = FirebaseAuth.getInstance();
-
-        PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-
-                Log.d(TAG, "onVerificationCompleted: " + phoneAuthCredential.getSmsCode());
-                smsCode = phoneAuthCredential.getSmsCode();
-
-            }
-            @Override
-            public void onVerificationFailed(@NonNull FirebaseException e) {
-
-                Log.d(TAG, "onVerificationFailed: " + e);
-
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    Log.d(TAG, "onVerificationFailed : 잘못된 요청");
-                } else if (e instanceof FirebaseTooManyRequestsException) {
-                    Log.d(TAG, "onVerificationFailed : sms 할당량 초과");
-                } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
-                    Log.d(TAG, "onVerificationFailed : 확인된 reCAPTCHA 없음");
-                }
-
-            }
-
-            @Override
-            public void onCodeSent(@NonNull String verificationId,
-                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
-
-                Log.d(TAG, "onCodeSent:" + verificationId);
-                String mVerificationId = verificationId;
-                String mResendToken = token.toString();
-
-                Log.d(TAG, "onCodeSent - token : " + mResendToken);
-            }
-
-        };
-
-        auth = FirebaseAuth.getInstance();
-        auth.setLanguageCode("ko");
-
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(auth)
-                        .setPhoneNumber(phoneNumber)
-                        .setTimeout(120L, TimeUnit.SECONDS)
-                        .setActivity(this)
-                        .setCallbacks(callbacks)
-                        .build();
-        PhoneAuthProvider.verifyPhoneNumber(options);
-
-    }
-
 
 
     @Override
@@ -377,22 +309,14 @@ public class Find_UserInfo extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-                    findCode = 2;
+
+                    loadingLayout.setVisibility(View.VISIBLE);
+                    loadingImage.startAnimation(rotate);
                     user_email = findPw_email.getText().toString();
 
-                    smsTimeThread = new SmsTimeThread();
-                    smsTimeThread.start();
+                    EmailThread thread = new EmailThread();
+                    thread.start();
 
-                    findPw_sendText.setVisibility(View.VISIBLE);
-                    findPw_smsTimeText.setVisibility(View.VISIBLE);
-                    findPw_sendBtn.setVisibility(View.INVISIBLE);
-                    findPw_sendBlock.setVisibility(View.VISIBLE);
-                    findPw_checkBtn.setVisibility(View.VISIBLE);
-                    findPw_checkBlock.setVisibility(View.INVISIBLE);
-                    findPw_smsErrorText.setVisibility(View.INVISIBLE);
-                    findPw_smsTimeoutText.setVisibility(View.INVISIBLE);
-
-                    smsCheckNumber = 1;
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -411,7 +335,7 @@ public class Find_UserInfo extends AppCompatActivity {
                     smsCheckNumber = 2;
                     smsTime = 0;
 
-                    if (pwCheckNum_value.equals("7777")) {
+                    if (pwCheckNum_value.equals(emailCode)) {
 
                         idCheck(user_email);
 
@@ -508,55 +432,136 @@ public class Find_UserInfo extends AppCompatActivity {
         });
 
 
-        emailTestBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-//                ActionCodeSettings actionCodeSettings = ActionCodeSettings.newBuilder()
-//                        .setUrl("https://console.firebase.google.com")
-//                        .setHandleCodeInApp(true)
-//                        .setAndroidPackageName("com.example.travelofrecord", true, "12")
-//                        .build();
-//
-//                FirebaseAuth auth = FirebaseAuth.getInstance();
-//                auth.sendSignInLinkToEmail("rkdgjdl@naver.com", actionCodeSettings)
-//                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<Void> task) {
-//
-//                                Log.d(TAG, "onComplete : Email sent");
-//
-//                                Intent i = getIntent();
-//                                String emailLink = i.getData().toString();
-//
-//                                if (auth.isSignInWithEmailLink(emailLink)) {
-//
-//                                    String email = "rkdgdjl@naver.com";
-//
-//                                    auth.signInWithEmailLink(email, emailLink)
-//                                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                                                @Override
-//                                                public void onComplete(@NonNull Task<AuthResult> task) {
-//
-//                                                    Log.d(TAG, "onComplete: success emailLink");
-//
-//                                                }
-//                                            });
-//
-//                                }
-//
-//                            }
-//                        });
-
-//                sendSms("+821082435284");
-
-
-
-            }
-        });
-
 
     } // onStart()
+
+
+    public class EmailThread extends Thread {
+
+        public void run() {
+            sendEmailCode(getApplicationContext(), user_email);
+        }
+
+    }
+
+    public void setVisible() {
+
+        findCode = 2;
+        smsCheckNumber = 1;
+
+        loadingLayout.setVisibility(View.GONE);
+        loadingImage.clearAnimation();
+        findPw_sendText.setVisibility(View.VISIBLE);
+        findPw_smsTimeText.setVisibility(View.VISIBLE);
+        findPw_sendBtn.setVisibility(View.INVISIBLE);
+        findPw_sendBlock.setVisibility(View.VISIBLE);
+        findPw_checkBtn.setVisibility(View.VISIBLE);
+        findPw_checkBlock.setVisibility(View.INVISIBLE);
+        findPw_smsErrorText.setVisibility(View.INVISIBLE);
+        findPw_smsTimeoutText.setVisibility(View.INVISIBLE);
+
+    }
+
+    public void sendEmailCode(Context context, String sendTo) {
+
+        emailCode = randomResult.getRandomResult();
+        String title = "여행의기록 앱에서 인증을 요청합니다.";
+        String message = "앱에서 아래 인증 코드를 입력해주세요.\n\n" + emailCode + "\n\n";
+
+        try {
+            GmailSender gMailSender = new GmailSender(ApiClient.googleId, ApiClient.googlePw);
+            gMailSender.sendMail(title, message, sendTo);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setVisible();
+                }
+            });
+            smsTimeThread = new SmsTimeThread();
+            smsTimeThread.start();
+
+        } catch (SendFailedException e) {
+            Log.d(TAG, "SendFailedException : " + e);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "이메일 형식이 잘못되었습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (MessagingException e) {
+            Log.d(TAG, "essagingException : " + e);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "이메일 전송을 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            Log.d(TAG, "Exception : " + e);
+            e.printStackTrace();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "이메일 전송을 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+
+    public void sendSms(String phoneNumber) {
+
+        auth = FirebaseAuth.getInstance();
+
+        PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+
+                Log.d(TAG, "onVerificationCompleted: " + phoneAuthCredential.getSmsCode());
+                smsCode = phoneAuthCredential.getSmsCode();
+
+            }
+            @Override
+            public void onVerificationFailed(@NonNull FirebaseException e) {
+
+                Log.d(TAG, "onVerificationFailed: " + e);
+
+                if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    Log.d(TAG, "onVerificationFailed : 잘못된 요청");
+                } else if (e instanceof FirebaseTooManyRequestsException) {
+                    Log.d(TAG, "onVerificationFailed : sms 할당량 초과");
+                } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
+                    Log.d(TAG, "onVerificationFailed : 확인된 reCAPTCHA 없음");
+                }
+
+            }
+
+            @Override
+            public void onCodeSent(@NonNull String verificationId,
+                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
+
+                Log.d(TAG, "onCodeSent:" + verificationId);
+                String mVerificationId = verificationId;
+                String mResendToken = token.toString();
+
+                Log.d(TAG, "onCodeSent - token : " + mResendToken);
+            }
+
+        };
+
+        auth = FirebaseAuth.getInstance();
+        auth.setLanguageCode("ko");
+
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(auth)
+                        .setPhoneNumber(phoneNumber)
+                        .setTimeout(120L, TimeUnit.SECONDS)
+                        .setActivity(this)
+                        .setCallbacks(callbacks)
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+
+    } // sendSms()
 
 
     // ▼ SMS 인증 남은 시간 스레드 ▼
@@ -744,44 +749,6 @@ public class Find_UserInfo extends AppCompatActivity {
 
     }
 
-    // 랜덤 문자열 생성
-    public String getRandomResult() {
-
-        Random ran = new Random();
-        String result = "";
-        int type;
-        char c;
-        int i;
-
-        for (int j = 0; j < 6; j++) {
-
-            type = ran.nextInt(2);
-
-            if (type == 0) {
-
-                i = 0;
-
-                while(i < 64) {
-
-                    i = ran.nextInt(91);
-
-                }
-
-                c = (char) i;
-                result += c;
-
-            } else {
-
-                i = ran.nextInt(9);
-                result += String.valueOf(i+1);
-
-            }
-        }
-
-        return result;
-
-    } // getRandomResult()
-
 
 
     public void setView() {
@@ -837,8 +804,11 @@ public class Find_UserInfo extends AppCompatActivity {
         right_out = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_rightout);
         right_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_rightin);
 
-        emailTestBtn = findViewById(R.id.emailTest_Btn);
+        randomResult = new RandomResult();
 
+        loadingLayout = findViewById(R.id.findInfo_loadingLayout);
+        loadingImage = findViewById(R.id.findInfo_loadingImage);
+        rotate = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.loading);
 
     }
 
