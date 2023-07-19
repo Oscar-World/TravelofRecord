@@ -170,6 +170,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     GoogleSignInClient googleSignInClient;
 
     String imageFileName;
+    boolean imageStatus;
 
 
     @Override public void onAttach(Context context) {
@@ -207,6 +208,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                                     .into(editProfile_Image);
 
                             user_image = getRealPathFromUri(uri);
+                            imageStatus = true;
 
                             Log.d(TAG, "uri : " + uri + "\nuri.toString : " + uri.toString() + "\nimagePath : " + user_image);
 
@@ -245,6 +247,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         super.onStart();
 
         mapView.onStart();
+        imageStatus = false;
 
 
     } // onStart()
@@ -442,13 +445,25 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     map_Block.setVisibility(View.GONE);
                     photo_Btn.setVisibility(View.GONE);
                     photo_Block.setVisibility(View.VISIBLE);
+                    profile_Edit.setVisibility(View.GONE);
+
+                    if (edit_memo == null | "".equals(edit_memo)) {
+                        profile_Edit.setVisibility(View.GONE);
+                        profile_memo.setVisibility(View.VISIBLE);
+                    } else {
+                        profile_memo.setText(edit_memo);
+                        profile_memo.setVisibility(View.VISIBLE);
+                        profile_Edit.setVisibility(View.GONE);
+                    }
 
                     String systemTime = String.valueOf(System.currentTimeMillis());
                     imageFileName = systemTime + ".jpg";
 
+                    Log.d(TAG, "업로드 시 imageStatus : " + imageStatus);
+
+                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
                     RequestBody nickname = RequestBody.create(MediaType.parse("text/plain"), user_nickname);
                     RequestBody memo = RequestBody.create(MediaType.parse("text/plain"), edit_memo);
-                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
                     RequestBody beforeImage = RequestBody.create(MediaType.parse("text/plain"), sharedPreferences.getString("image", ""));
 
                     HashMap map = new HashMap();
@@ -456,8 +471,13 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     map.put("memo", memo);
                     map.put("imagePath", image);
                     map.put("beforeImage", beforeImage);
-                    File file = new File(user_image);
-                    updateProfile(file, map);
+
+                    if (imageStatus) {
+                        File file = new File(user_image);
+                        updateProfile(file, map);
+                    } else {
+                        updateMemo(map);
+                    }
 
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -819,6 +839,35 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     } // getMyPost()
 
+    public void updateMemo(HashMap map) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.updateMemo(map);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String rpCode = response.body();
+                    Log.d(TAG, "updateMemo - onResponse isSuccessful" + rpCode);
+
+                    if (rpCode.equals("uploadOk1")) {
+                        editor.putString("memo", edit_memo);
+                        editor.commit();
+                    }
+
+                } else {
+                    Log.d(TAG, "updateMemo - onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "updateMemo - onFailure");
+            }
+        });
+
+    }
+
     // 상태 메시지, 프로필 사진 변경
     public void updateProfile(File file, HashMap map) {
 
@@ -834,23 +883,14 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     String rpCode = response.body();
                     Log.d(TAG, "updateProfile - onResponse isSuccessful : " + rpCode);
 
-                    if (rpCode.equals("uploadOk")) {
+                    if (rpCode.equals("uploadOk2")) {
 
                         editor.putString("memo", edit_memo);
                         editor.putString("image", imageFileName);
                         editor.commit();
 
-
-                        if (edit_memo == null | "".equals(edit_memo)) {
-                            profile_Edit.setVisibility(View.GONE);
-                            profile_memo.setVisibility(View.VISIBLE);
-                        } else {
-                            profile_memo.setText(edit_memo);
-                            profile_memo.setVisibility(View.VISIBLE);
-                            profile_Edit.setVisibility(View.GONE);
-                        }
-
-                    } else {
+                    }
+                    else {
                         Toast.makeText(getActivity(), "프로필 수정 실패", Toast.LENGTH_SHORT).show();
                     }
 

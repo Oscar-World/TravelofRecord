@@ -163,8 +163,6 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             post_DateCreated.setText(item.getDateCreated());
 
 
-            post_ProfileImage.setClipToOutline(true);
-
             if (!itemView.isLaidOut()) {
 
                 final TextView postTextView = post_Writing;
@@ -192,6 +190,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .skipMemoryCache(true)
                                 .into(post_PostImage);
+
 
                     }
                 });

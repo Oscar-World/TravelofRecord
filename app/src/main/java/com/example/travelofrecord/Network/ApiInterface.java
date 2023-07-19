@@ -74,6 +74,12 @@ public interface ApiInterface {
             @PartMap Map<String, RequestBody> map
     );
 
+    @Multipart
+    @POST("mysql_UserInfo_UpdateProfile.php")
+    Call<String> updateMemo (
+            @PartMap Map<String, RequestBody> map
+    );
+
     // 회원 탈퇴
     @GET("mysql_UserInfo_Delete.php")
     Call<String> deleteUser (
