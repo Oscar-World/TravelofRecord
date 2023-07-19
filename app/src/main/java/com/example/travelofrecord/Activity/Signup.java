@@ -1109,6 +1109,7 @@ public class Signup extends AppCompatActivity {
                         finish();
 
                         ((Login)Login.context).finish();
+                        ((Start)Start.context).finish();
 
                     } else {
                         Toast.makeText(getApplicationContext(), "회원가입 실패. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();

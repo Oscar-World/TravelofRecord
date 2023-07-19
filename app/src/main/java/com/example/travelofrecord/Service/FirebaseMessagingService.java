@@ -1,8 +1,6 @@
 package com.example.travelofrecord.Service;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.app.Fragment;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,7 +9,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.util.Log;
@@ -22,7 +19,6 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.travelofrecord.Activity.DirectMessage;
 import com.example.travelofrecord.Activity.Home;
-import com.example.travelofrecord.Activity.Loading;
 import com.example.travelofrecord.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.messaging.FirebaseMessaging;

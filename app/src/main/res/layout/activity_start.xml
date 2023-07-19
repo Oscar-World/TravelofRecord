@@ -15,17 +15,18 @@
         android:text="여행의 기록"
         android:textSize="40dp"
         android:shadowRadius="15"
-        android:shadowDy="8"
-        android:shadowDx="15"
+        android:shadowDy="4"
+        android:shadowDx="7"
         android:shadowColor="#222222"
         android:textStyle="bold"
-        android:textColor="#d2e3ee"
+        android:textColor="#B3DBF4"
         android:translationZ="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.126" />
+        app:layout_constraintVertical_bias="0.106"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/login_Button"
@@ -42,7 +43,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.881" />
+        app:layout_constraintVertical_bias="0.921"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/imageView"
@@ -56,7 +58,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        android:background="@color/main"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -314,23 +314,6 @@ public class Login extends AppCompatActivity {
 
                     naverLoginSDK.authenticate(getApplicationContext(), launcher_Naver);
 
-//                    nidOAuthLogin.callDeleteTokenApi(getApplicationContext(), new OAuthLoginCallback() {
-//                        @Override
-//                        public void onSuccess() {
-//                            Log.d(TAG, "onSuccess: DeleteToken");
-//                        }
-//
-//                        @Override
-//                        public void onFailure(int i, @NonNull String s) {
-//                            Log.d(TAG, "onFailure : DeleteToken");
-//                        }
-//
-//                        @Override
-//                        public void onError(int i, @NonNull String s) {
-//                            Log.d(TAG, "onError : DeleteToken");
-//                        }
-//                    });
-
                     Log.d(TAG, "onClick");
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -462,7 +445,6 @@ public class Login extends AppCompatActivity {
                         Intent i = new Intent(getApplicationContext(), Signup.class);
                         i.putExtra("googleId", googleEmail);
                         startActivity(i);
-                        finish();
 
                     } else if (rpCode.equals("ok")) {
 
@@ -484,6 +466,7 @@ public class Login extends AppCompatActivity {
                         editor.commit();
                         Intent i = new Intent(Login.this, Home.class);
                         startActivity(i);
+                        ((Start)Start.context).finish();
                         finish();
 
                     }
@@ -521,7 +504,6 @@ public class Login extends AppCompatActivity {
                         Intent i = new Intent(getApplicationContext(), Signup.class);
                         i.putExtra("naverId", naverEmail);
                         startActivity(i);
-                        finish();
 
                     } else if (rpCode.equals("ok")) {
 
@@ -543,6 +525,7 @@ public class Login extends AppCompatActivity {
                         editor.commit();
                         Intent i = new Intent(Login.this, Home.class);
                         startActivity(i);
+                        ((Start)Start.context).finish();
                         finish();
 
                     }
@@ -605,6 +588,7 @@ public class Login extends AppCompatActivity {
                     editor.commit();
                     Intent i = new Intent(Login.this, Home.class);
                     startActivity(i);
+                    ((Start)Start.context).finish();
                     finish();
                 }
             }
@@ -663,6 +647,7 @@ public class Login extends AppCompatActivity {
 
                         Intent i = new Intent(Login.this, Home.class);
                         startActivity(i);
+                        ((Start)Start.context).finish();
                         finish();
 
                     }

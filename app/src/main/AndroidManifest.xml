@@ -72,8 +72,15 @@
 
         <activity
             android:name=".Activity.Start"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="true"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".Activity.Home"
             android:configChanges="orientation|screenSize"
@@ -88,15 +95,6 @@
             android:name=".Activity.Login"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activity.Loading"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
