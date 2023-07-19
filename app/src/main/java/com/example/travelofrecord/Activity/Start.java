@@ -222,7 +222,7 @@ public class Start extends AppCompatActivity {
         public void run() {
 
             try {
-                Thread.sleep(5500);
+                Thread.sleep(6000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
