@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
@@ -190,7 +191,14 @@ public class Signup extends AppCompatActivity {
     FirebaseAuth auth;
     String smsCode;
     String imageFileName;
+    BackBtn backBtn = new BackBtn(this);
+    String backText = "\'뒤로\' 버튼을 한번 더 누르면 로그인 페이지로 이동합니다.";
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        backBtn.onBackTouched(backText);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

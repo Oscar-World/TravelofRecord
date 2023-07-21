@@ -30,6 +30,21 @@ public class BackBtn {
 
     }
 
+    public void onBackTouched(String msg) {
+
+        if (System.currentTimeMillis() > backTouchTime + 2000) {
+            backTouchTime = System.currentTimeMillis();
+            showToast(msg);
+            return;
+        }
+
+        if (System.currentTimeMillis() <= backTouchTime + 2000) {
+            activity.finish();
+            toast.cancel();
+        }
+
+    }
+
     public void onBackTouched(RecyclerView recyclerView) {
 
         if (System.currentTimeMillis() > backTouchTime + 2000) {
@@ -49,6 +64,13 @@ public class BackBtn {
     private void showToast() {
 
         toast = Toast.makeText(activity, text, Toast.LENGTH_SHORT);
+        toast.show();
+
+    }
+
+    private void showToast(String msg) {
+
+        toast = Toast.makeText(activity, msg, Toast.LENGTH_SHORT);
         toast.show();
 
     }

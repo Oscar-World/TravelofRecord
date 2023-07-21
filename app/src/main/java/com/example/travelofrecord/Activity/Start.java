@@ -25,6 +25,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 
@@ -46,6 +47,7 @@ public class Start extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String shared;
     public static Context context;
+    BackBtn backBtn = new BackBtn(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +111,11 @@ public class Start extends AppCompatActivity {
         Log.d(TAG, "onDestroy() 호출됨");
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        backBtn.onBackTouched();
+    }
 
     public void setVariable() {
 

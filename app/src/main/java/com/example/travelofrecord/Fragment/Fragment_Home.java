@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Function.GetAdress;
@@ -137,6 +138,8 @@ public class Fragment_Home extends Fragment {
 //        }
 
     } // onStart()
+
+
 
 
 

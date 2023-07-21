@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Function.RandomResult;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -145,6 +146,14 @@ public class Find_UserInfo extends AppCompatActivity {
     ImageView loadingImage;
     Animation rotate;
 
+    BackBtn backBtn = new BackBtn(this);
+    String backText = "\'뒤로\' 버튼을 한번 더 누르면 로그인 페이지로 이동합니다.";
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        backBtn.onBackTouched(backText);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
