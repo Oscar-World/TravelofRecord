@@ -83,7 +83,7 @@ public interface ApiInterface {
     // 회원 탈퇴
     @GET("mysql_UserInfo_Delete.php")
     Call<String> deleteUser (
-            @Query("id") String id
+            @Query("nickname") String nickname
     );
 
     @Multipart

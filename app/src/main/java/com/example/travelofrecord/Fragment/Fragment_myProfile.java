@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -571,7 +573,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
-                    deleteUser(user_id);
+                    quitDialog(user_nickname);
 
                 }else {
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -910,9 +912,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
 
     // 회원 탈퇴
-    public void deleteUser(String id) {
+    public void deleteUser(String nickname) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.deleteUser(id);
+        Call<String> call = apiInterface.deleteUser(nickname);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -925,20 +927,67 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                         Toast.makeText(getActivity().getApplicationContext(),"회원 탈퇴 완료",Toast.LENGTH_SHORT).show();
 
 
-                        UserApiClient.getInstance().unlink(error -> {
-                            if (error != null) {
-                                Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
-                            }else{
-                                Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
-                            }
-                            return null;
-                        });
+                        if (loginType.equals("Kakao")) {
 
-                        editor_Kakao.clear();
-                        editor_Kakao.commit();
+                            UserApiClient.getInstance().unlink(error -> {
+                                if (error != null) {
+                                    Log.d(TAG, "로그아웃 실패, SDK에서 토큰 삭제됨", error);
+                                }else{
+                                    Log.d(TAG, "로그아웃 성공, SDK에서 토큰 삭제됨");
+                                }
+                                return null;
+                            });
+
+                            editor_Kakao.clear();
+                            editor_Kakao.commit();
+
+                        } else if (loginType.equals("Google")) {
+
+                            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
+
+                            googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
+
+                            googleSignInClient.signOut().addOnCompleteListener(requireActivity(), new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(getActivity(), "구글 로그아웃 완료", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        } else if (loginType.equals("Naver")) {
+
+                            NaverIdLoginSDK naverLoginSDK = NaverIdLoginSDK.INSTANCE;
+                            naverLoginSDK.initialize(requireActivity(),
+                                    getString(R.string.naver_client_id),
+                                    getString(R.string.naver_client_secret),
+                                    getString(R.string.naver_client_name));
+
+                            NidOAuthLogin nidOAuthLogin = new NidOAuthLogin();
+
+                            nidOAuthLogin.callDeleteTokenApi(requireActivity(), new OAuthLoginCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.d(TAG, "onSuccess: DeleteToken");
+                                }
+
+                                @Override
+                                public void onFailure(int i, @NonNull String s) {
+                                    Log.d(TAG, "onFailure: DeleteToken");
+                                }
+
+                                @Override
+                                public void onError(int i, @NonNull String s) {
+                                    Log.d(TAG, "onError: DeleteToken");
+                                }
+                            });
+
+
+                        }
 
                         editor.clear();
                         editor.commit();
+
+                        updateToken(user_nickname, "");
 
                         Intent i = new Intent(getActivity(),Start.class);
                         startActivity(i);
@@ -992,6 +1041,32 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                 Log.d(TAG, "updateFcmToken - onFailure: " + t);
             }
         });
+
+    } // updateToken()
+
+
+    public void quitDialog(String user_Nickname) {
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
+
+                dlg.setTitle("회원 탈퇴 하시겠습니까?")
+                .setMessage("회원님의 모든 데이터가 삭제됩니다.")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        deleteUser(user_Nickname);
+
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .create()
+                .show();
 
     }
 
