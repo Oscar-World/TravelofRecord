@@ -22,6 +22,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.travelofrecord.Network.ApiClient;
@@ -61,6 +63,11 @@ public class Login extends AppCompatActivity {
     Button signup_Btn;
     Button findInfo_Btn;
 
+    LinearLayout socialLogin_Layout;
+    LinearLayout socialLoginBtn_Layout;
+    ImageView dropDown_Btn;
+    ImageView dropUp_Btn;
+
     String user_type;
     String user_id;
     String user_pw;
@@ -98,6 +105,8 @@ public class Login extends AppCompatActivity {
     NaverIdLoginSDK naverLoginSDK;
     NidOAuthLogin nidOAuthLogin;
 
+    int socialLoginBtnStatus;
+
 
     // 갤러리 접근 권한
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -127,6 +136,7 @@ public class Login extends AppCompatActivity {
 
         context = this;
 
+        setVariable();
         setView();
 
         verifyStoragePermissions(Login.this);
@@ -211,125 +221,7 @@ public class Login extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart() 호출");
 
-        login_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-
-                    edit_id = login_id.getText().toString();
-                    edit_pw = login_pw.getText().toString();
-
-                    if (edit_id.isEmpty()) {
-                        Toast t = Toast.makeText(login_Btn.getContext(),"아이디를 입력해주세요.",Toast.LENGTH_SHORT);
-                        t.show();
-                    } else if (edit_pw.isEmpty()) {
-                        Toast t = Toast.makeText(login_Btn.getContext(),"비밀번호를 입력해주세요.",Toast.LENGTH_SHORT);
-                        t.show();
-                    } else {
-                        getLogin(edit_id,edit_pw);
-                    }
-
-                }else {
-                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        findInfo_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-
-                    Intent i = new Intent(Login.this, Find_UserInfo.class);
-                    startActivity(i);
-
-                }else {
-                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        signup_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-
-                    Intent i = new Intent(signup_Btn.getContext(), Signup.class);
-                    startActivity(i);
-
-                }else {
-                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        kakao_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-
-                    kakao_Dialog();
-
-                }else {
-                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        google_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-
-                    gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestEmail()
-                            .build();
-
-                    googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
-
-                    Intent i = googleSignInClient.getSignInIntent();
-                    launcher_Google.launch(i);
-
-                }else {
-                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        naver_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-
-                    naverLoginSDK.authenticate(getApplicationContext(), launcher_Naver);
-
-                    Log.d(TAG, "onClick");
-                }else {
-                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        back_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
-
+        socialLoginBtnStatus = 0;
 
     }  // onStart()
 
@@ -664,7 +556,7 @@ public class Login extends AppCompatActivity {
     }  // getKakaoTest()
 
 
-    public void setView() {
+    public void setVariable() {
 
         networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
 
@@ -678,6 +570,11 @@ public class Login extends AppCompatActivity {
         signup_Btn = findViewById(R.id.Signup_button);
         findInfo_Btn = findViewById(R.id.find_Info);
 
+        socialLogin_Layout = findViewById(R.id.socialLogin_Layout);
+        socialLoginBtn_Layout = findViewById(R.id.socialLoginBtn_Layout);
+        dropDown_Btn = findViewById(R.id.loginDropDown_Btn);
+        dropUp_Btn = findViewById(R.id.loginDropUp_Btn);
+
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
@@ -688,7 +585,150 @@ public class Login extends AppCompatActivity {
                 getString(R.string.naver_client_name));
         nidOAuthLogin = new NidOAuthLogin();
 
-    }  // setView()
+    }  // setVariable()
+
+
+    public void setView() {
+
+        login_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    edit_id = login_id.getText().toString();
+                    edit_pw = login_pw.getText().toString();
+
+                    if (edit_id.isEmpty()) {
+                        Toast t = Toast.makeText(login_Btn.getContext(),"아이디를 입력해주세요.",Toast.LENGTH_SHORT);
+                        t.show();
+                    } else if (edit_pw.isEmpty()) {
+                        Toast t = Toast.makeText(login_Btn.getContext(),"비밀번호를 입력해주세요.",Toast.LENGTH_SHORT);
+                        t.show();
+                    } else {
+                        getLogin(edit_id,edit_pw);
+                    }
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        findInfo_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    Intent i = new Intent(Login.this, Find_UserInfo.class);
+                    startActivity(i);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        signup_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    Intent i = new Intent(signup_Btn.getContext(), Signup.class);
+                    startActivity(i);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        kakao_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    kakao_Dialog();
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        google_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestEmail()
+                            .build();
+
+                    googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
+
+                    Intent i = googleSignInClient.getSignInIntent();
+                    launcher_Google.launch(i);
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        naver_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    naverLoginSDK.authenticate(getApplicationContext(), launcher_Naver);
+
+                    Log.d(TAG, "onClick");
+                }else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        back_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        socialLoginBtn_Layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                socialLoginBtnStatus += 1;
+                Log.d(TAG, "socialLoginBtnStatus : " + socialLoginBtnStatus);
+
+                if (socialLoginBtnStatus % 2 == 0) {
+                    dropDown_Btn.setVisibility(View.VISIBLE);
+                    dropUp_Btn.setVisibility(View.GONE);
+                    socialLogin_Layout.setVisibility(View.GONE);
+                } else {
+                    dropDown_Btn.setVisibility(View.GONE);
+                    dropUp_Btn.setVisibility(View.VISIBLE);
+                    socialLogin_Layout.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+
+    } // setView()
 
     @Override
     protected void onResume(){
