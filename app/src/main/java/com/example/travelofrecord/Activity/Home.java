@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,7 @@ import com.example.travelofrecord.Fragment.Fragment_Heart;
 import com.example.travelofrecord.Fragment.Fragment_Home;
 import com.example.travelofrecord.Fragment.Fragment_add;
 import com.example.travelofrecord.Fragment.Fragment_myProfile;
+import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
@@ -76,6 +78,29 @@ public class Home extends AppCompatActivity {
     String fcmToken;
 
     boolean messageStatus = false;
+
+    BackBtn backBtn;
+    OnBackPressedListener mBackListener;
+
+
+    public interface OnBackPressedListener {
+        void onBack();
+    }
+
+    public void setOnBackPressedListener(OnBackPressedListener listener) {
+        mBackListener = listener;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (mBackListener != null) {
+            mBackListener.onBack();
+        }
+
+        backBtn.onBackPressed();
+
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -240,7 +265,10 @@ public class Home extends AppCompatActivity {
 //        Intent i = getIntent();
 //        postNickname = i.getStringExtra("postNickname");
 
+        backBtn = new BackBtn(this, mBackListener);
+
     }
+
 
     public void setView() {
 

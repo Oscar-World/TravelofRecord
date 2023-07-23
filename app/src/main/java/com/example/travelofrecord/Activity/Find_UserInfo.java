@@ -151,8 +151,7 @@ public class Find_UserInfo extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        backBtn.onBackTouched(backText);
+        backBtn.onBackPressed(backText);
     }
 
     @Override

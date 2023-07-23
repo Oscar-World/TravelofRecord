@@ -78,6 +78,7 @@ public class Fragment_Dm extends Fragment {
     int notReadMessage;
     Chat chat;
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

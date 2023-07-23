@@ -113,8 +113,7 @@ public class Start extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        backBtn.onBackTouched();
+        backBtn.onBackPressed();
     }
 
     public void setVariable() {

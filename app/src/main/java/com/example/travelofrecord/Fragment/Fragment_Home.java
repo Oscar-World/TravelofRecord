@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -41,7 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Fragment_Home extends Fragment {
+public class Fragment_Home extends Fragment implements Home.OnBackPressedListener{
 
     String TAG = "홈 프래그먼트";
     View v;
@@ -85,17 +86,24 @@ public class Fragment_Home extends Fragment {
 
     boolean receiverStatus;
 
+    @Override
+    public void onBack() {
+        Log.d(TAG, "onBack: ");
+        recyclerView.smoothScrollToPosition(0);
+    }
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach() 호출됨");
+        ((Home)context).setOnBackPressedListener(this);
+
     }
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() 호출됨");
         receiverStatus = false;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -137,10 +145,8 @@ public class Fragment_Home extends Fragment {
 //            getActivity().unregisterReceiver(adapter.commentReceiver);
 //        }
 
+
     } // onStart()
-
-
-
 
 
     public void getPost(String currentNickname) {
@@ -270,6 +276,7 @@ public class Fragment_Home extends Fragment {
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         loginNickname = sharedPreferences.getString("nickname","");
 
+
     }
 
     public void setView() {
@@ -320,7 +327,7 @@ public class Fragment_Home extends Fragment {
         heartFilter = new IntentFilter("homeHeartSync");
         commentFilter = new IntentFilter("homeCommentSync");
 
-    }
+    } // setView()
 
 
 
@@ -355,5 +362,6 @@ public class Fragment_Home extends Fragment {
         Log.d(TAG, "onDetach() 호출됨");
         super.onDetach();
     }
+
 
 }
