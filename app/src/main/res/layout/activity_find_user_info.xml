@@ -81,7 +81,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/feed"
-        android:visibility="gone"
+        android:visibility="v"
         >
 
             <TextView
@@ -129,7 +129,8 @@
             <TextView
                 android:layout_width="225dp"
                 android:layout_height="wrap_content"
-                android:text="본인 확인을 위해 SMS 인증을 진행합니다.\n\n연락처는 사용자 확인 외에 어떠한 용도로도 사용되지 않습니다."
+                android:text="본인 확인을 위해 SMS 인증을 진행합니다.
+\n\n연락처는 사용자 확인 외에 어떠한 용도로도 사용되지 않습니다.\n\n휴대폰 인증은 하루 3회 가능합니다."
                 android:textSize="13dp"
                 android:layout_gravity="top|center"
                 android:layout_marginTop="200dp"
@@ -147,6 +148,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="-92dp"
                 />
+
 
             <EditText
                 android:id="@+id/findId_phone"
@@ -182,6 +184,17 @@
                 android:layout_marginTop="60dp"
                 android:layout_marginLeft="102dp"
                 android:visibility="invisible"/>
+
+
+        <TextView
+            android:id="@+id/findId_sendPhoneText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="102dp"
+            android:text="남은 인증 횟수 : 3"
+            />
 
             <TextView
                 android:id="@+id/findId_sendText"

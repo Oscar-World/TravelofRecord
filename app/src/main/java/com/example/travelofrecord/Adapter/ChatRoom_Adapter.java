@@ -104,7 +104,7 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
             String dateMessage = item.getLastDate();
             Log.d(TAG, "onBind: " + dateMessage);
             long parseTime = Long.parseLong(dateMessage);
-            String time = getTime.getFormatTime(parseTime);
+            String time = getTime.getFormatTime1(parseTime);
 
 
             nicknameText.setText(item.getRoomName() + " 채팅방");

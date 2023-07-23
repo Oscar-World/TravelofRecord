@@ -42,12 +42,21 @@ public class GetTime {
         return currentTime;
     }
 
-    public String getFormatTime(Long time) {
+    public String getFormatTime1(Long time) {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         String formatTime = simpleDateFormat.format(time);
 
         return formatTime;
     }
+
+    public String getFormatTime2(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMddHH");
+        String formatTime = simpleDateFormat.format(time);
+
+        return formatTime;
+    }
+
 
 }

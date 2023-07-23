@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
@@ -85,8 +86,11 @@ public class Login extends AppCompatActivity {
     String kakaoId;
     String kakaoImage;
 
-    SharedPreferences sharedPreferences;
+    SharedPreferences userShared;
     SharedPreferences.Editor editor;
+
+    SharedPreferences authShared;
+    SharedPreferences.Editor authEditor;
 
     public static Context context;
 
@@ -106,6 +110,11 @@ public class Login extends AppCompatActivity {
     NidOAuthLogin nidOAuthLogin;
 
     int socialLoginBtnStatus;
+
+    GetTime getTime;
+    int phoneCount;
+    String savedTime;
+    String currentTime;
 
 
     // 갤러리 접근 권한
@@ -575,8 +584,30 @@ public class Login extends AppCompatActivity {
         dropDown_Btn = findViewById(R.id.loginDropDown_Btn);
         dropUp_Btn = findViewById(R.id.loginDropUp_Btn);
 
-        sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        userShared = getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        editor = userShared.edit();
+
+        authShared = getSharedPreferences("휴대폰 인증", MODE_PRIVATE);
+        authEditor = authShared.edit();
+
+        phoneCount = authShared.getInt("남은 횟수", 99);
+        savedTime = authShared.getString("해당 날짜", "");
+        getTime = new GetTime();
+        currentTime = getTime.getFormatTime2(getTime.getTime());
+
+        if (phoneCount == 99) {
+            authEditor.putInt("남은 횟수", 3);
+            authEditor.putString("해당 날짜", currentTime);
+        } else {
+
+            if (!currentTime.equals(savedTime)) {
+                authEditor.putInt("남은 횟수", 3);
+                authEditor.putString("해당 날짜", currentTime);
+            } else {
+                Log.d(TAG, "날짜가 바뀌지 않았음");
+            }
+
+        }
 
         naverLoginSDK = NaverIdLoginSDK.INSTANCE;
         naverLoginSDK.initialize(getApplicationContext(),

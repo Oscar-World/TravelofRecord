@@ -303,7 +303,7 @@ public class DirectMessage extends AppCompatActivity {
             String senderImage = array[3];
             String message = array[4];
             messageStatus = array[6];
-            String time = String.valueOf(getTime.getFormatTime(getTime.getTime()));
+            String time = String.valueOf(getTime.getFormatTime1(getTime.getTime()));
             int viewType = 0;
 
             if(nickname.equals(currentNickname) & !message.equals("ⓐloginⓐ") & !message.equals("ⓐlogoutⓐ")) {
@@ -414,7 +414,7 @@ public class DirectMessage extends AppCompatActivity {
                             String senderImage = response.body().get(i).getSenderImage();
                             String message = response.body().get(i).getMessage();
                             String dateMessage = response.body().get(i).getDateMessage();
-                            String time = String.valueOf(getTime.getFormatTime(Long.valueOf(dateMessage)));
+                            String time = String.valueOf(getTime.getFormatTime1(Long.valueOf(dateMessage)));
                             String messageStatus = response.body().get(i).getMessageStatus();
 
                             int viewType = 0;
