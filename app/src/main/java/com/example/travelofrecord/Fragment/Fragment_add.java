@@ -215,43 +215,6 @@ public class Fragment_add extends Fragment {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
 
-        // 위치 권한 확인
-        int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-        int COARSE_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        if (LOCATION_PERMISSION != PackageManager.PERMISSION_GRANTED && COARSE_PERMISSION != PackageManager.PERMISSION_GRANTED) {
-
-            Log.d(TAG, "위치 권한 없음");
-
-            ActivityCompat.requestPermissions(
-                    getActivity(),
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-            return;
-        } else {
-            Log.d(TAG, "위치 권한 있음");
-        }
-
-        // 현재 위치의 위도, 경도 확인
-        fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    Log.d(TAG, "onSuccess: location - " + location + "\n위도 - " + location.getLatitude() + "\n경도 - " + location.getLongitude());
-                    latitude = String.valueOf(location.getLatitude());
-                    longitude = String.valueOf(location.getLongitude());
-                    currentLocation = latitude + " " + longitude;
-
-                    Log.d(TAG, "location : " + currentLocation);
-
-                } else {
-                    Log.d(TAG, "location == null");
-                }
-            }
-        });
-
-
 
 
     } // onStart()
@@ -267,7 +230,6 @@ public class Fragment_add extends Fragment {
     public void onPause() {
         Log.d(TAG, "onPause() 호출");
         super.onPause();
-//        immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     @Override
@@ -339,6 +301,42 @@ public class Fragment_add extends Fragment {
         postImage_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // 위치 권한 확인
+                int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+                int COARSE_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+                if (LOCATION_PERMISSION != PackageManager.PERMISSION_GRANTED && COARSE_PERMISSION != PackageManager.PERMISSION_GRANTED) {
+
+                    Log.d(TAG, "위치 권한 없음");
+
+                    ActivityCompat.requestPermissions(
+                            getActivity(),
+                            PERMISSIONS_STORAGE,
+                            REQUEST_EXTERNAL_STORAGE
+                    );
+                    return;
+                } else {
+                    Log.d(TAG, "위치 권한 있음");
+                }
+
+                // 현재 위치의 위도, 경도 확인
+                fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            Log.d(TAG, "onSuccess: location - " + location + "\n위도 - " + location.getLatitude() + "\n경도 - " + location.getLongitude());
+                            latitude = String.valueOf(location.getLatitude());
+                            longitude = String.valueOf(location.getLongitude());
+                            currentLocation = latitude + " " + longitude;
+
+                            Log.d(TAG, "location : " + currentLocation);
+
+                        } else {
+                            Log.d(TAG, "location == null");
+                        }
+                    }
+                });
 
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
