@@ -1260,7 +1260,7 @@ public class Signup extends AppCompatActivity {
     // ▼ 3페이지의 submit 시, 마지막 정규식 점검 ▼
     private boolean signupCheck() {
 
-        idRule = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
+        idRule = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\\.[a-zA-Z]{2,3}$";
         pwRule = "^.*(?=^.{8,12}$)(\\w)(?=.*[!@#$%^&+=]).*$";
         phoneRule = "^\\d{10,11}$";
         nicknameRule = "^\\w{2,8}$";
@@ -1344,7 +1344,7 @@ public class Signup extends AppCompatActivity {
 
     // ▼ 아이디 정규식 점검 ▼
     private boolean idRuleCheck2() {
-        idRule = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
+        idRule = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\\.[a-zA-Z]{2,3}$";
         pattern_id = Pattern.compile(idRule);
 //        pattern_id = Patterns.EMAIL_ADDRESS;
 //        id_Pattern = Patterns.EMAIL_ADDRESS;
