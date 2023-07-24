@@ -20,11 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelofrecord.Activity.Home;
+import com.example.travelofrecord.Adapter.HomeHeartList_Adapter;
 import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -53,6 +55,12 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     RecyclerView recyclerView;
     TextView internetText;
+
+    FrameLayout heartLayout;
+    RecyclerView heartRecyclerView;
+    ArrayList<PostData> heart_ArrayList;
+    HomeHeartList_Adapter heartAdapter;
+
 
     ImageView loading_Iv;
     Animation rotate;
@@ -261,8 +269,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
         networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
         swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);
-
         internetText = v.findViewById(R.id.internetCheck_Text);
+
         recyclerView = v.findViewById(R.id.home_RecyclerView);
         adapter = new Home_Adapter();
 
@@ -272,6 +280,16 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         post_Data_ArrayList = new ArrayList<>();
 
         adapter.setItemPost(post_Data_ArrayList);
+
+        heartRecyclerView = v.findViewById(R.id.home_HeartRecyclerView);
+        heartAdapter = new HomeHeartList_Adapter();
+        heart_ArrayList = new ArrayList<>();
+
+        recyclerView.setAdapter(heartAdapter);
+        heartRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        heartAdapter.setItem(heart_ArrayList);
+
+        heartLayout = v.findViewById(R.id.home_HeartLayout);
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         loginNickname = sharedPreferences.getString("nickname","");

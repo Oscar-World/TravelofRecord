@@ -351,6 +351,17 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             });
 
 
+            post_Heart.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    
+
+                    return true;
+                }
+            });
+
+
 
         } // onBind
 
