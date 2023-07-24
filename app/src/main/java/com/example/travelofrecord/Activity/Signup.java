@@ -116,8 +116,14 @@ public class Signup extends AppCompatActivity {
     String nickname_code;
     String login_Type;
 
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    SharedPreferences userShared;
+    SharedPreferences.Editor userEditor;
+
+    SharedPreferences authShared;
+    SharedPreferences.Editor authEditor;
+
+    TextView phoneCountText;
+    int phoneCount;
 
     Animation left_out;
     Animation left_in;
@@ -193,6 +199,8 @@ public class Signup extends AppCompatActivity {
     String imageFileName;
     BackBtn backBtn = new BackBtn(this);
     String backText = "\'뒤로\' 버튼을 한번 더 누르면 로그인 페이지로 이동합니다.";
+
+
 
     @Override
     public void onBackPressed() {
@@ -602,7 +610,7 @@ public class Signup extends AppCompatActivity {
                     edit_phone = signup_phone.getText().toString();
                     edit_nickname = signup_nickname.getText().toString();
 
-                    String fcmToken = sharedPreferences.getString("fcmToken","");
+                    String fcmToken = userShared.getString("fcmToken","");
 
                     if (kakaoId != null) {
                         if (signupCheck2()) {
@@ -740,10 +748,15 @@ public class Signup extends AppCompatActivity {
 
                         smsCheckNumber = 1;
 
+                        phoneCount -= 1;
+                        phoneCountText.setText("남은 인증 횟수 : " + String.valueOf(phoneCount));
+                        authEditor.putInt("남은 횟수", phoneCount);
+                        authEditor.commit();
+
                         String phoneNum = "+82" + edit_phone.substring(1,edit_phone.length());
                         Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
 
-//                        sendSms(phoneNum);
+                        sendSms(phoneNum);
 
 
                     }
@@ -766,42 +779,50 @@ public class Signup extends AppCompatActivity {
                 Log.d(TAG, "NetworkStatus : " + status);
                 if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    smsCheckNumber = 2;
-                    smsTime = 0;
+                    if (edit_phoneCheck.equals("") | edit_phoneCheck == null) {
 
-                    Log.d(TAG, "smsCheckNumber : " + smsCheckNumber);
+                        Toast.makeText(getApplicationContext(), "인증 번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
 
-                    phone_Send.setVisibility(View.INVISIBLE);
-                    phone_SmsTime.setVisibility(View.INVISIBLE);
-                    smsCheck_Block.setVisibility(View.VISIBLE);
-                    smsCheck_Btn.setVisibility(View.INVISIBLE);
-
-                    edit_phoneCheck = signup_phoneCheck.getText().toString();
-
-//                    if (edit_phoneCheck.equals(smsCode)) {
-//                        phone_SmsOk.setVisibility(View.VISIBLE);
-//                        nextBlock_2.setVisibility(View.INVISIBLE);
-//                        nextBtn_2.setVisibility(View.VISIBLE);
-//                        auth.signOut();
-//                    } else {
-//                        phone_SmsError.setVisibility(View.VISIBLE);
-//                        smsSend_Btn.setVisibility(View.VISIBLE);
-//                        smsSend_Block.setVisibility(View.INVISIBLE);
-//                        auth.signOut();
-//                    }
-
-                    if (edit_phoneCheck.equals("7777")) {
-                        phone_SmsOk.setVisibility(View.VISIBLE);
-                        nextBlock_2.setVisibility(View.INVISIBLE);
-                        nextBtn_2.setVisibility(View.VISIBLE);
-//                        auth.signOut();
                     } else {
-                        phone_SmsError.setVisibility(View.VISIBLE);
-                        smsSend_Btn.setVisibility(View.VISIBLE);
-                        smsSend_Block.setVisibility(View.INVISIBLE);
-//                        auth.signOut();
-                    }
 
+                        smsCheckNumber = 2;
+                        smsTime = 0;
+
+                        Log.d(TAG, "smsCheckNumber : " + smsCheckNumber);
+
+                        phone_Send.setVisibility(View.INVISIBLE);
+                        phone_SmsTime.setVisibility(View.INVISIBLE);
+                        smsCheck_Block.setVisibility(View.VISIBLE);
+                        smsCheck_Btn.setVisibility(View.INVISIBLE);
+
+                        edit_phoneCheck = signup_phoneCheck.getText().toString();
+
+                        if (edit_phoneCheck.equals(smsCode)) {
+                            phone_SmsOk.setVisibility(View.VISIBLE);
+                            nextBlock_2.setVisibility(View.INVISIBLE);
+                            nextBtn_2.setVisibility(View.VISIBLE);
+                            auth.signOut();
+                        } else {
+
+                            if (phoneCount == 0) {
+
+                                phone_SmsError.setVisibility(View.VISIBLE);
+                                smsSend_Btn.setVisibility(View.INVISIBLE);
+                                smsSend_Block.setVisibility(View.INVISIBLE);
+                                auth.signOut();
+
+                            } else {
+
+                                phone_SmsError.setVisibility(View.VISIBLE);
+                                smsSend_Btn.setVisibility(View.VISIBLE);
+                                smsSend_Block.setVisibility(View.INVISIBLE);
+                                auth.signOut();
+
+                            }
+
+                        }
+
+                    }
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -1105,11 +1126,11 @@ public class Signup extends AppCompatActivity {
                     } else if (rpCode.equals("uploadOk")){
                         Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
 
-                        editor.putString("loginType", login_Type);
-                        editor.putString("id", edit_id);
-                        editor.putString("nickname", edit_nickname);
-                        editor.putString("image", imageFileName);
-                        editor.commit();
+                        userEditor.putString("loginType", login_Type);
+                        userEditor.putString("id", edit_id);
+                        userEditor.putString("nickname", edit_nickname);
+                        userEditor.putString("image", imageFileName);
+                        userEditor.commit();
 
                         Intent intent = new Intent(Signup.this, Home.class);
                         startActivity(intent);
@@ -1544,8 +1565,18 @@ public class Signup extends AppCompatActivity {
         nickname_Btn = findViewById(R.id.signup_Nicknamebtn);
         photo_Btn = findViewById(R.id.signup_Photo);
 
-        sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        userShared = getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        userEditor = userShared.edit();
+
+        authShared = getSharedPreferences("휴대폰 인증", MODE_PRIVATE);
+        authEditor = authShared.edit();
+
+        phoneCountText = findViewById(R.id.signUp_sendPhoneText);
+        phoneCount = authShared.getInt("남은 횟수", 0);
+        phoneCountText.setText("남은 인증 횟수 : " + String.valueOf(phoneCount));
+        if (phoneCount == 0) {
+            smsSend_Btn.setVisibility(View.INVISIBLE);
+        }
 
         left_out = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftout);
         left_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftin);

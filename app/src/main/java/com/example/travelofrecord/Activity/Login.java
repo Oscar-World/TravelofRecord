@@ -598,11 +598,13 @@ public class Login extends AppCompatActivity {
         if (phoneCount == 99) {
             authEditor.putInt("남은 횟수", 3);
             authEditor.putString("해당 날짜", currentTime);
+            authEditor.commit();
         } else {
 
             if (!currentTime.equals(savedTime)) {
                 authEditor.putInt("남은 횟수", 3);
                 authEditor.putString("해당 날짜", currentTime);
+                authEditor.commit();
             } else {
                 Log.d(TAG, "날짜가 바뀌지 않았음");
             }

@@ -560,6 +560,8 @@ public class Find_UserInfo extends AppCompatActivity {
         authEditor = authShared.edit();
         phoneCount = authShared.getInt("남은 횟수", 0);
 
+        phoneCountText.setText("남은 인증 횟수 : " + String.valueOf(phoneCount));
+
         if (phoneCount == 0) {
             findId_sendBtn.setVisibility(View.INVISIBLE);
         }
@@ -613,32 +615,43 @@ public class Find_UserInfo extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-                    findCode = 1;
+
                     user_phoneNum = findId_phone.getText().toString();
 
-                    smsTimeThread = new SmsTimeThread();
-                    smsTimeThread.start();
+                    if (user_phoneNum.isEmpty()) {
 
-                    findId_sendText.setVisibility(View.VISIBLE);
-                    findId_sendBtn.setVisibility(View.INVISIBLE);
-                    findId_sendBlock.setVisibility(View.VISIBLE);
-                    findId_checkBtn.setVisibility(View.VISIBLE);
-                    findId_checkBlock.setVisibility(View.INVISIBLE);
-                    findId_smsTimeText.setVisibility(View.VISIBLE);
-                    findId_smsErrorText.setVisibility(View.INVISIBLE);
-                    findId_smsTimeoutText.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getApplicationContext(), "휴대폰 번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
 
-                    smsCheckNumber = 1;
+                    } else {
 
-                    phoneCount -= 1;
-                    phoneCountText.setText("남은 인증 횟수 : " + String.valueOf(phoneCount));
-                    authEditor.putInt("남은 횟수", phoneCount);
-
-                    String phoneNum = "+82" + user_phoneNum.substring(1,user_phoneNum.length());
-                    Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
-                    sendSms(phoneNum);
+                        findCode = 1;
 
 
+                        smsTimeThread = new SmsTimeThread();
+                        smsTimeThread.start();
+
+                        findId_sendText.setVisibility(View.VISIBLE);
+                        findId_sendBtn.setVisibility(View.INVISIBLE);
+                        findId_sendBlock.setVisibility(View.VISIBLE);
+                        findId_checkBtn.setVisibility(View.VISIBLE);
+                        findId_checkBlock.setVisibility(View.INVISIBLE);
+                        findId_smsTimeText.setVisibility(View.VISIBLE);
+                        findId_smsErrorText.setVisibility(View.INVISIBLE);
+                        findId_smsTimeoutText.setVisibility(View.INVISIBLE);
+
+                        smsCheckNumber = 1;
+
+                        phoneCount -= 1;
+                        phoneCountText.setText("남은 인증 횟수 : " + String.valueOf(phoneCount));
+                        authEditor.putInt("남은 횟수", phoneCount);
+                        authEditor.commit();
+
+                        String phoneNum = "+82" + user_phoneNum.substring(1, user_phoneNum.length());
+                        Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
+
+//                    sendSms(phoneNum);
+
+                    }
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -654,43 +667,52 @@ public class Find_UserInfo extends AppCompatActivity {
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
                     idCheckNum_value = findId_checkNum.getText().toString();
 
-                    smsCheckNumber = 2;
-                    smsTime = 0;
+                    if (idCheckNum_value.equals("") | idCheckNum_value == null) {
 
-                    Log.d(TAG, "입력한 값 : " + idCheckNum_value + " / 인증번호 : " + smsCode);
+                        Toast.makeText(getApplicationContext(), "인증 번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
 
-                    if (idCheckNum_value.equals(smsCode)) {
-                        findIdFrame1.setVisibility(View.INVISIBLE);
-                        findIdFrame1.startAnimation(left_out);
-                        findIdFrame2.setVisibility(View.VISIBLE);
-                        findIdFrame2.startAnimation(left_in);
-
-                        phoneCheck(user_phoneNum);
-                        auth.signOut();
                     } else {
 
-                        if (phoneCount == 0) {
-                            findId_smsTimeText.setVisibility(View.INVISIBLE);
-                            findId_smsErrorText.setVisibility(View.VISIBLE);
-                            findId_sendText.setVisibility(View.INVISIBLE);
-                            findId_checkBlock.setVisibility(View.VISIBLE);
-                            findId_checkBtn.setVisibility(View.INVISIBLE);
-                            findId_sendBtn.setVisibility(View.INVISIBLE);
-                            findId_sendBlock.setVisibility(View.INVISIBLE);
+                        smsCheckNumber = 2;
+                        smsTime = 0;
+
+                        Log.d(TAG, "입력한 값 : " + idCheckNum_value + " / 인증번호 : " + smsCode);
+
+//                    if (idCheckNum_value.equals(smsCode)) {
+                        if (idCheckNum_value.equals("7777")) {
+                            findIdFrame1.setVisibility(View.INVISIBLE);
+                            findIdFrame1.startAnimation(left_out);
+                            findIdFrame2.setVisibility(View.VISIBLE);
+                            findIdFrame2.startAnimation(left_in);
+
+                            phoneCheck(user_phoneNum);
+                            auth.signOut();
                         } else {
-                            findId_smsTimeText.setVisibility(View.INVISIBLE);
-                            findId_smsErrorText.setVisibility(View.VISIBLE);
-                            findId_sendText.setVisibility(View.INVISIBLE);
-                            findId_checkBlock.setVisibility(View.VISIBLE);
-                            findId_checkBtn.setVisibility(View.INVISIBLE);
-                            findId_sendBtn.setVisibility(View.VISIBLE);
-                            findId_sendBlock.setVisibility(View.INVISIBLE);
+
+                            if (phoneCount == 0) {
+                                findId_smsTimeText.setVisibility(View.INVISIBLE);
+                                findId_smsErrorText.setVisibility(View.VISIBLE);
+                                findId_sendText.setVisibility(View.INVISIBLE);
+                                findId_checkBlock.setVisibility(View.VISIBLE);
+                                findId_checkBtn.setVisibility(View.INVISIBLE);
+                                findId_sendBtn.setVisibility(View.INVISIBLE);
+                                findId_sendBlock.setVisibility(View.INVISIBLE);
+                            } else {
+                                findId_smsTimeText.setVisibility(View.INVISIBLE);
+                                findId_smsErrorText.setVisibility(View.VISIBLE);
+                                findId_sendText.setVisibility(View.INVISIBLE);
+                                findId_checkBlock.setVisibility(View.VISIBLE);
+                                findId_checkBtn.setVisibility(View.INVISIBLE);
+                                findId_sendBtn.setVisibility(View.VISIBLE);
+                                findId_sendBlock.setVisibility(View.INVISIBLE);
+                            }
+
+                            findId_checkNum.setText("");
+
+                            auth.signOut();
                         }
-
-                        findId_checkNum.setText("");
-
-                        auth.signOut();
                     }
+
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }

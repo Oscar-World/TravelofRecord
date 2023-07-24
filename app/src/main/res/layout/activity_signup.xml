@@ -315,7 +315,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/signup_text2"
