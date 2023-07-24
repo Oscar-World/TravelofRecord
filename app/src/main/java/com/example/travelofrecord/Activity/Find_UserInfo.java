@@ -649,7 +649,7 @@ public class Find_UserInfo extends AppCompatActivity {
                         String phoneNum = "+82" + user_phoneNum.substring(1, user_phoneNum.length());
                         Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
 
-//                    sendSms(phoneNum);
+                    sendSms(phoneNum);
 
                     }
 
@@ -678,8 +678,7 @@ public class Find_UserInfo extends AppCompatActivity {
 
                         Log.d(TAG, "입력한 값 : " + idCheckNum_value + " / 인증번호 : " + smsCode);
 
-//                    if (idCheckNum_value.equals(smsCode)) {
-                        if (idCheckNum_value.equals("7777")) {
+                        if (idCheckNum_value.equals(smsCode)) {
                             findIdFrame1.setVisibility(View.INVISIBLE);
                             findIdFrame1.startAnimation(left_out);
                             findIdFrame2.setVisibility(View.VISIBLE);
