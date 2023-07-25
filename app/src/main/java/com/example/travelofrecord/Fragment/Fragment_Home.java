@@ -1,5 +1,6 @@
 package com.example.travelofrecord.Fragment;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Adapter.HomeHeartList_Adapter;
+import com.example.travelofrecord.Data.User;
 import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -58,8 +60,9 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     FrameLayout heartLayout;
     RecyclerView heartRecyclerView;
-    ArrayList<PostData> heart_ArrayList;
+    ArrayList<User> heart_ArrayList;
     HomeHeartList_Adapter heartAdapter;
+    ImageView heartListClose_Iv;
 
 
     ImageView loading_Iv;
@@ -155,6 +158,58 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
 
     } // onStart()
+
+    public void getHeartList(int postNum) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<ArrayList<User>> call = apiInterface.getHeartList(postNum);
+        call.enqueue(new Callback<ArrayList<User>>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onResponse(Call<ArrayList<User>> call, Response<ArrayList<User>> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "getHeartList - onResponse isSuccessful");
+
+                    ArrayList<User> data = response.body();
+                    Log.d(TAG, "data.size() : " + data.size());
+
+                    if (data.size() > 0) {
+
+                        String image;
+                        String nickname;
+
+
+                        for (int i = 0; i < data.size(); i++) {
+
+                            image = data.get(i).getImage();
+                            nickname = data.get(i).getNickname();
+
+                            User heartData = new User(image, nickname);
+
+                            heart_ArrayList.add(heartData);
+
+                            Log.d(TAG, "image : " + image + " nickname : " + nickname + " list.size() : " + heart_ArrayList.size());
+
+                        }
+
+                        heartAdapter.notifyDataSetChanged();
+
+                    } else {
+                        Log.d(TAG, "getHeartList 없음");
+                    }
+
+                } else {
+                    Log.d(TAG, "getHeartList - onResponse isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<User>> call, Throwable t) {
+                Log.d(TAG, "getHeartList - onFailure");
+            }
+        });
+
+    }
 
 
     public void getPost(String currentNickname) {
@@ -278,18 +333,18 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         post_Data_ArrayList = new ArrayList<>();
-
         adapter.setItemPost(post_Data_ArrayList);
 
         heartRecyclerView = v.findViewById(R.id.home_HeartRecyclerView);
         heartAdapter = new HomeHeartList_Adapter();
         heart_ArrayList = new ArrayList<>();
 
-        recyclerView.setAdapter(heartAdapter);
+        heartRecyclerView.setAdapter(heartAdapter);
         heartRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         heartAdapter.setItem(heart_ArrayList);
 
         heartLayout = v.findViewById(R.id.home_HeartLayout);
+        heartListClose_Iv = v.findViewById(R.id.heartListClose_Image);
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         loginNickname = sharedPreferences.getString("nickname","");
@@ -344,6 +399,29 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         deleteFilter = new IntentFilter("deletePostSync");
         heartFilter = new IntentFilter("homeHeartSync");
         commentFilter = new IntentFilter("homeCommentSync");
+
+        adapter.setOnItemLongClickListener(new Home_Adapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(int postNum) {
+                Log.d(TAG, "onItemLongClick : " + postNum);
+                heartLayout.setVisibility(View.VISIBLE);
+
+                getHeartList(postNum);
+
+            }
+        });
+
+        heartListClose_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                heartLayout.setVisibility(View.GONE);
+
+                heart_ArrayList.clear();
+                heartAdapter.notifyDataSetChanged();
+
+            }
+        });
 
     } // setView()
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,13 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.Data.User;
+import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
 
 public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Adapter.ViewHolder>{
 
-    ArrayList<PostData> data;
+    ArrayList<User> data;
     Context context;
 
 
@@ -27,7 +30,8 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
     public HomeHeartList_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
 
-        View view = LayoutInflater.from(context).inflate(R.layout.heartlist, parent, false);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.heartlist, parent, false);
         HomeHeartList_Adapter.ViewHolder viewHolder = new HomeHeartList_Adapter.ViewHolder(view);
 
         return viewHolder;
@@ -41,13 +45,14 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
 
     @Override
     public int getItemCount() {
-        return 0;
+        return data.size();
     }
 
-    public void setItem(ArrayList<PostData> data) {
+    public void setItem(ArrayList<User> data) {
         this.data = data;
         notifyDataSetChanged();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -62,15 +67,15 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
 
         }
 
-        void onBind(PostData item) {
+        void onBind(User item) {
 
-            textView.setText(item.getNickname());
+                textView.setText(item.getNickname());
 
-            Glide.with(context)
-                    .load(item.getProfileImage())
-                    .skipMemoryCache(true)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(imageView);
+                Glide.with(context)
+                        .load(ApiClient.serverProfileImagePath + item.getImage())
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(imageView);
 
         }
 

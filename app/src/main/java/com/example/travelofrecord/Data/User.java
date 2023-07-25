@@ -35,6 +35,11 @@ public class User {
     @Expose
     @SerializedName("response") public String response;
 
+    public User(String imagePath, String nickname) {
+        this.imagePath = imagePath;
+        this.nickname = nickname;
+    }
+
     public String getType() {
         return loginType;
     }

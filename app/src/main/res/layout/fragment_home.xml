@@ -80,7 +80,8 @@
                     android:layout_height="match_parent"
                     android:layout_marginVertical="50dp"
                     android:layout_marginHorizontal="35dp"
-                    android:background="@color/lightGray2"
+                    android:background="@color/main"
+                    android:visibility="gone"
                     >
 
                     <LinearLayout
@@ -143,9 +144,6 @@
                             />
 
                     </LinearLayout>
-
-
-
 
                 </FrameLayout>
 

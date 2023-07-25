@@ -95,6 +95,15 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
     }
 
+    private OnItemLongClickListener itemLongClickListener;
+    public interface OnItemLongClickListener {
+        void onItemLongClick(int postNum);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        this.itemLongClickListener = listener;
+    }
+
 
     // 뷰홀더 생성
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -355,7 +364,35 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 @Override
                 public boolean onLongClick(View view) {
 
-                    
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+
+                        if (itemLongClickListener != null) {
+
+                            itemLongClickListener.onItemLongClick(item.getNum());
+
+                        }
+
+                    }
+
+                    return true;
+                }
+            });
+
+            post_HeartFull.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+
+                        if (itemLongClickListener != null) {
+
+                            itemLongClickListener.onItemLongClick(item.getNum());
+
+                        }
+
+                    }
 
                     return true;
                 }

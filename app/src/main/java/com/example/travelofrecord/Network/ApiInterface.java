@@ -237,5 +237,10 @@ public interface ApiInterface {
             @Query("nickname") String nickname
     );
 
+    @GET("mysql_GetHeartList.php")
+    Call<ArrayList<User>> getHeartList(
+            @Query("postNum") int postNum
+    );
+
 
 }
