@@ -325,8 +325,9 @@ public class Fragment_Dm extends Fragment {
                         message = data.get(i).getLastMessage();
                         dateMessage = data.get(i).getLastDate();
                         notReadMessage = data.get(i).getNotReadMessage();
+                        String senderImage = data.get(i).getSenderImage();
 
-                        Log.d(TAG, "채팅방 정보 : " + roomName + " / " + message + " / " + dateMessage + " / " + notReadMessage);
+                        Log.d(TAG, "채팅방 정보 : " + roomName + " / " + message + " / " + dateMessage + " / " + notReadMessage + " / " + senderImage);
 
                         String[] array = roomName.split("↘");
                         String user1 = array[0];
@@ -338,7 +339,7 @@ public class Fragment_Dm extends Fragment {
                             roomName = user1;
                         }
 
-                        chat = new Chat(roomName, message, dateMessage, notReadMessage);
+                        chat = new Chat(roomName, message, dateMessage, notReadMessage, senderImage);
 
                         arrayList.add(chat);
 

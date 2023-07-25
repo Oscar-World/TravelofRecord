@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Activity.DirectMessage;
 import com.example.travelofrecord.Activity.Profile;
 import com.example.travelofrecord.Data.Chat;
@@ -78,18 +79,18 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout chatRoomLayout;
+        ImageView profileImage;
         TextView nicknameText;
         TextView messageText;
         TextView dateText;
         TextView notReadText;
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
-        String currentNickname = sharedPreferences.getString("nickname", "");
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             chatRoomLayout = itemView.findViewById(R.id.chatRoom_Layout);
+            profileImage = itemView.findViewById(R.id.chatRoom_Image);
             nicknameText = itemView.findViewById(R.id.chatRoomNickname_Text);
             messageText = itemView.findViewById(R.id.chatRoomMessage_Text);
             dateText = itemView.findViewById(R.id.chatRoomDate_Text);
@@ -106,6 +107,11 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
             long parseTime = Long.parseLong(dateMessage);
             String time = getTime.getFormatTime1(parseTime);
 
+            Glide.with(context)
+                    .load(ApiClient.serverProfileImagePath + item.getSenderImage())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(profileImage);
 
             nicknameText.setText(item.getRoomName() + " 채팅방");
             messageText.setText(item.getLastMessage());

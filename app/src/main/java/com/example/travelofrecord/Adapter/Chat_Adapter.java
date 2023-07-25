@@ -11,8 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
@@ -69,14 +71,14 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public class LeftViewHolder extends RecyclerView.ViewHolder {
 
-//        ImageView leftChatProfileImage;
+        ImageView leftChatProfileImage;
         TextView leftChatNicknameText;
         TextView leftChatMessageText;
         TextView leftChatDateText;
 
         public LeftViewHolder(View view) {
             super(view);
-//            leftChatProfileImage = view.findViewById(R.id.leftChatProfile_Image);
+            leftChatProfileImage = view.findViewById(R.id.leftChat_Image);
             leftChatNicknameText = view.findViewById(R.id.leftChatNickname_Text);
             leftChatMessageText = view.findViewById(R.id.leftChatMessage_Text);
             leftChatDateText = view.findViewById(R.id.leftChatDate_Text);
@@ -87,9 +89,12 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             leftChatNicknameText.setText(item.getSender());
             leftChatMessageText.setText(item.getMessage());
             leftChatDateText.setText(item.getDateMessage());
-//            Glide.with(context)
-//                    .load(item.getProfileImage())
-//                    .into(leftChatProfileImage);
+
+            Glide.with(context)
+                    .load(ApiClient.serverProfileImagePath + item.getSenderImage())
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(leftChatProfileImage);
 
         }
 

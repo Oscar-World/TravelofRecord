@@ -366,7 +366,6 @@ public class DirectMessage extends AppCompatActivity {
                     Log.d(TAG, "roomCheck : " + roomCheck + " roomNum : " + roomNum + " sender : " + sender);
 
 
-
                     if (roomCheck) {
                         Log.d(TAG, "이미 만들어진 채팅방 있음");
                         chatRoomStatus = true;
