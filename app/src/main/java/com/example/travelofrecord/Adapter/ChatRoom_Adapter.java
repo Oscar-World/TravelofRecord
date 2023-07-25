@@ -113,7 +113,7 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
                     .skipMemoryCache(true)
                     .into(profileImage);
 
-            nicknameText.setText(item.getRoomName() + " 채팅방");
+            nicknameText.setText(item.getRoomName());
             messageText.setText(item.getLastMessage());
             dateText.setText(time);
 

@@ -16,14 +16,14 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/leftChat_Image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             app:civ_border_color="@color/primary"
             app:civ_border_width="2dp"
             app:civ_border_overlay="false"
             android:src="@drawable/userfull"
             android:layout_gravity="center"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginHorizontal="5dp"
             />
 
         <LinearLayout
