@@ -135,7 +135,7 @@ public class Fragment_add extends Fragment {
     String imageFileName;
     String tempWrite;
     String tempImage;
-
+    boolean tempStatus = true;
 
     @Override
     public void onAttach(Context context) {
@@ -250,12 +250,18 @@ public class Fragment_add extends Fragment {
         Log.d(TAG, "onDestroyView() 호출");
         super.onDestroyView();
 
-        String tempImage = postImage;
-        String tempWrite = writing_Edit.getText().toString();
+        if (tempStatus) {
 
-        writeEditor.putString("image", tempImage);
-        writeEditor.putString("write", tempWrite);
-        writeEditor.commit();
+            String tempImage = postImage;
+            String tempWrite = writing_Edit.getText().toString();
+
+            if (tempImage != null | !tempWrite.equals("")) {
+                writeEditor.putString("image", tempImage);
+                writeEditor.putString("write", tempWrite);
+                writeEditor.commit();
+            }
+
+        }
 
     }
 
@@ -384,8 +390,6 @@ public class Fragment_add extends Fragment {
                 } else if (writing.equals("")) {
                     Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
                 } else {
-                    writeEditor.clear();
-                    writeEditor.commit();
 
                     String systemTime = String.valueOf(System.currentTimeMillis());
                     imageFileName = systemTime + ".jpg";
@@ -414,7 +418,6 @@ public class Fragment_add extends Fragment {
                     File file = new File(postImage);
                     insertFeed(file, map);
 
-//                    insertFeed(nickname, profileImage, heart, commentNum, currentLocation, postImage, writing, dateCreated);
                 }
 
             }
@@ -514,6 +517,10 @@ public class Fragment_add extends Fragment {
 
                     if (rpCode.equals("uploadOk")) {
 
+                        writeEditor.clear();
+                        writeEditor.commit();
+                        tempStatus = false;
+
                         sendData.putString("nickname", nickname);
                         sendData.putString("profileImage", profileImage);
                         sendData.putInt("heart", heart);
@@ -524,6 +531,7 @@ public class Fragment_add extends Fragment {
 
                         homeActivity.goHomeFragment(sendData);
                         Log.d(TAG, "보낸 번들 데이터 : " + sendData);
+
 
                     } else {
                         Toast.makeText(getActivity(), "업로드 실패", Toast.LENGTH_SHORT).show();
@@ -542,48 +550,6 @@ public class Fragment_add extends Fragment {
         });
 
     }
-
-
-    // 서버에 게시글 데이터 추가
-    public void insertFeed(String nickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated) {
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<PostData> call = apiInterface.insertFeed(nickname, profileImage, heart, commentNum, location, postImage, writing, dateCreated);
-        call.enqueue(new Callback<PostData>() {
-            @Override
-            public void onResponse(Call<PostData> call, Response<PostData> response) {
-
-                if (response.isSuccessful()) {
-
-                    Log.d(TAG, "onResponse: 리스폰스 성공");
-
-                    String rp_code = response.body().getResponse();
-                    Log.d(TAG, "서버에 게시글 추가 응답 : " + rp_code);
-
-                    sendData.putString("nickname", nickname);
-                    sendData.putString("profileImage", profileImage);
-                    sendData.putInt("heart", heart);
-                    sendData.putString("location", location);
-                    sendData.putString("postImage", postImage);
-                    sendData.putString("writing", writing);
-                    sendData.putString("dateCreated", dateCreated);
-
-                    homeActivity.goHomeFragment(sendData);
-                    Log.d(TAG, "보낸 번들 데이터 : " + sendData);
-
-                } else {
-                    Log.d(TAG, "onResponse: 리스폰스 실패");
-                }
-
-            }   // onResponse
-
-            @Override
-            public void onFailure(Call<PostData> call, Throwable t) {
-                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
-            }
-
-        });
-
-    }  // insertFeed()
 
 
     // ImageFile 생성 후, 경로를 가져올 메서드 선언

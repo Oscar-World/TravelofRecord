@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -97,6 +98,9 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     IntentFilter deleteFilter;
 
     boolean receiverStatus;
+
+    int pageNum;
+    boolean pagingStatus;
 
     @Override
     public void onBack() {
@@ -216,7 +220,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     public void getPost(String currentNickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<PostData>> call = apiInterface.getPost(currentNickname);
+        Call<ArrayList<PostData>> call = apiInterface.getPosts(currentNickname, pageNum);
         call.enqueue(new Callback<ArrayList<PostData>>() {
             @Override
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
@@ -350,6 +354,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         loginNickname = sharedPreferences.getString("nickname","");
 
+        pageNum = 1;
+        pagingStatus = true;
 
     }
 
@@ -420,6 +426,29 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
                 heart_ArrayList.clear();
                 heartAdapter.notifyDataSetChanged();
+
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                int totalCount = recyclerView.getAdapter().getItemCount();
+
+                if (lastPosition == totalCount -1) {
+                    Log.d(TAG, "최하단 도착. pageNum : " + pageNum);
+
+                    pageNum += 1;
+
+                }
 
             }
         });

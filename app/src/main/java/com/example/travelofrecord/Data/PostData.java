@@ -64,6 +64,12 @@ public class PostData {
     @Expose
     @SerializedName("memo") public String memo;
 
+    @Expose
+    @SerializedName("pagingStatus") public String pagingStatus;
+
+    @Expose
+    @SerializedName("pageNum") public int pageNum;
+
 
 
 
@@ -165,6 +171,8 @@ public class PostData {
     public String getComment() { return comment; }
     public int getCommentNum() { return commentNum; }
     public String getCommentProfileImage() { return commentProfileImage; }
+    public String getPagingStatus() { return pagingStatus; }
+    public int getPageNum() { return pageNum; }
 
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
@@ -200,5 +208,7 @@ public class PostData {
     public void setComment(String comment) { this.comment = comment; }
     public void setCommentNum(int commentNum) { this.commentNum = commentNum; }
     public void setCommentProfileImage(String commentProfileImage) { this.commentProfileImage = commentProfileImage; }
+    public void setPagingStatus(String pagingStatus) { this.pagingStatus = pagingStatus; }
+    public void setPageNum(int pageNum) { this.pageNum = pageNum; }
 
 }

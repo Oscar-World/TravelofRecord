@@ -108,8 +108,9 @@ public interface ApiInterface {
 
     // 게시글 데이터 가져오기 (메인 피드)
     @GET("mysql_GetPostInfo.php")
-    Call<ArrayList<PostData>> getPost(
-            @Query("nickname") String nickname
+    Call<ArrayList<PostData>> getPosts(
+            @Query("nickname") String nickname,
+            @Query("pageNum") int pageNum
     );
 
     // 게시글 데이터 가져오기 (게시글 내부)
