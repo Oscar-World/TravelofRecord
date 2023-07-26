@@ -372,16 +372,16 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
         Glide.with(requireActivity())
                 .load(ApiClient.serverProfileImagePath + user_image)
-                .transition(withCrossFade(factory))
-                .placeholder(R.drawable.loading2)
+//                .transition(withCrossFade(factory))
+//                .placeholder(R.drawable.loading2)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(profile_Image);
 
         Glide.with(requireActivity())
                 .load(ApiClient.serverProfileImagePath + user_image)
-                .transition(withCrossFade(factory))
-                .placeholder(R.drawable.loading2)
+//                .transition(withCrossFade(factory))
+//                .placeholder(R.drawable.loading2)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(editProfile_Image);

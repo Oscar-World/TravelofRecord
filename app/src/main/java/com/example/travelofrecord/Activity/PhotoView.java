@@ -90,8 +90,8 @@ public class PhotoView extends AppCompatActivity {
 
         Glide.with(this)
                 .load(image)
-                .transition(withCrossFade(factory))
-                .placeholder(R.drawable.loading2)
+//                .transition(withCrossFade(factory))
+//                .placeholder(R.drawable.loading2)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(photoView);

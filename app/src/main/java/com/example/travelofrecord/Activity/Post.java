@@ -663,8 +663,8 @@ public class Post extends AppCompatActivity {
 
                         Glide.with(getApplicationContext())
                                 .load(ApiClient.serverProfileImagePath + post_ProfileImage)
-                                .transition(withCrossFade(factory))
-                                .placeholder(R.drawable.loading2)
+//                                .transition(withCrossFade(factory))
+//                                .placeholder(R.drawable.loading2)
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .skipMemoryCache(true)
                                 .into(post_ProfileImage_Iv);

@@ -195,8 +195,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
                         Glide.with(context)
                                 .load(ApiClient.serverProfileImagePath + item.getProfileImage())
-                                .transition(withCrossFade(factory))
-                                .placeholder(R.drawable.loading2)
+//                                .transition(withCrossFade(factory))
+//                                .placeholder(R.drawable.loading2)
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .skipMemoryCache(true)
                                 .into(post_ProfileImage);

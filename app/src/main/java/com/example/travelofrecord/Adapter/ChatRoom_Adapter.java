@@ -117,8 +117,8 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
                 Glide.with(context)
                         .load(R.drawable.userfull)
-                        .transition(withCrossFade(factory))
-                        .placeholder(R.drawable.loading2)
+//                        .transition(withCrossFade(factory))
+//                        .placeholder(R.drawable.loading2)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(profileImage);
@@ -133,8 +133,8 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
                 Glide.with(context)
                         .load(ApiClient.serverProfileImagePath + item.getSenderImage())
-                        .transition(withCrossFade(factory))
-                        .placeholder(R.drawable.loading2)
+//                        .transition(withCrossFade(factory))
+//                        .placeholder(R.drawable.loading2)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(profileImage);

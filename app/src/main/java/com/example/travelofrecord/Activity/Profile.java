@@ -433,8 +433,8 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
                     Glide.with(getApplicationContext())
                             .load(ApiClient.serverProfileImagePath + user_ImagePath)
-                            .transition(withCrossFade(factory))
-                            .placeholder(R.drawable.loading2)
+//                            .transition(withCrossFade(factory))
+//                            .placeholder(R.drawable.loading2)
                             .skipMemoryCache(true)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(profileImage);
