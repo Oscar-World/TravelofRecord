@@ -3,6 +3,8 @@ package com.example.travelofrecord.Fragment;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -44,6 +46,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Other.BitmapConverter;
@@ -157,8 +160,12 @@ public class Fragment_add extends Fragment {
 
                         if (result.getResultCode() == RESULT_OK) {
 
+                            DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
                             Glide.with(getActivity())
                                     .load(postImage)
+                                    .transition(withCrossFade(factory))
+                                    .placeholder(R.drawable.loading2)
                                     .skipMemoryCache(true)
                                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                                     .into(postImage_Iv);

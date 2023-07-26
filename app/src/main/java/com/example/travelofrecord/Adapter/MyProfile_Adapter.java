@@ -1,5 +1,7 @@
 package com.example.travelofrecord.Adapter;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Network.ApiClient;
@@ -78,6 +81,8 @@ public class MyProfile_Adapter extends RecyclerView.Adapter<MyProfile_Adapter.Vi
 
         ImageView proflie_PostImage;
 
+        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -90,6 +95,8 @@ public class MyProfile_Adapter extends RecyclerView.Adapter<MyProfile_Adapter.Vi
 
             Glide.with(context)
                     .load(ApiClient.serverPostImagePath + item.getPostImage())
+                    .transition(withCrossFade(factory))
+                    .placeholder(R.drawable.loading2)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
                     .into(proflie_PostImage);

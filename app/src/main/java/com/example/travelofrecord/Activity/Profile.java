@@ -1,5 +1,7 @@
 package com.example.travelofrecord.Activity;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Function.GetAdress;
@@ -426,8 +429,12 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                     profileNicknameText.setText(user_Nickname);
                     profileMemoText.setText(user_Memo);
 
+                    DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
                     Glide.with(getApplicationContext())
                             .load(ApiClient.serverProfileImagePath + user_ImagePath)
+                            .transition(withCrossFade(factory))
+                            .placeholder(R.drawable.loading2)
                             .skipMemoryCache(true)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(profileImage);

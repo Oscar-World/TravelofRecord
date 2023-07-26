@@ -1,5 +1,7 @@
 package com.example.travelofrecord.Adapter;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Network.ApiClient;
@@ -76,6 +79,8 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView leftChatMessageText;
         TextView leftChatDateText;
 
+        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
         public LeftViewHolder(View view) {
             super(view);
             leftChatProfileImage = view.findViewById(R.id.leftChat_Image);
@@ -92,8 +97,11 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 leftChatMessageText.setText(item.getMessage());
                 leftChatDateText.setText(item.getDateMessage());
 
+
                 Glide.with(context)
                         .load(R.drawable.userfull)
+                        .transition(withCrossFade(factory))
+                        .placeholder(R.drawable.loading2)
                         .skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(leftChatProfileImage);
@@ -106,6 +114,8 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 Glide.with(context)
                         .load(ApiClient.serverProfileImagePath + item.getSenderImage())
+                        .transition(withCrossFade(factory))
+                        .placeholder(R.drawable.loading2)
                         .skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(leftChatProfileImage);

@@ -1,5 +1,7 @@
 package com.example.travelofrecord.Activity;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -36,6 +38,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -865,6 +868,8 @@ public class Signup extends AppCompatActivity {
             }
         });
 
+        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
@@ -877,6 +882,8 @@ public class Signup extends AppCompatActivity {
 
                          Glide.with(getApplicationContext())
                                  .load(uri)
+                                 .transition(withCrossFade(factory))
+                                 .placeholder(R.drawable.loading2)
                                  .skipMemoryCache(true)
                                  .diskCacheStrategy(DiskCacheStrategy.NONE)
                                  .into(photo_Btn);

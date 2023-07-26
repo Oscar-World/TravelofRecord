@@ -3,6 +3,8 @@ package com.example.travelofrecord.Fragment;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,6 +45,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.PhotoView;
 import com.example.travelofrecord.Activity.Start;
 import com.example.travelofrecord.Network.ApiClient;
@@ -365,14 +368,20 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         profile_nickname.setText(user_nickname);
         Log.d(TAG, "setView userImage : " + user_image);
 
+        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
         Glide.with(requireActivity())
                 .load(ApiClient.serverProfileImagePath + user_image)
+                .transition(withCrossFade(factory))
+                .placeholder(R.drawable.loading2)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(profile_Image);
 
         Glide.with(requireActivity())
                 .load(ApiClient.serverProfileImagePath + user_image)
+                .transition(withCrossFade(factory))
+                .placeholder(R.drawable.loading2)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(editProfile_Image);
