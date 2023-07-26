@@ -154,6 +154,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
             linearLayout = itemView.findViewById(R.id.post_LinearLayout);
 
 
+
         }
 
 
@@ -214,6 +215,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
                 });
 
             }
+
 
             post_SeeMore.setOnClickListener(new View.OnClickListener() {
                 @Override

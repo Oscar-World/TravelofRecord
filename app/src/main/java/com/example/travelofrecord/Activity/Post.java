@@ -425,7 +425,7 @@ public class Post extends AppCompatActivity {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
                     Intent i = new Intent(Post.this, PhotoView.class);
-                    i.putExtra("image",post_PostImage);
+                    i.putExtra("image",ApiClient.serverPostImagePath + post_PostImage);
                     startActivity(i);
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +71,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     ImageView loading_Iv;
     Animation rotate;
+    Animation appear;
+    Animation disappear;
 
     ArrayList<PostData> post_Data_ArrayList;
     int itemSize;
@@ -100,7 +104,16 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     boolean receiverStatus;
 
     int pageNum;
-    boolean pagingStatus;
+    String pagingStatus;
+
+    int lastPosition;
+    int totalCount;
+
+    LinearLayout loadingLayout;
+    ImageView loadingImage;
+    Handler handler;
+    int listSize = 0;
+    boolean requestStatus = true;
 
     @Override
     public void onBack() {
@@ -142,7 +155,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
             internetText.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            getPost(loginNickname);
+            requestStatus = true;
+            getPost(loginNickname, pageNum);
         }else {
             internetText.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
@@ -217,16 +231,15 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     }
 
 
-    public void getPost(String currentNickname) {
+    public void getPost(String currentNickname, int pageNumber) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<PostData>> call = apiInterface.getPosts(currentNickname, pageNum);
+        Call<ArrayList<PostData>> call = apiInterface.getPosts(currentNickname, pageNumber);
         call.enqueue(new Callback<ArrayList<PostData>>() {
             @Override
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
 
                 if (response.isSuccessful()) {
-
                     loading_Iv.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
                     loading_Iv.clearAnimation();
@@ -234,7 +247,6 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                     ArrayList<PostData> data = response.body();
 
                     if (data.size() > 0) {
-
                         Log.d(TAG, "data.size : " + data.size());
 
                         for (int i = 0; i < data.size(); i++) {
@@ -249,6 +261,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                             dateCreated = data.get(i).getDateCreated();
                             postNum = data.get(i).getPostNum();
                             whoLike = data.get(i).getWhoLike();
+                            pagingStatus = data.get(i).getPagingStatus();
 
                             heartStatus = false;
 
@@ -267,19 +280,23 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                             Log.d(TAG, "i : " + i);
 
                             Log.d(TAG, "num = " + num + "\nnickname = " + nickname + "\npostNum : " + postNum
-                             + "\nwhoLike : " + whoLike + "\nheartStatus : " + heartStatus);
-
+                             + "\nwhoLike : " + whoLike + "\nheartStatus : " + heartStatus + "\npagingStatus : " + pagingStatus);
 
                             PostData postData = new PostData(num, nickname, profileImage, heart, commentNum, addressPost, postImage, writing, datePost, postNum, whoLike, heartStatus);
 
-                            post_Data_ArrayList.add(0, postData);
-
+                            listSize = post_Data_ArrayList.size();
+                            post_Data_ArrayList.add(post_Data_ArrayList.size(), postData);
+                            listSize = post_Data_ArrayList.size() - listSize;
                         }
 
                         itemSize = post_Data_ArrayList.size();
                         Log.d(TAG, "itemSize : " + itemSize);
 
-                        adapter.notifyDataSetChanged();
+                        if (requestStatus) {
+                            adapter.setItemPost(post_Data_ArrayList);
+                        } else {
+                            adapter.notifyItemRangeChanged(post_Data_ArrayList.size()-listSize,listSize);
+                        }
 
                     }
 
@@ -326,6 +343,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
         loading_Iv = v.findViewById(R.id.home_Loading);
         rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
+        appear = AnimationUtils.loadAnimation(getActivity(),R.anim.loading_appear);
+        disappear = AnimationUtils.loadAnimation(getActivity(),R.anim.loading_disappear);
 
         networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
         swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);
@@ -355,7 +374,11 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         loginNickname = sharedPreferences.getString("nickname","");
 
         pageNum = 1;
-        pagingStatus = true;
+        pagingStatus = "false";
+
+        loadingLayout = v.findViewById(R.id.postLoading_Layout);
+        loadingImage = v.findViewById(R.id.postLoading_Image);
+        handler = new Handler();
 
     }
 
@@ -382,11 +405,17 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             public void onRefresh() {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    pageNum = 1;
+
                     internetText.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
+
+                    post_Data_ArrayList.clear();
                     post_Data_ArrayList = new ArrayList<>();
-                    adapter.setItemPost(post_Data_ArrayList);
-                    getPost(loginNickname);
+
+                    requestStatus = true;
+                    getPost(loginNickname, pageNum);
                 }else {
                     internetText.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
@@ -440,13 +469,18 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                int lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-                int totalCount = recyclerView.getAdapter().getItemCount();
+                lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                totalCount = recyclerView.getAdapter().getItemCount();
 
-                if (lastPosition == totalCount -1) {
-                    Log.d(TAG, "최하단 도착. pageNum : " + pageNum);
+                if (lastPosition == totalCount -1 & pagingStatus.equals("true")) {
 
-                    pageNum += 1;
+                    recyclerView.scrollToPosition(post_Data_ArrayList.size()-1);
+                    loadingLayout.setVisibility(View.VISIBLE);
+                    loadingLayout.startAnimation(appear);
+                    loadingImage.startAnimation(rotate);
+
+                    WaitPagingThread pagingThread = new WaitPagingThread();
+                    pagingThread.start();
 
                 }
 
@@ -455,6 +489,39 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     } // setView()
 
+    public class WaitPagingThread extends Thread {
+
+        public void run() {
+            Log.d(TAG, "WaitPagingTheard.start()");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    loadingImage.startAnimation(disappear);
+                    loadingLayout.startAnimation(disappear);
+                    loadingLayout.setVisibility(View.GONE);
+
+                }
+            });
+
+            if (lastPosition == totalCount -1) {
+
+                pageNum += 1;
+                Log.d(TAG, "최하단 도착. pageNum : " + pageNum);
+                requestStatus = false;
+                getPost(loginNickname, pageNum);
+
+            }
+
+        }
+
+    }
 
 
     @Override public void onResume() {

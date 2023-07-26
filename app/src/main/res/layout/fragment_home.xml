@@ -149,11 +149,29 @@
 
             </FrameLayout>
 
-
-
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+        <LinearLayout
+            android:id="@+id/postLoading_Layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:background="@color/none"
+            android:visibility="gone"
+            >
 
+            <ImageView
+                android:id="@+id/postLoading_Image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/loading"
+                android:layout_marginVertical="10dp"
+                android:layout_gravity="center"
+                />
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
