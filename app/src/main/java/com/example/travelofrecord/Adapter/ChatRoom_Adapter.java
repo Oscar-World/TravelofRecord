@@ -85,6 +85,8 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
         TextView dateText;
         TextView notReadText;
 
+        boolean userStatus = false;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -107,15 +109,35 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
             long parseTime = Long.parseLong(dateMessage);
             String time = getTime.getFormatTime1(parseTime);
 
-            Glide.with(context)
-                    .load(ApiClient.serverProfileImagePath + item.getSenderImage())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .into(profileImage);
+            if (item.getSenderImage().equals("") | item.getSenderImage() == null) {
 
-            nicknameText.setText(item.getRoomName());
-            messageText.setText(item.getLastMessage());
-            dateText.setText(time);
+                Glide.with(context)
+                        .load(R.drawable.userfull)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(profileImage);
+
+                nicknameText.setText(item.getRoomName());
+                messageText.setText("(탈퇴한 사용자)");
+                dateText.setText("");
+
+                userStatus = false;
+
+            } else {
+
+                Glide.with(context)
+                        .load(ApiClient.serverProfileImagePath + item.getSenderImage())
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(profileImage);
+
+                nicknameText.setText(item.getRoomName());
+                messageText.setText(item.getLastMessage());
+                dateText.setText(time);
+
+                userStatus = true;
+
+            }
 
             if (item.getNotReadMessage() == 0) {
                 notReadText.setVisibility(View.GONE);
@@ -136,6 +158,7 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
                     Intent i = new Intent(context, DirectMessage.class);
                     i.putExtra("postNickname", item.getRoomName());
+                    i.putExtra("userStatus", userStatus);
                     context.startActivity(i);
 
                 }

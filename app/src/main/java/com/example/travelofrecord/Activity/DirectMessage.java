@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travelofrecord.Adapter.Chat_Adapter;
@@ -44,6 +45,8 @@ public class DirectMessage extends AppCompatActivity {
     ImageButton backBtn;
     ImageButton sendBtn;
     EditText chatEdit;
+    TextView chatRoomText;
+
     RecyclerView chatRecyclerView;
     ArrayList<Chat> arrayList;
     Chat_Adapter adapter;
@@ -64,6 +67,7 @@ public class DirectMessage extends AppCompatActivity {
     String roomNum;
     boolean roomCheck = false;
     String getNickname;
+    boolean userStatus;
     String nicknameSum1;
     String nicknameSum2;
     String otherFcmToken;
@@ -131,10 +135,18 @@ public class DirectMessage extends AppCompatActivity {
         backBtn = findViewById(R.id.chatBack_Btn);
         sendBtn = findViewById(R.id.chatSend_Btn);
         chatEdit = findViewById(R.id.chatMessage_Edit);
+        chatRoomText = findViewById(R.id.chat_RoomText);
         chatRecyclerView = findViewById(R.id.chat_RecyclerView);
 
         Intent i = getIntent();
         getNickname = i.getStringExtra("postNickname");
+        userStatus = i.getBooleanExtra("userStatus", true);
+
+        if (userStatus) {
+            chatRoomText.setText(getNickname);
+        } else {
+            chatRoomText.setText(getNickname + " (탈퇴한 사용자)");
+        }
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         currentNickname = sharedPreferences.getString("nickname","");
@@ -159,8 +171,6 @@ public class DirectMessage extends AppCompatActivity {
 
 
     public void setView() {
-
-        // DB에 저장된 채팅 내용 불러와서 ArrayList.add 해주고 리사이클러뷰에 반영
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override

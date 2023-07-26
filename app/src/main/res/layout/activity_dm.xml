@@ -21,10 +21,20 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"
+            android:layout_marginHorizontal="5dp"
             android:backgroundTint="@color/none"
             android:scaleType="fitXY"
             app:srcCompat="?attr/actionModeCloseDrawable" />
+
+        <TextView
+            android:id="@+id/chat_RoomText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="닉네임"
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            />
 
     </LinearLayout>
 

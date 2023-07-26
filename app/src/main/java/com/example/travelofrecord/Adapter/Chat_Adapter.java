@@ -86,15 +86,31 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void onBind(Chat item) {
 
-            leftChatNicknameText.setText(item.getSender());
-            leftChatMessageText.setText(item.getMessage());
-            leftChatDateText.setText(item.getDateMessage());
+            if (item.getSenderImage().equals("") | item.getSenderImage() == null) {
 
-            Glide.with(context)
-                    .load(ApiClient.serverProfileImagePath + item.getSenderImage())
-                    .skipMemoryCache(true)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(leftChatProfileImage);
+                leftChatNicknameText.setText(item.getSender());
+                leftChatMessageText.setText(item.getMessage());
+                leftChatDateText.setText(item.getDateMessage());
+
+                Glide.with(context)
+                        .load(R.drawable.userfull)
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(leftChatProfileImage);
+
+            } else {
+
+                leftChatNicknameText.setText(item.getSender());
+                leftChatMessageText.setText(item.getMessage());
+                leftChatDateText.setText(item.getDateMessage());
+
+                Glide.with(context)
+                        .load(ApiClient.serverProfileImagePath + item.getSenderImage())
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(leftChatProfileImage);
+
+            }
 
         }
 
