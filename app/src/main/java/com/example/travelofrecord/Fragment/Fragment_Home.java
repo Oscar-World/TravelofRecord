@@ -456,6 +456,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                 heart_ArrayList.clear();
                 heartAdapter.notifyDataSetChanged();
 
+                swipeRefreshLayout.setEnabled(true);
+
             }
         });
 
@@ -484,6 +486,16 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
                 }
 
+            }
+        });
+
+
+
+        heartLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                swipeRefreshLayout.setEnabled(false);
+                return true;
             }
         });
 

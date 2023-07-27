@@ -81,6 +81,9 @@
                     android:layout_marginVertical="50dp"
                     android:layout_marginHorizontal="35dp"
                     android:background="@color/main"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:visibility="gone"
                     >
 
