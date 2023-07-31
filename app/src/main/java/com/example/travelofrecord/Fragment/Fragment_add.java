@@ -254,10 +254,12 @@ public class Fragment_add extends Fragment {
 
             String tempImage = postImage;
             String tempWrite = writing_Edit.getText().toString();
+            String tempLocation = currentLocation;
 
             if (tempImage != null | !tempWrite.equals("")) {
                 writeEditor.putString("image", tempImage);
                 writeEditor.putString("write", tempWrite);
+//                writeEditor.putString("location", tempLocation);
                 writeEditor.commit();
             }
 

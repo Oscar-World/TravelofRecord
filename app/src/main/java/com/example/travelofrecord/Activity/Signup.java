@@ -782,7 +782,9 @@ public class Signup extends AppCompatActivity {
                 Log.d(TAG, "NetworkStatus : " + status);
                 if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    if (edit_phoneCheck.equals("") | edit_phoneCheck == null) {
+                    edit_phoneCheck = signup_phoneCheck.getText().toString();
+
+                    if (edit_phoneCheck.equals("")) {
 
                         Toast.makeText(getApplicationContext(), "인증 번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
 
@@ -798,9 +800,8 @@ public class Signup extends AppCompatActivity {
                         smsCheck_Block.setVisibility(View.VISIBLE);
                         smsCheck_Btn.setVisibility(View.INVISIBLE);
 
-                        edit_phoneCheck = signup_phoneCheck.getText().toString();
-
                         if (edit_phoneCheck.equals(smsCode)) {
+//                        if (edit_phoneCheck.equals("7777")) {
                             phone_SmsOk.setVisibility(View.VISIBLE);
                             nextBlock_2.setVisibility(View.INVISIBLE);
                             nextBtn_2.setVisibility(View.VISIBLE);

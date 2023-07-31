@@ -116,8 +116,8 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
             Glide.with(context)
                     .load(ApiClient.serverProfileImagePath + item.getCommentProfileImage())
-                    .transition(withCrossFade(factory))
-                    .placeholder(R.drawable.loading2)
+//                    .transition(withCrossFade(factory))
+//                    .placeholder(R.drawable.loading2)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
                     .into(comment_ProfileImage);
