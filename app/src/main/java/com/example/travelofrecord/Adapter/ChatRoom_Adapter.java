@@ -90,7 +90,9 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
         boolean userStatus = false;
 
-        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+        Long currentTime = System.currentTimeMillis();
+        String currentFormatTime = "";
+        String parseFormatTime = "";
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -117,8 +119,6 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
                 Glide.with(context)
                         .load(R.drawable.userfull)
-//                        .transition(withCrossFade(factory))
-//                        .placeholder(R.drawable.loading2)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(profileImage);
@@ -141,6 +141,24 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
                 nicknameText.setText(item.getRoomName());
                 messageText.setText(item.getLastMessage());
+
+                currentFormatTime = getTime.getFormatTime3(currentTime);
+                parseFormatTime = getTime.getFormatTime3(parseTime);
+
+                if (!currentFormatTime.equals(parseFormatTime)) {
+
+                    if (!currentFormatTime.substring(0,2).equals(parseFormatTime.substring(0,2))) {
+
+                        time = getTime.getFormatTime5(parseTime);
+
+                    } else {
+
+                        time = getTime.getFormatTime4(parseTime);
+
+                    }
+
+                } 
+
                 dateText.setText(time);
 
                 userStatus = true;

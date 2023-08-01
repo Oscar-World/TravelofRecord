@@ -58,5 +58,40 @@ public class GetTime {
         return formatTime;
     }
 
+    public String getFormatTime3(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMdd");
+        String formatTime = simpleDateFormat.format(time);
+
+        return formatTime;
+    }
+
+    public String getFormatTime4(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd");
+        String formatTime = simpleDateFormat.format(time);
+        String returnValue = "";
+
+        if (formatTime.charAt(0) == '0') {
+
+            returnValue = formatTime.substring(1, 2) + "월 " + formatTime.substring(2, 4) + "일";
+
+        } else {
+
+            returnValue = formatTime.substring(0, 2) + "월 " + formatTime.substring(2, 4) + "일";
+
+        }
+
+        return returnValue;
+    }
+
+    public String getFormatTime5(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+        String formatTime = simpleDateFormat.format(time);
+
+        return formatTime;
+    }
+
 
 }
