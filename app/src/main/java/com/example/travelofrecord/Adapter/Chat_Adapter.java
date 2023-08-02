@@ -121,8 +121,6 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 Glide.with(context)
                         .load(R.drawable.userfull)
-                        .skipMemoryCache(true)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(leftChatProfileImage);
 
             } else {
@@ -138,10 +136,6 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 Glide.with(context)
                         .load(ApiClient.serverProfileImagePath + item.getSenderImage())
-//                        .transition(withCrossFade(factory))
-//                        .placeholder(R.drawable.loading2)
-                        .skipMemoryCache(true)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(leftChatProfileImage);
 
             }

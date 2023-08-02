@@ -1,5 +1,6 @@
 package com.example.travelofrecord.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ public class DirectMessage extends AppCompatActivity {
     ImageButton sendBtn;
     EditText chatEdit;
     TextView chatRoomText;
+    LinearLayout newMessageLayout;
 
     RecyclerView chatRecyclerView;
     ArrayList<Chat> arrayList;
@@ -76,6 +79,9 @@ public class DirectMessage extends AppCompatActivity {
     String messageStatus;
 
     String newChatDate = "";
+
+    int lastPosition;
+    int totalCount;
 
 
     @Override
@@ -140,6 +146,7 @@ public class DirectMessage extends AppCompatActivity {
         chatEdit = findViewById(R.id.chatMessage_Edit);
         chatRoomText = findViewById(R.id.chat_RoomText);
         chatRecyclerView = findViewById(R.id.chat_RecyclerView);
+        newMessageLayout = findViewById(R.id.chat_newMessageText);
 
         Intent i = getIntent();
         getNickname = i.getStringExtra("postNickname");
@@ -198,6 +205,38 @@ public class DirectMessage extends AppCompatActivity {
                     thread.start();
 
                 }
+
+            }
+        });
+
+        chatRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                totalCount = recyclerView.getAdapter().getItemCount();
+
+                if ( lastPosition == totalCount - 1) {
+
+                    newMessageLayout.setVisibility(View.GONE);
+
+                }
+
+            }
+        });
+
+        newMessageLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+                newMessageLayout.setVisibility(View.GONE);
 
             }
         });
@@ -360,7 +399,7 @@ public class DirectMessage extends AppCompatActivity {
 
                 }
 
-                if (time.equals(arrayList.get(arrayList.size()-1).getDateMessage())) {
+                if (time.equals(arrayList.get(arrayList.size()-1).getDateMessage()) & nickname.equals(arrayList.get(arrayList.size()-1).getSender())) {
                     arrayList.set(arrayList.size()-1, new Chat(array[0], arrayList.get(arrayList.size()-1).getSender(), arrayList.get(arrayList.size()-1).getSenderImage(),
                             arrayList.get(arrayList.size()-1).getMessage(), "", arrayList.get(arrayList.size()-1).getViewType(), arrayList.get(arrayList.size()-1).getMessageStatus()));
                 }
@@ -370,7 +409,15 @@ public class DirectMessage extends AppCompatActivity {
 
                 if (arrayList.size()>0) {
 
-                    chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+                    if (lastPosition < totalCount -5) {
+
+                        newMessageLayout.setVisibility(View.VISIBLE);
+
+                    } else {
+
+                        chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+
+                    }
 
                 }
 
