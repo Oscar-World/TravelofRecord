@@ -37,9 +37,12 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (viewType == 0) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_left, parent, false);
             return new LeftViewHolder(view);
-        } else {
+        } else if (viewType == 1) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_right, parent, false);
             return new RightViewHolder(view);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatting_center, parent, false);
+            return new CenterViewHolder(view);
         }
 
     }
@@ -49,8 +52,10 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         if (holder instanceof LeftViewHolder) {
             ((LeftViewHolder) holder).onBind(arrayList.get(holder.getAdapterPosition()));
-        } else {
+        } else if (holder instanceof  RightViewHolder) {
             ((RightViewHolder) holder).onBind(arrayList.get(holder.getAdapterPosition()));
+        } else {
+            ((CenterViewHolder) holder).onBind(arrayList.get(holder.getAdapterPosition()));
         }
 
     }
@@ -70,6 +75,23 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public class CenterViewHolder extends RecyclerView.ViewHolder {
+
+        TextView centerChatDayText;
+
+        public CenterViewHolder(View view) {
+            super(view);
+            centerChatDayText = view.findViewById(R.id.centerChat_Text);
+        }
+
+        void onBind(Chat item) {
+
+            centerChatDayText.setText(item.getDate());
+
+        }
+
+    }
+
 
 
     public class LeftViewHolder extends RecyclerView.ViewHolder {
@@ -79,7 +101,6 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView leftChatMessageText;
         TextView leftChatDateText;
 
-        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         public LeftViewHolder(View view) {
             super(view);
@@ -100,8 +121,6 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 Glide.with(context)
                         .load(R.drawable.userfull)
-//                        .transition(withCrossFade(factory))
-//                        .placeholder(R.drawable.loading2)
                         .skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(leftChatProfileImage);

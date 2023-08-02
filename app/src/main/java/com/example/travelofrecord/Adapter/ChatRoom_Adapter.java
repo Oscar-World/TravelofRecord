@@ -157,7 +157,7 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
                     }
 
-                } 
+                }
 
                 dateText.setText(time);
 

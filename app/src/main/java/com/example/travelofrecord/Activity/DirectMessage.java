@@ -414,6 +414,10 @@ public class DirectMessage extends AppCompatActivity {
                     Log.d(TAG, "getChatting - onResponse isSuccessful");
 
                     ArrayList<Chat> list = response.body();
+                    String formatday = "";
+                    String dayOfWeek = "";
+                    String date = "";
+                    int viewType = 0;
 
                     if (list.size() > 0) {
 
@@ -424,10 +428,26 @@ public class DirectMessage extends AppCompatActivity {
                             String senderImage = response.body().get(i).getSenderImage();
                             String message = response.body().get(i).getMessage();
                             String dateMessage = response.body().get(i).getDateMessage();
-                            String time = String.valueOf(getTime.getFormatTime1(Long.valueOf(dateMessage)));
                             String messageStatus = response.body().get(i).getMessageStatus();
 
-                            int viewType = 0;
+                            String time = String.valueOf(getTime.getFormatTime1(Long.valueOf(dateMessage)));
+
+                            Log.d(TAG, "formatday : " + formatday + "\n" + getTime.getFormatTime5(Long.valueOf(dateMessage)));
+
+                            if (!formatday.equals(String.valueOf(getTime.getFormatTime5(Long.valueOf(dateMessage))))) {
+
+                                viewType = 2;
+
+                                formatday = String.valueOf(getTime.getFormatTime5(Long.valueOf(dateMessage)));
+                                dayOfWeek = getTime.getDayOfWeek(formatday);
+                                date = getTime.getFormatTime6(Long.valueOf(dateMessage)) + dayOfWeek;
+
+                                Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType, messageStatus, date);
+                                arrayList.add(chat);
+
+                            }
+
+                            viewType = 0;
                             if(sender.equals(currentNickname)) {
                                 viewType = 1;
                             }
@@ -438,7 +458,6 @@ public class DirectMessage extends AppCompatActivity {
                         }
 
                         adapter.notifyDataSetChanged();
-//                        chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
                         chatRecyclerView.scrollToPosition(arrayList.size()-1);
 
                     }

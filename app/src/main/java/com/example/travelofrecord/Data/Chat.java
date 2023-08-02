@@ -42,6 +42,7 @@ public class Chat {
 
     public boolean roomCheck;
 
+    public String date;
 
     public Chat (String roomNum, String sender, String senderImage, String message, String dateMessage, int viewType, String messageStatus) {
 
@@ -52,6 +53,19 @@ public class Chat {
         this.dateMessage = dateMessage;
         this.viewType = viewType;
         this.messageStatus = messageStatus;
+
+    }
+
+    public Chat (String roomNum, String sender, String senderImage, String message, String dateMessage, int viewType, String messageStatus, String date) {
+
+        this.roomNum = roomNum;
+        this.sender = sender;
+        this.senderImage = senderImage;
+        this.message = message;
+        this.dateMessage = dateMessage;
+        this.viewType = viewType;
+        this.messageStatus = messageStatus;
+        this.date = date;
 
     }
 
@@ -145,5 +159,9 @@ public class Chat {
     public int getNotReadMessage() { return notReadMessage; }
 
     public void setNotReadMessage(int notReadMessage) { this.notReadMessage = notReadMessage; }
+
+    public String getDate() { return date; }
+
+    public void setDate(String date) { this.date = date; }
 
 }

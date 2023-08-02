@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_marginVertical="10dp"
+    >
+
+    <TextView
+        android:id="@+id/centerChat_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2023년 8월 1일 화요일"
+        android:textSize="16dp"
+        android:textColor="@color/white"
+        android:background="@color/gray"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="5dp"
+        />
+
+</LinearLayout>

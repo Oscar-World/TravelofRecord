@@ -1,8 +1,17 @@
 package com.example.travelofrecord.Function;
 
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Arrays;
+import java.util.Locale;
 
 public class GetTime {
+
+    String TAG = "getTime";
 
     public String lastTime(String dateCreated) {
 
@@ -91,6 +100,37 @@ public class GetTime {
         String formatTime = simpleDateFormat.format(time);
 
         return formatTime;
+    }
+
+    public String getFormatTime6(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일 ");
+        String formatTime = simpleDateFormat.format(time);
+
+        return formatTime;
+    }
+
+    public String getDayOfWeek(String time) {
+
+        String array[] = time.split("\\.");
+
+        Log.d(TAG, "array.toString : " + Arrays.toString(array));
+        Log.d(TAG, "array[0] : " + array[0] + " array[1] : " + array[1] + " array[2] : " + array[2]);
+
+        int year = Integer.parseInt(array[0]);
+        int month = Integer.parseInt(array[1]);
+        int day = Integer.parseInt(array[2]);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            LocalDate date = LocalDate.of(year,month,day);
+
+            DayOfWeek dayOfWeek = date.getDayOfWeek();
+            return dayOfWeek.getDisplayName(TextStyle.FULL, Locale.KOREAN);
+
+        }
+
+        return "";
+
     }
 
 
