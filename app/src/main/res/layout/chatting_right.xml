@@ -40,7 +40,8 @@
         android:textSize="15dp"
         android:textColor="@color/black"
         android:background="@color/yellow"
-        android:padding="8dp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
         android:layout_marginTop="2dp"
         android:layout_marginRight="5dp"
         android:layout_gravity="end"
@@ -57,7 +58,7 @@
         android:text="오후 08:00"
         android:textSize="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="8dp"
         android:layout_gravity="end"
         />
 

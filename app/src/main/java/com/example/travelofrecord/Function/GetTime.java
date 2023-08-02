@@ -1,5 +1,6 @@
 package com.example.travelofrecord.Function;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -53,6 +54,7 @@ public class GetTime {
 
     public String getFormatTime1(Long time) {
 
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         String formatTime = simpleDateFormat.format(time);
 

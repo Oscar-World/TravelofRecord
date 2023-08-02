@@ -75,6 +75,8 @@ public class DirectMessage extends AppCompatActivity {
     boolean chatRoomStatus = false;
     String messageStatus;
 
+    String newChatDate = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -317,6 +319,10 @@ public class DirectMessage extends AppCompatActivity {
             String time = String.valueOf(getTime.getFormatTime1(getTime.getTime()));
             int viewType = 0;
 
+            String formatTime = String.valueOf(getTime.getFormatTime5(getTime.getTime()));
+            String dayOfWeek = getTime.getDayOfWeek(formatTime);
+            String date = getTime.getFormatTime6(getTime.getTime()) + dayOfWeek;
+
             if(nickname.equals(currentNickname) & !message.equals("ⓐloginⓐ") & !message.equals("ⓐlogoutⓐ")) {
                 viewType = 1;
 
@@ -338,7 +344,7 @@ public class DirectMessage extends AppCompatActivity {
                     for ( int i = 0; i < arrayList.size(); i++) {
 
                         arrayList.set(i, new Chat(arrayList.get(i).getRoomNum(),arrayList.get(i).getSender(),arrayList.get(i).getSenderImage(),arrayList.get(i).getMessage(),
-                                arrayList.get(i).getDateMessage(),arrayList.get(i).getViewType(), "true"));
+                                arrayList.get(i).getDateMessage(),arrayList.get(i).getViewType(), "true", arrayList.get(i).getDate()));
 
                     }
 
@@ -346,16 +352,32 @@ public class DirectMessage extends AppCompatActivity {
 
             } else if (!message.equals("ⓐlogoutⓐ")) {
 
+                if (!formatTime.equals(getTime.getFormatTime5(Long.valueOf(newChatDate)))) {
+
+                    arrayList.add(new Chat("", "", "", "", "", 2, "", date));
+
+                    newChatDate = String.valueOf(getTime.getTime());
+
+                }
+
+                if (time.equals(arrayList.get(arrayList.size()-1).getDateMessage())) {
+                    arrayList.set(arrayList.size()-1, new Chat(array[0], arrayList.get(arrayList.size()-1).getSender(), arrayList.get(arrayList.size()-1).getSenderImage(),
+                            arrayList.get(arrayList.size()-1).getMessage(), "", arrayList.get(arrayList.size()-1).getViewType(), arrayList.get(arrayList.size()-1).getMessageStatus()));
+                }
+
                 Chat chat = new Chat(array[0], nickname, senderImage, message, time, viewType, messageStatus);
                 arrayList.add(chat);
+
+                if (arrayList.size()>0) {
+
+                    chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+
+                }
 
             }
 
             adapter.notifyDataSetChanged();
-            if (arrayList.size()>0) {
-                chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
-//                chatRecyclerView.scrollToPosition(arrayList.size()-1);
-            }
+
 
         } // run()
 
@@ -419,30 +441,66 @@ public class DirectMessage extends AppCompatActivity {
                     String date = "";
                     int viewType = 0;
 
+                    String roomNumber = "";
+                    String sender = "";
+                    String senderImage = "";
+                    String message = "";
+                    String dateMessage = "";
+                    String messageStatus = "";
+                    String time = "";
+
+                    int dateNum = 0;
+
                     if (list.size() > 0) {
 
                         for (int i = 0; i < list.size(); i++) {
 
-                            String roomNumber = response.body().get(i).getRoomNum();
-                            String sender = response.body().get(i).getSender();
-                            String senderImage = response.body().get(i).getSenderImage();
-                            String message = response.body().get(i).getMessage();
-                            String dateMessage = response.body().get(i).getDateMessage();
-                            String messageStatus = response.body().get(i).getMessageStatus();
 
-                            String time = String.valueOf(getTime.getFormatTime1(Long.valueOf(dateMessage)));
+
+                            if (arrayList.size() > 0) {
+
+                                Log.d(TAG, "beforeTime : " + time + " / time : " + getTime.getFormatTime1(Long.valueOf(response.body().get(i).getDateMessage())));
+
+                                if (time.equals(String.valueOf(getTime.getFormatTime1(Long.valueOf(response.body().get(i).getDateMessage())))) &
+                                        sender.equals(response.body().get(i).getSender())) {
+                                    Log.d(TAG, "beforeTime 들어옴");
+
+                                    Chat chat = new Chat(arrayList.get(i-1).getRoomNum(), arrayList.get(i-1).getSender(), arrayList.get(i-1).getSenderImage(),
+                                            arrayList.get(i-1).getMessage(), "", arrayList.get(i-1).getViewType(), arrayList.get(i-1).getMessageStatus(), arrayList.get(i-1).getDate());
+                                    arrayList.set(i-1, chat);
+
+                                }
+
+                            }
+
+                            roomNumber = response.body().get(i).getRoomNum();
+                            sender = response.body().get(i).getSender();
+                            senderImage = response.body().get(i).getSenderImage();
+                            message = response.body().get(i).getMessage();
+                            dateMessage = response.body().get(i).getDateMessage();
+                            messageStatus = response.body().get(i).getMessageStatus();
+                            newChatDate = dateMessage;
+
+                            if(!sender.equals(currentNickname)) {
+                                viewType = 0;
+                            } else {
+                                viewType = 1;
+                            }
+
+                            time = String.valueOf(getTime.getFormatTime1(Long.valueOf(dateMessage)));
 
                             Log.d(TAG, "formatday : " + formatday + "\n" + getTime.getFormatTime5(Long.valueOf(dateMessage)));
 
                             if (!formatday.equals(String.valueOf(getTime.getFormatTime5(Long.valueOf(dateMessage))))) {
 
                                 viewType = 2;
+                                dateNum += 1;
 
                                 formatday = String.valueOf(getTime.getFormatTime5(Long.valueOf(dateMessage)));
                                 dayOfWeek = getTime.getDayOfWeek(formatday);
                                 date = getTime.getFormatTime6(Long.valueOf(dateMessage)) + dayOfWeek;
 
-                                Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType, messageStatus, date);
+                                Chat chat = new Chat("", "", "", "", "", viewType, "", date);
                                 arrayList.add(chat);
 
                             }
@@ -452,12 +510,14 @@ public class DirectMessage extends AppCompatActivity {
                                 viewType = 1;
                             }
 
+
+
                             Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType, messageStatus);
                             arrayList.add(chat);
 
                         }
 
-                        adapter.notifyDataSetChanged();
+                        adapter.notifyItemRangeChanged(0, arrayList.size());
                         chatRecyclerView.scrollToPosition(arrayList.size()-1);
 
                     }

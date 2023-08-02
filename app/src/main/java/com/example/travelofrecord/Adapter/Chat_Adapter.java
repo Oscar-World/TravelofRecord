@@ -127,9 +127,14 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             } else {
 
+                if (item.getDateMessage().equals("")) {
+                    leftChatDateText.setVisibility(View.GONE);
+                } else {
+                    leftChatDateText.setVisibility(View.VISIBLE);
+                    leftChatDateText.setText(item.getDateMessage());
+                }
                 leftChatNicknameText.setText(item.getSender());
                 leftChatMessageText.setText(item.getMessage());
-                leftChatDateText.setText(item.getDateMessage());
 
                 Glide.with(context)
                         .load(ApiClient.serverProfileImagePath + item.getSenderImage())
@@ -167,8 +172,14 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 rightChatStatusText.setVisibility(View.VISIBLE);
             }
 
+            if (item.getDateMessage().equals("")) {
+                rightChatDateText.setVisibility(View.GONE);
+            } else {
+                rightChatDateText.setVisibility(View.VISIBLE);
+                rightChatDateText.setText(item.getDateMessage());
+            }
+
             rightChatMessageText.setText(item.getMessage());
-            rightChatDateText.setText(item.getDateMessage());
 
         }
 
