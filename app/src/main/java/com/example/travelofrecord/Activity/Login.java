@@ -19,6 +19,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -115,6 +117,9 @@ public class Login extends AppCompatActivity {
     int phoneCount;
     String savedTime;
     String currentTime;
+
+    Animation appearAnim;
+    Animation disappearAnim;
 
 
     // 갤러리 접근 권한
@@ -618,6 +623,9 @@ public class Login extends AppCompatActivity {
                 getString(R.string.naver_client_name));
         nidOAuthLogin = new NidOAuthLogin();
 
+        appearAnim = AnimationUtils.loadAnimation(Login.this, R.anim.socialloginappear);
+        disappearAnim = AnimationUtils.loadAnimation(Login.this, R.anim.sociallogindisappear);
+
     }  // setVariable()
 
 
@@ -752,10 +760,12 @@ public class Login extends AppCompatActivity {
                     dropDown_Btn.setVisibility(View.VISIBLE);
                     dropUp_Btn.setVisibility(View.GONE);
                     socialLogin_Layout.setVisibility(View.GONE);
+                    socialLogin_Layout.startAnimation(disappearAnim);
                 } else {
                     dropDown_Btn.setVisibility(View.GONE);
                     dropUp_Btn.setVisibility(View.VISIBLE);
                     socialLogin_Layout.setVisibility(View.VISIBLE);
+                    socialLogin_Layout.startAnimation(appearAnim);
                 }
 
             }
