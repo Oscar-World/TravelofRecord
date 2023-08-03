@@ -396,6 +396,8 @@ public class Fragment_add extends Fragment {
                     String systemTime = String.valueOf(System.currentTimeMillis());
                     imageFileName = systemTime + ".jpg";
 
+//                    currentLocation = "35.153416 129.118903";
+
                     RequestBody addNickname = RequestBody.create(MediaType.parse("text/plain"), nickname);
                     RequestBody addProfileImage = RequestBody.create(MediaType.parse("text/plain"), profileImage);
                     RequestBody addHeart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(heart));

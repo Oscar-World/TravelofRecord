@@ -274,7 +274,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                             double longitude = Double.parseDouble(arrayLocation[1]);
 
                             String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
-
+                            Log.d(TAG, "currentLocation : " + currentLocation);
                             String datePost = getTime.lastTime(dateCreated);
                             String addressPost = getAdress.editAddress1234(currentLocation);
                             Log.d(TAG, "i : " + i);

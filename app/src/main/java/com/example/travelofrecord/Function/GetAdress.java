@@ -47,7 +47,19 @@ public class GetAdress {
 
         String address = null;
         String[] addressArray = location.split(" ");
-        address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+
+        if (addressArray.length > 4) {
+            address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3] + " " + addressArray[4];
+        } else if (addressArray.length > 3) {
+            address = addressArray[1] + " " + addressArray[2] + " " + addressArray[3];
+        } else if (addressArray.length > 2) {
+            address = addressArray[1] + " " + addressArray[2];
+        } else if (addressArray.length > 1) {
+            address = addressArray[0] + " " + addressArray[1];
+        } else {
+            address = addressArray[0];
+        }
+
 
         return address;
 
@@ -57,7 +69,20 @@ public class GetAdress {
 
         String address = null;
         String[] addressArray = location.split(" ");
-        address = addressArray[2] + " " + addressArray[4];
+
+        if (addressArray.length > 4) {
+            address = addressArray[2] + " " + addressArray[4];
+        } else if (addressArray.length > 3) {
+            address = addressArray[2] + " " + addressArray[3];
+        } else if (addressArray.length > 2) {
+            address = addressArray[1] + " " + addressArray[2];
+        } else if (addressArray.length > 1) {
+            address = addressArray[0] + " " + addressArray[1];
+        } else {
+            address = addressArray[0];
+        }
+
+
 
         return address;
 
@@ -66,7 +91,14 @@ public class GetAdress {
     public String editAddress13(String location) {
 
         String[] address = location.split(" ");
-        String editAdrress = address[1] + " " + address[3];
+
+        String editAdrress = "";
+
+        if (address.length > 3) {
+            editAdrress = address[1] + " " + address[3];
+        } else {
+            editAdrress = address[1] + " " + address[2];
+        }
 
         return editAdrress;
 
