@@ -391,11 +391,15 @@ public class DirectMessage extends AppCompatActivity {
 
             } else if (!message.equals("ⓐlogoutⓐ")) {
 
-                if (!formatTime.equals(getTime.getFormatTime5(Long.valueOf(newChatDate)))) {
+                if (!newChatDate.equals("")) {
 
-                    arrayList.add(new Chat("", "", "", "", "", 2, "", date));
+                    if (!formatTime.equals(getTime.getFormatTime5(Long.valueOf(newChatDate)))) {
 
-                    newChatDate = String.valueOf(getTime.getTime());
+                        arrayList.add(new Chat("", "", "", "", "", 2, "", date));
+
+                        newChatDate = String.valueOf(getTime.getTime());
+
+                    }
 
                 }
 

@@ -325,7 +325,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             CameraPosition cameraPosition = new CameraPosition(new LatLng(currentLatitude, currentLongitude), 6);
             naverMap.setCameraPosition(cameraPosition);
         } else {
-            CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 8);
+            CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 4);
             naverMap.setCameraPosition(cameraPosition);
         }
 

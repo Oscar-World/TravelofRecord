@@ -695,7 +695,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         naverMap.setMinZoom(5);
 
         Log.d(TAG, "onMapReady: " + latitude + " " + longitude);
-        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 9);
+        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 4);
         naverMap.setCameraPosition(cameraPosition);
 
         UiSettings uiSettings = naverMap.getUiSettings();
