@@ -22,12 +22,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.travelofrecord.Activity.Home;
+import com.example.travelofrecord.Data.Markers;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Function.GetAdress;
@@ -52,11 +51,14 @@ import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ted.gun0912.clustering.clustering.TedClusterItem;
+import ted.gun0912.clustering.naver.TedNaverClustering;
 
 public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
@@ -114,6 +116,9 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
     NaverMap naverMap;
     private FusedLocationProviderClient fusedLocationClient;
     int networkStatus;
+
+    ArrayList<Markers> markerList;
+    Markers markers;
 
 
     @Override
@@ -215,6 +220,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보",Context.MODE_PRIVATE);
         nickname = sharedPreferences.getString("nickname","");
 
+        markerList = new ArrayList<>();
+
     }
 
     public void setView() {
@@ -311,6 +318,11 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     // -------------------------------------------------------------------------------------------------------
 
+//    int[] clusterBucket = {10, 30, 50, 80, 100, 150, 200};
+
+    int[] clusterBucket = {500, 900};
+    Marker marker;
+    InfoWindow infoWindow;
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
@@ -321,19 +333,28 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
         naverMap.setMaxZoom(17);
         naverMap.setMinZoom(5);
+
+        CameraPosition cameraPosition;
+
         if (latitude == 0.0) {
-            CameraPosition cameraPosition = new CameraPosition(new LatLng(currentLatitude, currentLongitude), 6);
+            cameraPosition = new CameraPosition(new LatLng(currentLatitude, currentLongitude), 6);
             naverMap.setCameraPosition(cameraPosition);
         } else {
-            CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 4);
+            cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 4);
             naverMap.setCameraPosition(cameraPosition);
         }
 
 
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setScaleBarEnabled(false);
-        uiSettings.setZoomControlEnabled(false);
+        uiSettings.setZoomControlEnabled(true);
         uiSettings.setLogoClickEnabled(false);
+        naverMap.addOnCameraChangeListener(new NaverMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(int i, boolean b) {
+                Log.d(TAG, "naverMap.getCameraPosition() : " + naverMap.getCameraPosition().zoom);
+            }
+        });
 
         addMarker();
 
@@ -353,8 +374,20 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
                 addressHeart = getAdress.editAddress24(currentLocation);
 
-                setMarker(latitude, longitude, addressHeart);
+//                setMarker(latitude, longitude, addressHeart);
+
+                markers = new Markers(latitude, longitude, addressHeart);
+                markerList.add(markers);
+
             }
+
+            TedNaverClustering.with(getActivity(), naverMap)
+                    .items(markerList)
+                    .minClusterSize(2)
+                    .clusterBuckets(clusterBucket)
+                    .make();
+
+
         }
 
     } // addMarker()
@@ -364,6 +397,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         Marker marker = new Marker();
         marker.setPosition(new LatLng(lat,lng));
         marker.setTag(addressHeart);
+        marker.setWidth(Marker.SIZE_AUTO);
+        marker.setHeight(Marker.SIZE_AUTO);
 //        marker.setCaptionText(addressHeart);
 //        marker.setCaptionAligns(Align.Top);
 //        marker.setCaptionMinZoom(11);

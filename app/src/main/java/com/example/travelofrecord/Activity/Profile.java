@@ -48,6 +48,7 @@ import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -101,6 +102,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         mapView = findViewById(R.id.profile_MapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
     }
     @Override
     protected void onStart(){
