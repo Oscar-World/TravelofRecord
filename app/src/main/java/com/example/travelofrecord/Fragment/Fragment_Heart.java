@@ -1,7 +1,9 @@
 package com.example.travelofrecord.Fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
@@ -17,15 +19,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Data.Markers;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -54,11 +62,14 @@ import java.util.ArrayList;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.internal.FunctionImpl;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ted.gun0912.clustering.clustering.Cluster;
 import ted.gun0912.clustering.clustering.TedClusterItem;
 import ted.gun0912.clustering.naver.TedNaverClustering;
+import ted.gun0912.clustering.naver.TedNaverMarker;
 
 public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
@@ -119,6 +130,16 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     ArrayList<Markers> markerList;
     Markers markers;
+
+    FrameLayout mapDrawer;
+    LinearLayout mapDrawerDown;
+    ImageView mapDrawerImage;
+    TextView mapDrawerText;
+
+    Animation appear;
+    Animation disappear;
+
+    int putNum;
 
 
     @Override
@@ -222,6 +243,13 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
         markerList = new ArrayList<>();
 
+        mapDrawer = v.findViewById(R.id.heart_mapDrawer);
+        mapDrawerDown = v.findViewById(R.id.heart_MapDrawerDropDown);
+        mapDrawerImage = v.findViewById(R.id.heart_MapDrawerImage);
+        mapDrawerText = v.findViewById(R.id.heart_MapDrawerText);
+        appear = AnimationUtils.loadAnimation(getActivity(), R.anim.mapdrawer_appear);
+        disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.mapdrawer_disappear);
+
     }
 
     public void setView() {
@@ -312,6 +340,21 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        mapDrawerDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapDrawer.startAnimation(disappear);
+                mapDrawer.setVisibility(View.GONE);
+            }
+        });
+
+        mapDrawer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+
 
     } //setView()
 
@@ -323,6 +366,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
     int[] clusterBucket = {500, 900};
     Marker marker;
     InfoWindow infoWindow;
+    TedNaverMarker tedNaverMarker;
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
@@ -358,6 +402,35 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
         addMarker();
 
+        mapView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (mapDrawer.getVisibility() == View.VISIBLE) {
+                    mapDrawer.startAnimation(disappear);
+                    mapDrawer.setVisibility(View.GONE);
+                }
+
+                return false;
+            }
+        });
+
+        mapDrawerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), Post.class);
+                i.putExtra("num", putNum);
+                startActivity(i);
+            }
+        });
+        mapDrawerText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), Post.class);
+                i.putExtra("num", putNum);
+                startActivity(i);
+            }
+        });
+
     }
 
     public void addMarker() {
@@ -366,6 +439,10 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             for (int i=0; i < data.size(); i++) {
 
                 post_Location = data.get(i).getLocation();
+                post_PostImage = data.get(i).getPostImage();
+                post_Writing = data.get(i).getWriting();
+                post_DateCreated = data.get(i).getDateCreated();
+                post_Num = data.get(i).getPostNum();
 
                 String[] arrayLocation = post_Location.split(" ");
                 latitude = Double.parseDouble(arrayLocation[0]);
@@ -376,10 +453,12 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
 //                setMarker(latitude, longitude, addressHeart);
 
-                markers = new Markers(latitude, longitude, addressHeart);
+                markers = new Markers(latitude, longitude, post_Location, post_PostImage, post_Writing, post_DateCreated, post_Num);
                 markerList.add(markers);
 
             }
+
+
 
             TedNaverClustering.with(getActivity(), naverMap)
                     .items(markerList)
@@ -402,76 +481,71 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                     .markerClickListener(new Function1<TedClusterItem, Unit>() {
                         @Override
                         public Unit invoke(TedClusterItem tedClusterItem) {
-                            Log.d(TAG, "마커 클릭 호출됨");
+
+                            String image = "";
+                            String text = "";
+                            String tedLat = String.valueOf(tedClusterItem.getTedLatLng().getLatitude());
+                            String tedLng = String.valueOf(tedClusterItem.getTedLatLng().getLongitude());
+
+                            if (String.valueOf(tedClusterItem.getTedLatLng().getLatitude()).length() == 8) {
+                                tedLat = tedClusterItem.getTedLatLng().getLatitude() + "0";
+                            }
+
+                            if (String.valueOf(tedClusterItem.getTedLatLng().getLongitude()).length() == 9) {
+                                tedLng = tedClusterItem.getTedLatLng().getLongitude() + "0";
+                            }
+
+                            String tedLocation = tedLat + " " + tedLng;
+
+                            for (int i = 0; i < markerList.size(); i++) {
+
+                                if (markerList.get(i).getLocation().equals(tedLocation)) {
+                                    image = markerList.get(i).getPostImage();
+                                    text = markerList.get(i).getWriting();
+                                    putNum = markerList.get(i).getNum();
+
+                                    break;
+                                }
+
+                            }
+
+                            Glide.with(requireActivity())
+                                    .load(ApiClient.serverPostImagePath + image)
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .placeholder(R.drawable.loading2)
+                                    .into(mapDrawerImage);
+
+                            mapDrawerText.setText(text);
+
+                            mapDrawer.setVisibility(View.VISIBLE);
+                            mapDrawer.startAnimation(appear);
 
                             return null;
+                        }
+                    })
+                    .clusterClickListener(new Function1<Cluster<TedClusterItem>, Unit>() {
+                        @Override
+                        public Unit invoke(Cluster<TedClusterItem> tedClusterItemCluster) {
+                            CameraPosition cameraPosition = new CameraPosition(new LatLng(tedClusterItemCluster.getPosition().getLatitude(),
+                                    tedClusterItemCluster.getPosition().getLongitude()), 6);
 
+                            CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,1500);
+                            naverMap.moveCamera(cameraUpdate);
+
+                            Log.d(TAG, "clusterClick : " + tedClusterItemCluster.getItems());
+
+                            return null;
                         }
                     })
                     .minClusterSize(2)
                     .clusterBuckets(clusterBucket)
                     .make();
 
-
         }
 
     } // addMarker()
 
-    public void setMarker(double lat, double lng, String addressHeart) {
-
-        Marker marker = new Marker();
-        marker.setPosition(new LatLng(lat,lng));
-        marker.setTag(addressHeart);
-        marker.setWidth(Marker.SIZE_AUTO);
-        marker.setHeight(Marker.SIZE_AUTO);
-//        marker.setCaptionText(addressHeart);
-//        marker.setCaptionAligns(Align.Top);
-//        marker.setCaptionMinZoom(11);
-//        marker.setCaptionOffset(10);
-
-        marker.setMap(naverMap);
-
-        setInfoWindow(marker);
-
-    } // setMarker()
-
-    public void setInfoWindow(Marker marker) {
-
-        InfoWindow infoWindow = new InfoWindow();
-        infoWindow.setAdapter(new InfoWindow.DefaultTextAdapter(getActivity()) {
-            @NonNull
-            @Override
-            public CharSequence getText(@NonNull InfoWindow infoWindow) {
-                return marker.getTag().toString();
-            }
-        });
-
-        marker.setOnClickListener(new Overlay.OnClickListener() {
-            @Override
-            public boolean onClick(@NonNull Overlay overlay) {
-                if (marker.getInfoWindow() == null) {
-                    // 현재 마커에 정보 창이 열려있지 않을 경우 엶
-                    infoWindow.open(marker);
-                } else {
-                    // 이미 현재 마커에 정보 창이 열려있을 경우 닫음
-                    infoWindow.close();
-                }
-
-                CameraPosition cameraPosition = new CameraPosition(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude), 12);
-                CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,2000);
-                naverMap.moveCamera(cameraUpdate);
-
-                return true;
-            }
-        });
-        naverMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(@NonNull PointF pointF, @NonNull LatLng latLng) {
-
-            }
-        });
-
-    } // setInfoWindow()
 
 
     public void getHeart(String nickname) {
@@ -521,6 +595,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                             latitude = Double.parseDouble(arrayLocation[0]);
                             longitude = Double.parseDouble(arrayLocation[1]);
 
+                            Log.d(TAG, "onResponseImage : " + post_PostImage);
                             Log.d(TAG, "getHeart - latitude : " + latitude);
                             Log.d(TAG, "getHeart - longitude : " + longitude);
 

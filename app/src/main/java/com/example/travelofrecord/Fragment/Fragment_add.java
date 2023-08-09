@@ -569,6 +569,7 @@ public class Fragment_add extends Fragment {
         );
 
         postImage = image.getAbsolutePath();
+        Log.d(TAG, "createImageFile: " + postImage);
 
         return image;
     }

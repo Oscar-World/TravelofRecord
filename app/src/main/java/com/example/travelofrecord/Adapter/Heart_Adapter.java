@@ -112,8 +112,8 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
                     .load(ApiClient.serverPostImagePath + item.getPostImage())
                     .transition(withCrossFade(factory))
                     .placeholder(R.drawable.loading2)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .skipMemoryCache(true)
                     .into(heart_PostImage);
 
             heart_PostImage.setOnClickListener(new View.OnClickListener() {

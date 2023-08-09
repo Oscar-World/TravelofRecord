@@ -337,8 +337,8 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
 //                setMarker(latitude, longitude, shortLocation);
 
-                markers = new Markers(latitude, longitude, shortLocation);
-                markerList.add(markers);
+//                markers = new Markers(latitude, longitude, shortLocation);
+//                markerList.add(markers);
 
             }
 
@@ -363,10 +363,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                     .markerClickListener(new Function1<TedClusterItem, Unit>() {
                         @Override
                         public Unit invoke(TedClusterItem tedClusterItem) {
-                            Log.d(TAG, "마커 클릭 호출됨");
-
                             return null;
-
                         }
                     })
                     .minClusterSize(2)

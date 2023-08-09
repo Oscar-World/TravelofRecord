@@ -731,8 +731,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
 //                setMarker(latitude, longitude, shortLocation);
 
-                markers = new Markers(latitude, longitude, shortLocation);
-                markerList.add(markers);
+//                markers = new Markers(latitude, longitude, shortLocation);
+//                markerList.add(markers);
 
             }
 
