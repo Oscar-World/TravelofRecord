@@ -48,6 +48,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.PhotoView;
 import com.example.travelofrecord.Activity.Start;
+import com.example.travelofrecord.Data.Markers;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Function.GetAdress;
@@ -84,12 +85,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ted.gun0912.clustering.clustering.TedClusterItem;
+import ted.gun0912.clustering.naver.TedNaverClustering;
 
 public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
@@ -176,6 +181,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     String imageFileName;
     boolean imageStatus;
+
+    ArrayList<Markers> markerList;
+    Markers markers;
 
 
     @Override public void onAttach(Context context) {
@@ -347,6 +355,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         adapter.setItemMyProfile(post_Data_ArrayList);
 
         bundle = new Bundle();
+
+        markerList = new ArrayList<>();
 
     } // setVariable()
 
@@ -675,14 +685,11 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     } // setView()
 
 
-    public void method() {
-
-
-
-    }
-
     // ---------------------------------------------------------------------------------------------
 
+    int[] clusterBucket = {500, 900};
+    Marker marker;
+    InfoWindow infoWindow;
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
@@ -722,8 +729,44 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                 String currentLocation = getAdress.getAddress(getActivity(),latitude,longitude);
                 String shortLocation = getAdress.editAddress24(currentLocation);
 
-                setMarker(latitude, longitude, shortLocation);
+//                setMarker(latitude, longitude, shortLocation);
+
+                markers = new Markers(latitude, longitude, shortLocation);
+                markerList.add(markers);
+
             }
+
+            TedNaverClustering.with(getActivity(), naverMap)
+                    .items(markerList)
+                    .customMarker(new Function1<TedClusterItem, Marker>() {
+                        @Override
+                        public Marker invoke(TedClusterItem tedClusterItem) {
+                            marker = new Marker();
+                            marker.setWidth(75);
+                            marker.setHeight(100);
+
+                            return marker;
+                        }
+                    })
+                    .clusterBackground(new Function1<Integer, Integer>() {
+                        @Override
+                        public Integer invoke(Integer integer) {
+                            return R.color.lightGreen;
+                        }
+                    })
+                    .markerClickListener(new Function1<TedClusterItem, Unit>() {
+                        @Override
+                        public Unit invoke(TedClusterItem tedClusterItem) {
+                            Log.d(TAG, "마커 클릭 호출됨");
+
+                            return null;
+
+                        }
+                    })
+                    .minClusterSize(2)
+                    .clusterBuckets(clusterBucket)
+                    .make();
+
         }
 
     } // addMarker()
