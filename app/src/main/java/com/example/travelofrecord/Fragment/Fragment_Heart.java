@@ -383,6 +383,31 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
             TedNaverClustering.with(getActivity(), naverMap)
                     .items(markerList)
+                    .customMarker(new Function1<TedClusterItem, Marker>() {
+                        @Override
+                        public Marker invoke(TedClusterItem tedClusterItem) {
+                            marker = new Marker();
+                            marker.setWidth(75);
+                            marker.setHeight(100);
+
+                            return marker;
+                        }
+                    })
+                    .clusterBackground(new Function1<Integer, Integer>() {
+                        @Override
+                        public Integer invoke(Integer integer) {
+                            return R.color.lightGreen;
+                        }
+                    })
+                    .markerClickListener(new Function1<TedClusterItem, Unit>() {
+                        @Override
+                        public Unit invoke(TedClusterItem tedClusterItem) {
+                            Log.d(TAG, "마커 클릭 호출됨");
+
+                            return null;
+
+                        }
+                    })
                     .minClusterSize(2)
                     .clusterBuckets(clusterBucket)
                     .make();
