@@ -294,6 +294,90 @@
             android:visibility="gone"
             />
 
+        <FrameLayout
+            android:id="@+id/myProfile_mapDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:visibility="gone"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/main"
+                >
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/myProfile_MapDrawerDropDown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    >
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/dropdown"
+                        android:scaleType="centerInside"
+                        android:padding="5dp"
+                        android:layout_marginVertical="5dp"
+                        />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray"
+                    />
+
+
+                <ImageView
+                    android:id="@+id/myProfile_MapDrawerImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="330dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_launcher_foreground"
+                    android:layout_marginHorizontal="3dp"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray"
+                    />
+
+                <TextView
+                    android:id="@+id/myProfile_MapDrawerText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="글 내용"
+                    android:textSize="16dp"
+                    android:padding="10dp"
+                    android:layout_marginBottom="40dp"
+                    android:textColor="@color/black"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray"
+                    />
+
+
+            </LinearLayout>
+
+        </FrameLayout>
+
     </LinearLayout>
 
     <include layout="@layout/myprofile_drawer"/>

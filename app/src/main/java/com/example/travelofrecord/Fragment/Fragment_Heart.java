@@ -361,12 +361,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     // -------------------------------------------------------------------------------------------------------
 
-//    int[] clusterBucket = {10, 30, 50, 80, 100, 150, 200};
-
     int[] clusterBucket = {500, 900};
     Marker marker;
-    InfoWindow infoWindow;
-    TedNaverMarker tedNaverMarker;
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
@@ -422,6 +418,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 startActivity(i);
             }
         });
+
         mapDrawerText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -450,8 +447,6 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
                 String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
                 addressHeart = getAdress.editAddress24(currentLocation);
-
-//                setMarker(latitude, longitude, addressHeart);
 
                 markers = new Markers(latitude, longitude, post_Location, post_PostImage, post_Writing, post_DateCreated, post_Num);
                 markerList.add(markers);
