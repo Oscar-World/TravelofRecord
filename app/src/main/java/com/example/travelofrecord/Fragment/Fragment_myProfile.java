@@ -817,23 +817,23 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        mapDrawerImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), Post.class);
-                i.putExtra("num", putNum);
-                startActivity(i);
-            }
-        });
-
-        mapDrawerText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), Post.class);
-                i.putExtra("num", putNum);
-                startActivity(i);
-            }
-        });
+//        mapDrawerImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent i = new Intent(getActivity(), Post.class);
+//                i.putExtra("num", putNum);
+//                startActivity(i);
+//            }
+//        });
+//
+//        mapDrawerText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent i = new Intent(getActivity(), Post.class);
+//                i.putExtra("num", putNum);
+//                startActivity(i);
+//            }
+//        });
 
     }
 
@@ -872,12 +872,12 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                             return marker;
                         }
                     })
-                    .clusterBackground(new Function1<Integer, Integer>() {
-                        @Override
-                        public Integer invoke(Integer integer) {
-                            return R.color.lightGreen;
-                        }
-                    })
+//                    .clusterBackground(new Function1<Integer, Integer>() {
+//                        @Override
+//                        public Integer invoke(Integer integer) {
+//                            return R.color.lightGreen;
+//                        }
+//                    })
                     .markerClickListener(new Function1<TedClusterItem, Unit>() {
                         @Override
                         public Unit invoke(TedClusterItem tedClusterItem) {
@@ -928,7 +928,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                         @Override
                         public Unit invoke(Cluster<TedClusterItem> tedClusterItemCluster) {
                             CameraPosition cameraPosition = new CameraPosition(new LatLng(tedClusterItemCluster.getPosition().getLatitude(),
-                                    tedClusterItemCluster.getPosition().getLongitude()), 8);
+                                    tedClusterItemCluster.getPosition().getLongitude()), 9);
 
                             CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,1500);
                             naverMap.moveCamera(cameraUpdate);
