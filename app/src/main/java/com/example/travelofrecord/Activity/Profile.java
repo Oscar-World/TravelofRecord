@@ -4,14 +4,20 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.PointF;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -19,6 +25,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +42,9 @@ import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Adapter.Profile_Adapter;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.geometry.LatLngBounds;
 import com.naver.maps.map.CameraAnimation;
@@ -56,6 +66,7 @@ import kotlin.jvm.functions.Function1;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ted.gun0912.clustering.clustering.Cluster;
 import ted.gun0912.clustering.clustering.TedClusterItem;
 import ted.gun0912.clustering.naver.TedNaverClustering;
 
@@ -99,8 +110,34 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
     int networkStatus;
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
+    private FusedLocationProviderClient fusedLocationClient;
+    double currentLatitude;
+    double currentLongitude;
+
+    int post_Num;
+    String post_Location;
+    String post_PostImage;
+    String post_Writing;
+    String post_DateCreated;
+
     ArrayList<Markers> markerList;
     Markers markers;
+
+    FrameLayout mapDrawer;
+    LinearLayout mapDrawerDown;
+    ImageView mapDrawerImage;
+    TextView mapDrawerText;
+
+    Animation appear;
+    Animation disappear;
+
+    int putNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,6 +239,13 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
         markerList = new ArrayList<>();
 
+        mapDrawer = findViewById(R.id.profile_mapDrawer);
+        mapDrawerDown = findViewById(R.id.profile_MapDrawerDropDown);
+        mapDrawerImage = findViewById(R.id.profile_MapDrawerImage);
+        mapDrawerText = findViewById(R.id.profile_MapDrawerText);
+        appear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.mapdrawer_appear);
+        disappear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.mapdrawer_disappear);
+
     } // setVariable()
 
 
@@ -288,14 +332,69 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             }
         });
 
+        int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(Profile.this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int COARSE_PERMISSION = ActivityCompat.checkSelfPermission(Profile.this, Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (LOCATION_PERMISSION != PackageManager.PERMISSION_GRANTED && COARSE_PERMISSION != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d(TAG, "위치 권한 없음");
+
+            ActivityCompat.requestPermissions(
+                    Profile.this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+            return;
+        } else {
+            Log.d(TAG, "위치 권한 있음");
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        fusedLocationClient.getLastLocation().addOnSuccessListener(Profile.this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+
+                    Log.d(TAG, "onSuccess: location - " + location + "\n위도 - " + location.getLatitude() + "\n경도 - " + location.getLongitude());
+                    currentLatitude = location.getLatitude();
+                    currentLongitude = location.getLongitude();
+
+                } else {
+                    Log.d(TAG, "location == null");
+                }
+            }
+        });
+
+        mapDrawerDown.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mapDrawer.startAnimation(disappear);
+                mapDrawer.setVisibility(View.GONE);
+                return true;
+            }
+        });
+
+//        mapDrawerDown.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+
+        mapDrawer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+
     } // setView()
 
 
     // ---------------------------------------------------------------------------------------------
 
-    int[] clusterBucket = {500, 900};
+    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
     Marker marker;
-    InfoWindow infoWindow;
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
@@ -307,16 +406,35 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         naverMap.setMaxZoom(17);
         naverMap.setMinZoom(5);
 
-        Log.d(TAG, "onMapReady: " + latitude + " " + longitude);
-        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 4);
-        naverMap.setCameraPosition(cameraPosition);
+        CameraPosition cameraPosition;
+
+        if (latitude == 0.0) {
+            cameraPosition = new CameraPosition(new LatLng(currentLatitude, currentLongitude), 6);
+            naverMap.setCameraPosition(cameraPosition);
+        } else {
+            cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 4);
+            naverMap.setCameraPosition(cameraPosition);
+        }
 
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setScaleBarEnabled(false);
-        uiSettings.setZoomControlEnabled(false);
+        uiSettings.setZoomControlEnabled(true);
         uiSettings.setLogoClickEnabled(false);
 
         addMarker();
+
+        mapView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (mapDrawer.getVisibility() == View.VISIBLE) {
+                    mapDrawer.startAnimation(disappear);
+                    mapDrawer.setVisibility(View.GONE);
+                }
+
+                return false;
+            }
+        });
+
 
     }
 
@@ -328,17 +446,18 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                 Log.d(TAG, "datasize() : " + data.size());
                 String location = data.get(i).getLocation();
 
+                post_Location = data.get(i).getLocation();
+                post_PostImage = data.get(i).getPostImage();
+                post_Writing = data.get(i).getWriting();
+                post_DateCreated = data.get(i).getDateCreated();
+                post_Num = data.get(i).getPostNum();
+
                 String[] arrayLocation = location.split(" ");
                 double latitude = Double.parseDouble(arrayLocation[0]);
                 double longitude = Double.parseDouble(arrayLocation[1]);
 
-                String currentLocation = getAddress.getAddress(this,latitude,longitude);
-                String shortLocation = getAddress.editAddress24(currentLocation);
-
-//                setMarker(latitude, longitude, shortLocation);
-
-//                markers = new Markers(latitude, longitude, shortLocation);
-//                markerList.add(markers);
+                markers = new Markers(latitude, longitude, post_Location, post_PostImage, post_Writing, post_DateCreated, post_Num);
+                markerList.add(markers);
 
             }
 
@@ -363,6 +482,60 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                     .markerClickListener(new Function1<TedClusterItem, Unit>() {
                         @Override
                         public Unit invoke(TedClusterItem tedClusterItem) {
+
+                            String image = "";
+                            String text = "";
+                            String tedLat = String.valueOf(tedClusterItem.getTedLatLng().getLatitude());
+                            String tedLng = String.valueOf(tedClusterItem.getTedLatLng().getLongitude());
+
+                            if (String.valueOf(tedClusterItem.getTedLatLng().getLatitude()).length() == 8) {
+                                tedLat = tedClusterItem.getTedLatLng().getLatitude() + "0";
+                            }
+
+                            if (String.valueOf(tedClusterItem.getTedLatLng().getLongitude()).length() == 9) {
+                                tedLng = tedClusterItem.getTedLatLng().getLongitude() + "0";
+                            }
+
+                            String tedLocation = tedLat + " " + tedLng;
+
+                            for (int i = 0; i < markerList.size(); i++) {
+
+                                if (markerList.get(i).getLocation().equals(tedLocation)) {
+                                    image = markerList.get(i).getPostImage();
+                                    text = markerList.get(i).getWriting();
+                                    putNum = markerList.get(i).getNum();
+
+                                    break;
+                                }
+
+                            }
+
+                            Glide.with(getApplicationContext())
+                                    .load(ApiClient.serverPostImagePath + image)
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .placeholder(R.drawable.loading2)
+                                    .into(mapDrawerImage);
+
+                            mapDrawerText.setText(text);
+
+                            mapDrawer.setVisibility(View.VISIBLE);
+                            mapDrawer.startAnimation(appear);
+
+                            return null;
+                        }
+                    })
+                    .clusterClickListener(new Function1<Cluster<TedClusterItem>, Unit>() {
+                        @Override
+                        public Unit invoke(Cluster<TedClusterItem> tedClusterItemCluster) {
+                            CameraPosition cameraPosition = new CameraPosition(new LatLng(tedClusterItemCluster.getPosition().getLatitude(),
+                                    tedClusterItemCluster.getPosition().getLongitude()), 8);
+
+                            CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,1500);
+                            naverMap.moveCamera(cameraUpdate);
+
+                            Log.d(TAG, "clusterClick : " + tedClusterItemCluster.getItems());
+
                             return null;
                         }
                     })

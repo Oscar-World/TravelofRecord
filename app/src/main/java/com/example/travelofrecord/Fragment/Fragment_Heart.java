@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.location.Location;
 import android.os.Bundle;
@@ -57,6 +58,7 @@ import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
+import com.naver.maps.map.util.MarkerIcons;
 
 import java.util.ArrayList;
 
@@ -340,11 +342,12 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        mapDrawerDown.setOnClickListener(new View.OnClickListener() {
+        mapDrawerDown.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onTouch(View view, MotionEvent motionEvent) {
                 mapDrawer.startAnimation(disappear);
                 mapDrawer.setVisibility(View.GONE);
+                return true;
             }
         });
 
@@ -361,7 +364,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     // -------------------------------------------------------------------------------------------------------
 
-    int[] clusterBucket = {500, 900};
+    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
     Marker marker;
 
     @Override
@@ -384,17 +387,10 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             naverMap.setCameraPosition(cameraPosition);
         }
 
-
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setScaleBarEnabled(false);
         uiSettings.setZoomControlEnabled(true);
         uiSettings.setLogoClickEnabled(false);
-        naverMap.addOnCameraChangeListener(new NaverMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(int i, boolean b) {
-                Log.d(TAG, "naverMap.getCameraPosition() : " + naverMap.getCameraPosition().zoom);
-            }
-        });
 
         addMarker();
 
@@ -440,6 +436,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 post_Writing = data.get(i).getWriting();
                 post_DateCreated = data.get(i).getDateCreated();
                 post_Num = data.get(i).getPostNum();
+                post_Nickname = data.get(i).getPostNickname();
 
                 String[] arrayLocation = post_Location.split(" ");
                 latitude = Double.parseDouble(arrayLocation[0]);
@@ -448,7 +445,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
                 addressHeart = getAdress.editAddress24(currentLocation);
 
-                markers = new Markers(latitude, longitude, post_Location, post_PostImage, post_Writing, post_DateCreated, post_Num);
+                markers = new Markers(latitude, longitude, post_Location, post_PostImage, post_Writing, post_DateCreated, post_Num, post_Nickname);
                 markerList.add(markers);
 
             }
@@ -523,7 +520,7 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                         @Override
                         public Unit invoke(Cluster<TedClusterItem> tedClusterItemCluster) {
                             CameraPosition cameraPosition = new CameraPosition(new LatLng(tedClusterItemCluster.getPosition().getLatitude(),
-                                    tedClusterItemCluster.getPosition().getLongitude()), 6);
+                                    tedClusterItemCluster.getPosition().getLongitude()), 7);
 
                             CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,1500);
                             naverMap.moveCamera(cameraUpdate);

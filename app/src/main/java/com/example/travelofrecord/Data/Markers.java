@@ -21,6 +21,18 @@ public class Markers implements Serializable, TedClusterItem {
     String writing;
     String dateCreated;
     int num;
+    String nickname;
+
+    public Markers(double LAT, double LNG, String location, String postImage, String writing, String dateCreated, int num, String nickname) {
+        this.LAT = LAT;
+        this.LNG = LNG;
+        this.location = location;
+        this.postImage = postImage;
+        this.writing = writing;
+        this.dateCreated = dateCreated;
+        this.num = num;
+        this.nickname = nickname;
+    }
 
     public Markers(double LAT, double LNG, String location, String postImage, String writing, String dateCreated, int num) {
         this.LAT = LAT;
@@ -93,6 +105,14 @@ public class Markers implements Serializable, TedClusterItem {
 
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
 }

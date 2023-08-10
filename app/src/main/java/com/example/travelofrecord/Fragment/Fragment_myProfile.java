@@ -5,11 +5,14 @@ import static android.content.Context.MODE_PRIVATE;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -20,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -64,7 +68,10 @@ import com.example.travelofrecord.Data.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.kakao.sdk.user.UserApiClient;
 import com.naver.maps.geometry.LatLng;
@@ -185,6 +192,16 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     String imageFileName;
     boolean imageStatus;
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
+    private FusedLocationProviderClient fusedLocationClient;
+    double currentLatitude;
+    double currentLongitude;
 
     ArrayList<Markers> markerList;
     Markers markers;
@@ -703,13 +720,48 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        mapDrawerDown.setOnClickListener(new View.OnClickListener() {
+        int LOCATION_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int COARSE_PERMISSION = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (LOCATION_PERMISSION != PackageManager.PERMISSION_GRANTED && COARSE_PERMISSION != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d(TAG, "위치 권한 없음");
+
+            ActivityCompat.requestPermissions(
+                    getActivity(),
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+            return;
+        } else {
+            Log.d(TAG, "위치 권한 있음");
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
             @Override
-            public void onClick(View view) {
-                mapDrawer.startAnimation(disappear);
-                mapDrawer.setVisibility(View.GONE);
+            public void onSuccess(Location location) {
+                if (location != null) {
+
+                    Log.d(TAG, "onSuccess: location - " + location + "\n위도 - " + location.getLatitude() + "\n경도 - " + location.getLongitude());
+                    currentLatitude = location.getLatitude();
+                    currentLongitude = location.getLongitude();
+
+                } else {
+                    Log.d(TAG, "location == null");
+                }
             }
         });
+
+        mapDrawerDown.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mapDrawer.startAnimation(disappear);
+                mapDrawer.setVisibility(View.GONE);
+                return true;
+            }
+        });
+
 
         mapDrawer.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -723,7 +775,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     // ---------------------------------------------------------------------------------------------
 
-    int[] clusterBucket = {500, 1000};
+    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
     Marker marker;
 
     @Override
@@ -736,9 +788,15 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         naverMap.setMaxZoom(17);
         naverMap.setMinZoom(5);
 
-        Log.d(TAG, "onMapReady: " + latitude + " " + longitude);
-        CameraPosition cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 4);
-        naverMap.setCameraPosition(cameraPosition);
+        CameraPosition cameraPosition;
+
+        if (latitude == 0.0) {
+            cameraPosition = new CameraPosition(new LatLng(currentLatitude, currentLongitude), 6);
+            naverMap.setCameraPosition(cameraPosition);
+        } else {
+            cameraPosition = new CameraPosition(new LatLng(latitude, longitude), 4);
+            naverMap.setCameraPosition(cameraPosition);
+        }
 
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setScaleBarEnabled(false);
@@ -767,6 +825,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                 startActivity(i);
             }
         });
+
         mapDrawerText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -869,7 +928,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                         @Override
                         public Unit invoke(Cluster<TedClusterItem> tedClusterItemCluster) {
                             CameraPosition cameraPosition = new CameraPosition(new LatLng(tedClusterItemCluster.getPosition().getLatitude(),
-                                    tedClusterItemCluster.getPosition().getLongitude()), 6);
+                                    tedClusterItemCluster.getPosition().getLongitude()), 8);
 
                             CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,1500);
                             naverMap.moveCamera(cameraUpdate);
