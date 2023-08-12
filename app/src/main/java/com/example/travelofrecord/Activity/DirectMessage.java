@@ -413,13 +413,13 @@ public class DirectMessage extends AppCompatActivity {
 
                 if (arrayList.size()>0) {
 
-                    if (lastPosition < totalCount -5) {
+                    if (lastPosition < totalCount -5 & !nickname.equals(currentNickname)) {
 
                         newMessageLayout.setVisibility(View.VISIBLE);
 
                     } else {
 
-                        chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+                        chatRecyclerView.scrollToPosition(arrayList.size()-1);
 
                     }
 
