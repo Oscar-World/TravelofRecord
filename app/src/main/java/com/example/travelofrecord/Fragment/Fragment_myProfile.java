@@ -1086,6 +1086,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
 
             @Override
+
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d(TAG, "updateProfile - onFailure : " + t);
             }

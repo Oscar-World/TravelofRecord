@@ -89,6 +89,7 @@ public class Find_UserInfo extends AppCompatActivity {
     Button findId_submitBtn;
     Button findPw_submitBtn;
     Button findPw_submitBlock;
+    ImageView findPw_PwRuleBtn;
 
     TextView findId_sendText;
     TextView findId_smsTimeText;
@@ -102,12 +103,16 @@ public class Find_UserInfo extends AppCompatActivity {
     TextView findPw_Ok;
     TextView findPw_RuleError;
     TextView findPw_pwInfoText;
+    TextView findPw_CheckErrorText;
+    TextView findPw_CheckRightText;
+    TextView findPw_newPwRuleInfoText;
 
     EditText findId_phone;
     EditText findId_checkNum;
     EditText findPw_email;
     EditText findPw_checkNum;
     EditText findPw_newPw;
+    EditText findPw_newPwCheck;
 
     Handler handler;
     String setTime;
@@ -156,6 +161,13 @@ public class Find_UserInfo extends AppCompatActivity {
 
     SharedPreferences authShared;
     SharedPreferences.Editor authEditor;
+
+    boolean newPwStatus = false;
+
+    Animation appear;
+    Animation disappear;
+
+    PwThread pwThread;
 
 
     @Override
@@ -536,13 +548,24 @@ public class Find_UserInfo extends AppCompatActivity {
         findPw_RuleError = findViewById(R.id.findPw_RuleError);
         findPw_pwInfoText = findViewById(R.id.findPw_pwInfoText);
 
+        findPw_CheckErrorText = findViewById(R.id.findPw_CheckErrorText);
+        findPw_CheckRightText = findViewById(R.id.findPw_CheckRightText);
+        findPw_newPwCheck = findViewById(R.id.findPw_newPwCheck);
+
+        findPw_PwRuleBtn = findViewById(R.id.findPw_PwRuleBtn);
+        findPw_newPwRuleInfoText = findViewById(R.id.findPw_newPwRuleInfo);
+
         findId_phone = findViewById(R.id.findId_phone);
         findId_checkNum = findViewById(R.id.findId_checkNum);
         findPw_email = findViewById(R.id.findPw_email);
         findPw_checkNum = findViewById(R.id.findPw_checkNum);
         findPw_newPw = findViewById(R.id.findPw_newPw);
 
+        appear = AnimationUtils.loadAnimation(Find_UserInfo.this, R.anim.frame_appear);
+        disappear = AnimationUtils.loadAnimation(Find_UserInfo.this, R.anim.frame_disappear);
+
         handler = new Handler();
+        pwThread = new PwThread();
 
         left_out = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftout);
         left_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftin);
@@ -820,23 +843,127 @@ public class Find_UserInfo extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
 
+                if (findPw_newPw.getText().toString().equals("")) {
+                    findPw_Ok.setVisibility(View.GONE);
+                    findPw_RuleError.setVisibility(View.GONE);
+                }
+
                 if (pwRuleCheck()) {
+
                     findPw_Ok.setVisibility(View.VISIBLE);
                     findPw_RuleError.setVisibility(View.INVISIBLE);
-                    findPw_submitBtn.setVisibility(View.VISIBLE);
-                    findPw_submitBlock.setVisibility(View.INVISIBLE);
+
+                    newPwStatus = true;
 
                 } else {
 
                     findPw_Ok.setVisibility(View.INVISIBLE);
                     findPw_RuleError.setVisibility(View.VISIBLE);
-                    findPw_submitBtn.setVisibility(View.INVISIBLE);
-                    findPw_submitBlock.setVisibility(View.VISIBLE);
+
+                    newPwStatus = false;
+
+                }
+
+                if (!findPw_newPwCheck.getText().toString().equals("")) {
+
+                    if (findPw_newPw.getText().toString().equals(findPw_newPwCheck.getText().toString())) {
+
+                        findPw_CheckRightText.setVisibility(View.VISIBLE);
+                        findPw_CheckErrorText.setVisibility(View.GONE);
+
+                        if (newPwStatus) {
+                            findPw_submitBtn.setVisibility(View.VISIBLE);
+                            findPw_submitBlock.setVisibility(View.INVISIBLE);
+                        }
+
+                    } else {
+
+                        findPw_CheckRightText.setVisibility(View.GONE);
+                        findPw_CheckErrorText.setVisibility(View.VISIBLE);
+                        findPw_submitBtn.setVisibility(View.INVISIBLE);
+                        findPw_submitBlock.setVisibility(View.VISIBLE);
+
+                    }
+
                 }
 
             }
         });
 
+        findPw_newPwCheck.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if (findPw_newPwCheck.getText().toString().equals("")) {
+
+                    findPw_CheckErrorText.setVisibility(View.GONE);
+                    findPw_CheckRightText.setVisibility(View.GONE);
+
+                } else {
+
+                    if (findPw_newPw.getText().toString().equals(findPw_newPwCheck.getText().toString())) {
+
+                        findPw_CheckRightText.setVisibility(View.VISIBLE);
+                        findPw_CheckErrorText.setVisibility(View.GONE);
+
+                        if (newPwStatus) {
+                            findPw_submitBtn.setVisibility(View.VISIBLE);
+                            findPw_submitBlock.setVisibility(View.INVISIBLE);
+                        }
+
+                    } else {
+
+                        findPw_CheckRightText.setVisibility(View.GONE);
+                        findPw_CheckErrorText.setVisibility(View.VISIBLE);
+                        findPw_submitBtn.setVisibility(View.INVISIBLE);
+                        findPw_submitBlock.setVisibility(View.VISIBLE);
+
+                    }
+
+                }
+
+            }
+        });
+
+        findPw_newPw.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
+                if (b) {
+
+                    if (!pwThread.isAlive()) {
+
+                        pwThread = new PwThread();
+                        pwThread.start();
+
+                    }
+
+                } else {
+                    findPw_newPwRuleInfoText.setVisibility(View.GONE);
+                }
+
+            }
+        });
+
+        findPw_PwRuleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (!pwThread.isAlive()) {
+
+                    pwThread = new PwThread();
+                    pwThread.start();
+
+                }
+
+            }
+        });
 
 
         findPw_submitBtn.setOnClickListener(new View.OnClickListener() {
@@ -874,6 +1001,40 @@ public class Find_UserInfo extends AppCompatActivity {
 
             }
         });
+
+    } // setView()
+
+    public class PwThread extends Thread {
+
+        public void run() {
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    findPw_newPwRuleInfoText.setVisibility(View.VISIBLE);
+                    findPw_newPwRuleInfoText.startAnimation(appear);
+
+                }
+            });
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    findPw_newPwRuleInfoText.startAnimation(disappear);
+                    findPw_newPwRuleInfoText.setVisibility(View.GONE);
+
+                }
+            });
+
+        }
 
     }
 
