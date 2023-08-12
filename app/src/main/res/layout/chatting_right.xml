@@ -20,16 +20,42 @@
         android:layout_weight="1"
         />
 
-    <TextView
-        android:id="@+id/rightChatStatus_Text"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1"
-        android:textSize="13dp"
-        android:layout_gravity="bottom"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="2dp"
-        />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:id="@+id/rightChatStatus_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textSize="11dp"
+            android:textColor="@color/yellow"
+            android:layout_gravity="right"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="2dp"
+            />
+
+        <TextView
+            android:id="@+id/rightChatDate_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="오후 08:00"
+            android:textSize="10dp"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="5dp"
+            />
+
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/rightChatMessage_Text"
@@ -48,18 +74,5 @@
         />
 
 </LinearLayout>
-
-
-
-    <TextView
-        android:id="@+id/rightChatDate_Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="오후 08:00"
-        android:textSize="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="8dp"
-        android:layout_gravity="end"
-        />
 
 </LinearLayout>
