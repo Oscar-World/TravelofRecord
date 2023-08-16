@@ -216,6 +216,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     int putNum;
 
+    int dayHeart;
+    int monthHeart;
+    int yearHeart;
+
 
     @Override public void onAttach(Context context) {
         super.onAttach(context);
@@ -1227,6 +1231,63 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         });
 
     } // updateToken()
+
+    public void getHeartNum(String nickname) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<ArrayList<PostData>> call = apiInterface.getHeartNum(nickname);
+        call.enqueue(new Callback<ArrayList<PostData>>() {
+            @Override
+            public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "getHeartNum - onResponse isSuccessful");
+
+                    ArrayList<PostData> data = response.body();
+                    String dateLiked;
+
+                    if (data.size() > 0) {
+
+                        for (int i = 0; i < data.size(); i++) {
+
+                            dateLiked = data.get(i).getDateLiked();
+
+                            if (getTime.isSameDay(Long.parseLong(dateLiked))) {
+
+                                dayHeart += 1;
+
+                            }
+
+                            if (getTime.isSameMonth(Long.parseLong(dateLiked))) {
+
+                                monthHeart += 1;
+
+                            }
+
+                            if (getTime.isSameYear(Long.parseLong(dateLiked))) {
+
+                                yearHeart += 1;
+
+                            }
+
+                        }
+
+                    }
+
+
+
+                } else {
+                    Log.d(TAG, "getHeartNum - onResponse isFailure");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<PostData>> call, Throwable t) {
+                Log.d(TAG, "getHeartNum - onFailure");
+            }
+        });
+
+    }
 
 
     public void quitDialog(String user_Nickname) {

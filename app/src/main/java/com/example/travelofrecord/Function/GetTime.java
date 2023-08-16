@@ -135,5 +135,56 @@ public class GetTime {
 
     }
 
+    public boolean isSameDay(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+        String formatTime = simpleDateFormat.format(time);
+        String currentTime = simpleDateFormat.format(System.currentTimeMillis());
+
+        String array[] = formatTime.split("\\.");
+        String array2[] = currentTime.split("\\.");
+
+        if (array[2].equals(array2[2])) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public boolean isSameMonth(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+        String formatTime = simpleDateFormat.format(time);
+        String currentTime = simpleDateFormat.format(System.currentTimeMillis());
+
+        String array[] = formatTime.split("\\.");
+        String array2[] = currentTime.split("\\.");
+
+        if (array[1].equals(array2[1])) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public boolean isSameYear(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+        String formatTime = simpleDateFormat.format(time);
+        String currentTime = simpleDateFormat.format(System.currentTimeMillis());
+
+        String array[] = formatTime.split("\\.");
+        String array2[] = currentTime.split("\\.");
+
+        if (array[0].equals(array2[0])) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 
 }

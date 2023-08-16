@@ -179,23 +179,27 @@ public interface ApiInterface {
             @Query("postNum") int postNum
     );
 
+    // 프로필 정보 가져오기
     @GET("mysql_GetProfileInfo.php")
     Call<ArrayList<PostData>> getProfile(
             @Query("postNickname") String nickname
     );
 
+    // 채팅방 이름 가져오기
     @GET("mysql_GetRoomNum.php")
     Call<Chat> getRoomNum(
             @Query("roomNum1") String roomNum1,
             @Query("roomNum2") String roomNum2
     );
 
+    // 채팅 내용 가져오기
     @GET("mysql_GetChatting.php")
     Call<ArrayList<Chat>> getChatting(
             @Query("roomNum") String roomNum,
             @Query("sender") String sender
     );
 
+    // 채팅 내용 추가하기
     @GET("mysql_Chat_Insert.php")
     Call<String> insertChatting(
             @Query("roomNum") String roomNum,
@@ -208,22 +212,26 @@ public interface ApiInterface {
             @Query("fcmToken") String fcmToken
     );
 
+    // 채팅방 정보 가져오기
     @GET("mysql_GetRoomInfo.php")
     Call<ArrayList<Chat>> getRoom(
             @Query("nickname") String nickname
     );
 
+    // 사용자 FCM 토큰 가져오기
     @GET("mysql_GetFcmToken.php")
     Call<String> getFcmToken(
             @Query("nickname") String nickname
     );
 
+    // 사용자 FCM 토큰 수정하기
     @GET("mysql_UpdateFcmToken.php")
     Call<String> updateFcmToken(
             @Query("nickname") String nickname,
             @Query("fcmToken") String fcmToken
     );
 
+    // 채팅방 추가하기
     @GET("mysql_ChatRoom_Insert.php")
     Call<String> insertChatRoom(
             @Query("chatRoomNum") String chatRoomNum,
@@ -233,15 +241,22 @@ public interface ApiInterface {
             @Query("chatRoomDateMessage") String chatRoomDateMessage
     );
 
+    // 안 읽은 채팅 알람 개수 가져오기
     @GET("mysql_GetNoti.php")
     Call<String> getNoti(
             @Query("nickname") String nickname
     );
 
+    // 좋아요 누른 사람 목록 가져오기
     @GET("mysql_GetHeartList.php")
     Call<ArrayList<User>> getHeartList(
             @Query("postNum") int postNum
     );
 
+    // 사용자가 받은 좋아요 개수 가져오기
+    @GET("mysql_GetHeartNum.php")
+    Call<ArrayList<PostData>> getHeartNum(
+            @Query("nickname") String nickname
+    );
 
 }

@@ -70,6 +70,9 @@ public class PostData {
     @Expose
     @SerializedName("pageNum") public int pageNum;
 
+    @Expose
+    @SerializedName("dateLiked") public String dateLiked;
+
 
 
 
@@ -173,6 +176,7 @@ public class PostData {
     public String getCommentProfileImage() { return commentProfileImage; }
     public String getPagingStatus() { return pagingStatus; }
     public int getPageNum() { return pageNum; }
+    public String getDateLiked() { return dateLiked; }
 
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
@@ -210,5 +214,6 @@ public class PostData {
     public void setCommentProfileImage(String commentProfileImage) { this.commentProfileImage = commentProfileImage; }
     public void setPagingStatus(String pagingStatus) { this.pagingStatus = pagingStatus; }
     public void setPageNum(int pageNum) { this.pageNum = pageNum; }
+    public void setDateLiked(String dateLiked) { this.dateLiked = dateLiked; }
 
 }
