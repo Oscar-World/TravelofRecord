@@ -73,9 +73,20 @@ public class PostData {
     @Expose
     @SerializedName("dateLiked") public String dateLiked;
 
+    public int rank;
+
+    public int heartNum;
 
 
 
+    public PostData(int rank, String profileImage, String postNickname, int heartNum) {
+
+        this.rank = rank;
+        this.profileImage = profileImage;
+        this.postNickname = postNickname;
+        this.heartNum = heartNum;
+
+    }
 
     public PostData(int num, String postNickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus) {
 
@@ -177,6 +188,8 @@ public class PostData {
     public String getPagingStatus() { return pagingStatus; }
     public int getPageNum() { return pageNum; }
     public String getDateLiked() { return dateLiked; }
+    public int getRank() { return rank; }
+    public int getHeartNum() { return heartNum; }
 
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
@@ -215,5 +228,7 @@ public class PostData {
     public void setPagingStatus(String pagingStatus) { this.pagingStatus = pagingStatus; }
     public void setPageNum(int pageNum) { this.pageNum = pageNum; }
     public void setDateLiked(String dateLiked) { this.dateLiked = dateLiked; }
+    public void setRank(int rank) { this.rank = rank; }
+    public void setHeartNum(int heartNum) { this.heartNum = heartNum; }
 
 }

@@ -27,9 +27,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="프로필"
-                android:textSize="24dp"
+                android:textSize="18dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
                 />
 
             <View
@@ -182,7 +184,7 @@
                                 android:id="@+id/myProfile_PostNumText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="0"
+                                android:text=""
                                 android:textSize="18dp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"
@@ -230,7 +232,7 @@
                                 android:id="@+id/myProfile_heartNumText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="0"
+                                android:text=""
                                 android:textSize="18dp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"

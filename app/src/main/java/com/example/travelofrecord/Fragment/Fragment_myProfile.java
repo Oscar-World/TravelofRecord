@@ -54,6 +54,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.PhotoView;
 import com.example.travelofrecord.Activity.Post;
+import com.example.travelofrecord.Activity.Ranking;
 import com.example.travelofrecord.Activity.Start;
 import com.example.travelofrecord.Data.Markers;
 import com.example.travelofrecord.Network.ApiClient;
@@ -814,7 +815,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-
+                basicLayout.setVisibility(View.GONE);
+                heartListLayout.setVisibility(View.VISIBLE);
+                basicLayout.startAnimation(leftOut);
+                heartListLayout.startAnimation(leftIn);
 
             }
         });
@@ -845,6 +849,11 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         checkRankLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Intent i = new Intent(getActivity(), Ranking.class);
+                i.putExtra("nickname", user_nickname);
+                startActivity(i);
+
 
             }
         });

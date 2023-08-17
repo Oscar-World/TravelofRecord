@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/rankItem_Layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:paddingVertical="10dp"
+        >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1.1"
+            />
+
+        <TextView
+            android:id="@+id/rankItem_UserRankText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1.3"
+            />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/rankItem_UserImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            app:civ_border_color="@color/primary"
+            app:civ_border_width="2dp"
+            app:civ_border_overlay="false"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            />
+
+        <TextView
+            android:id="@+id/rankItem_UserNicknameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="닉네임"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1.2"
+            />
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/heartfull"
+            android:layout_gravity="center"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"
+            />
+
+        <TextView
+            android:id="@+id/rankItem_HeartNumText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray"
+        android:layout_marginHorizontal="3dp"
+        />
+
+</LinearLayout>

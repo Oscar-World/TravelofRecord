@@ -260,4 +260,8 @@ public interface ApiInterface {
             @Query("nickname") String nickname
     );
 
+    // 랭킹 목록 가져오기
+    @GET("mysql_GetRank.php")
+    Call<ArrayList<PostData>> getRanking();
+
 }
