@@ -140,24 +140,413 @@
                     android:visibility="visible"
                     >
 
+                    <LinearLayout
+                        android:id="@+id/myProfile_basicLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/myProfile_image"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_margin="10dp"
+                            android:scaleType="centerCrop"
+                            app:srcCompat="@drawable/user"
+                            app:civ_border_color="@color/primary"
+                            app:civ_border_width="2dp"
+                            app:civ_border_overlay="false"
+                            />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+                        <LinearLayout
+                            android:id="@+id/myProfile_PostLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                            <TextView
+                                android:id="@+id/myProfile_PostNumText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="20dp"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:layout_gravity="center"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="게시물"
+                                android:textSize="17dp"
+                                android:textColor="@color/black"
+                                android:layout_gravity="center"
+                                android:layout_margin="5dp"
+                                />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+                        <LinearLayout
+                            android:id="@+id/myProfile_HeartLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                            <TextView
+                                android:id="@+id/myProfile_heartNumText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="20dp"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:layout_gravity="center"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="좋아요"
+                                android:textSize="17dp"
+                                android:textColor="@color/black"
+                                android:layout_gravity="center"
+                                android:layout_margin="5dp"
+                                />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+                        <LinearLayout
+                            android:id="@+id/myProfile_checkHeartBtnLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_marginRight="5dp"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="＞"
+                                android:textSize="25dp"
+                                android:textAlignment="center"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="5dp"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="좋아요\n자세히보기"
+                                android:textSize="13dp"
+                                android:textAlignment="center"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="10dp"
+                                />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/myProfile_heartListLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        >
+
+                        <LinearLayout
+                            android:id="@+id/myProfile_backBtnLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_marginLeft="5dp"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="＜"
+                                android:textSize="25dp"
+                                android:textAlignment="center"
+                                android:layout_gravity="center"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="이전으로"
+                                android:textSize="13dp"
+                                android:textAlignment="center"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="10dp"
+                                />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                            <TextView
+                                android:id="@+id/myProfile_dayHeartNumText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="0"
+                                android:textColor="@color/black"
+                                android:textSize="20dp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="오늘"
+                                android:textSize="17dp"
+                                android:textColor="@color/black"
+                                android:layout_gravity="center"
+                                android:layout_margin="5dp"
+                                />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                            <TextView
+                                android:id="@+id/myProfile_monthHeartNumText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="0"
+                                android:textColor="@color/black"
+                                android:textSize="20dp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="이번 달"
+                                android:textSize="17dp"
+                                android:textColor="@color/black"
+                                android:layout_gravity="center"
+                                android:layout_margin="5dp"
+                                />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                            <TextView
+                                android:id="@+id/myProfile_yearHeartNumText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="0"
+                                android:textColor="@color/black"
+                                android:textSize="20dp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="올해"
+                                android:textSize="17dp"
+                                android:textColor="@color/black"
+                                android:layout_gravity="center"
+                                android:layout_margin="5dp"
+                                />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+                        <LinearLayout
+                            android:id="@+id/myProfile_checkRankBtnLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_marginRight="5dp"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="＞"
+                                android:textSize="25dp"
+                                android:textAlignment="center"
+                                android:layout_gravity="center"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="랭킹 확인"
+                                android:textSize="13dp"
+                                android:textAlignment="center"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="10dp"
+                                />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
                 <FrameLayout
+                    android:id="@+id/myProfile_imageLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     >
-
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/myProfile_image"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_gravity="center"
-                        android:scaleType="centerCrop"
-                        app:srcCompat="@drawable/user"
-                        app:civ_border_color="@color/primary"
-                        app:civ_border_width="2dp"
-                        app:civ_border_overlay="false"
-                        />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/myProfileEdit_image"
@@ -185,19 +574,6 @@
                         />
 
                 </FrameLayout>
-
-
-                <TextView
-                    android:id="@+id/myProfile_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="닉네임"
-                    android:textSize="22dp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -232,28 +608,6 @@
                         />
 
                 </LinearLayout>
-
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:id="@+id/myProfile_medalLayout"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    >
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="25dp"
-                        android:text="메달 현황"
-                        android:gravity="center"
-                        android:layout_marginVertical="20dp"
-                        />
-
-
 
                 </LinearLayout>
 

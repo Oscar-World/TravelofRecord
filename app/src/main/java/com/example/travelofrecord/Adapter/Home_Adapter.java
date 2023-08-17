@@ -254,7 +254,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
                         Log.d(TAG, "누른 후 item.getHeart() : " + item.getHeart());
 
-                        insertWhoLike(item.getNum(),nickname, item.getHeart());
+                        insertWhoLike(item.getNum(),nickname, item.getHeart(), String.valueOf(System.currentTimeMillis()));
 
                     }else {
                         Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -414,10 +414,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         } // onBind
 
 
-        public void insertWhoLike(int postNum, String whoLike, int heart) {
+        public void insertWhoLike(int postNum, String whoLike, int heart, String time) {
 
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<PostData> call = apiInterface.insertWhoLike(postNum, whoLike, heart);
+            Call<PostData> call = apiInterface.insertWhoLike(postNum, whoLike, heart, time);
             call.enqueue(new Callback<PostData>() {
                 @Override
                 public void onResponse(Call<PostData> call, Response<PostData> response) {

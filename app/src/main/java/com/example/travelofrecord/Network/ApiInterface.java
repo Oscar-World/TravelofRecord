@@ -130,7 +130,8 @@ public interface ApiInterface {
     Call<PostData> insertWhoLike(
             @Query("postNum") int postNum,
             @Query("whoLike") String whoLike,
-            @Query("heart") int heart
+            @Query("heart") int heart,
+            @Query("dateLiked") String dateLiked
     );
 
     // 좋아요 취소 눌렀을 때 삭제

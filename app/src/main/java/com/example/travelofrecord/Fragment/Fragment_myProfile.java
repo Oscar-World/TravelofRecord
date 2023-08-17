@@ -216,9 +216,17 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     int putNum;
 
-    int dayHeart;
-    int monthHeart;
-    int yearHeart;
+    FrameLayout imageEditLayout;
+    LinearLayout heartNumLayout;
+    LinearLayout postNumLayout;
+    TextView heartNumText;
+    TextView postNumText;
+
+    LinearLayout basicLayout;
+    LinearLayout heartListLayout;
+    LinearLayout checkRankLayout;
+    LinearLayout backBtnLayout;
+    LinearLayout checkHeartLayout;
 
 
     @Override public void onAttach(Context context) {
@@ -278,6 +286,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         setVariable();
         setView();
         getMyPost(user_nickname);
+        getHeartNum(user_nickname);
 
         return v;
     }
@@ -357,7 +366,6 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         touchImage_Image = v.findViewById(R.id.myProfileTouchImage_Image);
 
         profile_Text = v.findViewById(R.id.myProfile_Text);
-        profile_nickname = v.findViewById(R.id.myProfile_nickname);
         profile_memo = v.findViewById(R.id.myProfile_memo);
         profile_Edit = v.findViewById(R.id.myProfile_Edit);
 
@@ -400,6 +408,18 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         appear = AnimationUtils.loadAnimation(getActivity(), R.anim.mapdrawer_appear);
         disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.mapdrawer_disappear);
 
+        imageEditLayout = v.findViewById(R.id.myProfile_imageLayout);
+        heartNumLayout = v.findViewById(R.id.myProfile_HeartLayout);
+        heartNumText = v.findViewById(R.id.myProfile_heartNumText);
+        postNumLayout = v.findViewById(R.id.myProfile_PostLayout);
+        postNumText = v.findViewById(R.id.myProfile_PostNumText);
+
+        basicLayout = v.findViewById(R.id.myProfile_basicLayout);
+        heartListLayout = v.findViewById(R.id.myProfile_heartListLayout);
+        checkRankLayout = v.findViewById(R.id.myProfile_checkRankBtnLayout);
+        backBtnLayout = v.findViewById(R.id.myProfile_backBtnLayout);
+        checkHeartLayout = v.findViewById(R.id.myProfile_checkHeartBtnLayout);
+
     } // setVariable()
 
 
@@ -417,7 +437,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             profile_Edit.setVisibility(View.GONE);
         }
 
-        profile_nickname.setText(user_nickname);
+        profile_Text.setText(user_nickname);
         Log.d(TAG, "setView userImage : " + user_image);
 
         DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
@@ -462,17 +482,16 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
-                    profile_Text.setText("프로필 수정");
-
                     profile_memo.setVisibility(View.GONE);
                     profile_Edit.setVisibility(View.VISIBLE);
                     profile_Edit.setText(user_memo);
                     drawer_Btn.setVisibility(View.GONE);
                     editProfileSubmit_Btn.setVisibility(View.VISIBLE);
                     profile_Image.setVisibility(View.GONE);
-                    editProfile_Image.setVisibility(View.VISIBLE);
+                    imageEditLayout.setVisibility(View.VISIBLE);
+//                    editProfile_Image.setVisibility(View.VISIBLE);
+//                    touchImage_Image.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
-                    touchImage_Image.setVisibility(View.VISIBLE);
                     map_Btn.setVisibility(View.GONE);
                     map_Block.setVisibility(View.GONE);
                     photo_Btn.setVisibility(View.GONE);
@@ -494,16 +513,16 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
-                    profile_Text.setText("프로필");
                     edit_memo = profile_Edit.getText().toString();
                     Log.d(TAG, "수정된 메시지 : " + edit_memo);
 
                     drawer_Btn.setVisibility(View.VISIBLE);
                     editProfileSubmit_Btn.setVisibility(View.GONE);
                     profile_Image.setVisibility(View.VISIBLE);
-                    editProfile_Image.setVisibility(View.GONE);
+                    imageEditLayout.setVisibility(View.GONE);
+//                    editProfile_Image.setVisibility(View.GONE);
+//                    touchImage_Image.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
-                    touchImage_Image.setVisibility(View.GONE);
                     map_Btn.setVisibility(View.VISIBLE);
                     map_Block.setVisibility(View.GONE);
                     photo_Btn.setVisibility(View.GONE);
@@ -774,6 +793,53 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        heartNumLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+            }
+        });
+
+        postNumLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (data.size() > 0) {
+                    recyclerView.smoothScrollToPosition(0);
+                }
+
+            }
+        });
+
+        checkHeartLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                basicLayout.setVisibility(View.GONE);
+                heartListLayout.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        checkRankLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        backBtnLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                heartListLayout.setVisibility(View.GONE);
+                basicLayout.setVisibility(View.VISIBLE);
+
+            }
+        });
+
     } // setView()
 
 
@@ -966,6 +1032,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     loading_Iv.clearAnimation();
 
                     data = response.body();
+
+                    postNumText.setText(String.valueOf(data.size()));
 
                     Log.d(TAG, "data.size : " + data.size());
 
@@ -1244,12 +1312,18 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                     ArrayList<PostData> data = response.body();
                     String dateLiked;
+                    int dayHeart = 0;
+                    int monthHeart = 0;
+                    int yearHeart = 0;
+
+                    heartNumText.setText(String.valueOf(data.size()));
 
                     if (data.size() > 0) {
 
                         for (int i = 0; i < data.size(); i++) {
 
                             dateLiked = data.get(i).getDateLiked();
+                            Log.d(TAG, "dateLiked : " + dateLiked);
 
                             if (getTime.isSameDay(Long.parseLong(dateLiked))) {
 

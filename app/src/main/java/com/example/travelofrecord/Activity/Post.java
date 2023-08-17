@@ -369,7 +369,7 @@ public class Post extends AppCompatActivity {
                     post_Heart += 1;
                     post_HeartNum_Text.setText(String.valueOf(post_Heart));
 
-                    insertWhoLike(post_Num, accessNickname, post_Heart);
+                    insertWhoLike(post_Num, accessNickname, post_Heart, String.valueOf(System.currentTimeMillis()));
 
                     Intent i = new Intent("heartSync");
                     i.putExtra("heartNum", post_Heart);
@@ -469,10 +469,10 @@ public class Post extends AppCompatActivity {
     // -------------------------------------------------------------------------------------------
 
 
-    public void insertWhoLike(int postNum, String whoLike, int heart) {
+    public void insertWhoLike(int postNum, String whoLike, int heart, String time) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<PostData> call = apiInterface.insertWhoLike(postNum, whoLike, heart);
+        Call<PostData> call = apiInterface.insertWhoLike(postNum, whoLike, heart, time);
         call.enqueue(new Callback<PostData>() {
             @Override
             public void onResponse(Call<PostData> call, Response<PostData> response) {
