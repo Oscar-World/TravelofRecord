@@ -240,7 +240,7 @@ public class Ranking extends AppCompatActivity {
                     String postNickname = "";
                     String dateLiked = "";
                     boolean userStatus = false;
-                    boolean userDuplicate = false;
+                    boolean userDuplicate;
 
                     if (data.size() > 0) {
                         Log.d(TAG, "getRanking - data.size() " + data.size());
@@ -250,7 +250,8 @@ public class Ranking extends AppCompatActivity {
                             profileImage = data.get(i).getProfileImage();
                             postNickname = data.get(i).getPostNickname();
                             dateLiked = data.get(i).getDateLiked();
-                            rank = i + 1;
+                            rank = 0;
+                            userDuplicate = false;
 
                             Log.d(TAG, "getRanking - postNickname : " + postNickname + " / dateLiked : " + dateLiked);
 
@@ -264,6 +265,7 @@ public class Ranking extends AppCompatActivity {
                                     if (postNickname.equals(arrayList.get(j).getPostNickname())) {
 
                                         userDuplicate = true;
+                                        break;
 
                                     }
 
@@ -276,7 +278,7 @@ public class Ranking extends AppCompatActivity {
                             if (userDuplicate) {
                                 Log.d(TAG, "getRanking - 중복 데이터 확인되어 수정 완료");
 
-                                arrayList.set(j-1, new PostData(rank, profileImage, postNickname, arrayList.get(j-1).getHeartNum() + 1));
+                                arrayList.set(j, new PostData(rank, profileImage, postNickname, arrayList.get(j).getHeartNum() + 1));
 
                             } else {
                                 Log.d(TAG, "getRanking - 중복 데이터 없어서 추가 완료");
