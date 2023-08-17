@@ -183,7 +183,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
-                                android:textSize="20dp"
+                                android:textSize="18dp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"
                                 android:layout_gravity="center"
@@ -193,7 +193,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="게시물"
-                                android:textSize="17dp"
+                                android:textSize="15dp"
                                 android:textColor="@color/black"
                                 android:layout_gravity="center"
                                 android:layout_margin="5dp"
@@ -231,7 +231,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
-                                android:textSize="20dp"
+                                android:textSize="18dp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"
                                 android:layout_gravity="center"
@@ -241,7 +241,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="좋아요"
-                                android:textSize="17dp"
+                                android:textSize="15dp"
                                 android:textColor="@color/black"
                                 android:layout_gravity="center"
                                 android:layout_margin="5dp"
@@ -266,7 +266,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:layout_marginRight="5dp"
+                            android:layout_marginRight="10dp"
                             >
 
                             <View
@@ -289,7 +289,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="좋아요\n자세히보기"
-                                android:textSize="13dp"
+                                android:textSize="11dp"
                                 android:textAlignment="center"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="10dp"
@@ -308,7 +308,7 @@
                     <LinearLayout
                         android:id="@+id/myProfile_heartListLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="160dp"
+                        android:layout_height="170dp"
                         android:orientation="horizontal"
                         android:visibility="gone"
                         >
@@ -318,7 +318,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:layout_marginLeft="5dp"
+                            android:layout_marginLeft="10dp"
                             >
 
                             <View
@@ -379,14 +379,14 @@
                                 android:layout_gravity="center"
                                 android:text="0"
                                 android:textColor="@color/black"
-                                android:textSize="20dp"
+                                android:textSize="18dp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="오늘"
-                                android:textSize="17dp"
+                                android:textSize="15dp"
                                 android:textColor="@color/black"
                                 android:layout_gravity="center"
                                 android:layout_margin="5dp"
@@ -412,6 +412,16 @@
                             android:orientation="vertical"
                             >
 
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/heartfull"
+                                android:scaleType="centerCrop"
+                                android:padding="5dp"
+                                android:layout_marginTop="10dp"
+                                />
+
                             <View
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
@@ -425,23 +435,26 @@
                                 android:layout_gravity="center"
                                 android:text="0"
                                 android:textColor="@color/black"
-                                android:textSize="20dp"
-                                android:textStyle="bold" />
+                                android:textSize="18dp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="-2dp"
+                                />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="이번 달"
-                                android:textSize="17dp"
+                                android:textSize="15dp"
                                 android:textColor="@color/black"
                                 android:layout_gravity="center"
-                                android:layout_margin="5dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="10dp"
                                 />
 
                             <View
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
-                                android:layout_weight="1"
+                                android:layout_weight="3"
                                 />
 
                         </LinearLayout>
@@ -471,14 +484,14 @@
                                 android:layout_gravity="center"
                                 android:text="0"
                                 android:textColor="@color/black"
-                                android:textSize="20dp"
+                                android:textSize="18dp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="올해"
-                                android:textSize="17dp"
+                                android:textSize="15dp"
                                 android:textColor="@color/black"
                                 android:layout_gravity="center"
                                 android:layout_margin="5dp"
@@ -503,7 +516,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:layout_marginRight="5dp"
+                            android:layout_marginRight="10dp"
                             >
 
                             <View

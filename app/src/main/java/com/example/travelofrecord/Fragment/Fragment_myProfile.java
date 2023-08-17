@@ -221,12 +221,20 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     LinearLayout postNumLayout;
     TextView heartNumText;
     TextView postNumText;
+    TextView dayHeartText;
+    TextView monthHeartText;
+    TextView yearHeartText;
 
     LinearLayout basicLayout;
     LinearLayout heartListLayout;
     LinearLayout checkRankLayout;
     LinearLayout backBtnLayout;
     LinearLayout checkHeartLayout;
+
+    Animation leftIn;
+    Animation leftOut;
+    Animation rightIn;
+    Animation rightOut;
 
 
     @Override public void onAttach(Context context) {
@@ -414,11 +422,20 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         postNumLayout = v.findViewById(R.id.myProfile_PostLayout);
         postNumText = v.findViewById(R.id.myProfile_PostNumText);
 
+        dayHeartText = v.findViewById(R.id.myProfile_dayHeartNumText);
+        monthHeartText = v.findViewById(R.id.myProfile_monthHeartNumText);
+        yearHeartText = v.findViewById(R.id.myProfile_yearHeartNumText);
+
         basicLayout = v.findViewById(R.id.myProfile_basicLayout);
         heartListLayout = v.findViewById(R.id.myProfile_heartListLayout);
         checkRankLayout = v.findViewById(R.id.myProfile_checkRankBtnLayout);
         backBtnLayout = v.findViewById(R.id.myProfile_backBtnLayout);
         checkHeartLayout = v.findViewById(R.id.myProfile_checkHeartBtnLayout);
+
+        leftIn = AnimationUtils.loadAnimation(getActivity(), R.anim.frame_leftin);
+        leftOut = AnimationUtils.loadAnimation(getActivity(), R.anim.frame_leftout);
+        rightIn = AnimationUtils.loadAnimation(getActivity(), R.anim.frame_rightin);
+        rightOut = AnimationUtils.loadAnimation(getActivity(), R.anim.frame_rightout);
 
     } // setVariable()
 
@@ -819,6 +836,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                 basicLayout.setVisibility(View.GONE);
                 heartListLayout.setVisibility(View.VISIBLE);
+                basicLayout.startAnimation(leftOut);
+                heartListLayout.startAnimation(leftIn);
 
             }
         });
@@ -836,6 +855,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                 heartListLayout.setVisibility(View.GONE);
                 basicLayout.setVisibility(View.VISIBLE);
+                heartListLayout.startAnimation(rightOut);
+                basicLayout.startAnimation(rightIn);
 
             }
         });
@@ -1322,6 +1343,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                         for (int i = 0; i < data.size(); i++) {
 
+                            Log.d(TAG, "getHeart : " + data + " " + data.get(i));
                             dateLiked = data.get(i).getDateLiked();
                             Log.d(TAG, "dateLiked : " + dateLiked);
 
@@ -1344,6 +1366,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                             }
 
                         }
+
+                        dayHeartText.setText(String.valueOf(dayHeart));
+                        monthHeartText.setText(String.valueOf(monthHeart));
+                        yearHeartText.setText(String.valueOf(yearHeart));
 
                     }
 
