@@ -94,19 +94,32 @@
                     android:layout_height="wrap_content"
                     android:text="댓글 내용"
                     android:textSize="16dp"
+                    android:textColor="@color/black"
                     android:layout_marginHorizontal="10dp"
                     />
 
             </LinearLayout>
 
-
-
-
         </LinearLayout>
 
-
-
-
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/comment_addrecommentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="답글 달기"
+        android:layout_marginLeft="72dp"
+        android:layout_marginVertical="5dp"
+        android:visibility="gone"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recomment_RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="72dp"
+        android:visibility="gone"
+        />
 
 </LinearLayout>
