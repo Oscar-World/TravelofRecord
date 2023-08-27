@@ -298,7 +298,12 @@ public class Ranking extends AppCompatActivity {
 
                         }
 
+                        Collections.sort(arrayList, sortByHeartNum);
+                        Collections.reverse(arrayList);
 
+                        for (int i = 0; i < arrayList.size(); i++) {
+                            arrayList.set(i, new PostData(i+1,arrayList.get(i).getProfileImage(), arrayList.get(i).getPostNickname(), arrayList.get(i).getHeartNum()));
+                        }
 
                         for (int p = 0; p < arrayList.size(); p++) {
 
