@@ -63,10 +63,14 @@ public class Ranking extends AppCompatActivity {
     Ranking_Adapter adapter;
     ArrayList<PostData> data;
     String currentNickname;
+    ArrayList<PostData> monthList;
+    ArrayList<PostData> yearList;
 
     GetTime getTime;
     Animation loading;
     FrameLayout loadingLayout;
+
+    boolean userDuplicate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,37 +84,37 @@ public class Ranking extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() 호출됨");
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() 호출됨");
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
     }
 
     @Override
-    protected void onRestart(){
+    protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart() 호출됨");
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
     }
@@ -139,6 +143,8 @@ public class Ranking extends AppCompatActivity {
         dateText = findViewById(R.id.ranking_DateText);
 
         arrayList = new ArrayList<>();
+        monthList = new ArrayList<>();
+        yearList = new ArrayList<>();
         adapter = new Ranking_Adapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(Ranking.this));
@@ -156,6 +162,7 @@ public class Ranking extends AppCompatActivity {
     public void setView() {
 
         dateText.setText(getTime.getFormatTime4(getTime.getTime()));
+        loadingImage.startAnimation(loading);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,31 +174,23 @@ public class Ranking extends AppCompatActivity {
         rankDayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 dayOnClick();
-
             }
         });
 
         rankMonthBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 monthOnClick();
-
             }
         });
 
         rankYearBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 yearOnClick();
-
             }
         });
-
-        loadingImage.startAnimation(loading);
 
 
     } // setView()
@@ -207,6 +206,15 @@ public class Ranking extends AppCompatActivity {
         rankYearBtn.setVisibility(View.VISIBLE);
         rankYearBlock.setVisibility(View.GONE);
 
+        adapter.setRankItem(arrayList);
+        listDataCheck(arrayList);
+
+        if (userStatus(arrayList)) {
+            userRankLayout.setVisibility(View.VISIBLE);
+        } else {
+            noRankLayout.setVisibility(View.VISIBLE);
+        }
+
     }
 
     public void monthOnClick() {
@@ -219,6 +227,15 @@ public class Ranking extends AppCompatActivity {
         rankMonthBlock.setVisibility(View.VISIBLE);
         rankYearBtn.setVisibility(View.VISIBLE);
         rankYearBlock.setVisibility(View.GONE);
+
+        adapter.setRankItem(monthList);
+        listDataCheck(monthList);
+
+        if (userStatus(monthList)) {
+            userRankLayout.setVisibility(View.VISIBLE);
+        } else {
+            noRankLayout.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -233,6 +250,15 @@ public class Ranking extends AppCompatActivity {
         rankMonthBlock.setVisibility(View.GONE);
         rankYearBtn.setVisibility(View.GONE);
         rankYearBlock.setVisibility(View.VISIBLE);
+
+        adapter.setRankItem(yearList);
+        listDataCheck(yearList);
+
+        if (userStatus(yearList)) {
+            userRankLayout.setVisibility(View.VISIBLE);
+        } else {
+            noRankLayout.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -257,12 +283,9 @@ public class Ranking extends AppCompatActivity {
                     data = response.body();
                     int rank = 0;
                     int heartNum = 1;
-                    int j = 0;
                     String profileImage = "";
                     String postNickname = "";
                     String dateLiked = "";
-                    boolean userStatus = false;
-                    boolean userDuplicate;
 
                     if (data.size() > 0) {
                         Log.d(TAG, "getRanking - data.size() " + data.size());
@@ -273,72 +296,32 @@ public class Ranking extends AppCompatActivity {
                             postNickname = data.get(i).getPostNickname();
                             dateLiked = data.get(i).getDateLiked();
                             rank = 0;
-                            userDuplicate = false;
-
-                            Log.d(TAG, "getRanking - postNickname : " + postNickname + " / dateLiked : " + dateLiked);
 
                             if (getTime.isSameDay(Long.parseLong(dateLiked))) {
 
-                            if (arrayList.size() > 0) {
-                                Log.d(TAG, "getRanking - arrayList.size() : " + arrayList.size());
-
-                                for (j = 0; j < arrayList.size(); j++) {
-
-                                    if (postNickname.equals(arrayList.get(j).getPostNickname())) {
-
-                                        userDuplicate = true;
-                                        break;
-
-                                    }
-
-                                }
-
-                                Log.d(TAG, "getRanking - j : " + j);
+                                setArrayList(arrayList, rank, profileImage, postNickname, heartNum);
 
                             }
 
-                            if (userDuplicate) {
-                                Log.d(TAG, "getRanking - 중복 데이터 확인되어 수정 완료");
+                            if (getTime.isSameMonth(Long.parseLong(dateLiked))) {
 
-                                arrayList.set(j, new PostData(rank, profileImage, postNickname, arrayList.get(j).getHeartNum() + 1));
+                                setArrayList(monthList, rank, profileImage, postNickname, heartNum);
 
-                            } else {
-                                Log.d(TAG, "getRanking - 중복 데이터 없어서 추가 완료");
-                                arrayList.add(new PostData(rank, profileImage, postNickname, heartNum));
                             }
 
-                        }
+                            if (getTime.isSameYear(Long.parseLong(dateLiked))) {
 
-                        }
-
-                        Collections.sort(arrayList, sortByHeartNum);
-                        Collections.reverse(arrayList);
-
-                        for (int i = 0; i < arrayList.size(); i++) {
-                            arrayList.set(i, new PostData(i+1,arrayList.get(i).getProfileImage(), arrayList.get(i).getPostNickname(), arrayList.get(i).getHeartNum()));
-                        }
-
-                        for (int p = 0; p < arrayList.size(); p++) {
-
-                            if (arrayList.get(p).getPostNickname().equals(currentNickname)) {
-                                Log.d(TAG, "getRanking - 해당 사용자의 데이터 확인되어 출력");
-
-                                Glide.with(Ranking.this)
-                                        .load(ApiClient.serverProfileImagePath + arrayList.get(p).getProfileImage())
-                                        .skipMemoryCache(true)
-                                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                        .into(userImage);
-
-                                userRankText.setText(String.valueOf(arrayList.get(p).getRank()));
-                                userNicknameText.setText(arrayList.get(p).getPostNickname());
-                                heartNumText.setText(String.valueOf(arrayList.get(p).getHeartNum()));
-                                userStatus = true;
+                                setArrayList(yearList, rank, profileImage, postNickname, heartNum);
 
                             }
 
                         }
 
-                        if (userStatus) {
+                        setList(arrayList);
+                        setList(monthList);
+                        setList(yearList);
+
+                        if (userStatus(arrayList)) {
                             userRankLayout.setVisibility(View.VISIBLE);
                         } else {
                             noRankLayout.setVisibility(View.VISIBLE);
@@ -356,6 +339,11 @@ public class Ranking extends AppCompatActivity {
                         noDataLayout.setVisibility(View.VISIBLE);
                     }
 
+                    if (arrayList.size() == 0) {
+                        recyclerView.setVisibility(View.GONE);
+                        noDataLayout.setVisibility(View.VISIBLE);
+                    }
+
                 } else {
                     Log.d(TAG, "getRanking - onResponse isFailure");
                 }
@@ -369,6 +357,72 @@ public class Ranking extends AppCompatActivity {
         });
 
     } // getRanking()
+
+    public void setList(ArrayList<PostData> list) {
+        Collections.sort(list, sortByHeartNum);
+        Collections.reverse(list);
+        for (int i = 0; i < list.size(); i++) {
+            list.set(i, new PostData(i + 1, list.get(i).getProfileImage(), list.get(i).getPostNickname(), list.get(i).getHeartNum()));
+        }
+    }
+
+    public boolean userStatus(ArrayList<PostData> list) {
+
+        for (int p = 0; p < list.size(); p++) {
+
+            if (list.get(p).getPostNickname().equals(currentNickname)) {
+                Log.d(TAG, "getRanking - 해당 사용자의 데이터 확인되어 출력");
+
+                Glide.with(Ranking.this)
+                        .load(ApiClient.serverProfileImagePath + list.get(p).getProfileImage())
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(userImage);
+
+                userRankText.setText(String.valueOf(list.get(p).getRank()));
+                userNicknameText.setText(list.get(p).getPostNickname());
+                heartNumText.setText(String.valueOf(list.get(p).getHeartNum()));
+
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    public void setArrayList(ArrayList<PostData> list, int rank, String profileImage, String postNickname, int heartNum) {
+
+        userDuplicate = false;
+        int j = 0;
+
+        if (list.size() > 0) {
+            for (j = 0; j < list.size(); j++) {
+                if (postNickname.equals(list.get(j).getPostNickname())) {
+                    userDuplicate = true;
+                    break;
+                }
+            }
+        }
+
+        if (userDuplicate) {
+            Log.d(TAG, "getRanking - 중복 데이터 확인되어 수정 완료");
+            list.set(j, new PostData(rank, profileImage, postNickname, list.get(j).getHeartNum() + 1));
+        } else {
+            Log.d(TAG, "getRanking - 중복 데이터 없어서 추가 완료");
+            list.add(new PostData(rank, profileImage, postNickname, heartNum));
+        }
+
+    }
+
+    public void listDataCheck(ArrayList<PostData> list) {
+        if (list.size() == 0) {
+            recyclerView.setVisibility(View.GONE);
+            noDataLayout.setVisibility(View.VISIBLE);
+        } else {
+            noDataLayout.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+    }
 
 
 }
