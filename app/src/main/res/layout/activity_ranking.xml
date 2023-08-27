@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activity.Ranking"
-    android:background="@color/main">
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -156,7 +156,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0.5"
                 />
 
             <TextView
@@ -214,7 +214,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_weight="1.2"
                 />
 
         </LinearLayout>
