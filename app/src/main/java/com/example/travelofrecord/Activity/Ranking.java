@@ -27,6 +27,8 @@ import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -217,9 +219,16 @@ public class Ranking extends AppCompatActivity {
         rankMonthBtn.setVisibility(View.VISIBLE);
         rankMonthBlock.setVisibility(View.GONE);
         rankYearBtn.setVisibility(View.GONE);
-        rankYearBlock.setVisibility(View.generateViewId());
+        rankYearBlock.setVisibility(View.VISIBLE);
 
     }
+
+    Comparator<PostData> sortByHeartNum = new Comparator<PostData>() {
+        @Override
+        public int compare(PostData postData, PostData t1) {
+            return Integer.compare(postData.heartNum, t1.heartNum);
+        }
+    };
 
     public void getRanking() {
 
@@ -283,12 +292,13 @@ public class Ranking extends AppCompatActivity {
                             } else {
                                 Log.d(TAG, "getRanking - 중복 데이터 없어서 추가 완료");
                                 arrayList.add(new PostData(rank, profileImage, postNickname, heartNum));
-
                             }
 
                         }
 
                         }
+
+
 
                         for (int p = 0; p < arrayList.size(); p++) {
 
@@ -301,7 +311,7 @@ public class Ranking extends AppCompatActivity {
                                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                                         .into(userImage);
 
-                                userRankText.setText(String.valueOf(rank));
+                                userRankText.setText(String.valueOf(arrayList.get(p).getRank()));
                                 userNicknameText.setText(arrayList.get(p).getPostNickname());
                                 heartNumText.setText(String.valueOf(arrayList.get(p).getHeartNum()));
                                 userStatus = true;

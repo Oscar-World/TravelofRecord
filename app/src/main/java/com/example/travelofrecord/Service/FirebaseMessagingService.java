@@ -90,9 +90,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             builder = new NotificationCompat.Builder(getApplicationContext());
 
         }
-
-        String title = remoteMessage.getNotification().getTitle();
-        String body = remoteMessage.getNotification().getBody();
+        String title = remoteMessage.getData().get("title");
+        String body = remoteMessage.getData().get("body");
+//        String title = remoteMessage.getNotification().getTitle();
+//        String body = remoteMessage.getNotification().getBody();
         Log.d(TAG, "수신한 메시지 : " + title + " / " + body);
 
         Intent i = new Intent(getApplicationContext(), DirectMessage.class);
