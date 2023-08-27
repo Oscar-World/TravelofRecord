@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:background="@color/white"
         android:weightSum="10"
         >
@@ -49,7 +49,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
             android:orientation="horizontal">
 
             <View
@@ -140,6 +140,18 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/ranking_DateText"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.6"
+            android:text="날짜"
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginBottom="5dp"
+            />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -149,7 +161,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
             android:orientation="horizontal"
             >
 
@@ -164,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:text="랭 킹"
                 android:layout_gravity="center"
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:textColor="@color/black"
                 />
 
@@ -179,7 +191,7 @@
                 android:layout_height="wrap_content"
                 android:text="사용자 정보"
                 android:layout_gravity="center"
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:textColor="@color/black"
                 />
 
@@ -190,8 +202,8 @@
                 />
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:src="@drawable/heartfull"
                 android:layout_gravity="center"
                 />

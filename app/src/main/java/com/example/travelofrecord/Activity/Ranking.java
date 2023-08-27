@@ -57,6 +57,7 @@ public class Ranking extends AppCompatActivity {
     LinearLayout userRankLayout;
     LinearLayout noRankLayout;
     FrameLayout noDataLayout;
+    TextView dateText;
 
     ArrayList<PostData> arrayList;
     Ranking_Adapter adapter;
@@ -135,6 +136,7 @@ public class Ranking extends AppCompatActivity {
         userRankLayout = findViewById(R.id.ranking_UserRankLayout);
         noRankLayout = findViewById(R.id.ranking_NoRankTextLayout);
         noDataLayout = findViewById(R.id.rankingNoData_Layout);
+        dateText = findViewById(R.id.ranking_DateText);
 
         arrayList = new ArrayList<>();
         adapter = new Ranking_Adapter();
@@ -152,6 +154,8 @@ public class Ranking extends AppCompatActivity {
     } // setVariable()
 
     public void setView() {
+
+        dateText.setText(getTime.getFormatTime4(getTime.getTime()));
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +198,8 @@ public class Ranking extends AppCompatActivity {
 
     public void dayOnClick() {
 
+        dateText.setText(getTime.getFormatTime4(getTime.getTime()));
+
         rankDayBtn.setVisibility(View.GONE);
         rankDayBlock.setVisibility(View.VISIBLE);
         rankMonthBtn.setVisibility(View.VISIBLE);
@@ -205,6 +211,8 @@ public class Ranking extends AppCompatActivity {
 
     public void monthOnClick() {
 
+        dateText.setText(getTime.getFormatTime7(getTime.getTime()));
+
         rankDayBtn.setVisibility(View.VISIBLE);
         rankDayBlock.setVisibility(View.GONE);
         rankMonthBtn.setVisibility(View.GONE);
@@ -215,6 +223,9 @@ public class Ranking extends AppCompatActivity {
     }
 
     public void yearOnClick() {
+
+        String[] array = getTime.getFormatTime7(getTime.getTime()).split(" ");
+        dateText.setText(array[0]);
 
         rankDayBtn.setVisibility(View.VISIBLE);
         rankDayBlock.setVisibility(View.GONE);

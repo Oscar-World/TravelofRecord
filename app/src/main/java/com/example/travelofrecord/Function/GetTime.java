@@ -112,6 +112,27 @@ public class GetTime {
         return formatTime;
     }
 
+    public String getFormatTime7(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월");
+        String formatTime = simpleDateFormat.format(time);
+
+        String returnValue = "";
+
+        if (formatTime.charAt(6) == '0') {
+
+            returnValue = formatTime.substring(0, 4) + "년 " + formatTime.substring(7, 8) + "월";
+
+        } else {
+
+            returnValue = formatTime.substring(0, 4) + "년 " + formatTime.substring(6, 8) + "월";
+
+        }
+
+        return returnValue;
+
+    }
+
     public String getDayOfWeek(String time) {
 
         String array[] = time.split("\\.");
