@@ -1,5 +1,6 @@
 package com.example.travelofrecord.Fragment;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -113,6 +114,7 @@ public class Fragment_Dm extends Fragment {
         getRoom(currentNickname);
         SocketThread thread = new SocketThread();
         thread.start();
+        deleteNoti();
     }
     @Override
     public void onResume() {
@@ -389,6 +391,14 @@ public class Fragment_Dm extends Fragment {
         });
 
     } // getRoom()
+
+    public void deleteNoti() {
+
+        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+//        notificationManager.cancel(0);
+
+    }
 
 
 }
