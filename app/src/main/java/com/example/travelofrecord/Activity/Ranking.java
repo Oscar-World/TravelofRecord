@@ -56,6 +56,7 @@ public class Ranking extends AppCompatActivity {
 
     LinearLayout userRankLayout;
     LinearLayout noRankLayout;
+    FrameLayout noDataLayout;
 
     ArrayList<PostData> arrayList;
     Ranking_Adapter adapter;
@@ -133,6 +134,7 @@ public class Ranking extends AppCompatActivity {
 
         userRankLayout = findViewById(R.id.ranking_UserRankLayout);
         noRankLayout = findViewById(R.id.ranking_NoRankTextLayout);
+        noDataLayout = findViewById(R.id.rankingNoData_Layout);
 
         arrayList = new ArrayList<>();
         adapter = new Ranking_Adapter();
@@ -326,22 +328,22 @@ public class Ranking extends AppCompatActivity {
                         }
 
                         if (userStatus) {
-
                             userRankLayout.setVisibility(View.VISIBLE);
-
                         } else {
-
                             noRankLayout.setVisibility(View.VISIBLE);
-
                         }
 
+                        loadingImage.clearAnimation();
+                        loadingLayout.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+
+                        adapter.notifyDataSetChanged();
+
+                    } else {
+                        loadingImage.clearAnimation();
+                        loadingLayout.setVisibility(View.GONE);
+                        noDataLayout.setVisibility(View.VISIBLE);
                     }
-
-                    loadingImage.clearAnimation();
-                    loadingLayout.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-
-                    adapter.notifyDataSetChanged();
 
                 } else {
                     Log.d(TAG, "getRanking - onResponse isFailure");
@@ -355,6 +357,7 @@ public class Ranking extends AppCompatActivity {
             }
         });
 
-    }
+    } // getRanking()
+
 
 }

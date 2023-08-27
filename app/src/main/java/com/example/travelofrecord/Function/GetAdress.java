@@ -96,8 +96,10 @@ public class GetAdress {
 
         if (address.length > 3) {
             editAdrress = address[1] + " " + address[3];
-        } else {
+        } else if (address.length > 2) {
             editAdrress = address[1] + " " + address[2];
+        } else {
+            editAdrress = address[0] + " " + address[1];
         }
 
         return editAdrress;

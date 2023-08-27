@@ -257,6 +257,23 @@
 
             </FrameLayout>
 
+            <FrameLayout
+                android:id="@+id/rankingNoData_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                >
+
+                <TextView
+                    android:id="@+id/rankingNoData_Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="랭킹 데이터가 존재하지 않습니다."
+                    android:textSize="18dp"
+                    android:layout_gravity="center"
+                    />
+
+            </FrameLayout>
 
 
         </LinearLayout>
