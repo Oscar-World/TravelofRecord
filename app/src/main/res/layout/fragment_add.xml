@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/feed">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="9"
-        >
+    android:background="@color/feed"
+    android:weightSum="9"
+    >
 
         <FrameLayout
             android:id="@+id/addHead_Frame"
@@ -34,6 +30,28 @@
                 android:layout_marginLeft="15dp"
                 />
 
+            <ImageView
+                android:id="@+id/add_helpBtn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center|start"
+                app:srcCompat="@android:drawable/ic_menu_help"
+                android:layout_marginStart="60dp"
+                />
+
+            <TextView
+                android:id="@+id/add_helpText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이번 주에 10회 더 작성할 수 있어요!"
+                android:background="@color/lightBlue"
+                android:padding="10dp"
+                android:textSize="12dp"
+                android:layout_marginTop="2dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                />
+
             <Button
                 android:id="@+id/addUpload_Btn"
                 android:layout_width="70dp"
@@ -49,8 +67,6 @@
 
         </FrameLayout>
 
-
-
     <ImageView
         android:id="@+id/postImage_Iv"
         android:layout_width="260dp"
@@ -62,7 +78,6 @@
         android:src="@drawable/camera"
         android:background="@color/darkGray"
         />
-
 
         <View
             android:layout_width="match_parent"
@@ -111,8 +126,6 @@
 
             </LinearLayout>
 
-
-
             <FrameLayout
                 android:id="@+id/writing_FrameLayout"
                 android:layout_width="match_parent"
@@ -136,11 +149,6 @@
 
             </FrameLayout>
 
-
-
-
         </LinearLayout>
 
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

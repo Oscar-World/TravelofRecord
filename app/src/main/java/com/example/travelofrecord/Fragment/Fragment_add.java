@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import androidx.loader.content.CursorLoader;
 
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,6 +37,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -84,7 +87,13 @@ public class Fragment_add extends Fragment {
     FrameLayout writing_Layout;
     TextView writingCount_Text;
 
-    File file;
+    ImageView helpImage;
+    TextView helpText;
+    Animation leftOut;
+    Animation rightIn;
+
+    Handler handler;
+    HelpInfoThread thread;
 
     String nickname;
     String profileImage;
@@ -96,9 +105,6 @@ public class Fragment_add extends Fragment {
     String dateCreated;
 
     ActivityResultLauncher<Intent> launcher;
-
-    Bundle getCamera;
-    Bitmap imageBitmap;
 
     Bundle sendData;
 
@@ -288,6 +294,14 @@ public class Fragment_add extends Fragment {
         writing_Layout = v.findViewById(R.id.writing_FrameLayout);
         writingCount_Text = v.findViewById(R.id.writingCount_Text);
 
+        helpImage = v.findViewById(R.id.add_helpBtn);
+        helpText = v.findViewById(R.id.add_helpText);
+        leftOut = AnimationUtils.loadAnimation(getActivity(), R.anim.add_leftout);
+        rightIn = AnimationUtils.loadAnimation(getActivity(), R.anim.add_rightin);
+
+        handler = new Handler();
+        thread = new HelpInfoThread();
+        thread.start();
 
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
@@ -457,6 +471,18 @@ public class Fragment_add extends Fragment {
             }
         });
 
+        helpImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (!thread.isAlive()) {
+                    thread = new HelpInfoThread();
+                    thread.start();
+                }
+
+            }
+        });
+
     } // setView()
 
 
@@ -572,6 +598,40 @@ public class Fragment_add extends Fragment {
         Log.d(TAG, "createImageFile: " + postImage);
 
         return image;
+    }
+
+    public class HelpInfoThread extends Thread {
+
+        public void run() {
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    helpText.setVisibility(View.VISIBLE);
+                    helpText.startAnimation(rightIn);
+
+                }
+            });
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    helpText.startAnimation(leftOut);
+                    helpText.setVisibility(View.GONE);
+
+                }
+            });
+
+        }
+
     }
 
 
