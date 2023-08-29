@@ -103,6 +103,7 @@ public class Fragment_add extends Fragment {
     String postImage;
     String writing;
     String dateCreated;
+    String writeCount;
 
     ActivityResultLauncher<Intent> launcher;
 
@@ -112,10 +113,7 @@ public class Fragment_add extends Fragment {
     Home homeActivity;
 
     SharedPreferences sharedPreferences;
-    SharedPreferences sharedPreferences_Kakao;
     SharedPreferences.Editor editor;
-    SharedPreferences.Editor editor_Kakao;
-    String sharedInfo;
 
     BitmapConverter bitmapConverter;
 
@@ -185,7 +183,6 @@ public class Fragment_add extends Fragment {
     } // onCreate()
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -228,8 +225,6 @@ public class Fragment_add extends Fragment {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
 
-
-
     } // onStart()
 
 
@@ -249,6 +244,11 @@ public class Fragment_add extends Fragment {
     public void onStop() {
         Log.d(TAG, "onStop() 호출");
         super.onStop();
+
+        if (thread.isAlive()) {
+            thread.interrupt();
+        }
+
     }
 
     @Override
@@ -308,13 +308,13 @@ public class Fragment_add extends Fragment {
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        sharedPreferences_Kakao = this.getActivity().getSharedPreferences("a5636c0dc6cb43c4ea8f52134f0f1337", MODE_PRIVATE);
-        editor_Kakao = sharedPreferences_Kakao.edit();
+
         writeShared = this.getActivity().getSharedPreferences("임시저장", MODE_PRIVATE);
         writeEditor = writeShared.edit();
 
         nickname = sharedPreferences.getString("nickname", "");
         profileImage = sharedPreferences.getString("image", "");
+        writeCount = sharedPreferences.getString("writeCount", "");
 
         bitmapConverter = new BitmapConverter();
 
@@ -420,6 +420,7 @@ public class Fragment_add extends Fragment {
                     RequestBody addPostImage = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
                     RequestBody addWriting = RequestBody.create(MediaType.parse("text/plain"), writing);
                     RequestBody addDateCreated = RequestBody.create(MediaType.parse("text/plain"), dateCreated);
+                    RequestBody addWriteCount = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(writeCount));
 
                     HashMap map = new HashMap();
                     map.put("nickname", addNickname);
@@ -617,7 +618,7 @@ public class Fragment_add extends Fragment {
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                helpText.clearAnimation();
             }
 
             handler.post(new Runnable() {

@@ -78,8 +78,7 @@ public class Login extends AppCompatActivity {
     String user_nickname;
     String user_image;
     String user_memo;
-    String no_id;
-    String no_pw;
+    String user_writeCount;
 
     String rp_code;
     String edit_id;
@@ -363,12 +362,14 @@ public class Login extends AppCompatActivity {
                         user_nickname = response.body().getNickname();
                         user_image = response.body().getImage();
                         user_memo = response.body().getMemo();
+                        user_writeCount = response.body().getWriteCount();
 
                         editor.putString("loginType", user_type);
                         editor.putString("id", user_id);
                         editor.putString("nickname", user_nickname);
                         editor.putString("image", user_image);
                         editor.putString("memo", user_memo);
+                        editor.putString("writeCount", user_writeCount);
                         editor.commit();
                         Intent i = new Intent(Login.this, Home.class);
                         startActivity(i);
@@ -422,12 +423,14 @@ public class Login extends AppCompatActivity {
                         user_nickname = response.body().getNickname();
                         user_image = response.body().getImage();
                         user_memo = response.body().getMemo();
+                        user_writeCount = response.body().getWriteCount();
 
                         editor.putString("loginType", user_type);
                         editor.putString("id", user_id);
                         editor.putString("nickname", user_nickname);
                         editor.putString("image", user_image);
                         editor.putString("memo", user_memo);
+                        editor.putString("writeCount", user_writeCount);
                         editor.commit();
                         Intent i = new Intent(Login.this, Home.class);
                         startActivity(i);
@@ -482,6 +485,7 @@ public class Login extends AppCompatActivity {
                     user_nickname = response.body().getNickname();
                     user_image = response.body().getImage();
                     user_memo = response.body().getMemo();
+                    user_writeCount = response.body().getWriteCount();
 
                     Log.d(TAG, "서버에서 전달 받은 코드 - 타입 : " + user_type + "\n아이디 : " + user_id + "\n비번 : "
                             + user_pw + "\n전화번호 : " + user_phone + "\n닉네임 : " + user_nickname + "\n이미지 : " + user_image);
@@ -491,6 +495,7 @@ public class Login extends AppCompatActivity {
                     editor.putString("nickname", user_nickname);
                     editor.putString("image", user_image);
                     editor.putString("memo", user_memo);
+                    editor.putString("writeCount", user_writeCount);
                     editor.commit();
                     Intent i = new Intent(Login.this, Home.class);
                     startActivity(i);
@@ -541,6 +546,7 @@ public class Login extends AppCompatActivity {
                         user_nickname = response.body().getNickname();
                         user_image = response.body().getImage();
                         user_memo = response.body().getMemo();
+                        user_writeCount = response.body().getWriteCount();
 
                         Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
 
@@ -549,6 +555,7 @@ public class Login extends AppCompatActivity {
                         editor.putString("nickname", user_nickname);
                         editor.putString("image", kakaoImage);
                         editor.putString("memo", user_memo);
+                        editor.putString("writeCount", user_writeCount);
                         editor.commit();
 
                         Intent i = new Intent(Login.this, Home.class);

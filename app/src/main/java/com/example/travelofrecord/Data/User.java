@@ -35,6 +35,9 @@ public class User {
     @Expose
     @SerializedName("response") public String response;
 
+    @Expose
+    @SerializedName("writeCount") public String writeCount;
+
     public User(String imagePath, String nickname) {
         this.imagePath = imagePath;
         this.nickname = nickname;
@@ -59,6 +62,7 @@ public class User {
     public String getTextContent() { return text; }
     public String getImage() { return imagePath; }
     public String getResponse() { return response; }
+    public String getWriteCount() { return writeCount; }
 
     public void setType(String loginType) {
         this.loginType = loginType;
@@ -83,5 +87,6 @@ public class User {
     }
     public void setImage(String imagePath) { this.imagePath = imagePath; }
     public void setResponse(String response) { this.response = response; }
+    public void setWriteCount(String writeCount) { this.writeCount = writeCount; }
 
 }
