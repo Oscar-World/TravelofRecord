@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.travelofrecord.Data.User;
 import com.example.travelofrecord.Fragment.Fragment_Dm;
 import com.example.travelofrecord.Fragment.Fragment_Heart;
 import com.example.travelofrecord.Fragment.Fragment_Home;
@@ -224,7 +225,6 @@ public class Home extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-
 
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
             @Override
@@ -545,7 +545,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
-    }
+    } // updateFcmToken()
 
     public void getNoti(String currentNickname) {
 
@@ -618,7 +618,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
-    }
+    } // getNoti()
 
 
 }

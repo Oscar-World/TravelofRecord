@@ -57,14 +57,26 @@
                 android:id="@+id/addUpload_Btn"
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:text="완료"
                 android:layout_gravity="center|end"
                 android:layout_marginRight="15dp"
-                android:textStyle="bold"
-                android:textSize="18dp"
-                android:textColor="@color/primary"
                 android:background="@color/none"
-                />
+                android:text="완료"
+                android:textColor="@color/primary"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/addUpload_Block"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:layout_marginRight="15dp"
+                android:background="@color/none"
+                android:text="완료"
+                android:textColor="@color/gray"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
         </FrameLayout>
 

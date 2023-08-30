@@ -82,6 +82,7 @@ public class Fragment_add extends Fragment {
     GetTime getTime = new GetTime();
 
     Button addUpload_Btn;
+    Button addUpload_Block;
     EditText writing_Edit;
     ImageView postImage_Iv;
     FrameLayout writing_Layout;
@@ -289,6 +290,7 @@ public class Fragment_add extends Fragment {
     public void setVariable() {
 
         addUpload_Btn = v.findViewById(R.id.addUpload_Btn);
+        addUpload_Block = v.findViewById(R.id.addUpload_Block);
         writing_Edit = v.findViewById(R.id.writing_Edit);
         postImage_Iv = v.findViewById(R.id.postImage_Iv);
         writing_Layout = v.findViewById(R.id.writing_FrameLayout);
@@ -316,6 +318,8 @@ public class Fragment_add extends Fragment {
         profileImage = sharedPreferences.getString("image", "");
         writeCount = sharedPreferences.getString("writeCount", "");
 
+        helpText.setText("이번 주에 " + writeCount + "회 더 작성할 수 있어요!");
+
         bitmapConverter = new BitmapConverter();
 
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
@@ -326,6 +330,11 @@ public class Fragment_add extends Fragment {
     } // setVariable()
 
     public void setView() {
+
+        if (Integer.parseInt(writeCount) <= 0) {
+            addUpload_Btn.setVisibility(View.GONE);
+            addUpload_Block.setVisibility(View.VISIBLE);
+        }
 
         postImage_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -407,6 +416,10 @@ public class Fragment_add extends Fragment {
                     Toast.makeText(getActivity(),"내용을 기록해주세요",Toast.LENGTH_SHORT).show();
                 } else {
 
+                    writeCount = String.valueOf(Integer.parseInt(writeCount) - 1);
+                    editor.putString("writeCount", writeCount);
+                    editor.commit();
+
                     String systemTime = String.valueOf(System.currentTimeMillis());
                     imageFileName = systemTime + ".jpg";
 
@@ -420,7 +433,7 @@ public class Fragment_add extends Fragment {
                     RequestBody addPostImage = RequestBody.create(MediaType.parse("text/plain"), imageFileName);
                     RequestBody addWriting = RequestBody.create(MediaType.parse("text/plain"), writing);
                     RequestBody addDateCreated = RequestBody.create(MediaType.parse("text/plain"), dateCreated);
-                    RequestBody addWriteCount = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(writeCount));
+                    RequestBody addWriteCount = RequestBody.create(MediaType.parse("text/plain"), writeCount);
 
                     HashMap map = new HashMap();
                     map.put("nickname", addNickname);
@@ -431,6 +444,7 @@ public class Fragment_add extends Fragment {
                     map.put("postImage", addPostImage);
                     map.put("writing", addWriting);
                     map.put("dateCreated", addDateCreated);
+                    map.put("writeCount", addWriteCount);
 
                     Log.d(TAG, "onClick : " + postImage);
                     Log.d(TAG, "onClick: " + imageFileName);

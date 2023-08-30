@@ -264,4 +264,10 @@ public interface ApiInterface {
     @GET("mysql_GetRank.php")
     Call<ArrayList<PostData>> getRanking();
 
+    // 작성 가능 횟수 가져오기
+    @GET("mysql_GetWriteCount.php")
+    Call<User> getWriteCount(
+            @Query("nickname") String nickname
+    );
+
 }

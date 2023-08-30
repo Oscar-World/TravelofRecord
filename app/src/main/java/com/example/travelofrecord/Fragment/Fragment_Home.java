@@ -92,7 +92,9 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     boolean heartStatus;
 
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     String loginNickname;
+    String writeCount;
 
     int networkStatus;
 
@@ -152,6 +154,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
         setVariable();
         setView();
+        getWriteCount(loginNickname);
         if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
             internetText.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
@@ -337,7 +340,34 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             }
         });
 
-    }
+    } // deletePost()
+
+    public void getWriteCount(String nickname) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getWriteCount(nickname);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "getWriteCount - onResponse : isSuccessful");
+                    writeCount = response.body().getWriteCount();
+                    Log.d(TAG, "onResponse : " + writeCount);
+                    editor.putString("writeCount", writeCount);
+                    editor.commit();
+
+                } else {
+                    Log.d(TAG, "getWriteCount - onResponse : isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "getWriteCount - onFailure");
+            }
+        });
+
+    } // getWriteCount()
 
     public void setVariable() {
 
@@ -371,7 +401,9 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         heartListClose_Iv = v.findViewById(R.id.heartListClose_Image);
 
         sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         loginNickname = sharedPreferences.getString("nickname","");
+        writeCount = sharedPreferences.getString("writeCount", "");
 
         pageNum = 1;
         pagingStatus = "false";
