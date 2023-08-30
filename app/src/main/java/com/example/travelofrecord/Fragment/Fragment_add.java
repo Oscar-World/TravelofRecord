@@ -303,7 +303,7 @@ public class Fragment_add extends Fragment {
 
         handler = new Handler();
         thread = new HelpInfoThread();
-        thread.start();
+
 
         sendData = new Bundle();
         fragment_home = new Fragment_Home();
@@ -319,6 +319,11 @@ public class Fragment_add extends Fragment {
         writeCount = sharedPreferences.getString("writeCount", "");
 
         helpText.setText("이번 주에 " + writeCount + "회 더 작성할 수 있어요!");
+        if (Integer.parseInt(writeCount) <= 0) {
+            writeCountDialog();
+        } else {
+            thread.start();
+        }
 
         bitmapConverter = new BitmapConverter();
 
@@ -545,6 +550,23 @@ public class Fragment_add extends Fragment {
 
     } // tempDialog()
 
+    public void writeCountDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("더 이상 작성할 수 없습니다.")
+                .setMessage("이번 주 작성 횟수를 모두 소진하였어요.\n\n게시글은 1주일에 10회 작성 가능하며,\n매주 월요일 0시에 초기화됩니다.")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        homeActivity.goHomeFragment(sendData);
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+
+    }
+
 
     public void insertFeed(File file, HashMap map) {
 
@@ -648,6 +670,8 @@ public class Fragment_add extends Fragment {
         }
 
     }
+
+
 
 
 }
