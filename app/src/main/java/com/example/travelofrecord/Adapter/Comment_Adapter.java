@@ -166,7 +166,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                         public boolean onMenuItemClick(MenuItem menuItem) {
 
                             if (menuItem.getItemId() == R.id.menu_CommentDelete) {
-                                Toast.makeText(context,"삭제ㄱㄱ",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context,"댓글 삭제 완료",Toast.LENGTH_SHORT).show();
 
                                 item.commentNum -= 1;
                                 deleteComment(item.whoComment, item.dateComment, item.commentNum, item.postNum);
@@ -201,9 +201,9 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                         postData.remove(getAdapterPosition());
                         notifyDataSetChanged();
 
-                        Intent i = new Intent("commentSync2");
-                        i.putExtra("commentNum2", commentNum);
-                        context.sendBroadcast(i);
+//                        Intent i = new Intent("commentSync2");
+//                        i.putExtra("commentNum2", commentNum);
+//                        context.sendBroadcast(i);
 
                     }
                     Log.d(TAG, "responseFail");

@@ -416,21 +416,21 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     public void setView() {
 
-        deleteReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "onReceiveDelete");
-
-                int position = intent.getIntExtra("position", 0);
-                int deleteNum = post_Data_ArrayList.get(position).num;
-                Log.d(TAG, "postion : " + position + "\nnum : " + deleteNum);
-                post_Data_ArrayList.remove(position);
-                adapter.notifyDataSetChanged();
-
-                deletePost(deleteNum);
-
-            }
-        };
+//        deleteReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                Log.d(TAG, "onReceiveDelete");
+//
+//                int position = intent.getIntExtra("position", 0);
+//                int deleteNum = post_Data_ArrayList.get(position).num;
+//                Log.d(TAG, "postion : " + position + "\nnum : " + deleteNum);
+//                post_Data_ArrayList.remove(position);
+//                adapter.notifyDataSetChanged();
+//
+//                deletePost(deleteNum);
+//
+//            }
+//        };
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

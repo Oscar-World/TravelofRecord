@@ -2,6 +2,7 @@ package com.example.travelofrecord.Activity;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -96,6 +98,7 @@ public class Post extends AppCompatActivity {
     Comment_Adapter adapter;
     ArrayList<PostData> postDataArrayList;
     int listSize;
+    LinearLayout comment_Layout;
 
     ApiInterface apiInterface;
     LinearLayout post_TopLayout;
@@ -204,6 +207,7 @@ public class Post extends AppCompatActivity {
 
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
+        comment_Layout = findViewById(R.id.post_commentLayout);
         scrollView = findViewById(R.id.post_ScrollView);
         recyclerView = findViewById(R.id.comment_recyclerView);
         adapter = new Comment_Adapter();
@@ -446,10 +450,12 @@ public class Post extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem menuItem) {
 
                         if (menuItem.getItemId() == R.id.menu_PostDelete) {
-                            Intent i = new Intent("deletePostSync");
-                            i.putExtra("position", getPosition);
-                            sendBroadcast(i);
-                            finish();
+//                            Intent i = new Intent("deletePostSync");
+//                            i.putExtra("position", getPosition);
+//                            sendBroadcast(i);
+//                            finish();
+
+                            deletePost(post_Num);
 
                         }
 
@@ -464,6 +470,22 @@ public class Post extends AppCompatActivity {
 
 
     } // setView()
+
+    public void noDataDlg() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Post.this);
+        builder.setTitle("존재하지 않는 게시물입니다.")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+
+    }
 
 
     // -------------------------------------------------------------------------------------------
@@ -677,6 +699,10 @@ public class Post extends AppCompatActivity {
                                 .skipMemoryCache(true)
                                 .into(post_PostImage_Iv);
 
+                    } else {
+                        scrollView.setVisibility(View.GONE);
+                        comment_Layout.setVisibility(View.GONE);
+                        noDataDlg();
                     }
 
                 } else {
@@ -692,7 +718,30 @@ public class Post extends AppCompatActivity {
 
     } // getPost()
 
+    public void deletePost(int postNum) {
 
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.deletePost(postNum);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "deletePost - onResponse : isSuccessful");
+                    Log.d(TAG, "onResponse : " + response.body());
+                    Toast.makeText(Post.this, "게시글 삭제 완료", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Log.d(TAG, "deletePost - onResponse : isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "deletePost - onFailure");
+            }
+        });
+
+    }
 
 
 }
