@@ -455,10 +455,10 @@ public class Find_UserInfo extends AppCompatActivity {
     }  // getNewPw()
 
     // ▼ 휴대폰 번호 중복 검사 ▼
-    public void phoneCheck(String phone) {
+    public void phoneAuth(String phone) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.getPhoneCheck(phone);
+        Call<String> call = apiInterface.getPhoneAuth(phone);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -707,7 +707,7 @@ public class Find_UserInfo extends AppCompatActivity {
                             findIdFrame2.setVisibility(View.VISIBLE);
                             findIdFrame2.startAnimation(left_in);
 
-                            phoneCheck(user_phoneNum);
+                            phoneAuth(user_phoneNum);
                             auth.signOut();
                         } else {
 

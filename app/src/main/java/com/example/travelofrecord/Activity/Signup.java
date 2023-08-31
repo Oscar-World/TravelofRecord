@@ -20,6 +20,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -54,6 +55,11 @@ import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -203,8 +209,6 @@ public class Signup extends AppCompatActivity {
     BackBtn backBtn = new BackBtn(this);
     String backText = "\'뒤로\' 버튼을 한번 더 누르면 로그인 페이지로 이동합니다.";
 
-
-
     @Override
     public void onBackPressed() {
         backBtn.onBackPressed(backText);
@@ -240,6 +244,7 @@ public class Signup extends AppCompatActivity {
                 smsCode = phoneAuthCredential.getSmsCode();
 
             }
+
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
 
@@ -284,7 +289,7 @@ public class Signup extends AppCompatActivity {
 
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() 호출");
         Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus);
@@ -300,9 +305,11 @@ public class Signup extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
                 Log.d(TAG, "afterTextChanged: " + editable.toString());
@@ -324,9 +331,11 @@ public class Signup extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
                 Log.d(TAG, "afterTextChanged: " + editable.toString());
@@ -424,17 +433,17 @@ public class Signup extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
 
-                    if (!pwRuleCheck()) {
-                        pw_Error.setVisibility(View.VISIBLE);
-                        pw_Useable.setVisibility(View.INVISIBLE);
-                        pwStatus = false;
-                    } else {
-                        pw_Useable.setVisibility(View.VISIBLE);
-                        pw_Error.setVisibility(View.INVISIBLE);
-                        pwStatus = true;
-                    }
+                if (!pwRuleCheck()) {
+                    pw_Error.setVisibility(View.VISIBLE);
+                    pw_Useable.setVisibility(View.INVISIBLE);
+                    pwStatus = false;
+                } else {
+                    pw_Useable.setVisibility(View.VISIBLE);
+                    pw_Error.setVisibility(View.INVISIBLE);
+                    pwStatus = true;
+                }
 
-                if (idStatus&pwStatus&pwCheckStatus) {
+                if (idStatus & pwStatus & pwCheckStatus) {
                     Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus + " 버튼 활성화!");
                     nextBtn_1.setVisibility(View.VISIBLE);
                     nextBlock_1.setVisibility(View.INVISIBLE);
@@ -483,6 +492,7 @@ public class Signup extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -492,22 +502,22 @@ public class Signup extends AppCompatActivity {
 
                 Log.d(TAG, "afterTextChanged: " + editable);
 
-                    if (!pwCheckRuleCheck()) {
-                        pwCheck_Error.setVisibility(View.VISIBLE);
-                        pwCheck_Useable.setVisibility(View.INVISIBLE);
-                        pwCheckStatus = false;
-                    } else if (editable.equals("")) {
-                        pwCheck_Error.setVisibility(View.VISIBLE);
-                        pwCheck_Useable.setVisibility(View.INVISIBLE);
-                        pwCheckStatus = false;
+                if (!pwCheckRuleCheck()) {
+                    pwCheck_Error.setVisibility(View.VISIBLE);
+                    pwCheck_Useable.setVisibility(View.INVISIBLE);
+                    pwCheckStatus = false;
+                } else if (editable.equals("")) {
+                    pwCheck_Error.setVisibility(View.VISIBLE);
+                    pwCheck_Useable.setVisibility(View.INVISIBLE);
+                    pwCheckStatus = false;
 
-                    } else {
-                        pwCheck_Error.setVisibility(View.INVISIBLE);
-                        pwCheck_Useable.setVisibility(View.VISIBLE);
-                        pwCheckStatus = true;
-                    }
+                } else {
+                    pwCheck_Error.setVisibility(View.INVISIBLE);
+                    pwCheck_Useable.setVisibility(View.VISIBLE);
+                    pwCheckStatus = true;
+                }
 
-                if (idStatus&pwStatus&pwCheckStatus) {
+                if (idStatus & pwStatus & pwCheckStatus) {
                     Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus + " 버튼 활성화!");
                     nextBtn_1.setVisibility(View.VISIBLE);
                     nextBlock_1.setVisibility(View.INVISIBLE);
@@ -605,7 +615,7 @@ public class Signup extends AppCompatActivity {
 
                 int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
                 Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if (status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
                     edit_id = signup_id.getText().toString();
                     edit_pw = signup_pw.getText().toString();
@@ -613,7 +623,7 @@ public class Signup extends AppCompatActivity {
                     edit_phone = signup_phone.getText().toString();
                     edit_nickname = signup_nickname.getText().toString();
 
-                    String fcmToken = userShared.getString("fcmToken","");
+                    String fcmToken = userShared.getString("fcmToken", "");
 
                     if (kakaoId != null) {
                         if (signupCheck2()) {
@@ -660,23 +670,15 @@ public class Signup extends AppCompatActivity {
 
                     Log.d(TAG, "데이터 : \nid-" + edit_id + "\npw-" + edit_pw + "\nphone-" + edit_phone + "\nnickname-" + edit_nickname + "\nimagePath-" + imagePath + "\nimageFileName-" + imageFileName + "\nfcmToken-" + fcmToken);
 
-                    if (login_Type.equals("Basic") & signupCheck()) {
-                        Signup(imageFile, map);
-                    } else {
-                        if (signupCheck2()) {
-                            Signup(imageFile, map);
-                        }
-                    }
+                    Signup(imageFile, map);
 
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
 
-
             }
         });
-        
 
 
         // ▼ 1페이지 뒤로가기 버튼 ▼
@@ -719,7 +721,7 @@ public class Signup extends AppCompatActivity {
 
                 int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
                 Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if (status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
                     edit_phone = signup_phone.getText().toString();
 
@@ -733,38 +735,12 @@ public class Signup extends AppCompatActivity {
                         phone_NumberError.setVisibility(View.VISIBLE);
                     } else {
 
-                        smsTimeThread = new SmsTimeThread();
-                        smsTimeThread.start();
-
-                        phone_SmsEmpty.setVisibility(View.INVISIBLE);
-                        phone_NumberError.setVisibility(View.INVISIBLE);
-                        phone_Send.setVisibility(View.VISIBLE);
-                        phone_SmsTime.setVisibility(View.VISIBLE);
-                        phone_SmsOk.setVisibility(View.INVISIBLE);
-                        phone_SmsError.setVisibility(View.INVISIBLE);
-                        phone_SmsTimeout.setVisibility(View.INVISIBLE);
-
-                        smsSend_Block.setVisibility(View.VISIBLE);
-                        smsSend_Btn.setVisibility(View.INVISIBLE);
-                        smsCheck_Block.setVisibility(View.INVISIBLE);
-                        smsCheck_Btn.setVisibility(View.VISIBLE);
-
-                        smsCheckNumber = 1;
-
-                        phoneCount -= 1;
-                        phoneCountText.setText("남은 인증 횟수 : " + String.valueOf(phoneCount));
-                        authEditor.putInt("남은 횟수", phoneCount);
-                        authEditor.commit();
-
-                        String phoneNum = "+82" + edit_phone.substring(1,edit_phone.length());
-                        Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
-
-                        sendSms(phoneNum);
-
+                        phoneCheck(edit_phone);
+//                        phoneCheckOnClick();
 
                     }
 
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
@@ -780,7 +756,7 @@ public class Signup extends AppCompatActivity {
 
                 int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
                 Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if (status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
                     edit_phoneCheck = signup_phoneCheck.getText().toString();
 
@@ -828,7 +804,7 @@ public class Signup extends AppCompatActivity {
 
                     }
 
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
@@ -845,9 +821,9 @@ public class Signup extends AppCompatActivity {
 
                 int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
                 Log.d(TAG, "NetworkStatus : " + status);
-                if(status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
+                if (status == NetworkStatus.TYPE_MOBILE || status == NetworkStatus.TYPE_WIFI) {
 
-                    if (ActivityCompat.checkSelfPermission(Signup.this,Manifest.permission.READ_EXTERNAL_STORAGE)
+                    if (ActivityCompat.checkSelfPermission(Signup.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                             == PackageManager.PERMISSION_GRANTED) {
 
                         Log.d(TAG, "퍼미션 허용");
@@ -862,7 +838,7 @@ public class Signup extends AppCompatActivity {
 
                     }
 
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
@@ -876,40 +852,71 @@ public class Signup extends AppCompatActivity {
                     @Override
                     public void onActivityResult(ActivityResult result) {
 
-                     if (result.getResultCode() == RESULT_OK) {
+                        if (result.getResultCode() == RESULT_OK) {
 
-                         Intent intent = result.getData();
-                         uri = intent.getData();
+                            Intent intent = result.getData();
+                            uri = intent.getData();
 
-                         Glide.with(getApplicationContext())
-                                 .load(uri)
-                                 .transition(withCrossFade(factory))
-                                 .placeholder(R.drawable.loading2)
-                                 .skipMemoryCache(true)
-                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                 .into(photo_Btn);
+                            Glide.with(getApplicationContext())
+                                    .load(uri)
+                                    .transition(withCrossFade(factory))
+                                    .placeholder(R.drawable.loading2)
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .into(photo_Btn);
 
-                         imagePath = getRealPathFromUri(uri);
+                            imagePath = getRealPathFromUri(uri);
 
-                     }
+                        }
                     }
-        });
+                });
 
 
     } // onStart()
 
+    public void phoneCheckOnClick() {
+
+        smsTimeThread = new SmsTimeThread();
+        smsTimeThread.start();
+
+        phone_SmsEmpty.setVisibility(View.INVISIBLE);
+        phone_NumberError.setVisibility(View.INVISIBLE);
+        phone_Send.setVisibility(View.VISIBLE);
+        phone_SmsTime.setVisibility(View.VISIBLE);
+        phone_SmsOk.setVisibility(View.INVISIBLE);
+        phone_SmsError.setVisibility(View.INVISIBLE);
+        phone_SmsTimeout.setVisibility(View.INVISIBLE);
+
+        smsSend_Block.setVisibility(View.VISIBLE);
+        smsSend_Btn.setVisibility(View.INVISIBLE);
+        smsCheck_Block.setVisibility(View.INVISIBLE);
+        smsCheck_Btn.setVisibility(View.VISIBLE);
+
+        smsCheckNumber = 1;
+
+        phoneCount -= 1;
+        phoneCountText.setText("남은 인증 횟수 : " + phoneCount);
+        authEditor.putInt("남은 횟수", phoneCount);
+        authEditor.commit();
+
+        String phoneNum = "+82" + edit_phone.substring(1, edit_phone.length());
+        Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
+
+//        sendSms(phoneNum);
+
+    }
 
 
-     //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
-    String getRealPathFromUri(Uri uri){
-        String[] proj= {MediaStore.Images.Media.DATA};
-        CursorLoader loader= new CursorLoader(this, uri, proj, null, null, null);
-        Cursor cursor= loader.loadInBackground();
-        int column_index= cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+    //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
+    String getRealPathFromUri(Uri uri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        CursorLoader loader = new CursorLoader(this, uri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        String result= cursor.getString(column_index);
+        String result = cursor.getString(column_index);
         cursor.close();
-        return  result;
+        return result;
     }
 
 
@@ -918,7 +925,7 @@ public class Signup extends AppCompatActivity {
         AlertDialog.Builder reset = new AlertDialog.Builder(Signup.this);
         reset.setTitle("추가 정보 수집");
         reset.setMessage("본 앱에서는 한 사용자의 다중 계정 사용 방지를 위해 휴대폰 인증을 진행합니다.");
-        reset.setPositiveButton("확인",new DialogInterface.OnClickListener(){
+        reset.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
         });
@@ -926,10 +933,6 @@ public class Signup extends AppCompatActivity {
         AlertDialog resetDlg = reset.create();
         resetDlg.show();
     }
-
-
-
-
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1131,7 +1134,7 @@ public class Signup extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "이미 사용중인 아이디입니다.", Toast.LENGTH_SHORT).show();
                     } else if (rpCode.equals("usingNick")) {
                         Toast.makeText(getApplicationContext(), "이미 사용중인 닉네임입니다.", Toast.LENGTH_SHORT).show();
-                    } else if (rpCode.equals("uploadOk")){
+                    } else if (rpCode.equals("uploadOk")) {
                         Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
 
                         userEditor.putString("loginType", login_Type);
@@ -1144,8 +1147,8 @@ public class Signup extends AppCompatActivity {
                         startActivity(intent);
                         finish();
 
-                        ((Login)Login.context).finish();
-                        ((Start)Start.context).finish();
+                        ((Login) Login.context).finish();
+                        ((Start) Start.context).finish();
 
                     } else {
                         Toast.makeText(getApplicationContext(), "회원가입 실패. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
@@ -1195,7 +1198,7 @@ public class Signup extends AppCompatActivity {
 
                 }
 
-                if (idStatus&pwStatus&pwCheckStatus) {
+                if (idStatus & pwStatus & pwCheckStatus) {
                     Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus + " 버튼 활성화!");
                     nextBtn_1.setVisibility(View.VISIBLE);
                     nextBlock_1.setVisibility(View.INVISIBLE);
@@ -1242,9 +1245,9 @@ public class Signup extends AppCompatActivity {
                     nickname_Error.setVisibility(View.INVISIBLE);
                     nicknameStatus = true;
 
-                        Log.d(TAG, "닉네임 중복검사 nickname Status : " + nicknameStatus + " 버튼 활성화!");
-                        submitBtn.setVisibility(View.VISIBLE);
-                        submitBlock.setVisibility(View.INVISIBLE);
+                    Log.d(TAG, "닉네임 중복검사 nickname Status : " + nicknameStatus + " 버튼 활성화!");
+                    submitBtn.setVisibility(View.VISIBLE);
+                    submitBlock.setVisibility(View.INVISIBLE);
 
                 }
 
@@ -1258,6 +1261,78 @@ public class Signup extends AppCompatActivity {
 
     }  // nicknameCheck()
 
+    // ▼ 핸드폰 중복 검사 ▼
+    public void phoneCheck(String phone) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.getPhoneCheck(phone);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "phoneCheck - onResponse : isSuccessful");
+
+                    String rpCode = response.body();
+                    Log.d(TAG, "onResponse : " + rpCode);
+
+                    if (rpCode.equals("Basic")) {
+
+                        phoneDlg("");
+
+                    } else if (rpCode.equals("Kakao")) {
+
+                        phoneDlg("카카오");
+
+                    } else if (rpCode.equals("Google")) {
+
+                        phoneDlg("구글");
+
+                    } else if (rpCode.equals("Naver")) {
+
+                        phoneDlg("네이버");
+
+                    } else if (rpCode.equals("noPhone")) {
+
+                        phoneCheckOnClick();
+
+                    }
+
+                } else {
+                    Log.d(TAG, "phoneCheck - onResponse : isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "phoneCheck - onFailure");
+            }
+        });
+
+    } // phoneCheck()
+
+    public void phoneDlg(String loginType) {
+
+        String message;
+
+        if (loginType.equals("")) {
+            message = "\n앱 내 회원가입 기록이 존재합니다.\n해당 계정으로 로그인하시기 바랍니다.";
+        } else {
+            message = "\n" + loginType + " 계정을 통해 회원가입된 사용자입니다.\n해당 계정으로 로그인하시기 바랍니다.";
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Signup.this);
+        builder.setTitle("이미 가입된 사용자입니다.")
+                .setMessage(message)
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1286,35 +1361,30 @@ public class Signup extends AppCompatActivity {
         matcher_nick = pattern_nick.matcher(edit_nickname);
 
         if (!matcher_id.find()) {
-            Toast t = Toast.makeText(Signup.this,"이메일 형식이 올바르지 않습니다.",Toast.LENGTH_SHORT);
+            Toast t = Toast.makeText(Signup.this, "이메일 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT);
             t.show();
             return false;
-        }
-        else if (!matcher_pw.find()) {
-            Toast t = Toast.makeText(Signup.this,"비밀번호 형식이 올바르지 않습니다.",Toast.LENGTH_SHORT);
+        } else if (!matcher_pw.find()) {
+            Toast t = Toast.makeText(Signup.this, "비밀번호 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT);
             t.show();
             return false;
-        }
-        else if (!edit_pw.equals(edit_pwCheck) ) {
-            Toast t = Toast.makeText(Signup.this,"비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
+        } else if (!edit_pw.equals(edit_pwCheck)) {
+            Toast t = Toast.makeText(Signup.this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT);
             t.show();
 
             Log.d(TAG, "비밀번호 : " + edit_pw);
             Log.d(TAG, "비밀번호 확인 : " + edit_pwCheck);
 
             return false;
-        }
-        else if (!matcher_ph.find()) {
-            Toast t = Toast.makeText(Signup.this,"휴대폰 번호가 올바르지 않습니다.",Toast.LENGTH_SHORT);
+        } else if (!matcher_ph.find()) {
+            Toast t = Toast.makeText(Signup.this, "휴대폰 번호가 올바르지 않습니다.", Toast.LENGTH_SHORT);
             t.show();
             return false;
-        }
-        else if (!matcher_nick.find()) {
-            Toast t = Toast.makeText(Signup.this,"닉네임 형식이 올바르지 않습니다.",Toast.LENGTH_SHORT);
+        } else if (!matcher_nick.find()) {
+            Toast t = Toast.makeText(Signup.this, "닉네임 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT);
             t.show();
             return false;
-        }
-        else {
+        } else {
             return true;
         }
 
@@ -1334,16 +1404,14 @@ public class Signup extends AppCompatActivity {
         matcher_nick = pattern_nick.matcher(edit_nickname);
 
         if (!matcher_ph.find()) {
-            Toast t = Toast.makeText(Signup.this,"휴대폰 번호가 올바르지 않습니다.",Toast.LENGTH_SHORT);
+            Toast t = Toast.makeText(Signup.this, "휴대폰 번호가 올바르지 않습니다.", Toast.LENGTH_SHORT);
             t.show();
             return false;
-        }
-        else if (!matcher_nick.find()) {
-            Toast t = Toast.makeText(Signup.this,"닉네임 형식이 올바르지 않습니다.",Toast.LENGTH_SHORT);
+        } else if (!matcher_nick.find()) {
+            Toast t = Toast.makeText(Signup.this, "닉네임 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT);
             t.show();
             return false;
-        }
-        else {
+        } else {
             return true;
         }
 
@@ -1360,7 +1428,7 @@ public class Signup extends AppCompatActivity {
         edit_id = signup_id.getText().toString();
         matcher_id = pattern_id.matcher(edit_id);
 
-        if(!matcher_id.find()) {
+        if (!matcher_id.find()) {
 
             idStatus = false;
             nextBtn_1.setVisibility(View.INVISIBLE);
@@ -1382,7 +1450,7 @@ public class Signup extends AppCompatActivity {
         edit_pw = signup_pw.getText().toString();
         matcher_pw = pattern_pw.matcher(edit_pw);
 
-        if(!matcher_pw.find()) {
+        if (!matcher_pw.find()) {
 
             pwStatus = false;
             nextBtn_1.setVisibility(View.INVISIBLE);
@@ -1422,7 +1490,7 @@ public class Signup extends AppCompatActivity {
         edit_nickname = signup_nickname.getText().toString();
         matcher_nick = pattern_nick.matcher(edit_nickname);
 
-        if(!matcher_nick.find()) {
+        if (!matcher_nick.find()) {
 
             nicknameStatus = false;
             nextBtn_1.setVisibility(View.INVISIBLE);
@@ -1471,6 +1539,7 @@ public class Signup extends AppCompatActivity {
                     .load(kakaoImage)
                     .into(photo_Btn);
 
+//            imagePath = getRealPathFromUri(Uri.parse(kakaoImage));
             imagePath = kakaoImage;
             edit_id = kakaoId;
 
@@ -1511,31 +1580,31 @@ public class Signup extends AppCompatActivity {
 
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() 호출됨");
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() 호출됨");
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
     }
 
     @Override
-    protected void onRestart(){
+    protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart() 호출됨");
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
     }
@@ -1586,12 +1655,12 @@ public class Signup extends AppCompatActivity {
             smsSend_Btn.setVisibility(View.INVISIBLE);
         }
 
-        left_out = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftout);
-        left_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_leftin);
-        right_out = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_rightout);
-        right_in = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_rightin);
-        appear = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_appear);
-        disappear = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.frame_disappear);
+        left_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_leftout);
+        left_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_leftin);
+        right_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_rightout);
+        right_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_rightin);
+        appear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_appear);
+        disappear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_disappear);
 
         id_Using = findViewById(R.id.id_Using);
         id_Error = findViewById(R.id.id_Error);

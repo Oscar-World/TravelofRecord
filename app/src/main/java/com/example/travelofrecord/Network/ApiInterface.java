@@ -48,9 +48,15 @@ public interface ApiInterface {
             @Query("nickname") String nickname
     );
 
-    // 아이디 찾기 - 핸드폰 번호 확인
+    // 핸드폰 중복 확인
     @GET("mysql_UserInfo_PhoneCheck.php")
     Call<String> getPhoneCheck (
+            @Query("phone") String phone
+    );
+
+    // 아이디 찾기 - 핸드폰 번호 확인
+    @GET("mysql_UserInfo_PhoneAuth.php")
+    Call<String> getPhoneAuth (
             @Query("phone") String nickname
     );
 
