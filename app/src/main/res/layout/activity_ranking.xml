@@ -302,14 +302,8 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="visible"
             >
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1.1"
-                />
 
             <TextView
                 android:id="@+id/ranking_UserRankText"
@@ -320,12 +314,8 @@
                 android:textSize="18dp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1.3"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="40dp"
                 />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -338,12 +328,7 @@
                 app:civ_border_color="@color/primary"
                 app:civ_border_width="2dp"
                 app:civ_border_overlay="false"
-                />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="0.3"
+                android:layout_marginRight="10dp"
                 />
 
             <TextView
@@ -360,7 +345,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1.2"
+                android:layout_weight="1"
                 />
 
             <ImageView
@@ -368,12 +353,6 @@
                 android:layout_height="25dp"
                 android:src="@drawable/heartfull"
                 android:layout_gravity="center"
-                />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="0.2"
                 />
 
             <TextView
@@ -385,12 +364,8 @@
                 android:textSize="18dp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="45dp"
                 />
 
         </LinearLayout>

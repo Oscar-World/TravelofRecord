@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Profile;
 import com.example.travelofrecord.Function.GetAdress;
 import com.example.travelofrecord.Function.GetTime;
@@ -42,6 +43,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
     ArrayList<PostData> postData;
     Context context;
+    Post post = new Post();
 
     @Override
     public Comment_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -200,6 +202,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                         Log.d(TAG, "onResponse: " + rpCode + " / position : " + getAdapterPosition());
                         postData.remove(getAdapterPosition());
                         notifyDataSetChanged();
+
 
 //                        Intent i = new Intent("commentSync2");
 //                        i.putExtra("commentNum2", commentNum);
