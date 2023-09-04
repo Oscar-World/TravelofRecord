@@ -58,6 +58,8 @@ public class Ranking extends AppCompatActivity {
     LinearLayout noRankLayout;
     FrameLayout noDataLayout;
     TextView dateText;
+    TextView leftBtn;
+    TextView rightBtn;
 
     ArrayList<PostData> arrayList;
     Ranking_Adapter adapter;
@@ -119,6 +121,7 @@ public class Ranking extends AppCompatActivity {
         Log.d(TAG, "onDestroy() 호출됨");
     }
 
+
     public void setVariable() {
 
         backBtn = findViewById(R.id.rankingBack_Btn);
@@ -136,6 +139,9 @@ public class Ranking extends AppCompatActivity {
         userImage = findViewById(R.id.ranking_UserImage);
         userNicknameText = findViewById(R.id.ranking_UserNicknameText);
         heartNumText = findViewById(R.id.ranking_HeartNumText);
+
+        leftBtn = findViewById(R.id.ranking_LeftText);
+        rightBtn = findViewById(R.id.ranking_RightText);
 
         userRankLayout = findViewById(R.id.ranking_UserRankLayout);
         noRankLayout = findViewById(R.id.ranking_NoRankTextLayout);
@@ -158,6 +164,7 @@ public class Ranking extends AppCompatActivity {
         loadingLayout = findViewById(R.id.rankingLoading_Layout);
 
     } // setVariable()
+
 
     public void setView() {
 
@@ -192,8 +199,22 @@ public class Ranking extends AppCompatActivity {
             }
         });
 
+        leftBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                leftOnClick();
+            }
+        });
+
+        rightBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rightOnClick();
+            }
+        });
 
     } // setView()
+
 
     public void dayOnClick() {
 
@@ -215,7 +236,8 @@ public class Ranking extends AppCompatActivity {
             noRankLayout.setVisibility(View.VISIBLE);
         }
 
-    }
+    } // dayOnClick()
+
 
     public void monthOnClick() {
 
@@ -237,7 +259,8 @@ public class Ranking extends AppCompatActivity {
             noRankLayout.setVisibility(View.VISIBLE);
         }
 
-    }
+    } // monthOnClick()
+
 
     public void yearOnClick() {
 
@@ -260,7 +283,23 @@ public class Ranking extends AppCompatActivity {
             noRankLayout.setVisibility(View.VISIBLE);
         }
 
-    }
+    } // yearOnClick()
+
+    public void leftOnClick() {
+
+        // 선택 날짜 != 오늘 날짜라면 rightBtn visible 처리
+        // 선택 날짜에 맞는 데이터 띄워주기
+
+    } // leftOnClick()
+
+
+    public void rightOnClick() {
+
+        // 선택 날짜 == 오늘 날짜라면 rightBtn invisible 처리
+        // 선택 날짜에 맞는 데이터 띄워주기
+
+    } // rightOnClick()
+
 
     Comparator<PostData> sortByHeartNum = new Comparator<PostData>() {
         @Override
@@ -268,6 +307,7 @@ public class Ranking extends AppCompatActivity {
             return Integer.compare(postData.heartNum, t1.heartNum);
         }
     };
+
 
     public void getRanking() {
 
@@ -289,6 +329,9 @@ public class Ranking extends AppCompatActivity {
 
                     if (data.size() > 0) {
                         Log.d(TAG, "getRanking - data.size() " + data.size());
+
+                        loadingImage.clearAnimation();
+                        loadingLayout.setVisibility(View.GONE);
 
                         for (int i = 0; i < data.size(); i++) {
 
@@ -317,9 +360,9 @@ public class Ranking extends AppCompatActivity {
 
                         }
 
-                        setList(arrayList);
-                        setList(monthList);
-                        setList(yearList);
+                        sortList(arrayList);
+                        sortList(monthList);
+                        sortList(yearList);
 
                         if (userStatus(arrayList)) {
                             userRankLayout.setVisibility(View.VISIBLE);
@@ -327,19 +370,10 @@ public class Ranking extends AppCompatActivity {
                             noRankLayout.setVisibility(View.VISIBLE);
                         }
 
-                        loadingImage.clearAnimation();
-                        loadingLayout.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
-
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        loadingImage.clearAnimation();
-                        loadingLayout.setVisibility(View.GONE);
-                        noDataLayout.setVisibility(View.VISIBLE);
-                    }
-
-                    if (arrayList.size() == 0) {
                         recyclerView.setVisibility(View.GONE);
                         noDataLayout.setVisibility(View.VISIBLE);
                     }
@@ -358,13 +392,17 @@ public class Ranking extends AppCompatActivity {
 
     } // getRanking()
 
-    public void setList(ArrayList<PostData> list) {
+
+    public void sortList(ArrayList<PostData> list) {
+
         Collections.sort(list, sortByHeartNum);
         Collections.reverse(list);
         for (int i = 0; i < list.size(); i++) {
             list.set(i, new PostData(i + 1, list.get(i).getProfileImage(), list.get(i).getPostNickname(), list.get(i).getHeartNum()));
         }
-    }
+
+    } // setList()
+
 
     public boolean userStatus(ArrayList<PostData> list) {
 
@@ -388,7 +426,9 @@ public class Ranking extends AppCompatActivity {
 
         }
         return false;
-    }
+
+    } // userStatus()
+
 
     public void setArrayList(ArrayList<PostData> list, int rank, String profileImage, String postNickname, int heartNum) {
 
@@ -412,9 +452,11 @@ public class Ranking extends AppCompatActivity {
             list.add(new PostData(rank, profileImage, postNickname, heartNum));
         }
 
-    }
+    } // setArrayList()
+
 
     public void listDataCheck(ArrayList<PostData> list) {
+
         if (list.size() == 0) {
             recyclerView.setVisibility(View.GONE);
             noDataLayout.setVisibility(View.VISIBLE);
@@ -422,7 +464,8 @@ public class Ranking extends AppCompatActivity {
             noDataLayout.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         }
-    }
+
+    } // listDataCheck()
 
 
 }
