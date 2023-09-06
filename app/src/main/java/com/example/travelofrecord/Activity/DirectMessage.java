@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 import com.example.travelofrecord.Adapter.Chat_Adapter;
 import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Data.PostData;
+import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -36,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -83,6 +88,8 @@ public class DirectMessage extends AppCompatActivity {
     int lastPosition;
     int totalCount;
 
+    BackBtn back;
+    String baseActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,10 +143,37 @@ public class DirectMessage extends AppCompatActivity {
         Log.d(TAG, "onDestroy() 호출됨");
     }
 
+    @Override
+    public void onBackPressed() {
+
+//        if (path != null) {
+//            back.onBackPressedAtDm();
+//        } else {
+//            finish();
+//        }
+
+        if (baseActivity.equals(".Activity.Home")) {
+            Log.d(TAG, "onBackPressed : 내부 진입");
+            finish();
+        } else {
+            Log.d(TAG, "onBackPressed : 외부 진입");
+            back.onBackPressedAtDm();
+        }
+
+    }
+
 
     // -------------------------------------------------------------------------------------------
 
     public void setVariable() {
+
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.AppTask> info = manager.getAppTasks();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            baseActivity = info.get(0).getTaskInfo().baseActivity.getShortClassName();
+        }
+
+        back = new BackBtn(this);
 
         backBtn = findViewById(R.id.chatBack_Btn);
         sendBtn = findViewById(R.id.chatSend_Btn);

@@ -1,6 +1,7 @@
 package com.example.travelofrecord.Function;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,6 +27,14 @@ public class BackBtn {
         this.mBackListener = listener;
     }
 
+    public void onBackPressedAtDm() {
+
+        Intent i = new Intent(activity, Home.class);
+        i.putExtra("fromDm", "fromDm");
+        activity.startActivity(i);
+        activity.finish();
+
+    }
 
     public void onBackPressed() {
 
