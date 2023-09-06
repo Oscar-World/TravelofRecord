@@ -112,7 +112,7 @@
             android:background="@color/none"
             android:padding="10dp"
             android:scaleType="centerInside"
-            android:src="@drawable/commentup" />
+            android:src="@drawable/sendbtn" />
 
 
     </LinearLayout>
