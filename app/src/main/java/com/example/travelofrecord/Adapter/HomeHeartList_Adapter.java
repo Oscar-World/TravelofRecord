@@ -3,11 +3,13 @@ package com.example.travelofrecord.Adapter;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.example.travelofrecord.Activity.Profile;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Data.User;
 import com.example.travelofrecord.Network.ApiClient;
@@ -61,14 +64,16 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
 
         ImageView imageView;
         TextView textView;
+        LinearLayout layout;
 
-        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+//        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.heartList_Image);
             textView = itemView.findViewById(R.id.heartList_Text);
+            layout = itemView.findViewById(R.id.heartList_Layout);
 
         }
 
@@ -78,11 +83,22 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
 
                 Glide.with(context)
                         .load(ApiClient.serverProfileImagePath + item.getImage())
-                        .transition(withCrossFade(factory))
-                        .placeholder(R.drawable.loading2)
+//                        .transition(withCrossFade(factory))
+//                        .placeholder(R.drawable.loading2)
                         .skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
+
+                layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent i = new Intent(context, Profile.class);
+                        i.putExtra("nickname", item.getNickname());
+                        context.startActivity(i);
+
+                    }
+                });
 
         }
 
