@@ -26,6 +26,7 @@ import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.R;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -67,12 +68,15 @@ public class Ranking extends AppCompatActivity {
     String currentNickname;
     ArrayList<PostData> monthList;
     ArrayList<PostData> yearList;
+    ArrayList<PostData> dateList;
 
     GetTime getTime;
     Animation loading;
     FrameLayout loadingLayout;
 
     boolean userDuplicate = false;
+    int currentLocation = 0;
+    int clickNum = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +155,7 @@ public class Ranking extends AppCompatActivity {
         arrayList = new ArrayList<>();
         monthList = new ArrayList<>();
         yearList = new ArrayList<>();
+        dateList = new ArrayList<>();
         adapter = new Ranking_Adapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(Ranking.this));
@@ -168,7 +173,7 @@ public class Ranking extends AppCompatActivity {
 
     public void setView() {
 
-        dateText.setText(getTime.getFormatTime4(getTime.getTime()));
+        dateText.setText(getTime.getFormatTime44(getTime.getTime()));
         loadingImage.startAnimation(loading);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -202,14 +207,22 @@ public class Ranking extends AppCompatActivity {
         leftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                leftOnClick();
+                try {
+                    leftOnClick();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
         rightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rightOnClick();
+                try {
+                    rightOnClick();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -218,7 +231,9 @@ public class Ranking extends AppCompatActivity {
 
     public void dayOnClick() {
 
-        dateText.setText(getTime.getFormatTime4(getTime.getTime()));
+        currentLocation = 0;
+        clickNum = 0;
+        dateText.setText(getTime.getFormatTime44(getTime.getTime()));
 
         rankDayBtn.setVisibility(View.GONE);
         rankDayBlock.setVisibility(View.VISIBLE);
@@ -231,16 +246,22 @@ public class Ranking extends AppCompatActivity {
         listDataCheck(arrayList);
 
         if (userStatus(arrayList)) {
+            noRankLayout.setVisibility(View.GONE);
             userRankLayout.setVisibility(View.VISIBLE);
         } else {
+            userRankLayout.setVisibility(View.GONE);
             noRankLayout.setVisibility(View.VISIBLE);
         }
+
+        checkRightBtn();
 
     } // dayOnClick()
 
 
     public void monthOnClick() {
 
+        currentLocation = 1;
+        clickNum = 0;
         dateText.setText(getTime.getFormatTime7(getTime.getTime()));
 
         rankDayBtn.setVisibility(View.VISIBLE);
@@ -254,16 +275,22 @@ public class Ranking extends AppCompatActivity {
         listDataCheck(monthList);
 
         if (userStatus(monthList)) {
+            noRankLayout.setVisibility(View.GONE);
             userRankLayout.setVisibility(View.VISIBLE);
         } else {
+            userRankLayout.setVisibility(View.GONE);
             noRankLayout.setVisibility(View.VISIBLE);
         }
+
+        checkRightBtn();
 
     } // monthOnClick()
 
 
     public void yearOnClick() {
 
+        currentLocation = 2;
+        clickNum = 0;
         String[] array = getTime.getFormatTime7(getTime.getTime()).split(" ");
         dateText.setText(array[0]);
 
@@ -278,25 +305,243 @@ public class Ranking extends AppCompatActivity {
         listDataCheck(yearList);
 
         if (userStatus(yearList)) {
+            noRankLayout.setVisibility(View.GONE);
             userRankLayout.setVisibility(View.VISIBLE);
         } else {
+            userRankLayout.setVisibility(View.GONE);
             noRankLayout.setVisibility(View.VISIBLE);
         }
 
+        checkRightBtn();
+
     } // yearOnClick()
 
-    public void leftOnClick() {
+    public void leftOnClick() throws ParseException {
 
-        // 선택 날짜 != 오늘 날짜라면 rightBtn visible 처리
-        // 선택 날짜에 맞는 데이터 띄워주기
+        dateList = new ArrayList<>();
+        rightBtn.setVisibility(View.VISIBLE);
+        String date = dateText.getText().toString();
+
+        if (currentLocation == 0) {
+
+            clickNum ++;
+            date = getTime.decreaseDay(date);
+            dateText.setText(date);
+
+        } else if (currentLocation == 1) {
+
+            clickNum ++;
+            date = getTime.decreaseMonth(date);
+            dateText.setText(date);
+
+        } else {
+
+            clickNum ++;
+            date = getTime.decreaseYear(date);
+            dateText.setText(date);
+
+        }
+
+        if (data.size() > 0) {
+
+            int rank = 0;
+            int heartNum = 1;
+            String profileImage = "";
+            String postNickname = "";
+            String dateLiked = "";
+
+            for (int i = 0; i < data.size(); i++) {
+
+                profileImage = data.get(i).getProfileImage();
+                postNickname = data.get(i).getPostNickname();
+                dateLiked = data.get(i).getDateLiked();
+                rank = 0;
+
+                if (currentLocation == 0) {
+
+                    if (date.equals(getTime.getFormatTime44(Long.parseLong(dateLiked)))) {
+
+                        setArrayList(dateList, rank, profileImage, postNickname, heartNum);
+
+                    }
+
+                } else if (currentLocation == 1) {
+
+                    if (date.equals(getTime.getFormatTime7(Long.parseLong(dateLiked)))) {
+
+                        setArrayList(dateList, rank, profileImage, postNickname, heartNum);
+
+                    }
+
+                } else {
+
+                    String[] array = getTime.getFormatTime7(getTime.getTime()).split(" ");
+
+                    if (date.equals(array[0])) {
+
+                        setArrayList(dateList, rank, profileImage, postNickname, heartNum);
+
+                    }
+
+                }
+
+            }
+
+            sortList(dateList);
+
+            if (userStatus(arrayList)) {
+                noRankLayout.setVisibility(View.GONE);
+                userRankLayout.setVisibility(View.VISIBLE);
+            } else {
+                userRankLayout.setVisibility(View.GONE);
+                noRankLayout.setVisibility(View.VISIBLE);
+            }
+
+            adapter.setRankItem(dateList);
+            listDataCheck(dateList);
+            recyclerView.setVisibility(View.VISIBLE);
+            adapter.notifyDataSetChanged();
+
+        } else {
+
+            recyclerView.setVisibility(View.GONE);
+            noDataLayout.setVisibility(View.VISIBLE);
+
+        }
+
+        if (userStatus(dateList)) {
+            noRankLayout.setVisibility(View.GONE);
+            userRankLayout.setVisibility(View.VISIBLE);
+        } else {
+            userRankLayout.setVisibility(View.GONE);
+            noRankLayout.setVisibility(View.VISIBLE);
+        }
+
+        if (clickNum > 6) {
+            leftBtn.setVisibility(View.INVISIBLE);
+        }
 
     } // leftOnClick()
 
 
-    public void rightOnClick() {
+    public void rightOnClick() throws ParseException {
 
-        // 선택 날짜 == 오늘 날짜라면 rightBtn invisible 처리
-        // 선택 날짜에 맞는 데이터 띄워주기
+        dateList = new ArrayList<>();
+        String date = dateText.getText().toString();
+
+        if (currentLocation == 0) {
+
+            clickNum --;
+            date = getTime.increaseDay(date);
+            dateText.setText(date);
+
+            if (date.equals(getTime.getFormatTime44(getTime.getTime()))) {
+                rightBtn.setVisibility(View.INVISIBLE);
+            }
+
+        } else if (currentLocation == 1) {
+
+            clickNum --;
+            date = getTime.increaseMonth(date);
+            dateText.setText(date);
+
+            if (date.equals(getTime.getFormatTime7(getTime.getTime()))) {
+                rightBtn.setVisibility(View.INVISIBLE);
+            }
+
+        } else {
+
+            clickNum --;
+            date = getTime.increaseYear(date);
+            dateText.setText(date);
+
+            String[] array = getTime.getFormatTime7(getTime.getTime()).split(" ");
+            if (date.equals(array[0])) {
+                rightBtn.setVisibility(View.INVISIBLE);
+            }
+
+        }
+
+
+        if (data.size() > 0) {
+
+            int rank = 0;
+            int heartNum = 1;
+            String profileImage = "";
+            String postNickname = "";
+            String dateLiked = "";
+
+            for (int i = 0; i < data.size(); i++) {
+
+                profileImage = data.get(i).getProfileImage();
+                postNickname = data.get(i).getPostNickname();
+                dateLiked = data.get(i).getDateLiked();
+                rank = 0;
+
+                if (currentLocation == 0) {
+
+                    if (date.equals(getTime.getFormatTime44(Long.parseLong(dateLiked)))) {
+
+                        setArrayList(dateList, rank, profileImage, postNickname, heartNum);
+
+                    }
+
+                } else if (currentLocation == 1) {
+
+                    if (date.equals(getTime.getFormatTime7(Long.parseLong(dateLiked)))) {
+
+                        setArrayList(dateList, rank, profileImage, postNickname, heartNum);
+
+                    }
+
+                } else {
+
+                    String[] array = getTime.getFormatTime7(getTime.getTime()).split(" ");
+
+                    if (date.equals(array[0])) {
+
+                        setArrayList(dateList, rank, profileImage, postNickname, heartNum);
+
+                    }
+
+                }
+
+            }
+
+            sortList(dateList);
+
+            if (userStatus(arrayList)) {
+                noRankLayout.setVisibility(View.GONE);
+                userRankLayout.setVisibility(View.VISIBLE);
+            } else {
+                userRankLayout.setVisibility(View.GONE);
+                noRankLayout.setVisibility(View.VISIBLE);
+            }
+
+            adapter.setRankItem(dateList);
+            listDataCheck(dateList);
+            recyclerView.setVisibility(View.VISIBLE);
+            adapter.notifyDataSetChanged();
+
+        } else {
+
+            recyclerView.setVisibility(View.GONE);
+            noDataLayout.setVisibility(View.VISIBLE);
+
+        }
+
+        if (userStatus(dateList)) {
+            noRankLayout.setVisibility(View.GONE);
+            userRankLayout.setVisibility(View.VISIBLE);
+        } else {
+            userRankLayout.setVisibility(View.GONE);
+            noRankLayout.setVisibility(View.VISIBLE);
+        }
+
+
+        if (clickNum < 7) {
+            leftBtn.setVisibility(View.VISIBLE);
+        }
 
     } // rightOnClick()
 
@@ -365,8 +610,10 @@ public class Ranking extends AppCompatActivity {
                         sortList(yearList);
 
                         if (userStatus(arrayList)) {
+                            noRankLayout.setVisibility(View.GONE);
                             userRankLayout.setVisibility(View.VISIBLE);
                         } else {
+                            userRankLayout.setVisibility(View.GONE);
                             noRankLayout.setVisibility(View.VISIBLE);
                         }
 
@@ -377,6 +624,8 @@ public class Ranking extends AppCompatActivity {
                         recyclerView.setVisibility(View.GONE);
                         noDataLayout.setVisibility(View.VISIBLE);
                     }
+
+                    listDataCheck(arrayList);
 
                 } else {
                     Log.d(TAG, "getRanking - onResponse isFailure");
@@ -413,8 +662,8 @@ public class Ranking extends AppCompatActivity {
 
                 Glide.with(Ranking.this)
                         .load(ApiClient.serverProfileImagePath + list.get(p).getProfileImage())
-                        .skipMemoryCache(true)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                        .skipMemoryCache(true)
+//                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(userImage);
 
                 userRankText.setText(String.valueOf(list.get(p).getRank()));
@@ -466,6 +715,34 @@ public class Ranking extends AppCompatActivity {
         }
 
     } // listDataCheck()
+
+
+    public void checkRightBtn() {
+
+        String date = dateText.getText().toString();
+
+        if (currentLocation == 0) {
+
+            if (date.equals(getTime.getFormatTime4(getTime.getTime()))) {
+                rightBtn.setVisibility(View.GONE);
+            }
+
+        } else if (currentLocation == 1) {
+
+            if (date.equals(getTime.getFormatTime7(getTime.getTime()))) {
+                rightBtn.setVisibility(View.GONE);
+            }
+
+        } else {
+
+            String[] array = getTime.getFormatTime7(getTime.getTime()).split(" ");
+            if (date.equals(array[0])) {
+                rightBtn.setVisibility(View.GONE);
+            }
+
+        }
+
+    } // checkRightBtn()
 
 
 }

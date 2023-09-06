@@ -3,11 +3,14 @@ package com.example.travelofrecord.Function;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class GetTime {
@@ -81,19 +84,31 @@ public class GetTime {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd");
         String formatTime = simpleDateFormat.format(time);
-        String returnValue = "";
+        String month;
+        String day;
 
         if (formatTime.charAt(0) == '0') {
-
-            returnValue = formatTime.substring(1, 2) + "월 " + formatTime.substring(2, 4) + "일";
-
+            month = formatTime.substring(1, 2) + "월 ";
         } else {
-
-            returnValue = formatTime.substring(0, 2) + "월 " + formatTime.substring(2, 4) + "일";
-
+            month = formatTime.substring(0, 2) + "월 ";
         }
 
-        return returnValue;
+        if (formatTime.charAt(2) == '0') {
+            day = formatTime.substring(3, 4) + "일";
+        } else {
+            day = formatTime.substring(2, 4) + "일";
+        }
+
+        return month + day;
+    }
+
+    public String getFormatTime44(Long time) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
+        String formatTime = simpleDateFormat.format(time);
+
+        return formatTime;
+
     }
 
     public String getFormatTime5(Long time) {
@@ -117,19 +132,20 @@ public class GetTime {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월");
         String formatTime = simpleDateFormat.format(time);
 
-        String returnValue = "";
-
-        if (formatTime.charAt(6) == '0') {
-
-            returnValue = formatTime.substring(0, 4) + "년 " + formatTime.substring(7, 8) + "월";
-
-        } else {
-
-            returnValue = formatTime.substring(0, 4) + "년 " + formatTime.substring(6, 8) + "월";
-
-        }
-
-        return returnValue;
+        return formatTime;
+//        String returnValue = "";
+//
+//        if (formatTime.charAt(6) == '0') {
+//
+//            returnValue = formatTime.substring(0, 4) + "년 " + formatTime.substring(7, 8) + "월";
+//
+//        } else {
+//
+//            returnValue = formatTime.substring(0, 4) + "년 " + formatTime.substring(6, 8) + "월";
+//
+//        }
+//
+//        return returnValue;
 
     }
 
@@ -204,6 +220,78 @@ public class GetTime {
         } else {
             return false;
         }
+
+    }
+
+    public String decreaseDay(String date) throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
+        Date date1 = simpleDateFormat.parse(date);
+        long longDate = date1.getTime() - 86400000;
+
+        return simpleDateFormat.format(longDate);
+
+    }
+
+    public String increaseDay(String date) throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
+        Date date1 = simpleDateFormat.parse(date);
+        long longDate = date1.getTime() + 86400000;
+
+        return simpleDateFormat.format(longDate);
+
+    }
+
+    public String decreaseMonth(String date) throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월");
+        Date date1 = simpleDateFormat.parse(date);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date1);
+        calendar.add(Calendar.MONTH, -1);
+
+        return simpleDateFormat.format(calendar.getTime());
+
+    }
+
+    public String increaseMonth(String date) throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월");
+        Date date1 = simpleDateFormat.parse(date);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date1);
+        calendar.add(Calendar.MONTH, 1);
+
+        return simpleDateFormat.format(calendar.getTime());
+
+    }
+
+    public String decreaseYear(String date) throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년");
+        Date date1 = simpleDateFormat.parse(date);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date1);
+        calendar.add(Calendar.YEAR, -1);
+
+        return simpleDateFormat.format(calendar.getTime());
+
+    }
+
+    public String increaseYear(String date) throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년");
+        Date date1 = simpleDateFormat.parse(date);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date1);
+        calendar.add(Calendar.YEAR, 1);
+
+        return simpleDateFormat.format(calendar.getTime());
 
     }
 

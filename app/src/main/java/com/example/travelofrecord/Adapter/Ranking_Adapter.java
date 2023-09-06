@@ -93,8 +93,8 @@ public class Ranking_Adapter extends RecyclerView.Adapter<Ranking_Adapter.ViewHo
 
             Glide.with(context)
                     .load(ApiClient.serverProfileImagePath + item.getProfileImage())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .skipMemoryCache(true)
                     .into(image);
 
             layout.setOnClickListener(new View.OnClickListener() {
