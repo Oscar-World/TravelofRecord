@@ -77,6 +77,7 @@ public class PostData {
 
     public int heartNum;
 
+    public int viewType;
 
 
     public PostData(int rank, String profileImage, String postNickname, int heartNum) {
@@ -85,6 +86,16 @@ public class PostData {
         this.profileImage = profileImage;
         this.postNickname = postNickname;
         this.heartNum = heartNum;
+
+    }
+
+    public PostData(String postNickname, String writing, String profileImage, String postImage, int viewType) {
+
+        this.postNickname = postNickname;
+        this.writing = writing;
+        this.profileImage = profileImage;
+        this.postImage = postImage;
+        this.viewType = viewType;
 
     }
 
@@ -102,6 +113,24 @@ public class PostData {
         this.postNum = postNum;
         this.whoLike = whoLike;
         this.heartStatus = heartStatus;
+
+    }
+
+    public PostData(int num, String postNickname, String profileImage, int heart, int commentNum, String location, String postImage, String writing, String dateCreated, int postNum, String whoLike, boolean heartStatus, int viewType) {
+
+        this.num = num;
+        this.postNickname = postNickname;
+        this.profileImage = profileImage;
+        this.heart = heart;
+        this.commentNum = commentNum;
+        this.location = location;
+        this.postImage = postImage;
+        this.writing = writing;
+        this.dateCreated = dateCreated;
+        this.postNum = postNum;
+        this.whoLike = whoLike;
+        this.heartStatus = heartStatus;
+        this.viewType = viewType;
 
     }
 
@@ -190,6 +219,7 @@ public class PostData {
     public String getDateLiked() { return dateLiked; }
     public int getRank() { return rank; }
     public int getHeartNum() { return heartNum; }
+    public int getViewType() { return viewType; }
 
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
@@ -230,5 +260,6 @@ public class PostData {
     public void setDateLiked(String dateLiked) { this.dateLiked = dateLiked; }
     public void setRank(int rank) { this.rank = rank; }
     public void setHeartNum(int heartNum) { this.heartNum = heartNum; }
+    public void setViewType(int viewType) { this.viewType = viewType; }
 
 }

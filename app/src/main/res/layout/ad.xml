@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/lightGray3"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginVertical="10dp"
+        android:layout_marginHorizontal="10dp"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ad_profileImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_launcher_foreground"
+            app:civ_border_color="@color/primary"
+            app:civ_border_width="2dp"
+            app:civ_border_overlay="false"
+            />
+
+        <TextView
+            android:id="@+id/ad_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="닉네임"
+            android:textSize="17dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="5dp"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="광고"
+            android:textSize="16dp"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="10dp"
+            />
+
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/ad_postImage"
+        android:layout_width="match_parent"
+        android:layout_height="330dp"
+        android:layout_marginBottom="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_foreground"
+        android:background="@color/main"
+        android:layout_marginHorizontal="10dp"
+        />
+
+
+    <TextView
+        android:id="@+id/ad_writing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="글 내용"
+        android:textSize="16dp"
+        android:layout_margin="10dp"
+        android:textColor="@color/black"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/darkGray"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        />
+
+</LinearLayout>

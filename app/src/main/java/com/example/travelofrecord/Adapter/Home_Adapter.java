@@ -44,7 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> {
+public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     String TAG = "홈 어댑터";
 
@@ -56,46 +56,51 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     public BroadcastReceiver heartReceiver;
     public BroadcastReceiver commentReceiver;
 
-    // 레이아웃을 실체화 해줌 - inflate
+
     @Override
-    public Home_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         home = (Home) context;
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.feed_post, parent, false);
-        Home_Adapter.ViewHolder viewHolder = new Home_Adapter.ViewHolder(view);
+        View view;
 
-        return viewHolder;
+        if (viewType == 0) {
+            view = LayoutInflater.from(context).inflate(R.layout.feed_post, parent, false);
+            return new MainViewHolder(view);
+        } else {
+            view = LayoutInflater.from(context).inflate(R.layout.ad, parent, false);
+            return new AdViewHolder(view);
+        }
+
     }
 
 
-    // 받아온 데이터를 바인딩해줌
     @Override
-    public void onBindViewHolder(@NonNull Home_Adapter.ViewHolder holder,int position) {
-        Log.d(TAG, "onBindViewHolder() 호출됨");
-        holder.onBind(postData.get(holder.getAdapterPosition()));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder,int position) {
+
+        if (holder instanceof Home_Adapter.MainViewHolder) {
+            ((Home_Adapter.MainViewHolder) holder).onBind(postData.get(holder.getAdapterPosition()));
+        } else if (holder instanceof Home_Adapter.AdViewHolder) {
+            ((Home_Adapter.AdViewHolder) holder).onBind(postData.get(holder.getAdapterPosition()));
+        }
 
     }
 
-    // 뷰와 데이터를 연결해줌
+
     public void setItemPost(ArrayList<PostData> list) {
-        Log.d(TAG, "setGameList() 호출됨");
-
         this.postData = list;
-        Log.d(TAG, "어댑터 리스트 : " + postData);
-
         notifyDataSetChanged();
     }
 
-    // 리사이클러뷰 리스트 사이즈를 불러옴
+
     @Override
     public int getItemCount() {
-//        Log.d(TAG, "getItemCount() 호출됨");
-//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
-
         return postData.size();
+    }
 
+    @Override
+    public int getItemViewType(int position) {
+        return postData.get(position).getViewType();
     }
 
     private OnItemLongClickListener itemLongClickListener;
@@ -108,8 +113,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
     }
 
 
-    // 뷰홀더 생성
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class MainViewHolder extends RecyclerView.ViewHolder {
 
         TextView post_Nickname;
         ImageView post_ProfileImage;
@@ -131,7 +135,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
         DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
-        public ViewHolder(@NonNull View itemView) {
+        public MainViewHolder(@NonNull View itemView) {
             super(itemView);
 
             post_Nickname = itemView.findViewById(R.id.item_nickname);
@@ -153,13 +157,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
 
             linearLayout = itemView.findViewById(R.id.post_LinearLayout);
 
-
-
         }
 
 
         void onBind(PostData item) {
-            Log.d(TAG, "onBind() 호출됨");
 
             if (item.heartStatus) {
                 post_HeartFull.setVisibility(View.VISIBLE);
@@ -470,6 +471,42 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.ViewHolder> 
         } // deleteWhoLike()
 
 
-    } // ViewHolder
+    } // MainViewHolder
+
+    public class AdViewHolder extends RecyclerView.ViewHolder {
+
+        TextView ad_NicknameText;
+        TextView ad_WriteText;
+        ImageView ad_ProfileImage;
+        ImageView ad_PostImage;
+
+        public AdViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            ad_NicknameText = itemView.findViewById(R.id.ad_nickname);
+            ad_WriteText = itemView.findViewById(R.id.ad_writing);
+            ad_ProfileImage = itemView.findViewById(R.id.ad_profileImage);
+            ad_PostImage = itemView.findViewById(R.id.ad_postImage);
+
+        }
+
+        void onBind(PostData item) {
+            Log.d(TAG, "AdViewHolder : " + item.getProfileImage() + " / " + item.getPostImage());
+
+            ad_NicknameText.setText(item.getPostNickname());
+            ad_WriteText.setText(item.getWriting());
+
+            Glide.with(context)
+                    .load(Integer.parseInt(item.getProfileImage()))
+                    .into(ad_ProfileImage);
+
+            Glide.with(context)
+                    .load(Integer.parseInt(item.getPostImage()))
+                    .into(ad_PostImage);
+
+        }
+
+    }
+
 
 } // Home_Adapter

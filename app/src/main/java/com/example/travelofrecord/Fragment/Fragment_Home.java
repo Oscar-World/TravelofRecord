@@ -34,6 +34,7 @@ import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Adapter.HomeHeartList_Adapter;
 import com.example.travelofrecord.Data.User;
 import com.example.travelofrecord.Function.BackBtn;
+import com.example.travelofrecord.Function.RandomResult;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Function.GetAdress;
@@ -45,6 +46,7 @@ import com.example.travelofrecord.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,6 +58,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     View v;
     GetAdress getAdress = new GetAdress();
     GetTime getTime = new GetTime();
+    RandomResult randomResult = new RandomResult();
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -285,11 +288,17 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                             Log.d(TAG, "num = " + num + "\nnickname = " + nickname + "\npostNum : " + postNum
                              + "\nwhoLike : " + whoLike + "\nheartStatus : " + heartStatus + "\npagingStatus : " + pagingStatus);
 
-                            PostData postData = new PostData(num, nickname, profileImage, heart, commentNum, addressPost, postImage, writing, datePost, postNum, whoLike, heartStatus);
+                            PostData postData = new PostData(num, nickname, profileImage, heart, commentNum, addressPost, postImage, writing, datePost, postNum, whoLike, heartStatus, 0);
 
                             listSize = post_Data_ArrayList.size();
                             post_Data_ArrayList.add(post_Data_ArrayList.size(), postData);
                             listSize = post_Data_ArrayList.size() - listSize;
+
+                            if (post_Data_ArrayList.size() % 7 == 0) {
+                                Random random = new Random();
+                                post_Data_ArrayList.add(post_Data_ArrayList.size(), randomResult.randomAd(random.nextInt(4)));
+                            }
+
                         }
 
                         itemSize = post_Data_ArrayList.size();
@@ -300,6 +309,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                         } else {
                             adapter.notifyItemRangeChanged(post_Data_ArrayList.size()-listSize,listSize);
                         }
+
+
 
                     }
 
@@ -538,7 +549,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         public void run() {
             Log.d(TAG, "WaitPagingTheard.start()");
             try {
-                Thread.sleep(500);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
