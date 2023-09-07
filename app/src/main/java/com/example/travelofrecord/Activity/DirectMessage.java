@@ -220,7 +220,13 @@ public class DirectMessage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                finish();
+                if (baseActivity.equals(".Activity.Home")) {
+                    Log.d(TAG, "onBackPressed : 내부 진입");
+                    finish();
+                } else {
+                    Log.d(TAG, "onBackPressed : 외부 진입");
+                    back.onBackPressedAtDm();
+                }
 
             }
         });
