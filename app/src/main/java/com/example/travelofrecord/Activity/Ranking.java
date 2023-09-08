@@ -234,6 +234,7 @@ public class Ranking extends AppCompatActivity {
         currentLocation = 0;
         clickNum = 0;
         dateText.setText(getTime.getFormatTime44(getTime.getTime()));
+        leftBtn.setVisibility(View.VISIBLE);
 
         rankDayBtn.setVisibility(View.GONE);
         rankDayBlock.setVisibility(View.VISIBLE);
@@ -263,6 +264,7 @@ public class Ranking extends AppCompatActivity {
         currentLocation = 1;
         clickNum = 0;
         dateText.setText(getTime.getFormatTime7(getTime.getTime()));
+        leftBtn.setVisibility(View.VISIBLE);
 
         rankDayBtn.setVisibility(View.VISIBLE);
         rankDayBlock.setVisibility(View.GONE);
@@ -293,6 +295,7 @@ public class Ranking extends AppCompatActivity {
         clickNum = 0;
         String[] array = getTime.getFormatTime7(getTime.getTime()).split(" ");
         dateText.setText(array[0]);
+        leftBtn.setVisibility(View.VISIBLE);
 
         rankDayBtn.setVisibility(View.VISIBLE);
         rankDayBlock.setVisibility(View.GONE);
@@ -724,20 +727,20 @@ public class Ranking extends AppCompatActivity {
         if (currentLocation == 0) {
 
             if (date.equals(getTime.getFormatTime4(getTime.getTime()))) {
-                rightBtn.setVisibility(View.GONE);
+                rightBtn.setVisibility(View.INVISIBLE);
             }
 
         } else if (currentLocation == 1) {
 
             if (date.equals(getTime.getFormatTime7(getTime.getTime()))) {
-                rightBtn.setVisibility(View.GONE);
+                rightBtn.setVisibility(View.INVISIBLE);
             }
 
         } else {
 
             String[] array = getTime.getFormatTime7(getTime.getTime()).split(" ");
             if (date.equals(array[0])) {
-                rightBtn.setVisibility(View.GONE);
+                rightBtn.setVisibility(View.INVISIBLE);
             }
 
         }
