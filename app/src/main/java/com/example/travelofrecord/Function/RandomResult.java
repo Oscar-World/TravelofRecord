@@ -3,9 +3,12 @@ package com.example.travelofrecord.Function;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class RandomResult {
+
+    Random random = new Random();
 
     public String getRandomResult() {
 
@@ -84,6 +87,18 @@ public class RandomResult {
         }
 
         return new PostData(nickname, writing, profileImage, postImage, viewType);
+    }
+
+    public int[] getRandomAdIndex(ArrayList<Integer> list) {
+
+        int[] array = new int[2];
+        int randomValue = random.nextInt(list.size());
+
+        array[0] = list.get(randomValue);
+        array[1] = randomValue;
+
+        return array;
+
     }
 
 

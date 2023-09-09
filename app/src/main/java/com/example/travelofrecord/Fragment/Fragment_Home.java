@@ -120,6 +120,12 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     int listSize = 0;
     boolean requestStatus = true;
 
+    ArrayList<Integer> adList;
+    int adListIndex;
+    int adListValue;
+    int dataSize;
+    int[] randomValueArray;
+
     @Override
     public void onBack() {
         Log.d(TAG, "onBack: ");
@@ -294,9 +300,24 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                             post_Data_ArrayList.add(post_Data_ArrayList.size(), postData);
                             listSize = post_Data_ArrayList.size() - listSize;
 
-                            if (post_Data_ArrayList.size() % 7 == 0) {
-                                Random random = new Random();
-                                post_Data_ArrayList.add(post_Data_ArrayList.size(), randomResult.randomAd(random.nextInt(4)));
+                            dataSize ++;
+
+                            if (dataSize % 7 == 0) {
+
+                                randomValueArray = randomResult.getRandomAdIndex(adList);
+                                adListValue = randomValueArray[0];
+                                adListIndex = randomValueArray[1];
+                                Log.d(TAG, "adListIndex : " + adListValue);
+                                Log.d(TAG, "adList : " + adList);
+
+                                post_Data_ArrayList.add(post_Data_ArrayList.size(), randomResult.randomAd(adListValue));
+                                adList.remove(adListIndex);
+                                Log.d(TAG, "adListDeleted : " + adList);
+                                if (adList.size() == 0) {
+                                    Log.d(TAG, "initArrayList getPost");
+                                    initArrayList();
+                                }
+
                             }
 
                         }
@@ -328,6 +349,16 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
 
     } // getPost()
+
+    public void initArrayList() {
+
+        adList = new ArrayList<>();
+        for (int j = 0; j < 4; j++) {
+            adList.add(j);
+        }
+        dataSize = 0;
+
+    }
 
 
     public void deletePost(int num) {
@@ -423,6 +454,12 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         loadingImage = v.findViewById(R.id.postLoading_Image);
         handler = new Handler();
 
+        adList = new ArrayList<>();
+        Log.d(TAG, "initArrayList setVariable");
+        initArrayList();
+        dataSize = 0;
+        randomValueArray = new int[2];
+
     }
 
     public void setView() {
@@ -458,6 +495,10 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                     post_Data_ArrayList = new ArrayList<>();
 
                     requestStatus = true;
+
+                    Log.d(TAG, "initArrayList swipe");
+                    initArrayList();
+
                     getPost(loginNickname, pageNum);
                 }else {
                     internetText.setVisibility(View.VISIBLE);
