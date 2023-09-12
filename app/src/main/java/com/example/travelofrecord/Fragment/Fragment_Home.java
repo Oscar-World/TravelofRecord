@@ -126,8 +126,6 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     int dataSize;
     int[] randomValueArray;
 
-    EventBus eventBus;
-
     @Override
     public void onBack() {
         Log.d(TAG, "onBack: ");

@@ -30,6 +30,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Profile;
+import com.example.travelofrecord.EventBus.CommentNumEventBus;
 import com.example.travelofrecord.EventBus.HeartEventBus;
 import com.example.travelofrecord.Fragment.Fragment_Home;
 import com.example.travelofrecord.Network.ApiClient;
@@ -57,7 +58,8 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     Bundle bundle;
     Home home;
 
-    EventBus eventBus;
+    EventBus eventBusHeart;
+    EventBus eventBusCommentNum;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -137,6 +139,7 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         HeartEventBus heartEventBus;
+        CommentNumEventBus commentNumEventBus;
 
 
         public MainViewHolder(@NonNull View itemView) {
@@ -160,7 +163,8 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             bundle = new Bundle();
 
             linearLayout = itemView.findViewById(R.id.post_LinearLayout);
-            eventBus = EventBus.getDefault();
+            eventBusHeart = EventBus.getDefault();
+            eventBusCommentNum = EventBus.getDefault();
 
         }
 
@@ -168,10 +172,13 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void onBind(PostData item) {
 
             heartEventBus = new HeartEventBus(post_HeartNum, post_Heart, post_HeartFull, postData.get(getAdapterPosition()).getNum());
-            Log.d(TAG, "onClick ::: " + postData.get(getAdapterPosition()).getNum());
+            commentNumEventBus = new CommentNumEventBus(post_CommentNum, postData.get(getAdapterPosition()).getNum());
 
-            if (!eventBus.isRegistered(heartEventBus)) {
-                eventBus.register(heartEventBus);
+            if (!eventBusHeart.isRegistered(heartEventBus)) {
+                eventBusHeart.register(heartEventBus);
+            }
+            if (!eventBusCommentNum.isRegistered(commentNumEventBus)) {
+                eventBusCommentNum.register(commentNumEventBus);
             }
 
             if (item.heartStatus) {

@@ -7,11 +7,11 @@ import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+
 
 public class HeartEventBus {
 
-    String TAG = "onEventt";
+    String TAG = "onHeartEvent";
 
     TextView textView;
     ImageView heartIv;
@@ -30,7 +30,7 @@ public class HeartEventBus {
     @Subscribe
     public void onHeartEvent(String[] array) {
 
-        Log.d(TAG, "onEvent1 들어옴");
+        Log.d(TAG, "onHeartEvent 들어옴");
         String heartNum = array[0];
         boolean heartStatus = Boolean.parseBoolean(array[1]);
         int num = Integer.parseInt(array[2]);

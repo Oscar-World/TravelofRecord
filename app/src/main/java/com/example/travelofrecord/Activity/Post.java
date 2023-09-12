@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.example.travelofrecord.EventBus.CommentNumEventBus;
 import com.example.travelofrecord.EventBus.HeartEventBus;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -112,9 +113,12 @@ public class Post extends AppCompatActivity {
     int networkStatus;
 
     String[] heartEventArray;
+    String[] commentNumArray;
 
+    CommentNumEventBus commentNumEventBus;
     HeartEventBus heartEventBus;
-    EventBus eventBus;
+    EventBus eventBusHeart;
+    EventBus eventBusCommentNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,11 +131,13 @@ public class Post extends AppCompatActivity {
         getPost(accessNickname, post_Num);
         getComment(post_Num);
 
-        Log.d(TAG, "EventBus1 : " + eventBus.isRegistered(heartEventBus));
-        if (!eventBus.isRegistered(heartEventBus)) {
-            eventBus.register(heartEventBus);
+
+        if (!eventBusHeart.isRegistered(heartEventBus)) {
+            eventBusHeart.register(heartEventBus);
         }
-        Log.d(TAG, "EventBus2 : " + eventBus.isRegistered(heartEventBus));
+        if (!eventBusCommentNum.isRegistered(commentNumEventBus)) {
+            eventBusCommentNum.register(commentNumEventBus);
+        }
 
     }
 
@@ -170,8 +176,11 @@ public class Post extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
 
-        if (eventBus.isRegistered(heartEventBus)) {
-            eventBus.unregister(heartEventBus);
+        if (eventBusHeart.isRegistered(heartEventBus)) {
+            eventBusHeart.unregister(heartEventBus);
+        }
+        if (eventBusCommentNum.isRegistered(commentNumEventBus)) {
+            eventBusCommentNum.unregister(commentNumEventBus);
         }
 
     }
@@ -225,8 +234,10 @@ public class Post extends AppCompatActivity {
 
         post_TopLayout = findViewById(R.id.post_TopLayout);
 
-        eventBus = EventBus.getDefault();
+        eventBusHeart = EventBus.getDefault();
+        eventBusCommentNum = EventBus.getDefault();
         heartEventBus = new HeartEventBus(post_HeartNum_Text, post_Heart_Iv, post_HeartFull_Iv, post_Num);
+        commentNumEventBus = new CommentNumEventBus(post_CommentNum_Text, post_Num);
 
     } // setVariable()
 
@@ -291,13 +302,11 @@ public class Post extends AppCompatActivity {
 
                         post_Comment_Edit.setText("");
 
-                        Intent i = new Intent("commentSync");
-                        i.putExtra("commentNum", post_CommentNum);
-                        sendBroadcast(i);
+                        commentNumArray = new String[2];
+                        commentNumArray[0] = String.valueOf(post_CommentNum);
+                        commentNumArray[1] = String.valueOf(post_Num);
 
-                        Intent i2 = new Intent("homeCommentSync");
-                        i2.putExtra("commentNum", post_CommentNum);
-                        sendBroadcast(i2);
+                        eventBusCommentNum.post(commentNumArray);
 
                     } else {
                         Toast.makeText(Post.this, "댓글을 입력해 주세요.", Toast.LENGTH_SHORT).show();
@@ -342,7 +351,7 @@ public class Post extends AppCompatActivity {
                     heartEventArray[1] = "true";
                     heartEventArray[2] = String.valueOf(post_Num);
 
-                    eventBus.post(heartEventArray);
+                    eventBusHeart.post(heartEventArray);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -368,7 +377,7 @@ public class Post extends AppCompatActivity {
                     heartEventArray[1] = "false";
                     heartEventArray[2] = String.valueOf(post_Num);
 
-                    eventBus.post(heartEventArray);
+                    eventBusHeart.post(heartEventArray);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
