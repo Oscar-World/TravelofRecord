@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Adapter.HomeHeartList_Adapter;
 import com.example.travelofrecord.Data.User;
+import com.example.travelofrecord.EventBus.HeartEventBus;
 import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Function.RandomResult;
 import com.example.travelofrecord.Network.ApiClient;
@@ -44,7 +45,11 @@ import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
 
@@ -52,7 +57,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Fragment_Home extends Fragment implements Home.OnBackPressedListener{
+public class Fragment_Home extends Fragment implements Home.OnBackPressedListener {
 
     String TAG = "홈 프래그먼트";
     View v;
@@ -101,11 +106,6 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     int networkStatus;
 
-    IntentFilter heartFilter;
-    IntentFilter commentFilter;
-    BroadcastReceiver deleteReceiver;
-    IntentFilter deleteFilter;
-
     boolean receiverStatus;
 
     int pageNum;
@@ -125,6 +125,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     int adListValue;
     int dataSize;
     int[] randomValueArray;
+
+    EventBus eventBus;
 
     @Override
     public void onBack() {
@@ -180,15 +182,32 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         Log.d(TAG, "onStart() 호출됨");
         super.onStart();
 
-//        Log.d(TAG, "onStart receiverStatus : " + receiverStatus);
-//        if (receiverStatus) {
-//            getActivity().unregisterReceiver(deleteReceiver);
-//            getActivity().unregisterReceiver(adapter.heartReceiver);
-//            getActivity().unregisterReceiver(adapter.commentReceiver);
-//        }
-
-
     } // onStart()
+
+    @Override public void onResume() {
+        Log.d(TAG, "onResume() 호출됨");
+        super.onResume();
+
+    }
+    @Override public void onPause() {
+        Log.d(TAG, "onPause() 호출됨");
+        super.onPause();
+
+    }
+    @Override public void onStop() {
+        Log.d(TAG, "onStop() 호출됨");
+        super.onStop();
+
+    }
+    @Override public void onDestroyView() {
+        Log.d(TAG, "onDestroyView() 호출됨");
+        super.onDestroyView();
+
+    }
+    @Override public void onDetach() {
+        Log.d(TAG, "onDetach() 호출됨");
+        super.onDetach();
+    }
 
     public void getHeartList(int postNum) {
 
@@ -240,7 +259,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             }
         });
 
-    }
+    } // getHeartList()
 
 
     public void getPost(String currentNickname, int pageNumber) {
@@ -332,7 +351,6 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                         }
 
 
-
                     }
 
 
@@ -349,6 +367,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
 
     } // getPost()
+
 
     public void initArrayList() {
 
@@ -460,25 +479,10 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         dataSize = 0;
         randomValueArray = new int[2];
 
-    }
+    } // setVariable()
+
 
     public void setView() {
-
-//        deleteReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Log.d(TAG, "onReceiveDelete");
-//
-//                int position = intent.getIntExtra("position", 0);
-//                int deleteNum = post_Data_ArrayList.get(position).num;
-//                Log.d(TAG, "postion : " + position + "\nnum : " + deleteNum);
-//                post_Data_ArrayList.remove(position);
-//                adapter.notifyDataSetChanged();
-//
-//                deletePost(deleteNum);
-//
-//            }
-//        };
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -513,12 +517,6 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         loading_Iv.setVisibility(View.VISIBLE);
         loading_Iv.startAnimation(rotate);
 
-
-//        this.heartReceiver = adapter.heartReceiver;
-//        this.commentReceiver = adapter.commentReceiver;
-        deleteFilter = new IntentFilter("deletePostSync");
-        heartFilter = new IntentFilter("homeHeartSync");
-        commentFilter = new IntentFilter("homeCommentSync");
 
         adapter.setOnItemLongClickListener(new Home_Adapter.OnItemLongClickListener() {
             @Override
@@ -585,6 +583,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     } // setView()
 
+
     public class WaitPagingThread extends Thread {
 
         public void run() {
@@ -617,40 +616,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
         }
 
-    }
-
-
-    @Override public void onResume() {
-        Log.d(TAG, "onResume() 호출됨");
-        super.onResume();
-
-    }
-    @Override public void onPause() {
-        Log.d(TAG, "onPause() 호출됨");
-        super.onPause();
-
-    }
-    @Override public void onStop() {
-        Log.d(TAG, "onStop() 호출됨");
-        super.onStop();
-        Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
-
-//        getActivity().registerReceiver(deleteReceiver, deleteFilter);
-//        getActivity().registerReceiver(adapter.heartReceiver, heartFilter);
-//        getActivity().registerReceiver(adapter.commentReceiver, commentFilter);
-//        receiverStatus = true;
-//        Log.d(TAG, "onStop receiverStatus : " + receiverStatus);
-
-
-    }
-    @Override public void onDestroyView() {
-        Log.d(TAG, "onDestroyView() 호출됨");
-        super.onDestroyView();
-    }
-    @Override public void onDetach() {
-        Log.d(TAG, "onDetach() 호출됨");
-        super.onDetach();
-    }
+    } // WaitPagingThread
 
 
 }

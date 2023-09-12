@@ -30,6 +30,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Profile;
+import com.example.travelofrecord.EventBus.HeartEventBus;
 import com.example.travelofrecord.Fragment.Fragment_Home;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -37,6 +38,9 @@ import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
@@ -53,9 +57,7 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     Bundle bundle;
     Home home;
 
-    public BroadcastReceiver heartReceiver;
-    public BroadcastReceiver commentReceiver;
-
+    EventBus eventBus;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -112,7 +114,6 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.itemLongClickListener = listener;
     }
 
-
     public class MainViewHolder extends RecyclerView.ViewHolder {
 
         TextView post_Nickname;
@@ -135,6 +136,9 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
+        HeartEventBus heartEventBus;
+
+
         public MainViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -156,11 +160,19 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             bundle = new Bundle();
 
             linearLayout = itemView.findViewById(R.id.post_LinearLayout);
+            eventBus = EventBus.getDefault();
 
         }
 
 
         void onBind(PostData item) {
+
+            heartEventBus = new HeartEventBus(post_HeartNum, post_Heart, post_HeartFull, postData.get(getAdapterPosition()).getNum());
+            Log.d(TAG, "onClick ::: " + postData.get(getAdapterPosition()).getNum());
+
+            if (!eventBus.isRegistered(heartEventBus)) {
+                eventBus.register(heartEventBus);
+            }
 
             if (item.heartStatus) {
                 post_HeartFull.setVisibility(View.VISIBLE);
@@ -177,7 +189,6 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             post_Location.setText(item.getLocation());
             post_Writing.setText(item.getWriting());
             post_DateCreated.setText(item.getDateCreated());
-
 
             if (!itemView.isLaidOut()) {
 
@@ -197,18 +208,12 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                         Glide.with(context)
                                 .load(ApiClient.serverProfileImagePath + item.getProfileImage())
-//                                .transition(withCrossFade(factory))
-//                                .placeholder(R.drawable.loading2)
-//                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                                .skipMemoryCache(true)
                                 .into(post_ProfileImage);
 
                         Glide.with(context)
                                 .load(ApiClient.serverPostImagePath + item.getPostImage())
                                 .transition(withCrossFade(factory))
                                 .placeholder(R.drawable.loading2)
-//                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                                .skipMemoryCache(true)
                                 .into(post_PostImage);
 
 
@@ -216,7 +221,6 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 });
 
             }
-
 
             post_SeeMore.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -327,42 +331,7 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                         context.startActivity(i);
 
-                        heartReceiver = new BroadcastReceiver() {
-                            @Override
-                            public void onReceive(Context context, Intent intent) {
-                                Log.d(TAG, "어댑터 onReceive호출");
 
-                                int heartNum = intent.getIntExtra("heartNum", 0);
-                                boolean heartStatus = intent.getBooleanExtra("heartStatus", false);
-                                int postNum = intent.getIntExtra("postNum", 0);
-
-                                Log.d(TAG, "onReceive()\nheartNum : " + heartNum + "\nheartStatus : " + heartStatus + "\npostNum : " + postNum + "\nposition : " + getAdapterPosition());
-
-
-                                post_HeartNum.setText(String.valueOf(heartNum));
-
-                                if (heartStatus) {
-                                    post_Heart.setVisibility(View.GONE);
-                                    post_HeartFull.setVisibility(View.VISIBLE);
-                                } else {
-                                    post_HeartFull.setVisibility(View.GONE);
-                                    post_Heart.setVisibility(View.VISIBLE);
-                                }
-
-
-                            }
-                        };
-
-                        commentReceiver = new BroadcastReceiver() {
-                            @Override
-                            public void onReceive(Context context, Intent intent) {
-
-                                int commentNum = intent.getIntExtra("commentNum", 0);
-                                Log.d(TAG, "받은개수 : " + commentNum);
-                                post_CommentNum.setText(String.valueOf(commentNum));
-
-                            }
-                        };
 
                     }else {
                         Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -409,7 +378,6 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     return true;
                 }
             });
-
 
 
         } // onBind

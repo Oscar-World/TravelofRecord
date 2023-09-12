@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.example.travelofrecord.EventBus.HeartEventBus;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Adapter.Comment_Adapter;
@@ -40,7 +41,12 @@ import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -105,13 +111,10 @@ public class Post extends AppCompatActivity {
 
     int networkStatus;
 
-    BroadcastReceiver heartReceiver;
-    IntentFilter heartFilter;
-    BroadcastReceiver commentReceiver;
-    IntentFilter commentFilter;
+    String[] heartEventArray;
 
-    BroadcastReceiver commentReceiver2;
-    IntentFilter commentFilter2;
+    HeartEventBus heartEventBus;
+    EventBus eventBus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,13 +127,18 @@ public class Post extends AppCompatActivity {
         getPost(accessNickname, post_Num);
         getComment(post_Num);
 
+        Log.d(TAG, "EventBus1 : " + eventBus.isRegistered(heartEventBus));
+        if (!eventBus.isRegistered(heartEventBus)) {
+            eventBus.register(heartEventBus);
+        }
+        Log.d(TAG, "EventBus2 : " + eventBus.isRegistered(heartEventBus));
+
     }
 
     @Override
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
-        registerReceiver(commentReceiver2, commentFilter2);
     }
 
     @Override
@@ -149,10 +157,6 @@ public class Post extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
-        unregisterReceiver(commentReceiver2);
-        registerReceiver(heartReceiver, heartFilter);
-        registerReceiver(commentReceiver, commentFilter);
-
     }
 
     @Override
@@ -165,8 +169,11 @@ public class Post extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
-        unregisterReceiver(heartReceiver);
-        unregisterReceiver(commentReceiver);
+
+        if (eventBus.isRegistered(heartEventBus)) {
+            eventBus.unregister(heartEventBus);
+        }
+
     }
 
 
@@ -218,58 +225,12 @@ public class Post extends AppCompatActivity {
 
         post_TopLayout = findViewById(R.id.post_TopLayout);
 
+        eventBus = EventBus.getDefault();
+        heartEventBus = new HeartEventBus(post_HeartNum_Text, post_Heart_Iv, post_HeartFull_Iv, post_Num);
+
     } // setVariable()
 
     public void setView() {
-
-
-
-        heartReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int heartNum = intent.getIntExtra("heartNum",0);
-                boolean heartStatus = intent.getBooleanExtra("heartStatus", false);
-                Log.d(TAG, "onReceive: " + heartNum + " " + heartStatus);
-
-                post_HeartNum_Text.setText(String.valueOf(heartNum));
-
-                if (heartStatus) {
-                    post_Heart_Iv.setVisibility(View.GONE);
-                    post_HeartFull_Iv.setVisibility(View.VISIBLE);
-                } else {
-                    post_HeartFull_Iv.setVisibility(View.GONE);
-                    post_Heart_Iv.setVisibility(View.VISIBLE);
-                }
-
-            }
-        };
-
-        commentReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                int commentNum = intent.getIntExtra("commentNum", 0);
-                Log.d(TAG, "받은개수 : " + commentNum);
-                post_CommentNum_Text.setText(String.valueOf(commentNum));
-
-            }
-        };
-
-        commentReceiver2 = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                int commentNum = intent.getIntExtra("commentNum2", 0);
-                Log.d(TAG, "받은개수2 : " + commentNum);
-                post_CommentNum_Text.setText(String.valueOf(commentNum));
-
-            }
-        };
-
-        heartFilter = new IntentFilter("heartSync");
-        commentFilter = new IntentFilter("commentSync");
-        commentFilter2 = new IntentFilter("commentSync2");
-
 
         post_Comment_Iv.setFocusableInTouchMode(true);
         recyclerView.setFocusableInTouchMode(true);
@@ -367,6 +328,7 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                Log.d(TAG, "HeartClick");
                 if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
                     post_Heart_Iv.setVisibility(View.GONE);
                     post_HeartFull_Iv.setVisibility(View.VISIBLE);
@@ -375,16 +337,12 @@ public class Post extends AppCompatActivity {
 
                     insertWhoLike(post_Num, accessNickname, post_Heart, String.valueOf(System.currentTimeMillis()));
 
-                    Intent i = new Intent("heartSync");
-                    i.putExtra("heartNum", post_Heart);
-                    i.putExtra("heartStatus", true);
-                    sendBroadcast(i);
+                    heartEventArray = new String[3];
+                    heartEventArray[0] = String.valueOf(post_Heart);
+                    heartEventArray[1] = "true";
+                    heartEventArray[2] = String.valueOf(post_Num);
 
-                    Intent i2 = new Intent("homeHeartSync");
-                    i2.putExtra("heartNum", post_Heart);
-                    i2.putExtra("heartStatus", true);
-                    i2.putExtra("postNum", post_Num);
-                    sendBroadcast(i2);
+                    eventBus.post(heartEventArray);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -405,16 +363,12 @@ public class Post extends AppCompatActivity {
 
                     deleteWhoLike(post_Num, accessNickname, post_Heart);
 
-                    Intent i = new Intent("heartSync");
-                    i.putExtra("heartNum", post_Heart);
-                    i.putExtra("heartStatus", false);
-                    sendBroadcast(i);
+                    heartEventArray = new String[3];
+                    heartEventArray[0] = String.valueOf(post_Heart);
+                    heartEventArray[1] = "false";
+                    heartEventArray[2] = String.valueOf(post_Num);
 
-                    Intent i2 = new Intent("homeHeartSync");
-                    i2.putExtra("heartNum", post_Heart);
-                    i2.putExtra("heartStatus", false);
-                    i2.putExtra("postNum", post_Num);
-                    sendBroadcast(i2);
+                    eventBus.post(heartEventArray);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -470,6 +424,31 @@ public class Post extends AppCompatActivity {
 
 
     } // setView()
+
+//    public class HeartEventBus {
+//
+//        @Subscribe
+//        public void HeartEventListener(String[] array) {
+//
+//            Log.d(TAG, "HeartEventListener 들어옴");
+//            String heartNum = array[0];
+//            boolean heartStatus = Boolean.parseBoolean(array[1]);
+//
+//            post_HeartNum_Text.setText(heartNum);
+//
+//            if (heartStatus) {
+//                post_Heart_Iv.setVisibility(View.GONE);
+//                post_HeartFull_Iv.setVisibility(View.VISIBLE);
+//            } else {
+//                post_HeartFull_Iv.setVisibility(View.GONE);
+//                post_Heart_Iv.setVisibility(View.VISIBLE);
+//            }
+//
+//            Log.d(TAG, "HeartEventListener : " + post_Heart_Iv.getVisibility());
+//
+//        }
+//
+//    }
 
     public void noDataDlg() {
 
