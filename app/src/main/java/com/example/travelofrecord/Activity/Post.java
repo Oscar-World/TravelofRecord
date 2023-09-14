@@ -445,12 +445,8 @@ public class Post extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem menuItem) {
 
                         if (menuItem.getItemId() == R.id.menu_PostDelete) {
-//                            Intent i = new Intent("deletePostSync");
-//                            i.putExtra("position", getPosition);
-//                            sendBroadcast(i);
-//                            finish();
 
-                            deletePost(post_Num);
+                            deleteDlg();
 
                         }
 
@@ -458,13 +454,35 @@ public class Post extends AppCompatActivity {
                     }
                 });
 
-
-
             }
         });
 
 
     } // setView()
+
+    public void deleteDlg() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Post.this);
+        builder.setMessage("정말로 삭제하시겠습니까?")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        deletePost(post_Num);
+
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+
+    }
 
 
     public void noDataDlg() {

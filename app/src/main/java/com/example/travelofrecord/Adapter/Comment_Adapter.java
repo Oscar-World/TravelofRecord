@@ -181,9 +181,8 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                         public boolean onMenuItemClick(MenuItem menuItem) {
 
                             if (menuItem.getItemId() == R.id.menu_CommentDelete) {
-                                Toast.makeText(context,"댓글 삭제 완료",Toast.LENGTH_SHORT).show();
 
-                                item.commentNum -= 1;
+                                item.commentNum = postData.size() - 1;
 
                                 commentNumDeleteEventBus = new CommentNumDeleteEventBus(commentNumText, item.postNum);
 
