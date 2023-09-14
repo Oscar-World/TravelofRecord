@@ -51,6 +51,9 @@ public class PostData {
     @SerializedName("commentNum") public int commentNum;
 
     @Expose
+    @SerializedName("commentNumber") public int commentNumber;
+
+    @Expose
     @SerializedName("commentProfileImage") public String commentProfileImage;
 
     public boolean heartStatus;
@@ -157,8 +160,9 @@ public class PostData {
     }
 
     // getComment()
-    public PostData(String profileImage, String whoComment, String dateComment, String comment, int postNum, int commentNum) {
+    public PostData(int commentNumber, String profileImage, String whoComment, String dateComment, String comment, int postNum, int commentNum) {
 
+        this.commentNumber = commentNumber;
         this.commentProfileImage = profileImage;
         this.whoComment = whoComment;
         this.dateComment = dateComment;
@@ -220,6 +224,7 @@ public class PostData {
     public int getRank() { return rank; }
     public int getHeartNum() { return heartNum; }
     public int getViewType() { return viewType; }
+    public int getCommentNumber() { return commentNumber; }
 
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
@@ -261,5 +266,6 @@ public class PostData {
     public void setRank(int rank) { this.rank = rank; }
     public void setHeartNum(int heartNum) { this.heartNum = heartNum; }
     public void setViewType(int viewType) { this.viewType = viewType; }
+    public void setCommentNumber(int commentNumber) { this.commentNumber = commentNumber; }
 
 }

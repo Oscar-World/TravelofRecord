@@ -24,12 +24,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Profile;
+import com.example.travelofrecord.EventBus.CommentDeleteEventBus;
+import com.example.travelofrecord.EventBus.CommentNumDeleteEventBus;
 import com.example.travelofrecord.Function.GetAdress;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -43,7 +47,10 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
     ArrayList<PostData> postData;
     Context context;
-    Post post = new Post();
+
+    TextView commentNumText;
+    EventBus eventBusCommentDelete;
+    EventBus eventBusCommentNumDelete;
 
     @Override
     public Comment_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -61,11 +68,11 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         holder.onBind(postData.get(holder.getAdapterPosition()));
     }
 
-    public void setItemComment(ArrayList<PostData> list) {
-        Log.d(TAG, "setGameList() 호출됨");
+    public void setItemComment(ArrayList<PostData> list, TextView commentNumText) {
 
         this.postData = list;
-        Log.d(TAG, "어댑터 리스트 : " + postData);
+        this.commentNumText = commentNumText;
+        Log.d(TAG, "commentText2 : " + commentNumText);
 
         notifyDataSetChanged();
     }
@@ -92,10 +99,10 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         SharedPreferences sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         String currentNickname = sharedPreferences.getString("nickname","");
 
-        GetAdress getAddress = new GetAdress();
         GetTime getTime = new GetTime();
 
-        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+        CommentDeleteEventBus commentDeleteEventBus;
+        CommentNumDeleteEventBus commentNumDeleteEventBus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,10 +113,20 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
             comment_CommentText = itemView.findViewById(R.id.commnet_commentText);
             comment_MenuBtn = itemView.findViewById(R.id.comment_menuBtn);
 
+            eventBusCommentDelete = EventBus.getDefault();
+            eventBusCommentNumDelete = EventBus.getDefault();
+
         }
 
         void onBind(PostData item) {
-            Log.d(TAG, "onBind() 호출됨");
+
+            commentDeleteEventBus = new CommentDeleteEventBus(postData, Comment_Adapter.this, item.getPostNum(), item.getCommentNum(), item.getCommentNumber());
+
+            if (!eventBusCommentDelete.isRegistered(commentDeleteEventBus)) {
+                eventBusCommentDelete.register(commentDeleteEventBus);
+            }
+
+
             String commentTime = getTime.lastTime(item.getDateComment());
 
             comment_NicknameText.setText(item.getWhoComment());
@@ -118,10 +135,6 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
             Glide.with(context)
                     .load(ApiClient.serverProfileImagePath + item.getCommentProfileImage())
-//                    .transition(withCrossFade(factory))
-//                    .placeholder(R.drawable.loading2)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
                     .into(comment_ProfileImage);
 
             if (currentNickname.equals(item.getWhoComment())) {
@@ -171,7 +184,14 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                                 Toast.makeText(context,"댓글 삭제 완료",Toast.LENGTH_SHORT).show();
 
                                 item.commentNum -= 1;
-                                deleteComment(item.whoComment, item.dateComment, item.commentNum, item.postNum);
+
+                                commentNumDeleteEventBus = new CommentNumDeleteEventBus(commentNumText, item.postNum);
+
+                                if (!eventBusCommentNumDelete.isRegistered(commentNumDeleteEventBus)) {
+                                    eventBusCommentNumDelete.register(commentNumDeleteEventBus);
+                                }
+
+                                deleteComment(item.whoComment, item.dateComment, item.commentNum, item.postNum, item.commentNumber);
 
                             }
 
@@ -188,7 +208,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
         } // onBind
 
-        public void deleteComment(String whoComment, String dateComment, int commentNum, int postNum) {
+        public void deleteComment(String whoComment, String dateComment, int commentNum, int postNum, int commentNumber) {
 
             apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
             Call<String> call = apiInterface.deleteComment(whoComment, dateComment, commentNum, postNum);
@@ -200,13 +220,24 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
                         String rpCode = response.body();
                         Log.d(TAG, "onResponse: " + rpCode + " / position : " + getAdapterPosition());
-                        postData.remove(getAdapterPosition());
-                        notifyDataSetChanged();
+//                        postData.remove(getAdapterPosition());
+//                        notifyDataSetChanged();
 
+                        Log.d(TAG, "commentNum2 : " + commentNum);
+                        int[] array = new int[4];
+                        array[0] = postNum;
+                        array[1] = getAdapterPosition();
+                        array[2] = commentNum;
+                        array[3] = commentNumber;
 
-//                        Intent i = new Intent("commentSync2");
-//                        i.putExtra("commentNum2", commentNum);
-//                        context.sendBroadcast(i);
+                        eventBusCommentDelete.post(array);
+
+                        String[] commentNumArray = new String[2];
+                        commentNumArray[0] = String.valueOf(commentNum);
+                        commentNumArray[1] = String.valueOf(postNum);
+
+                        eventBusCommentNumDelete.post(commentNumArray);
+
 
                     }
                     Log.d(TAG, "responseFail");

@@ -2,11 +2,8 @@ package com.example.travelofrecord.Adapter;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,9 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,13 +20,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Profile;
-import com.example.travelofrecord.EventBus.CommentNumEventBus;
+import com.example.travelofrecord.EventBus.CommentNumAddEventBus;
+import com.example.travelofrecord.EventBus.CommentNumDeleteEventBus;
 import com.example.travelofrecord.EventBus.HeartEventBus;
-import com.example.travelofrecord.Fragment.Fragment_Home;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Activity.Home;
@@ -41,7 +34,6 @@ import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
@@ -60,6 +52,7 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     EventBus eventBusHeart;
     EventBus eventBusCommentNum;
+    EventBus eventBusCommentNumDelete;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -139,7 +132,8 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         HeartEventBus heartEventBus;
-        CommentNumEventBus commentNumEventBus;
+        CommentNumAddEventBus commentNumAddEventBus;
+        CommentNumDeleteEventBus commentNumDeleteEventBus;
 
 
         public MainViewHolder(@NonNull View itemView) {
@@ -163,8 +157,10 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             bundle = new Bundle();
 
             linearLayout = itemView.findViewById(R.id.post_LinearLayout);
+
             eventBusHeart = EventBus.getDefault();
             eventBusCommentNum = EventBus.getDefault();
+            eventBusCommentNumDelete = EventBus.getDefault();
 
         }
 
@@ -172,13 +168,17 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void onBind(PostData item) {
 
             heartEventBus = new HeartEventBus(post_HeartNum, post_Heart, post_HeartFull, postData.get(getAdapterPosition()).getNum());
-            commentNumEventBus = new CommentNumEventBus(post_CommentNum, postData.get(getAdapterPosition()).getNum());
+            commentNumAddEventBus = new CommentNumAddEventBus(post_CommentNum, postData.get(getAdapterPosition()).getNum());
+            commentNumDeleteEventBus = new CommentNumDeleteEventBus(post_CommentNum, item.getPostNum());
 
             if (!eventBusHeart.isRegistered(heartEventBus)) {
                 eventBusHeart.register(heartEventBus);
             }
-            if (!eventBusCommentNum.isRegistered(commentNumEventBus)) {
-                eventBusCommentNum.register(commentNumEventBus);
+            if (!eventBusCommentNum.isRegistered(commentNumAddEventBus)) {
+                eventBusCommentNum.register(commentNumAddEventBus);
+            }
+            if (!eventBusCommentNumDelete.isRegistered(commentNumDeleteEventBus)) {
+                eventBusCommentNumDelete.register(commentNumDeleteEventBus);
             }
 
             if (item.heartStatus) {
@@ -337,8 +337,6 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         i.putExtra("position", getAdapterPosition());
 
                         context.startActivity(i);
-
-
 
                     }else {
                         Toast.makeText(context, "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();

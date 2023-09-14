@@ -8,11 +8,9 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +29,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
-import com.example.travelofrecord.EventBus.CommentNumEventBus;
+import com.example.travelofrecord.EventBus.CommentAddEventBus;
+import com.example.travelofrecord.EventBus.CommentDeleteEventBus;
+import com.example.travelofrecord.EventBus.CommentNumAddEventBus;
+import com.example.travelofrecord.EventBus.CommentNumDeleteEventBus;
 import com.example.travelofrecord.EventBus.HeartEventBus;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
@@ -43,11 +44,8 @@ import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -115,10 +113,17 @@ public class Post extends AppCompatActivity {
     String[] heartEventArray;
     String[] commentNumArray;
 
-    CommentNumEventBus commentNumEventBus;
     HeartEventBus heartEventBus;
+    CommentNumAddEventBus commentNumAddEventBus;
+    CommentAddEventBus commentAddEventBus;
+    CommentNumDeleteEventBus commentNumDeleteEventBus;
+
     EventBus eventBusHeart;
     EventBus eventBusCommentNum;
+    EventBus eventBusCommentAdd;
+    EventBus eventBusCommentNumDelete;
+
+    boolean eventBusAddStatus = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,20 +136,26 @@ public class Post extends AppCompatActivity {
         getPost(accessNickname, post_Num);
         getComment(post_Num);
 
-
-        if (!eventBusHeart.isRegistered(heartEventBus)) {
-            eventBusHeart.register(heartEventBus);
-        }
-        if (!eventBusCommentNum.isRegistered(commentNumEventBus)) {
-            eventBusCommentNum.register(commentNumEventBus);
-        }
-
     }
 
     @Override
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
+
+        if (eventBusHeart.isRegistered(heartEventBus)) {
+            eventBusHeart.unregister(heartEventBus);
+        }
+        if (eventBusCommentNum.isRegistered(commentNumAddEventBus)) {
+            eventBusCommentNum.unregister(commentNumAddEventBus);
+        }
+        if (eventBusCommentAdd.isRegistered(commentAddEventBus)) {
+            eventBusCommentAdd.unregister(commentAddEventBus);
+        }
+        if (eventBusCommentNumDelete.isRegistered(commentNumDeleteEventBus)) {
+            eventBusCommentNumDelete.unregister(commentNumDeleteEventBus);
+        }
+
     }
 
     @Override
@@ -163,6 +174,20 @@ public class Post extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
+
+        if (!eventBusHeart.isRegistered(heartEventBus)) {
+            eventBusHeart.register(heartEventBus);
+        }
+        if (!eventBusCommentNum.isRegistered(commentNumAddEventBus)) {
+            eventBusCommentNum.register(commentNumAddEventBus);
+        }
+        if (!eventBusCommentAdd.isRegistered(commentAddEventBus)) {
+            eventBusCommentAdd.register(commentAddEventBus);
+        }
+        if (!eventBusCommentNumDelete.isRegistered(commentNumDeleteEventBus)) {
+            eventBusCommentNumDelete.register(commentNumDeleteEventBus);
+        }
+
     }
 
     @Override
@@ -176,11 +201,18 @@ public class Post extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
 
+
         if (eventBusHeart.isRegistered(heartEventBus)) {
             eventBusHeart.unregister(heartEventBus);
         }
-        if (eventBusCommentNum.isRegistered(commentNumEventBus)) {
-            eventBusCommentNum.unregister(commentNumEventBus);
+        if (eventBusCommentNum.isRegistered(commentNumAddEventBus)) {
+            eventBusCommentNum.unregister(commentNumAddEventBus);
+        }
+        if (eventBusCommentAdd.isRegistered(commentAddEventBus)) {
+            eventBusCommentAdd.unregister(commentAddEventBus);
+        }
+        if (eventBusCommentNumDelete.isRegistered(commentNumDeleteEventBus)) {
+            eventBusCommentNumDelete.unregister(commentNumDeleteEventBus);
         }
 
     }
@@ -210,6 +242,7 @@ public class Post extends AppCompatActivity {
         post_CommentAdd_Btn = findViewById(R.id.post_commentAdd_Btn);
         post_Menu_Btn = findViewById(R.id.postMenu_Btn);
 
+        Log.d(TAG, "commentNumText1 : " + post_CommentNum_Text);
         Intent i = getIntent();
 
         post_Num = i.getIntExtra("num", 0);
@@ -230,14 +263,19 @@ public class Post extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         postDataArrayList = new ArrayList<>();
-        adapter.setItemComment(postDataArrayList);
+        adapter.setItemComment(postDataArrayList, post_CommentNum_Text);
 
         post_TopLayout = findViewById(R.id.post_TopLayout);
 
         eventBusHeart = EventBus.getDefault();
         eventBusCommentNum = EventBus.getDefault();
+        eventBusCommentAdd = EventBus.getDefault();
+        eventBusCommentNumDelete = EventBus.getDefault();
+
         heartEventBus = new HeartEventBus(post_HeartNum_Text, post_Heart_Iv, post_HeartFull_Iv, post_Num);
-        commentNumEventBus = new CommentNumEventBus(post_CommentNum_Text, post_Num);
+        commentNumAddEventBus = new CommentNumAddEventBus(post_CommentNum_Text, post_Num);
+        commentAddEventBus = new CommentAddEventBus(postDataArrayList, adapter, recyclerView, post_Num);
+        commentNumDeleteEventBus = new CommentNumDeleteEventBus(post_CommentNum_Text, post_Num);
 
     } // setVariable()
 
@@ -301,12 +339,6 @@ public class Post extends AppCompatActivity {
                         addComment(post_Num, accessProfileImage, accessNickname, addDateComment, addComment, post_CommentNum);
 
                         post_Comment_Edit.setText("");
-
-                        commentNumArray = new String[2];
-                        commentNumArray[0] = String.valueOf(post_CommentNum);
-                        commentNumArray[1] = String.valueOf(post_Num);
-
-                        eventBusCommentNum.post(commentNumArray);
 
                     } else {
                         Toast.makeText(Post.this, "댓글을 입력해 주세요.", Toast.LENGTH_SHORT).show();
@@ -434,30 +466,6 @@ public class Post extends AppCompatActivity {
 
     } // setView()
 
-//    public class HeartEventBus {
-//
-//        @Subscribe
-//        public void HeartEventListener(String[] array) {
-//
-//            Log.d(TAG, "HeartEventListener 들어옴");
-//            String heartNum = array[0];
-//            boolean heartStatus = Boolean.parseBoolean(array[1]);
-//
-//            post_HeartNum_Text.setText(heartNum);
-//
-//            if (heartStatus) {
-//                post_Heart_Iv.setVisibility(View.GONE);
-//                post_HeartFull_Iv.setVisibility(View.VISIBLE);
-//            } else {
-//                post_HeartFull_Iv.setVisibility(View.GONE);
-//                post_Heart_Iv.setVisibility(View.VISIBLE);
-//            }
-//
-//            Log.d(TAG, "HeartEventListener : " + post_Heart_Iv.getVisibility());
-//
-//        }
-//
-//    }
 
     public void noDataDlg() {
 
@@ -543,6 +551,13 @@ public class Post extends AppCompatActivity {
                 Log.d(TAG, "insertComment onResponse");
                 if (response.isSuccessful()) {
 
+                    commentNumArray = new String[2];
+                    commentNumArray[0] = String.valueOf(post_CommentNum);
+                    commentNumArray[1] = String.valueOf(post_Num);
+
+                    eventBusCommentNum.post(commentNumArray);
+                    eventBusAddStatus = true;
+
                     postDataArrayList.clear();
                     getComment(post_Num);
 
@@ -570,9 +585,10 @@ public class Post extends AppCompatActivity {
                 if (response.isSuccessful()) {
 
                     ArrayList<PostData> data = response.body();
-//                    Log.d(TAG, "data.size() : " + data.size());
 
                     if (data.size() > 0) {
+
+                        PostData postData = null;
 
                         for (int i = 0; i < data.size(); i++) {
 
@@ -580,13 +596,10 @@ public class Post extends AppCompatActivity {
                             String whoComment = data.get(i).getWhoComment();
                             String dateComment = data.get(i).getDateComment();
                             String comment = data.get(i).getComment();
+                            int commentNumber = data.get(i).getCommentNumber();
+                            Log.d(TAG, "commentNumber : " + commentNumber);
 
-                            Log.d(TAG, "dateComment : " + dateComment);
-
-
-//                            Log.d(TAG, "profileImage : " + profileImage + "\nwhoComment : " + whoComment + "\ndateComment : " + commentTime + "\ncomment : " + comment);
-
-                            PostData postData = new PostData(profileImage, whoComment, dateComment, comment, post_Num, post_CommentNum);
+                            postData = new PostData(commentNumber, profileImage, whoComment, dateComment, comment, post_Num, post_CommentNum);
 
                             postDataArrayList.add(postData);
 
@@ -594,6 +607,12 @@ public class Post extends AppCompatActivity {
 
                         listSize = postDataArrayList.size();
                         adapter.notifyDataSetChanged();
+
+                        if (eventBusAddStatus) {
+                            eventBusCommentAdd.post(postData);
+                            eventBusAddStatus = false;
+                            recyclerView.scrollToPosition(postDataArrayList.size()-1);
+                        }
 
                     }
 
