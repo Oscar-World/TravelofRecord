@@ -99,48 +99,48 @@ public class DirectMessage extends AppCompatActivity {
 
         setVariable();
         setView();
-
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-        Log.d(TAG, "onStart() 호출됨");
         getRoomNum(nicknameSum1, nicknameSum2);
         getFcmToken(getNickname);
+
     }
 
     @Override
-    protected void onResume(){
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart() 호출됨");
+    }
+
+    @Override
+    protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() 호출됨");
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() 호출됨");
 
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
-        LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
-        thread.start();
     }
 
     @Override
-    protected void onRestart(){
+    protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart() 호출됨");
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
+        LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
+        thread.start();
     }
 
     @Override
@@ -193,7 +193,7 @@ public class DirectMessage extends AppCompatActivity {
         }
 
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
-        currentNickname = sharedPreferences.getString("nickname","");
+        currentNickname = sharedPreferences.getString("nickname", "");
         currentImage = sharedPreferences.getString("image", "");
 
         Log.d(TAG, "currentNickname : " + currentNickname + " / getNickname : " + getNickname);
@@ -262,7 +262,7 @@ public class DirectMessage extends AppCompatActivity {
                 lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
                 totalCount = recyclerView.getAdapter().getItemCount();
 
-                if ( lastPosition == totalCount - 1) {
+                if (lastPosition == totalCount - 1) {
 
                     newMessageLayout.setVisibility(View.GONE);
 
@@ -275,7 +275,7 @@ public class DirectMessage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                chatRecyclerView.smoothScrollToPosition(arrayList.size()-1);
+                chatRecyclerView.smoothScrollToPosition(arrayList.size() - 1);
                 newMessageLayout.setVisibility(View.GONE);
 
             }
@@ -291,7 +291,7 @@ public class DirectMessage extends AppCompatActivity {
 
         public void run() {
 
-            try{
+            try {
 
                 InetAddress inetAddress = InetAddress.getByName(ip);
                 socket = new Socket(inetAddress, port);
@@ -328,7 +328,7 @@ public class DirectMessage extends AppCompatActivity {
         public void run() {
             super.run();
             try {
-                printWriter.println(roomNum+ "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + sendMessage + "↖" + otherFcmToken);
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + sendMessage + "↖" + otherFcmToken);
                 printWriter.flush();
 
                 chatEdit.setText("");
@@ -348,7 +348,7 @@ public class DirectMessage extends AppCompatActivity {
         public void run() {
             super.run();
             try {
-                printWriter.println(roomNum+ "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + "ⓐloginⓐ" + "↖" + otherFcmToken);
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + "ⓐloginⓐ" + "↖" + otherFcmToken);
                 printWriter.flush();
                 Log.d(TAG, "LoginPrintWriter : 실행 완료");
             } catch (Exception e) {
@@ -365,7 +365,7 @@ public class DirectMessage extends AppCompatActivity {
             super.run();
             try {
 
-                printWriter.println(roomNum+ "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + "ⓐlogoutⓐ" + "↖" + otherFcmToken);
+                printWriter.println(roomNum + "↖" + currentNickname + "↖" + getNickname + "↖" + currentImage + "↖" + "ⓐlogoutⓐ" + "↖" + otherFcmToken);
                 printWriter.flush();
                 Log.d(TAG, "LogoutPrintWriter : 실행 완료");
 
@@ -402,7 +402,7 @@ public class DirectMessage extends AppCompatActivity {
             String dayOfWeek = getTime.getDayOfWeek(formatTime);
             String date = getTime.getFormatTime6(getTime.getTime()) + dayOfWeek;
 
-            if(nickname.equals(currentNickname) & !message.equals("ⓐloginⓐ") & !message.equals("ⓐlogoutⓐ")) {
+            if (nickname.equals(currentNickname) & !message.equals("ⓐloginⓐ") & !message.equals("ⓐlogoutⓐ")) {
                 viewType = 1;
 
                 insertChat(roomNum, currentNickname, getNickname, currentImage, sendMessage, String.valueOf(System.currentTimeMillis()), messageStatus, otherFcmToken);
@@ -419,11 +419,14 @@ public class DirectMessage extends AppCompatActivity {
 
             if (message.equals("ⓐloginⓐ")) {
 
-                if (!currentNickname.equals(nickname) & messageStatus.equals("true")) {
-                    for ( int i = 0; i < arrayList.size(); i++) {
+                String beforeTime = "";
+                String beforeSender = "";
 
-                        arrayList.set(i, new Chat(arrayList.get(i).getRoomNum(),arrayList.get(i).getSender(),arrayList.get(i).getSenderImage(),arrayList.get(i).getMessage(),
-                                arrayList.get(i).getDateMessage(),arrayList.get(i).getViewType(), "true", arrayList.get(i).getDate()));
+                if (!currentNickname.equals(nickname) & messageStatus.equals("true")) {
+                    for (int i = 0; i < arrayList.size(); i++) {
+
+                            arrayList.set(i, new Chat(arrayList.get(i).getRoomNum(), arrayList.get(i).getSender(), arrayList.get(i).getSenderImage(), arrayList.get(i).getMessage(),
+                                    arrayList.get(i).getDateMessage(), arrayList.get(i).getViewType(), "true", arrayList.get(i).getDate()));
 
                     }
 
@@ -443,23 +446,23 @@ public class DirectMessage extends AppCompatActivity {
 
                 }
 
-                if (time.equals(arrayList.get(arrayList.size()-1).getDateMessage()) & nickname.equals(arrayList.get(arrayList.size()-1).getSender())) {
-                    arrayList.set(arrayList.size()-1, new Chat(array[0], arrayList.get(arrayList.size()-1).getSender(), arrayList.get(arrayList.size()-1).getSenderImage(),
-                            arrayList.get(arrayList.size()-1).getMessage(), "", arrayList.get(arrayList.size()-1).getViewType(), arrayList.get(arrayList.size()-1).getMessageStatus()));
+                if (time.equals(arrayList.get(arrayList.size() - 1).getDateMessage()) & nickname.equals(arrayList.get(arrayList.size() - 1).getSender())) {
+                    arrayList.set(arrayList.size() - 1, new Chat(array[0], arrayList.get(arrayList.size() - 1).getSender(), arrayList.get(arrayList.size() - 1).getSenderImage(),
+                            arrayList.get(arrayList.size() - 1).getMessage(), "", arrayList.get(arrayList.size() - 1).getViewType(), arrayList.get(arrayList.size() - 1).getMessageStatus()));
                 }
 
                 Chat chat = new Chat(array[0], nickname, senderImage, message, time, viewType, messageStatus);
                 arrayList.add(chat);
 
-                if (arrayList.size()>0) {
+                if (arrayList.size() > 0) {
 
-                    if (lastPosition < totalCount -5 & !nickname.equals(currentNickname)) {
+                    if (lastPosition < totalCount - 5 & !nickname.equals(currentNickname)) {
 
                         newMessageLayout.setVisibility(View.VISIBLE);
 
                     } else {
 
-                        chatRecyclerView.scrollToPosition(arrayList.size()-1);
+                        chatRecyclerView.scrollToPosition(arrayList.size() - 1);
 
                     }
 
@@ -481,7 +484,7 @@ public class DirectMessage extends AppCompatActivity {
         call.enqueue(new Callback<Chat>() {
             @Override
             public void onResponse(Call<Chat> call, Response<Chat> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     Log.d(TAG, "getRoomNum - onResponse isSuccessful");
 
                     roomCheck = response.body().getRoomCheck();
@@ -523,7 +526,7 @@ public class DirectMessage extends AppCompatActivity {
         call.enqueue(new Callback<ArrayList<Chat>>() {
             @Override
             public void onResponse(Call<ArrayList<Chat>> call, Response<ArrayList<Chat>> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     Log.d(TAG, "getChatting - onResponse isSuccessful");
 
                     ArrayList<Chat> list = response.body();
@@ -546,37 +549,36 @@ public class DirectMessage extends AppCompatActivity {
 
                         for (int i = 0; i < list.size(); i++) {
 
-
+                            Log.d(TAG, "beforeTime : " + time + " / time : " + getTime.getFormatTime1(Long.valueOf(list.get(i).getDateMessage())));
+                            Log.d(TAG, "beforeSender : " + sender + " / sender : " + list.get(i).getSender());
 
                             if (arrayList.size() > 0) {
 
-                                Log.d(TAG, "beforeTime : " + time + " / time : " + getTime.getFormatTime1(Long.valueOf(response.body().get(i).getDateMessage())));
+                                if (time.equals(String.valueOf(getTime.getFormatTime1(Long.valueOf(list.get(i).getDateMessage())))) &&
+                                        sender.equals(list.get(i).getSender())) {
+                                    Log.d(TAG, "before 들어옴");
+                                    Log.d(TAG, "oscar - index : " + i);
+                                    Log.d(TAG, "oscar - time1 : " + time + " / time2 : " + String.valueOf(getTime.getFormatTime1(Long.valueOf(list.get(i).getDateMessage()))));
+                                    Log.d(TAG, "oscar - sender1 : " + sender + " / sender2 : " + list.get(i).getSender());
 
-                                if (time.equals(String.valueOf(getTime.getFormatTime1(Long.valueOf(response.body().get(i).getDateMessage())))) &
-                                        sender.equals(response.body().get(i).getSender())) {
-                                    Log.d(TAG, "beforeTime 들어옴");
+//                                    Chat chat = new Chat(list.get(i - 1).getRoomNum(), list.get(i - 1).getSender(), list.get(i - 1).getSenderImage(),
+//                                            list.get(i - 1).getMessage(), "", list.get(i - 1).getViewType(), list.get(i - 1).getMessageStatus(), list.get(i - 1).getDate());
 
-                                    Chat chat = new Chat(arrayList.get(i-1).getRoomNum(), arrayList.get(i-1).getSender(), arrayList.get(i-1).getSenderImage(),
-                                            arrayList.get(i-1).getMessage(), "", arrayList.get(i-1).getViewType(), arrayList.get(i-1).getMessageStatus(), arrayList.get(i-1).getDate());
-                                    arrayList.set(i-1, chat);
+                                    Chat chat = new Chat(arrayList.get(i-1+dateNum).getRoomNum(), arrayList.get(i-1+dateNum).getSender(), arrayList.get(i-1+dateNum).getSenderImage(),
+                                            arrayList.get(i-1+dateNum).getMessage(), "", arrayList.get(i-1+dateNum).getViewType(), arrayList.get(i-1+dateNum).getMessageStatus(), arrayList.get(i-1+dateNum).getDate());
+                                    arrayList.set(i - 1+dateNum, chat);
 
                                 }
 
                             }
 
-                            roomNumber = response.body().get(i).getRoomNum();
-                            sender = response.body().get(i).getSender();
-                            senderImage = response.body().get(i).getSenderImage();
-                            message = response.body().get(i).getMessage();
-                            dateMessage = response.body().get(i).getDateMessage();
-                            messageStatus = response.body().get(i).getMessageStatus();
+                            roomNumber = list.get(i).getRoomNum();
+                            sender = list.get(i).getSender();
+                            senderImage = list.get(i).getSenderImage();
+                            message = list.get(i).getMessage();
+                            dateMessage = list.get(i).getDateMessage();
+                            messageStatus = list.get(i).getMessageStatus();
                             newChatDate = dateMessage;
-
-                            if(!sender.equals(currentNickname)) {
-                                viewType = 0;
-                            } else {
-                                viewType = 1;
-                            }
 
                             time = String.valueOf(getTime.getFormatTime1(Long.valueOf(dateMessage)));
 
@@ -597,19 +599,18 @@ public class DirectMessage extends AppCompatActivity {
                             }
 
                             viewType = 0;
-                            if(sender.equals(currentNickname)) {
+                            if (sender.equals(currentNickname)) {
                                 viewType = 1;
                             }
-
-
 
                             Chat chat = new Chat(roomNumber, sender, senderImage, message, time, viewType, messageStatus);
                             arrayList.add(chat);
 
                         }
 
-                        adapter.notifyItemRangeChanged(0, arrayList.size());
-                        chatRecyclerView.scrollToPosition(arrayList.size()-1);
+//                        adapter.notifyItemRangeChanged(0, arrayList.size());
+                        adapter.notifyDataSetChanged();
+                        chatRecyclerView.scrollToPosition(arrayList.size() - 1);
 
                     }
 
