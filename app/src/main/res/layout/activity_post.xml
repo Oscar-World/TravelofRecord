@@ -150,7 +150,7 @@
                 android:orientation="horizontal"
                 >
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/post_heart"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
@@ -161,7 +161,7 @@
                     android:layout_marginHorizontal="10dp"
                     />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/post_heartFull"
                     android:layout_width="30dp"
                     android:layout_height="30dp"

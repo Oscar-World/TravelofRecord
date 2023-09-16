@@ -34,6 +34,7 @@ import com.example.travelofrecord.EventBus.CommentDeleteEventBus;
 import com.example.travelofrecord.EventBus.CommentNumAddEventBus;
 import com.example.travelofrecord.EventBus.CommentNumDeleteEventBus;
 import com.example.travelofrecord.EventBus.HeartEventBus;
+import com.example.travelofrecord.EventBus.PostDeleteEventBusPost;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Adapter.Comment_Adapter;
@@ -42,6 +43,7 @@ import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
+import com.google.android.gms.common.api.Api;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -64,8 +66,8 @@ public class Post extends AppCompatActivity {
     ImageView post_PostImage_Iv;
     TextView post_DateCreated_Text;
     TextView post_Writing_Text;
-    ImageView post_Heart_Iv;
-    ImageView post_HeartFull_Iv;
+    ImageButton post_Heart_Iv;
+    ImageButton post_HeartFull_Iv;
     TextView post_HeartNum_Text;
     ImageView post_Comment_Iv;
     TextView post_CommentNum_Text;
@@ -117,19 +119,23 @@ public class Post extends AppCompatActivity {
     CommentNumAddEventBus commentNumAddEventBus;
     CommentAddEventBus commentAddEventBus;
     CommentNumDeleteEventBus commentNumDeleteEventBus;
+    PostDeleteEventBusPost postDeleteEventBusPost;
 
     EventBus eventBusHeart;
     EventBus eventBusCommentNum;
     EventBus eventBusCommentAdd;
     EventBus eventBusCommentNumDelete;
+    EventBus eventBusPostDeletePost;
 
     boolean eventBusAddStatus = false;
+    public static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         Log.d(TAG, "onStart() 호출됨");
+        context = this;
 
         setVariable();
         setView();
@@ -139,9 +145,16 @@ public class Post extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
+
+        Log.d(TAG, "게시글삭제 확인됨2 : " + post_Menu_Btn.getVisibility());
+
+        if (post_Menu_Btn.getVisibility() == View.GONE) {
+            Log.d(TAG, "게시글삭제 확인됨3 : " + post_Menu_Btn.getVisibility());
+            checkPostDelete(post_Num);
+        }
 
         if (eventBusHeart.isRegistered(heartEventBus)) {
             eventBusHeart.unregister(heartEventBus);
@@ -155,23 +168,26 @@ public class Post extends AppCompatActivity {
         if (eventBusCommentNumDelete.isRegistered(commentNumDeleteEventBus)) {
             eventBusCommentNumDelete.unregister(commentNumDeleteEventBus);
         }
+        if (eventBusPostDeletePost.isRegistered(postDeleteEventBusPost)) {
+            eventBusPostDeletePost.unregister(postDeleteEventBusPost);
+        }
 
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() 호출됨");
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() 호출됨");
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
 
@@ -187,17 +203,20 @@ public class Post extends AppCompatActivity {
         if (!eventBusCommentNumDelete.isRegistered(commentNumDeleteEventBus)) {
             eventBusCommentNumDelete.register(commentNumDeleteEventBus);
         }
+        if (!eventBusPostDeletePost.isRegistered(postDeleteEventBusPost)) {
+            eventBusPostDeletePost.register(postDeleteEventBusPost);
+        }
 
     }
 
     @Override
-    protected void onRestart(){
+    protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart() 호출됨");
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
 
@@ -213,6 +232,9 @@ public class Post extends AppCompatActivity {
         }
         if (eventBusCommentNumDelete.isRegistered(commentNumDeleteEventBus)) {
             eventBusCommentNumDelete.unregister(commentNumDeleteEventBus);
+        }
+        if (eventBusPostDeletePost.isRegistered(postDeleteEventBusPost)) {
+            eventBusPostDeletePost.unregister(postDeleteEventBusPost);
         }
 
     }
@@ -251,7 +273,7 @@ public class Post extends AppCompatActivity {
         home = new Home();
 
         sharedPreferences = getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
-        accessNickname = sharedPreferences.getString("nickname","");
+        accessNickname = sharedPreferences.getString("nickname", "");
         accessProfileImage = sharedPreferences.getString("image", "");
 
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -267,15 +289,31 @@ public class Post extends AppCompatActivity {
 
         post_TopLayout = findViewById(R.id.post_TopLayout);
 
+        // 좋아요 이미지 변경 & 좋아요 개수 변경
         eventBusHeart = EventBus.getDefault();
-        eventBusCommentNum = EventBus.getDefault();
-        eventBusCommentAdd = EventBus.getDefault();
-        eventBusCommentNumDelete = EventBus.getDefault();
-
         heartEventBus = new HeartEventBus(post_HeartNum_Text, post_Heart_Iv, post_HeartFull_Iv, post_Num);
+
+        // 댓글 개수 변경
+        eventBusCommentNum = EventBus.getDefault();
         commentNumAddEventBus = new CommentNumAddEventBus(post_CommentNum_Text, post_Num);
+
+        // 댓글 추가 적용
+        eventBusCommentAdd = EventBus.getDefault();
         commentAddEventBus = new CommentAddEventBus(postDataArrayList, adapter, recyclerView, post_Num);
+
+        // 댓글 삭제 적용
+        eventBusCommentNumDelete = EventBus.getDefault();
         commentNumDeleteEventBus = new CommentNumDeleteEventBus(post_CommentNum_Text, post_Num);
+
+        // 게시글 삭제 적용 - Post Activity
+        eventBusPostDeletePost = EventBus.getDefault();
+        postDeleteEventBusPost = new PostDeleteEventBusPost(post_Num, post_Menu_Btn);
+
+        // 게시글 삭제 적용 - Home Fragment
+
+
+        // 게시글 삭제 적용 - Heart Fragment
+
 
     } // setVariable()
 
@@ -296,9 +334,9 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                if (networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
                     Intent i = new Intent(getApplicationContext(), Profile.class);
-                    i.putExtra("nickname",post_Nickname);
+                    i.putExtra("nickname", post_Nickname);
                     startActivity(i);
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -311,9 +349,9 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-                    Intent i = new Intent(getApplicationContext(),Profile.class);
-                    i.putExtra("nickname",post_Nickname);
+                if (networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    Intent i = new Intent(getApplicationContext(), Profile.class);
+                    i.putExtra("nickname", post_Nickname);
                     startActivity(i);
                 } else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -326,7 +364,7 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                if (networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
 
                     addComment = post_Comment_Edit.getText().toString();
                     addDateComment = getTime.getTime().toString();
@@ -365,16 +403,66 @@ public class Post extends AppCompatActivity {
             }
         });
 
+        post_PostImage_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                    Intent i = new Intent(Post.this, PhotoView.class);
+                    i.putExtra("image", ApiClient.serverPostImagePath + post_PostImage);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        post_Menu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                PopupMenu popup = new PopupMenu(Post.this, view);
+                popup.getMenuInflater().inflate(R.menu.post_delete, popup.getMenu());
+                popup.show();
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        if (menuItem.getItemId() == R.id.menu_PostDelete) {
+
+                            deleteDlg();
+
+                        }
+
+                        return false;
+                    }
+                });
+
+            }
+        });
+
+        setHeartOnClick();
+        setHeartFullOnClick();
+
+
+    } // setView()
+
+
+    public void setHeartOnClick() {
+
         post_Heart_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Log.d(TAG, "HeartClick");
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                post_HeartFull_Iv.setClickable(false);
+
+                if (networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
                     post_Heart_Iv.setVisibility(View.GONE);
                     post_HeartFull_Iv.setVisibility(View.VISIBLE);
                     post_Heart += 1;
                     post_HeartNum_Text.setText(String.valueOf(post_Heart));
+
 
                     insertWhoLike(post_Num, accessNickname, post_Heart, String.valueOf(System.currentTimeMillis()));
 
@@ -392,11 +480,17 @@ public class Post extends AppCompatActivity {
             }
         });
 
+    } // setHeartOnClick()
+
+    public void setHeartFullOnClick() {
+
         post_HeartFull_Iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+                post_Heart_Iv.setClickable(false);
+
+                if (networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
                     post_HeartFull_Iv.setVisibility(View.GONE);
                     post_Heart_Iv.setVisibility(View.VISIBLE);
                     post_Heart -= 1;
@@ -418,47 +512,8 @@ public class Post extends AppCompatActivity {
             }
         });
 
-        post_PostImage_Iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    } // setHeartFullOnClick()
 
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-                    Intent i = new Intent(Post.this, PhotoView.class);
-                    i.putExtra("image",ApiClient.serverPostImagePath + post_PostImage);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        post_Menu_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                PopupMenu popup = new PopupMenu(Post.this,view);
-                popup.getMenuInflater().inflate(R.menu.post_delete, popup.getMenu());
-                popup.show();
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-
-                        if (menuItem.getItemId() == R.id.menu_PostDelete) {
-
-                            deleteDlg();
-
-                        }
-
-                        return false;
-                    }
-                });
-
-            }
-        });
-
-
-    } // setView()
 
     public void deleteDlg() {
 
@@ -467,7 +522,9 @@ public class Post extends AppCompatActivity {
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        int[] array = new int[1];
+                        array[0] = post_Num;
+                        eventBusPostDeletePost.post(array);
                         deletePost(post_Num);
 
                     }
@@ -488,7 +545,7 @@ public class Post extends AppCompatActivity {
     public void noDataDlg() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Post.this);
-        builder.setTitle("존재하지 않는 게시물입니다.")
+        builder.setTitle("삭제된 게시물입니다.")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -508,18 +565,24 @@ public class Post extends AppCompatActivity {
     public void insertWhoLike(int postNum, String whoLike, int heart, String time) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<PostData> call = apiInterface.insertWhoLike(postNum, whoLike, heart, time);
-        call.enqueue(new Callback<PostData>() {
+        Call<String> call = apiInterface.insertWhoLike(postNum, whoLike, heart, time);
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<PostData> call, Response<PostData> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
 
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "insertWhoLike_Response 성공");
+                    Log.d(TAG, "scar3insertWhoLike_Response 성공");
 
-                    int rp_postNum = response.body().getPostNum();
-                    String rp_whoLike = response.body().getWhoLike();
+                    String rpCode = response.body();
 
-                    Log.d(TAG, "저장된 데이터 -\nrp_num : " + rp_postNum + "\nrp_heart : " + rp_whoLike);
+                    if (rpCode.equals("noData")) {
+
+                        noDataDlg();
+
+                    } else {
+                        post_HeartFull_Iv.setClickable(true);
+                        Log.d(TAG, "onResponse : 좋아요 추가 완료");
+                    }
 
                 } else {
                     Log.d(TAG, "insertWhoLike_Response 실패");
@@ -528,7 +591,7 @@ public class Post extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<PostData> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.d(TAG, "onFailure: 실패 " + t);
             }
         });
@@ -538,13 +601,24 @@ public class Post extends AppCompatActivity {
     public void deleteWhoLike(int postNum, String whoLike, int heart) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<PostData> call = apiInterface.deleteWhoLike(postNum, whoLike, heart);
-        call.enqueue(new Callback<PostData>() {
+        Call<String> call = apiInterface.deleteWhoLike(postNum, whoLike, heart);
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<PostData> call, Response<PostData> response) {
-
+            public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "deleteWhoLike_Response 성공");
+                    Log.d(TAG, "scar3deleteWhoLike_Response 성공");
+
+                    String rpCode = response.body();
+
+                    if (rpCode.equals("noData")) {
+
+                        noDataDlg();
+
+                    } else {
+                        post_Heart_Iv.setClickable(true);
+                        Log.d(TAG, "onResponse : 좋아요 삭제 완료");
+                    }
+
                 } else {
                     Log.d(TAG, "deleteWhoLike_Response 실패");
                 }
@@ -552,7 +626,7 @@ public class Post extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<PostData> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.d(TAG, "onFailure: 실패 " + t);
             }
         });
@@ -569,15 +643,23 @@ public class Post extends AppCompatActivity {
                 Log.d(TAG, "insertComment onResponse");
                 if (response.isSuccessful()) {
 
-                    commentNumArray = new String[2];
-                    commentNumArray[0] = String.valueOf(post_CommentNum);
-                    commentNumArray[1] = String.valueOf(post_Num);
+                    if (response.body().equals("noData")) {
 
-                    eventBusCommentNum.post(commentNumArray);
-                    eventBusAddStatus = true;
+                        noDataDlg();
 
-                    postDataArrayList.clear();
-                    getComment(post_Num);
+                    } else {
+
+                        commentNumArray = new String[2];
+                        commentNumArray[0] = String.valueOf(post_CommentNum);
+                        commentNumArray[1] = String.valueOf(post_Num);
+
+                        eventBusCommentNum.post(commentNumArray);
+                        eventBusAddStatus = true;
+
+                        postDataArrayList.clear();
+                        getComment(post_Num);
+
+                    }
 
                 } else {
                     Log.d(TAG, "responseFail");
@@ -629,7 +711,7 @@ public class Post extends AppCompatActivity {
                         if (eventBusAddStatus) {
                             eventBusCommentAdd.post(postData);
                             eventBusAddStatus = false;
-                            recyclerView.scrollToPosition(postDataArrayList.size()-1);
+                            recyclerView.scrollToPosition(postDataArrayList.size() - 1);
                         }
 
                     }
@@ -648,6 +730,36 @@ public class Post extends AppCompatActivity {
 
     } // getComment()
 
+    public void checkPostDelete(int postNum) {
+
+        Log.d(TAG, "게시글삭제 확인됨4 : " + post_Menu_Btn.getVisibility());
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.checkPostDelete(postNum);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "checkPostDelete - onResponse : isSuccessful");
+
+                    String rpCode = response.body();
+
+                    if (rpCode.equals("fail")) {
+                        noDataDlg();
+                    }
+
+                } else {
+                    Log.d(TAG, "checkPostDelete - onResponse : isFailure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "checkPostDelete - onFailure");
+            }
+        });
+
+    } // checkPostDelete()
 
     public void getPost(String currentNickname, int postNum) {
 
@@ -657,36 +769,36 @@ public class Post extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
                 if (response.isSuccessful()) {
-
+                    Log.d(TAG, "getPost - onResponse : isSuccessful");
                     ArrayList<PostData> data = response.body();
 
                     if (data.size() > 0) {
 //                        Log.d(TAG, "data.size : " + data.size());
 
-                            post_Num = data.get(0).getNum();
-                            post_Nickname = data.get(0).getPostNickname();
-                            post_ProfileImage = data.get(0).getProfileImage();
-                            post_Heart = data.get(0).getHeart();
-                            post_CommentNum = data.get(0).getCommentNum();
-                            post_Location = data.get(0).getLocation();
-                            post_PostImage = data.get(0).getPostImage();
-                            post_Writing = data.get(0).getWriting();
-                            post_DateCreated = data.get(0).getDateCreated();
-                            post_WhoLike = data.get(0).getWhoLike();
-                            post_HeartStatus = false;
+                        post_Num = data.get(0).getNum();
+                        post_Nickname = data.get(0).getPostNickname();
+                        post_ProfileImage = data.get(0).getProfileImage();
+                        post_Heart = data.get(0).getHeart();
+                        post_CommentNum = data.get(0).getCommentNum();
+                        post_Location = data.get(0).getLocation();
+                        post_PostImage = data.get(0).getPostImage();
+                        post_Writing = data.get(0).getWriting();
+                        post_DateCreated = data.get(0).getDateCreated();
+                        post_WhoLike = data.get(0).getWhoLike();
+                        post_HeartStatus = false;
 
-                            if (currentNickname.equals(post_WhoLike)) {
-                                post_HeartStatus = true;
-                            }
+                        if (currentNickname.equals(post_WhoLike)) {
+                            post_HeartStatus = true;
+                        }
 
-                            String[] arrayLocation = post_Location.split(" ");
-                            double latitude = Double.parseDouble(arrayLocation[0]);
-                            double longitude = Double.parseDouble(arrayLocation[1]);
+                        String[] arrayLocation = post_Location.split(" ");
+                        double latitude = Double.parseDouble(arrayLocation[0]);
+                        double longitude = Double.parseDouble(arrayLocation[1]);
 
-                            String currentLocation = getAddress.getAddress(getApplicationContext(),latitude,longitude);
+                        String currentLocation = getAddress.getAddress(getApplicationContext(), latitude, longitude);
 
-                            post_EditDate = getTime.lastTime(post_DateCreated);
-                            post_EditLocation = getAddress.editAddress1234(currentLocation);
+                        post_EditDate = getTime.lastTime(post_DateCreated);
+                        post_EditLocation = getAddress.editAddress1234(currentLocation);
 
                         post_Nickname_Text.setText(post_Nickname);
                         post_Location_Text.setText(post_EditLocation);

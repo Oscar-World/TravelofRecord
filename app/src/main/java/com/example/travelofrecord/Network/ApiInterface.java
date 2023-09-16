@@ -133,7 +133,7 @@ public interface ApiInterface {
 
     // 좋아요 눌렀을 때 추가
     @GET("mysql_Heart_Insert.php")
-    Call<PostData> insertWhoLike(
+    Call<String> insertWhoLike(
             @Query("postNum") int postNum,
             @Query("whoLike") String whoLike,
             @Query("heart") int heart,
@@ -142,7 +142,7 @@ public interface ApiInterface {
 
     // 좋아요 취소 눌렀을 때 삭제
     @GET("mysql_Heart_Delete.php")
-    Call<PostData> deleteWhoLike(
+    Call<String> deleteWhoLike(
             @Query("postNum") int postNum,
             @Query("whoLike") String whoLike,
             @Query("heart") int heart
@@ -274,6 +274,12 @@ public interface ApiInterface {
     @GET("mysql_GetWriteCount.php")
     Call<User> getWriteCount(
             @Query("nickname") String nickname
+    );
+
+    // 게시글 삭제 여부 확인
+    @GET("mysql_CheckPostDelete.php")
+    Call<String> checkPostDelete(
+            @Query("num") int num
     );
 
 }

@@ -391,18 +391,22 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void insertWhoLike(int postNum, String whoLike, int heart, String time) {
 
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<PostData> call = apiInterface.insertWhoLike(postNum, whoLike, heart, time);
-            call.enqueue(new Callback<PostData>() {
+            Call<String> call = apiInterface.insertWhoLike(postNum, whoLike, heart, time);
+            call.enqueue(new Callback<String>() {
                 @Override
-                public void onResponse(Call<PostData> call, Response<PostData> response) {
-
+                public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
                         Log.d(TAG, "insertWhoLike_Response 성공");
 
-                        int rp_postNum = response.body().getPostNum();
-                        String rp_whoLike = response.body().getWhoLike();
+                        String rpCode = response.body();
 
-                        Log.d(TAG, "저장된 데이터 -\nrp_num : " + rp_postNum + "\nrp_heart : " + rp_whoLike);
+                        if (rpCode.equals("noData")) {
+
+//                            noDataDlg();
+
+                        } else {
+                            Log.d(TAG, "onResponse : 좋아요 추가 완료");
+                        }
 
                     } else {
                         Log.d(TAG, "insertWhoLike_Response 실패");
@@ -411,7 +415,7 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
 
                 @Override
-                public void onFailure(Call<PostData> call, Throwable t) {
+                public void onFailure(Call<String> call, Throwable t) {
                     Log.d(TAG, "onFailure: 실패 " + t);
                 }
             });
@@ -422,13 +426,24 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void deleteWhoLike(int postNum, String whoLike, int heart) {
 
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<PostData> call = apiInterface.deleteWhoLike(postNum, whoLike, heart);
-            call.enqueue(new Callback<PostData>() {
+            Call<String> call = apiInterface.deleteWhoLike(postNum, whoLike, heart);
+            call.enqueue(new Callback<String>() {
                 @Override
-                public void onResponse(Call<PostData> call, Response<PostData> response) {
+                public void onResponse(Call<String> call, Response<String> response) {
 
                     if (response.isSuccessful()) {
                         Log.d(TAG, "insertWhoLike_Response 성공");
+
+                        String rpCode = response.body();
+
+                        if (rpCode.equals("noData")) {
+
+//                            noDataDlg();
+
+                        } else {
+                            Log.d(TAG, "onResponse : 좋아요 삭제 완료");
+                        }
+
                     } else {
                         Log.d(TAG, "insertWhoLike_Response 실패");
                     }
@@ -436,7 +451,7 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
 
                 @Override
-                public void onFailure(Call<PostData> call, Throwable t) {
+                public void onFailure(Call<String> call, Throwable t) {
                     Log.d(TAG, "onFailure: 실패 " + t);
                 }
             });
