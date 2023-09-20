@@ -30,20 +30,19 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.EventBus.CommentAddEventBus;
-import com.example.travelofrecord.EventBus.CommentDeleteEventBus;
 import com.example.travelofrecord.EventBus.CommentNumAddEventBus;
 import com.example.travelofrecord.EventBus.CommentNumDeleteEventBus;
 import com.example.travelofrecord.EventBus.HeartEventBus;
+import com.example.travelofrecord.EventBus.PostDeleteEventBusHome;
 import com.example.travelofrecord.EventBus.PostDeleteEventBusPost;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Adapter.Comment_Adapter;
-import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetAddress;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
-import com.google.android.gms.common.api.Api;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -56,7 +55,7 @@ import retrofit2.Response;
 public class Post extends AppCompatActivity {
 
     String TAG = "게시글 액티비티";
-    GetAdress getAddress = new GetAdress();
+    GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
 
     ImageButton back_Btn;
@@ -120,12 +119,14 @@ public class Post extends AppCompatActivity {
     CommentAddEventBus commentAddEventBus;
     CommentNumDeleteEventBus commentNumDeleteEventBus;
     PostDeleteEventBusPost postDeleteEventBusPost;
+    PostDeleteEventBusHome postDeleteEventBusHome;
 
     EventBus eventBusHeart;
     EventBus eventBusCommentNum;
     EventBus eventBusCommentAdd;
     EventBus eventBusCommentNumDelete;
     EventBus eventBusPostDeletePost;
+    EventBus eventBusPostDeleteHome;
 
     boolean eventBusAddStatus = false;
     public static Context context;
@@ -171,6 +172,9 @@ public class Post extends AppCompatActivity {
         if (eventBusPostDeletePost.isRegistered(postDeleteEventBusPost)) {
             eventBusPostDeletePost.unregister(postDeleteEventBusPost);
         }
+        if (eventBusPostDeleteHome.isRegistered(postDeleteEventBusHome)) {
+            eventBusPostDeleteHome.unregister(postDeleteEventBusHome);
+        }
 
     }
 
@@ -205,6 +209,9 @@ public class Post extends AppCompatActivity {
         }
         if (!eventBusPostDeletePost.isRegistered(postDeleteEventBusPost)) {
             eventBusPostDeletePost.register(postDeleteEventBusPost);
+        }
+        if (!eventBusPostDeleteHome.isRegistered(postDeleteEventBusHome)) {
+            eventBusPostDeleteHome.register(postDeleteEventBusHome);
         }
 
     }
@@ -310,9 +317,8 @@ public class Post extends AppCompatActivity {
         postDeleteEventBusPost = new PostDeleteEventBusPost(post_Num, post_Menu_Btn);
 
         // 게시글 삭제 적용 - Home Fragment
-
-
-        // 게시글 삭제 적용 - Heart Fragment
+        eventBusPostDeleteHome = EventBus.getDefault();
+        postDeleteEventBusHome = new PostDeleteEventBusHome(null, null);
 
 
     } // setVariable()
@@ -525,6 +531,7 @@ public class Post extends AppCompatActivity {
                         int[] array = new int[1];
                         array[0] = post_Num;
                         eventBusPostDeletePost.post(array);
+                        eventBusPostDeleteHome.post(array);
                         deletePost(post_Num);
 
                     }

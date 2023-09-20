@@ -1,13 +1,10 @@
 package com.example.travelofrecord.Fragment;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PointF;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -38,7 +35,7 @@ import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Data.Markers;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
-import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetAddress;
 import com.example.travelofrecord.Adapter.Heart_Adapter;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Network.NetworkStatus;
@@ -55,29 +52,24 @@ import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
-import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
-import com.naver.maps.map.overlay.Overlay;
-import com.naver.maps.map.util.MarkerIcons;
 
 import java.util.ArrayList;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import kotlin.jvm.internal.FunctionImpl;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ted.gun0912.clustering.clustering.Cluster;
 import ted.gun0912.clustering.clustering.TedClusterItem;
 import ted.gun0912.clustering.naver.TedNaverClustering;
-import ted.gun0912.clustering.naver.TedNaverMarker;
 
 public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     String TAG = "하트 프래그먼트";
     View v;
-    GetAdress getAdress = new GetAdress();
+    GetAddress getAddress = new GetAddress();
 
     private Button photo_Btn;
     private Button map_Btn;
@@ -442,8 +434,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                 latitude = Double.parseDouble(arrayLocation[0]);
                 longitude = Double.parseDouble(arrayLocation[1]);
 
-                String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
-                addressHeart = getAdress.editAddress24(currentLocation);
+                String currentLocation = getAddress.getAddress(getContext(),latitude,longitude);
+                addressHeart = getAddress.editAddress24(currentLocation);
 
                 markers = new Markers(latitude, longitude, post_Location, post_PostImage, post_Writing, post_DateCreated, post_Num, post_Nickname);
                 markerList.add(markers);
@@ -591,8 +583,8 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                             Log.d(TAG, "getHeart - latitude : " + latitude);
                             Log.d(TAG, "getHeart - longitude : " + longitude);
 
-                            String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
-                            addressHeart = getAdress.editAddress1234(currentLocation);
+                            String currentLocation = getAddress.getAddress(getContext(),latitude,longitude);
+                            addressHeart = getAddress.editAddress1234(currentLocation);
 
                             PostData postData = new PostData(post_Num, post_Nickname, post_ProfileImage, post_Heart, post_CommentNum,
                                     addressHeart, post_PostImage, post_Writing, post_DateCreated, post_Num, post_WhoLike, heartStatus);

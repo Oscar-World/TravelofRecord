@@ -17,10 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.Post;
-import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetAddress;
 import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.NetworkStatus;
@@ -32,7 +31,7 @@ import java.util.ArrayList;
 public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder> {
 
     String TAG = "하트 어댑터";
-    GetAdress getAdress = new GetAdress();
+    GetAddress getAddress = new GetAddress();
 
     int networkStatus;
     ArrayList<PostData> postData;
@@ -106,7 +105,7 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
             Log.d(TAG, "onBind() 호출됨");
 
 
-            heart_Location.setText(getAdress.editAddress13(item.getLocation()));
+            heart_Location.setText(getAddress.editAddress13(item.getLocation()));
 
             Glide.with(context)
                     .load(ApiClient.serverPostImagePath + item.getPostImage())

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
@@ -26,7 +25,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +34,7 @@ import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Data.Markers;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
-import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetAddress;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Adapter.Profile_Adapter;
@@ -59,7 +57,6 @@ import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -73,7 +70,7 @@ import ted.gun0912.clustering.naver.TedNaverClustering;
 public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
     String TAG = "프로필 액티비티";
-    GetAdress getAddress = new GetAdress();
+    GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
 
     MapView mapView;
@@ -148,16 +145,16 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
+        setVariable();
+        setView();
+        getProfile(getNickname);
+
     }
     @Override
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
         mapView.onStart();
-
-        setVariable();
-        setView();
-        getProfile(getNickname);
     }
     @Override
     protected void onResume(){

@@ -1,23 +1,20 @@
 package com.example.travelofrecord.Fragment;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,12 +30,11 @@ import android.widget.Toast;
 import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Adapter.HomeHeartList_Adapter;
 import com.example.travelofrecord.Data.User;
-import com.example.travelofrecord.EventBus.HeartEventBus;
-import com.example.travelofrecord.Function.BackBtn;
+import com.example.travelofrecord.EventBus.PostDeleteEventBusHome;
 import com.example.travelofrecord.Function.RandomResult;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
-import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetAddress;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Adapter.Home_Adapter;
 import com.example.travelofrecord.Network.NetworkStatus;
@@ -46,12 +42,8 @@ import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,7 +53,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     String TAG = "홈 프래그먼트";
     View v;
-    GetAdress getAdress = new GetAdress();
+    GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
     RandomResult randomResult = new RandomResult();
 
@@ -75,7 +67,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     ArrayList<User> heart_ArrayList;
     HomeHeartList_Adapter heartAdapter;
     ImageView heartListClose_Iv;
-
+    TextView checkPosition_Text;
 
     ImageView loading_Iv;
     Animation rotate;
@@ -126,6 +118,14 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     int dataSize;
     int[] randomValueArray;
 
+    EventBus eventBusPostDeleteHome;
+    PostDeleteEventBusHome postDeleteEventBusHome;
+
+    String latStr;
+    String lngStr;
+    double latitude;
+    double longitude;
+
     @Override
     public void onBack() {
         Log.d(TAG, "onBack: ");
@@ -156,7 +156,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         return v;
 
     }
-
+    // oscar babo
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출됨");
@@ -180,6 +180,18 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         Log.d(TAG, "onStart() 호출됨");
         super.onStart();
 
+        if (!checkPosition_Text.getText().toString().equals("")) {
+            Log.d(TAG, "checkDeleted 들어옴" + checkPosition_Text.getText().toString());
+            post_Data_ArrayList.remove(Integer.parseInt(checkPosition_Text.getText().toString()));
+            adapter.notifyItemRemoved(Integer.parseInt(checkPosition_Text.getText().toString()));
+
+            checkPosition_Text.setText("");
+        }
+
+        if (eventBusPostDeleteHome.isRegistered(postDeleteEventBusHome)) {
+            eventBusPostDeleteHome.unregister(postDeleteEventBusHome);
+        }
+
     } // onStart()
 
     @Override public void onResume() {
@@ -195,6 +207,12 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출됨");
         super.onStop();
+
+        postDeleteEventBusHome = new PostDeleteEventBusHome(post_Data_ArrayList, checkPosition_Text);
+
+        if (!eventBusPostDeleteHome.isRegistered(postDeleteEventBusHome)) {
+            eventBusPostDeleteHome.register(postDeleteEventBusHome);
+        }
 
     }
     @Override public void onDestroyView() {
@@ -269,9 +287,9 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
 
                 if (response.isSuccessful()) {
+                    loading_Iv.clearAnimation();
                     loading_Iv.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
-                    loading_Iv.clearAnimation();
 
                     ArrayList<PostData> data = response.body();
 
@@ -299,13 +317,24 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                             }
 
                             String[] arrayLocation = location.split(" ");
-                            double latitude = Double.parseDouble(arrayLocation[0]);
-                            double longitude = Double.parseDouble(arrayLocation[1]);
 
-                            String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
+                            Log.d(TAG, "location3 : " + location);
+                            Log.d(TAG, "location3 : " + arrayLocation[0]);
+                            Log.d(TAG, "location3 : " + arrayLocation[1]);
+
+                            latStr = arrayLocation[0];
+                            lngStr = arrayLocation[1];
+
+                            Log.d(TAG, "location3 : " + latStr);
+                            Log.d(TAG, "location3 : " + lngStr);
+
+                            latitude = Double.parseDouble(latStr);
+                            longitude = Double.parseDouble(lngStr);
+
+                            String currentLocation = getAddress.getAddress(getContext(),latitude,longitude);
                             Log.d(TAG, "currentLocation : " + currentLocation);
                             String datePost = getTime.lastTime(dateCreated);
-                            String addressPost = getAdress.editAddress1234(currentLocation);
+                            String addressPost = getAddress.editAddress1234(currentLocation);
                             Log.d(TAG, "i : " + i);
 
                             Log.d(TAG, "num = " + num + "\nnickname = " + nickname + "\npostNum : " + postNum
@@ -377,30 +406,6 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     }
 
-
-    public void deletePost(int num) {
-
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<String> call = apiInterface.deletePost(num);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.d(TAG, "deletePost : onResponse");
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "onResponse : " + response.body());
-                } else {
-                    Log.d(TAG, "onResponse : fail");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d(TAG, "deletePost : onFailure");
-            }
-        });
-
-    } // deletePost()
-
     public void getWriteCount(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -438,6 +443,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
         swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);
         internetText = v.findViewById(R.id.internetCheck_Text);
+        checkPosition_Text = v.findViewById(R.id.homeCheckPosition_Text);
 
         recyclerView = v.findViewById(R.id.home_RecyclerView);
         adapter = new Home_Adapter();
@@ -476,6 +482,12 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         initArrayList();
         dataSize = 0;
         randomValueArray = new int[2];
+
+        DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
+        defaultItemAnimator.setRemoveDuration(500);
+        recyclerView.setItemAnimator(defaultItemAnimator);
+
+        eventBusPostDeleteHome = EventBus.getDefault();
 
     } // setVariable()
 
@@ -558,6 +570,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
                     recyclerView.scrollToPosition(post_Data_ArrayList.size()-1);
                     loadingLayout.setVisibility(View.VISIBLE);
+                    loadingImage.setVisibility(View.VISIBLE);
                     loadingLayout.startAnimation(appear);
                     loadingImage.startAnimation(rotate);
 
@@ -599,6 +612,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                     loadingImage.startAnimation(disappear);
                     loadingLayout.startAnimation(disappear);
                     loadingLayout.setVisibility(View.GONE);
+                    loadingImage.setVisibility(View.GONE);
 
                 }
             });

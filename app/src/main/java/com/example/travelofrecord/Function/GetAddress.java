@@ -10,21 +10,19 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class GetAdress {
+public class GetAddress {
 
     String TAG = "주소 얻기";
     String nowAddr;
 
     // Geocoder - 위도, 경도 사용해서 주소 구하기.
     public String getAddress(Context context, double lat, double lng) {
-        nowAddr ="현재 위치를 확인 할 수 없습니다.";
+        nowAddr ="somewhere";
         Geocoder geocoder = new Geocoder(context, Locale.KOREA);
         List<Address> address;
 
         try
         {
-            if (geocoder != null)
-            {
                 address = geocoder.getFromLocation(lat, lng, 1);
                 if (address != null && address.size() > 0)
                 {
@@ -32,7 +30,6 @@ public class GetAdress {
                     Log.d(TAG, "전체 주소 : " + nowAddr);
 
                 }
-            }
         }
         catch (IOException e)
         {

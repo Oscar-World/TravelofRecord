@@ -45,7 +45,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,19 +52,17 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.PhotoView;
-import com.example.travelofrecord.Activity.Post;
 import com.example.travelofrecord.Activity.Ranking;
 import com.example.travelofrecord.Activity.Start;
 import com.example.travelofrecord.Data.Markers;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
-import com.example.travelofrecord.Function.GetAdress;
+import com.example.travelofrecord.Function.GetAddress;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Adapter.MyProfile_Adapter;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
-import com.example.travelofrecord.Data.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -84,9 +81,7 @@ import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
-import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
-import com.naver.maps.map.overlay.Overlay;
 import com.navercorp.nid.NaverIdLoginSDK;
 import com.navercorp.nid.oauth.NidOAuthLogin;
 import com.navercorp.nid.oauth.OAuthLoginCallback;
@@ -94,7 +89,6 @@ import com.navercorp.nid.oauth.OAuthLoginCallback;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -112,7 +106,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     String TAG = "내 프로필 프래그먼트";
     View v;
-    GetAdress getAdress = new GetAdress();
+    GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
 
     int networkStatus;
@@ -1092,8 +1086,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                             latitude = Double.parseDouble(arrayLocation[0]);
                             longitude = Double.parseDouble(arrayLocation[1]);
 
-                            String currentLocation = getAdress.getAddress(getContext(),latitude,longitude);
-                            String addressPost = getAdress.editAddress1234(currentLocation);
+                            String currentLocation = getAddress.getAddress(getContext(),latitude,longitude);
+                            String addressPost = getAddress.editAddress1234(currentLocation);
 
                             String datePost = getTime.lastTime(post_DateCreated);
 
