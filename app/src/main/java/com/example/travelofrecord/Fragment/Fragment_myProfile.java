@@ -104,7 +104,7 @@ import ted.gun0912.clustering.naver.TedNaverClustering;
 
 public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
-    String TAG = "내 프로필 프래그먼트";
+    String TAG = "myProfile 프래그먼트";
     View v;
     GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
@@ -1202,6 +1202,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                     String rp_code = response.body();
                     Log.d(TAG, "삭제 response : " + rp_code);
+                    Log.d(TAG, "삭제 loginType : " + loginType);
 
                     if (rp_code.equals("Ok")) {
                         Toast.makeText(getActivity().getApplicationContext(),"회원 탈퇴 완료",Toast.LENGTH_SHORT).show();
@@ -1261,13 +1262,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                                 }
                             });
 
-
                         }
 
                         editor.clear();
                         editor.commit();
-
-                        updateToken(user_nickname, "");
 
                         Intent i = new Intent(getActivity(),Start.class);
                         startActivity(i);
@@ -1280,7 +1278,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     }
 
                 } else {
-                    Log.d(TAG, "onResponse: 리스폰스 실패");
+                    Log.d(TAG, "onResponse: 리스폰스 실패" + response.message());
+                    Log.d(TAG, "onResponse: 리스폰스 실패" + response.errorBody());
+                    Log.d(TAG, "onResponse: 리스폰스 실패" + response.code());
+                    Log.d(TAG, "onResponse: 리스폰스 실패" + response.raw());
                 }
 
             }

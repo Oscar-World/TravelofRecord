@@ -736,7 +736,6 @@ public class Signup extends AppCompatActivity {
                     } else {
 
                         phoneCheck(edit_phone);
-//                        phoneCheckOnClick();
 
                     }
 
@@ -902,7 +901,7 @@ public class Signup extends AppCompatActivity {
         String phoneNum = "+82" + edit_phone.substring(1, edit_phone.length());
         Log.d(TAG, "전송할 핸드폰 번호 : " + phoneNum);
 
-//        sendSms(phoneNum);
+        sendSms(phoneNum);
 
     }
 
