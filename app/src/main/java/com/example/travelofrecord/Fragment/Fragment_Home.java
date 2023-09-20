@@ -218,7 +218,9 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출됨");
         super.onDestroyView();
-
+        if (eventBusPostDeleteHome.isRegistered(postDeleteEventBusHome)) {
+            eventBusPostDeleteHome.unregister(postDeleteEventBusHome);
+        }
     }
     @Override public void onDetach() {
         Log.d(TAG, "onDetach() 호출됨");

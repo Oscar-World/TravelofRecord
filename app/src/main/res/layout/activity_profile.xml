@@ -85,6 +85,13 @@
             android:layout_weight="1"
             />
 
+        <TextView
+            android:id="@+id/profileCheckPosition_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            />
+
         <ImageButton
             android:id="@+id/profileDM_Btn"
             android:layout_width="55dp"

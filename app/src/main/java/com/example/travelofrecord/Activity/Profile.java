@@ -32,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Data.Markers;
+import com.example.travelofrecord.EventBus.PostDeleteEventBusHome;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Function.GetAddress;
@@ -55,6 +56,8 @@ import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -130,11 +133,15 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     LinearLayout mapDrawerDown;
     ImageView mapDrawerImage;
     TextView mapDrawerText;
+    TextView checkPositionText;
 
     Animation appear;
     Animation disappear;
 
     int putNum;
+
+    EventBus eventBusPostDeleteProfile;
+    PostDeleteEventBusHome postDeleteEventBusProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +162,20 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
         mapView.onStart();
+
+        if (!checkPositionText.getText().toString().equals("")) {
+            Log.d(TAG, "checkPosition 들어옴 : " + checkPositionText.getText().toString());
+            postData_ArrayList.remove(Integer.parseInt(checkPositionText.getText().toString()));
+            adapter.notifyItemRemoved(Integer.parseInt(checkPositionText.getText().toString()));
+
+            checkPositionText.setText("");
+
+        }
+
+        if (eventBusPostDeleteProfile.isRegistered(postDeleteEventBusProfile)) {
+            eventBusPostDeleteProfile.unregister(postDeleteEventBusProfile);
+        }
+
     }
     @Override
     protected void onResume(){
@@ -179,6 +200,11 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
         mapView.onStop();
+
+        if (!eventBusPostDeleteProfile.isRegistered(postDeleteEventBusProfile)) {
+            eventBusPostDeleteProfile.register(postDeleteEventBusProfile);
+        }
+
     }
     @Override
     protected void onRestart(){
@@ -189,7 +215,13 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     protected void onDestroy(){
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
+
         mapView.onDestroy();
+
+        if (eventBusPostDeleteProfile.isRegistered(postDeleteEventBusProfile)) {
+            eventBusPostDeleteProfile.unregister(postDeleteEventBusProfile);
+        }
+
     }
     @Override
     public void onLowMemory() {
@@ -242,6 +274,10 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         mapDrawerText = findViewById(R.id.profile_MapDrawerText);
         appear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.mapdrawer_appear);
         disappear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.mapdrawer_disappear);
+        checkPositionText = findViewById(R.id.profileCheckPosition_Text);
+
+        eventBusPostDeleteProfile = EventBus.getDefault();
+        postDeleteEventBusProfile = new PostDeleteEventBusHome(postData_ArrayList, checkPositionText);
 
     } // setVariable()
 

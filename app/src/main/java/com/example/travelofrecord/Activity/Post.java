@@ -243,6 +243,9 @@ public class Post extends AppCompatActivity {
         if (eventBusPostDeletePost.isRegistered(postDeleteEventBusPost)) {
             eventBusPostDeletePost.unregister(postDeleteEventBusPost);
         }
+        if (eventBusPostDeleteHome.isRegistered(postDeleteEventBusHome)) {
+            eventBusPostDeleteHome.unregister(postDeleteEventBusHome);
+        }
 
     }
 
