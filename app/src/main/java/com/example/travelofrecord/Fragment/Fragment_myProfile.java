@@ -501,8 +501,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     editProfileSubmit_Btn.setVisibility(View.VISIBLE);
                     profile_Image.setVisibility(View.GONE);
                     imageEditLayout.setVisibility(View.VISIBLE);
-//                    editProfile_Image.setVisibility(View.VISIBLE);
-//                    touchImage_Image.setVisibility(View.VISIBLE);
+                    editProfile_Image.setVisibility(View.VISIBLE);
+                    touchImage_Image.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
                     map_Btn.setVisibility(View.GONE);
                     map_Block.setVisibility(View.GONE);
@@ -532,8 +532,8 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     editProfileSubmit_Btn.setVisibility(View.GONE);
                     profile_Image.setVisibility(View.VISIBLE);
                     imageEditLayout.setVisibility(View.GONE);
-//                    editProfile_Image.setVisibility(View.GONE);
-//                    touchImage_Image.setVisibility(View.GONE);
+                    editProfile_Image.setVisibility(View.GONE);
+                    touchImage_Image.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
                     map_Btn.setVisibility(View.VISIBLE);
                     map_Block.setVisibility(View.GONE);
