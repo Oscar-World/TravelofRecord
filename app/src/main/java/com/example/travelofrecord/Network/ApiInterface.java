@@ -282,4 +282,10 @@ public interface ApiInterface {
             @Query("num") int num
     );
 
+    // 사용자 존재 여부 확인
+    @GET("mysql_CheckUser.php")
+    Call<String> checkUser(
+            @Query("nickname") String nickname
+    );
+
 }

@@ -571,7 +571,6 @@ public class Post extends AppCompatActivity {
 
     // -------------------------------------------------------------------------------------------
 
-
     public void insertWhoLike(int postNum, String whoLike, int heart, String time) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);

@@ -3,6 +3,7 @@ package com.example.travelofrecord.Activity;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
@@ -154,7 +156,7 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
         setVariable();
         setView();
-        getProfile(getNickname);
+        checkUser(getNickname);
 
     }
     @Override
@@ -632,6 +634,22 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
     } // setInfoWindow()
 
+    public void noDataDlg() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Profile.this);
+        builder.setTitle("존재하지 않는 사용자입니다.")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+
+    }
+
 
     public void getProfile(String nickname) {
 
@@ -707,5 +725,42 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         });
 
     } // getProfile()
+
+    public void checkUser(String nickname) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<String> call = apiInterface.checkUser(nickname);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "checkUser - onResponse : ok");
+
+                    String rpCode = response.body();
+
+                    if (rpCode.equals("ok")) {
+
+                        getProfile(getNickname);
+
+                    } else {
+
+                        noDataDlg();
+
+                    }
+
+                } else {
+                    Log.d(TAG, "checkUser - onResponse : fail");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "checkUser - onFailure");
+            }
+        });
+
+    } // checkUser()
 
 }
