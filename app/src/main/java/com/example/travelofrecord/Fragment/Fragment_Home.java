@@ -507,7 +507,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                     internetText.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
 
-                    post_Data_ArrayList.clear();
+//                    post_Data_ArrayList.clear();
                     post_Data_ArrayList = new ArrayList<>();
 
                     requestStatus = true;
