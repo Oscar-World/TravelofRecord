@@ -33,6 +33,7 @@
             android:scaleType="centerInside"
             android:background="@color/none"
             android:padding="5dp"
+            android:visibility="gone"
             />
 
     </FrameLayout>
