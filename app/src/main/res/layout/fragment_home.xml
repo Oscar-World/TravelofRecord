@@ -45,12 +45,19 @@
 
         </FrameLayout>
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        <com.baoyz.widget.PullRefreshLayout
             android:id="@+id/home_SwipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="8.2"
             >
+
+<!--        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--            android:id="@+id/home_SwipeRefreshLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="8.2"-->
+<!--            >-->
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -161,7 +168,8 @@
 
             </FrameLayout>
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+<!--        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+        </com.baoyz.widget.PullRefreshLayout>
 
         <LinearLayout
             android:id="@+id/postLoading_Layout"

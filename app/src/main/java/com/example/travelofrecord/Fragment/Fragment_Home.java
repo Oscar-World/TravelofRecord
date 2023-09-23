@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baoyz.widget.PullRefreshLayout;
 import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Adapter.HomeHeartList_Adapter;
 import com.example.travelofrecord.Data.User;
@@ -57,8 +58,10 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     GetTime getTime = new GetTime();
     RandomResult randomResult = new RandomResult();
 
-    SwipeRefreshLayout swipeRefreshLayout;
+    PullRefreshLayout swipeRefreshLayout;
+//    SwipeRefreshLayout swipeRefreshLayout;
 
+    LinearLayoutManager linearLayoutManager;
     RecyclerView recyclerView;
     TextView internetText;
 
@@ -289,6 +292,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             public void onResponse(Call<ArrayList<PostData>> call, Response<ArrayList<PostData>> response) {
 
                 if (response.isSuccessful()) {
+                    swipeRefreshLayout.setRefreshing(false);
                     loading_Iv.clearAnimation();
                     loading_Iv.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
@@ -449,9 +453,10 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
         recyclerView = v.findViewById(R.id.home_RecyclerView);
         adapter = new Home_Adapter();
+        linearLayoutManager = new LinearLayoutManager(getActivity());
 
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         post_Data_ArrayList = new ArrayList<>();
         adapter.setItemPost(post_Data_ArrayList);
@@ -496,7 +501,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     public void setView() {
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
@@ -521,9 +526,39 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                     recyclerView.setVisibility(View.GONE);
                     Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
-                swipeRefreshLayout.setRefreshing(false);
+
+
             }
         });
+
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//
+//                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+//
+//                    pageNum = 1;
+//
+//                    internetText.setVisibility(View.GONE);
+//                    recyclerView.setVisibility(View.VISIBLE);
+//
+////                    post_Data_ArrayList.clear();
+//                    post_Data_ArrayList = new ArrayList<>();
+//
+//                    requestStatus = true;
+//
+//                    Log.d(TAG, "initArrayList swipe");
+//                    initArrayList();
+//
+//                    getPost(loginNickname, pageNum);
+//                }else {
+//                    internetText.setVisibility(View.VISIBLE);
+//                    recyclerView.setVisibility(View.GONE);
+//                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+//                }
+//                swipeRefreshLayout.setRefreshing(false);
+//            }
+//        });
 
         recyclerView.setVisibility(View.GONE);
         loading_Iv.setVisibility(View.VISIBLE);
@@ -559,6 +594,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "onScrollStateChanged : " + newState);
             }
 
             @Override
@@ -567,6 +603,12 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
                 lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
                 totalCount = recyclerView.getAdapter().getItemCount();
+
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
+                    swipeRefreshLayout.setEnabled(true);
+                } else {
+                    swipeRefreshLayout.setEnabled(false);
+                }
 
                 if (lastPosition == totalCount -1 & pagingStatus.equals("true")) {
 
