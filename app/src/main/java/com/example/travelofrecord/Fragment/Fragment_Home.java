@@ -129,6 +129,8 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     double latitude;
     double longitude;
 
+    Context context;
+
     @Override
     public void onBack() {
         Log.d(TAG, "onBack: ");
@@ -139,6 +141,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     @Override public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach() 호출됨");
+        this.context = context;
         ((Home)context).setOnBackPressedListener(this);
 
     }
@@ -337,7 +340,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
                             latitude = Double.parseDouble(latStr);
                             longitude = Double.parseDouble(lngStr);
 
-                            String currentLocation = getAddress.getAddress(getContext(),latitude,longitude);
+                            String currentLocation = getAddress.getAddress(context,latitude,longitude);
                             Log.d(TAG, "currentLocation : " + currentLocation);
                             String datePost = getTime.lastTime(dateCreated);
                             String addressPost = getAddress.editAddress1234(currentLocation);

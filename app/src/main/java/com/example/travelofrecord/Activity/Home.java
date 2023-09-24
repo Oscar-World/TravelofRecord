@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -83,6 +84,7 @@ public class Home extends AppCompatActivity {
     BackBtn backBtn;
     OnBackPressedListener mBackListener;
 
+    Handler handler;
 
     public interface OnBackPressedListener {
         void onBack();
@@ -267,7 +269,9 @@ public class Home extends AppCompatActivity {
 
         backBtn = new BackBtn(this, mBackListener);
 
-    }
+        handler = new Handler();
+
+    } // setvariable()
 
 
     public void setView() {
@@ -301,6 +305,9 @@ public class Home extends AppCompatActivity {
                     addFull_Btn.setVisibility(View.GONE);
                     dmFull_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.GONE);
+
+                    ButtonThread thread = new ButtonThread();
+                    thread.start();
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -338,6 +345,9 @@ public class Home extends AppCompatActivity {
                     addFull_Btn.setVisibility(View.GONE);
                     dmFull_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.GONE);
+
+                    ButtonThread thread = new ButtonThread();
+                    thread.start();
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -377,6 +387,9 @@ public class Home extends AppCompatActivity {
                     dmFull_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.GONE);
 
+                    ButtonThread thread = new ButtonThread();
+                    thread.start();
+
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -404,6 +417,9 @@ public class Home extends AppCompatActivity {
                     heartFull_Btn.setVisibility(View.GONE);
                     addFull_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.GONE);
+
+                    ButtonThread thread = new ButtonThread();
+                    thread.start();
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -433,6 +449,9 @@ public class Home extends AppCompatActivity {
                     heartFull_Btn.setVisibility(View.GONE);
                     addFull_Btn.setVisibility(View.GONE);
                     myProfileFull_Btn.setVisibility(View.GONE);
+
+                    ButtonThread thread = new ButtonThread();
+                    thread.start();
 
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
@@ -472,6 +491,9 @@ public class Home extends AppCompatActivity {
                     addFull_Btn.setVisibility(View.GONE);
                     dmFull_Btn.setVisibility(View.GONE);
 
+                    ButtonThread thread = new ButtonThread();
+                    thread.start();
+
                 }else {
                     Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -483,6 +505,50 @@ public class Home extends AppCompatActivity {
 
 
     // ----------------------------------------------------------------------------------------
+
+
+    // 일정 시간동안 버튼 안눌림 처리
+    public class ButtonThread extends Thread {
+
+        public void run() {
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    home_Btn.setEnabled(false);
+                    heart_Btn.setEnabled(false);
+                    add_Btn.setEnabled(false);
+                    dm_Btn.setEnabled(false);
+                    myProfile_Btn.setEnabled(false);
+                    dmRed_Btn.setEnabled(false);
+
+                }
+            });
+
+            try {
+                sleep(400);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    home_Btn.setEnabled(true);
+                    heart_Btn.setEnabled(true);
+                    add_Btn.setEnabled(true);
+                    dm_Btn.setEnabled(true);
+                    myProfile_Btn.setEnabled(true);
+                    dmRed_Btn.setEnabled(true);
+
+                }
+            });
+
+        }
+
+    }
 
 
     // 프래그먼트 이동
