@@ -14,9 +14,9 @@
         android:text="2023년 8월 1일 화요일"
         android:textSize="16dp"
         android:textColor="@color/white"
-        android:background="@color/gray"
-        android:paddingHorizontal="15dp"
-        android:paddingVertical="5dp"
+        android:background="@drawable/centerchat2"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="8dp"
         />
 
 </LinearLayout>
