@@ -34,7 +34,7 @@ public class MyProfile_Adapter extends RecyclerView.Adapter<MyProfile_Adapter.Vi
     Context context;
     Home home;
 
-    // 레이아웃을 실체화 해줌 - inflate
+
     @Override
     public MyProfile_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
@@ -45,38 +45,32 @@ public class MyProfile_Adapter extends RecyclerView.Adapter<MyProfile_Adapter.Vi
         MyProfile_Adapter.ViewHolder viewHolder = new MyProfile_Adapter.ViewHolder(view);
 
         return viewHolder;
-    }
+
+    } // onCreateViewHolder()
 
 
-    // 받아온 데이터를 바인딩해줌
     @Override
     public void onBindViewHolder(@NonNull MyProfile_Adapter.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
         holder.onBind(postData.get(holder.getAdapterPosition()));
-    }
+    } // onBindViewHolder()
 
-    // 뷰와 데이터를 연결해줌
+
     public void setItemMyProfile(ArrayList<PostData> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
         this.postData = list;
-        Log.d(TAG, "어댑터 리스트 : " + postData);
-
         notifyDataSetChanged();
-    }
 
-    // 리사이클러뷰 리스트 사이즈를 불러옴
+    } // setItemMyProfile()
+
+
     @Override
     public int getItemCount() {
-//        Log.d(TAG, "getItemCount() 호출됨");
-//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
-
         return postData.size();
+    } // getItemCount()
 
-    }
 
-
-    // 뷰홀더 생성
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView proflie_PostImage;
@@ -133,8 +127,6 @@ public class MyProfile_Adapter extends RecyclerView.Adapter<MyProfile_Adapter.Vi
 
 
         } // onBind
-
-
 
     } // ViewHolder
 

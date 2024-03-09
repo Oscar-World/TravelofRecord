@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.loader.content.CursorLoader;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,7 +21,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -55,11 +55,6 @@ import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -75,144 +70,43 @@ import retrofit2.Response;
 public class Signup extends AppCompatActivity {
 
     String TAG = "회원가입 액티비티";
-
-    FrameLayout frameLayout_1;
-    FrameLayout frameLayout_2;
-    FrameLayout frameLayout_3;
-    FrameLayout id_Info;
-    FrameLayout pw_Info;
-    FrameLayout nickname_Info;
-
-    EditText signup_id;
-    EditText signup_pw;
-    EditText signup_pwCheck;
-    EditText signup_phone;
-    EditText signup_phoneCheck;
-    EditText signup_nickname;
-
-    Button nextBtn_1;
-    Button nextBtn_2;
-    Button submitBtn;
-
-    Button nextBlock_1;
-    Button nextBlock_2;
-    Button submitBlock;
-
-    ImageButton backBtn_1;
-    ImageButton backBtn_2;
-    ImageButton backBtn_3;
-    ImageButton id_Btn;
-    ImageButton pw_Btn;
-    ImageButton nickname_Btn;
+    String backText = "\'뒤로\' 버튼을 한번 더 누르면 로그인 페이지로 이동합니다.";
+    String edit_id, edit_pw, edit_pwCheck, edit_phone, edit_phoneCheck, edit_nickname, idRule, pwRule, phoneRule, nicknameRule,
+            id_code, nickname_code, login_Type, kakaoId, kakaoImage, googleId, naverId, setTime, imagePath, smsCode, imageFileName;
+    int phoneCount, smsTime, smsTime_min, smsTime_sec, smsCheckNumber;
+    boolean idStatus, pwStatus, pwCheckStatus, nicknameStatus;
+    SharedPreferences userShared, authShared;
+    SharedPreferences.Editor userEditor, authEditor;
+    ActivityResultLauncher<Intent> launcher;
+    Uri uri;
+    FirebaseAuth auth;
+    Animation left_out, left_in, right_out, right_in, appear, disappear;
+    Pattern pattern_id, pattern_pw, pattern_ph, pattern_nick;
+    Matcher matcher_id, matcher_pw, matcher_ph, matcher_nick;
+    TextView phoneCountText, id_Using, id_Error, id_Useable, pw_Error, pw_Useable, pwCheck_Error, pwCheck_Useable, phone_Send,
+            phone_SmsTime, phone_SmsOk, phone_SmsError, phone_SmsEmpty, phone_SmsTimeout, phone_NumberError, nickname_Using, nickname_Useable, nickname_Error;
+    FrameLayout frameLayout_1, frameLayout_2, frameLayout_3, id_Info, pw_Info, nickname_Info;
+    EditText signup_id, signup_pw, signup_pwCheck, signup_phone, signup_phoneCheck, signup_nickname;
+    Button nextBtn_1, nextBtn_2, submitBtn, nextBlock_1, nextBlock_2, submitBlock, smsSend_Btn, smsCheck_Btn, smsSend_Block, smsCheck_Block;
+    ImageButton backBtn_1, backBtn_2, backBtn_3, id_Btn, pw_Btn, nickname_Btn;
     ImageView photo_Btn;
-
-    String edit_id;
-    String edit_pw;
-    String edit_pwCheck;
-    String edit_phone;
-    String edit_phoneCheck;
-    String edit_nickname;
-    String image;
-
-
-    String idRule;
-    String pwRule;
-    String phoneRule;
-    String nicknameRule;
-
-    String rp_code;
-    String id_code;
-    String nickname_code;
-    String login_Type;
-
-    SharedPreferences userShared;
-    SharedPreferences.Editor userEditor;
-
-    SharedPreferences authShared;
-    SharedPreferences.Editor authEditor;
-
-    TextView phoneCountText;
-    int phoneCount;
-
-    Animation left_out;
-    Animation left_in;
-    Animation right_out;
-    Animation right_in;
-    Animation appear;
-    Animation disappear;
-
-    String kakaoId;
-    String kakaoImage;
-
-    String googleId;
-    String naverId;
-
-    Pattern pattern_id;
-    Matcher matcher_id;
-
-    Pattern pattern_pw;
-    Matcher matcher_pw;
-
-    Pattern pattern_ph;
-    Matcher matcher_ph;
-
-    Pattern pattern_nick;
-    Matcher matcher_nick;
-
-    TextView id_Using;
-    TextView id_Error;
-    TextView id_Useable;
-    TextView pw_Error;
-    TextView pw_Useable;
-    TextView pwCheck_Error;
-    TextView pwCheck_Useable;
-    TextView phone_Send;
-    TextView phone_SmsTime;
-    TextView phone_SmsOk;
-    TextView phone_SmsError;
-    TextView phone_SmsEmpty;
-    TextView phone_SmsTimeout;
-    TextView phone_NumberError;
-    TextView nickname_Using;
-    TextView nickname_Useable;
-    TextView nickname_Error;
-
-    Button smsSend_Btn;
-    Button smsCheck_Btn;
-    Button smsSend_Block;
-    Button smsCheck_Block;
-
+    BackBtn backBtn = new BackBtn(this);
     Handler handler;
     IdinfoThread idThread;
     PwinfoThread pwThread;
     NicknameinfoThread nicknameThread;
     SmsTimeThread smsTimeThread;
 
-    boolean idStatus;
-    boolean pwStatus;
-    boolean pwCheckStatus;
-    boolean nicknameStatus;
 
-    String setTime;
-    int smsTime;
-    int smsTime_min;
-    int smsTime_sec;
-    int smsCheckNumber;
+    /*
+    갤러리 접근 권한 관련 상수 세팅
+     */
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    };
 
-    ActivityResultLauncher<Intent> launcher;
-    Uri uri;
-    String imagePath;
-
-    FirebaseAuth auth;
-    String smsCode;
-    String imageFileName;
-    BackBtn backBtn = new BackBtn(this);
-    String backText = "\'뒤로\' 버튼을 한번 더 누르면 로그인 페이지로 이동합니다.";
-
-    @Override
-    public void onBackPressed() {
-        backBtn.onBackPressed(backText);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,85 +114,128 @@ public class Signup extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         Log.d(TAG, "onCreate() 호출");
 
-        setView();
+        setVariable();
         checkLoginType();
 
     } // onCreate()
-
-
-    public void sendSms(String phoneNumber) {
-
-//        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, Find_UserInfo.class), PendingIntent.FLAG_MUTABLE);
-//
-//        SmsManager smsManager = SmsManager.getDefault();
-//        smsManager.sendTextMessage(phoneNumber, null, smsMessage, pi, null);
-//
-//        Toast.makeText(this, "전송 완료", Toast.LENGTH_SHORT).show();
-        auth = FirebaseAuth.getInstance();
-
-        PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-
-                Log.d(TAG, "onVerificationCompleted: " + phoneAuthCredential.getSmsCode());
-                smsCode = phoneAuthCredential.getSmsCode();
-
-            }
-
-            @Override
-            public void onVerificationFailed(@NonNull FirebaseException e) {
-
-                Log.d(TAG, "onVerificationFailed: " + e);
-
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    Log.d(TAG, "onVerificationFailed : 잘못된 요청");
-                } else if (e instanceof FirebaseTooManyRequestsException) {
-                    Log.d(TAG, "onVerificationFailed : sms 할당량 초과");
-                } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
-                    Log.d(TAG, "onVerificationFailed : 확인된 reCAPTCHA 없음");
-                }
-
-            }
-
-            @Override
-            public void onCodeSent(@NonNull String verificationId,
-                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
-
-                Log.d(TAG, "onCodeSent:" + verificationId);
-                String mVerificationId = verificationId;
-                String mResendToken = token.toString();
-
-                Log.d(TAG, "onCodeSent - token : " + mResendToken);
-            }
-
-        };
-
-        auth = FirebaseAuth.getInstance();
-        auth.setLanguageCode("ko");
-
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(auth)
-                        .setPhoneNumber(phoneNumber)
-                        .setTimeout(120L, TimeUnit.SECONDS)
-                        .setActivity(this)
-                        .setCallbacks(callbacks)
-                        .build();
-        PhoneAuthProvider.verifyPhoneNumber(options);
-
-    } // smsSend()
 
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() 호출");
-        Log.d(TAG, "id / pw / pwCheck Status : " + idStatus + " " + pwStatus + " " + pwCheckStatus);
 
         idStatus = false;
         pwStatus = false;
         pwCheckStatus = false;
         nicknameStatus = false;
 
+        setListener();
+
+    } // onStart()
+
+
+    /*
+    시스템 뒤로가기 버튼 클릭 이벤트
+     */
+    @Override
+    public void onBackPressed() {
+
+        backBtn.onBackPressed(backText);
+
+    } // onBackPressed()
+
+
+    /*
+    뷰 세팅
+     */
+    public void setVariable() {
+
+        frameLayout_1 = findViewById(R.id.signup_frameLayout1);
+        frameLayout_2 = findViewById(R.id.signup_frameLayout2);
+        frameLayout_3 = findViewById(R.id.signup_frameLayout3);
+        id_Info = findViewById(R.id.signup_idInfo);
+        pw_Info = findViewById(R.id.signup_pwInfo);
+        nickname_Info = findViewById(R.id.signup_nicknameInfo);
+
+        signup_id = findViewById(R.id.signup_id);
+        signup_pw = findViewById(R.id.signup_pw);
+        signup_pwCheck = findViewById(R.id.signup_pwCheck);
+        signup_phone = findViewById(R.id.signup_phone);
+        signup_phoneCheck = findViewById(R.id.signup_CheckNum);
+        signup_nickname = findViewById(R.id.signup_nickname);
+
+        nextBtn_1 = findViewById(R.id.signupNext1_button);
+        nextBtn_2 = findViewById(R.id.signupNext2_button);
+        submitBtn = findViewById(R.id.signupSubmit_button);
+
+        nextBlock_1 = findViewById(R.id.signupNext1_Block);
+        nextBlock_2 = findViewById(R.id.signupNext2_Block);
+        submitBlock = findViewById(R.id.signupSubmit_Block);
+
+        backBtn_1 = findViewById(R.id.signupBack_Btn);
+        backBtn_2 = findViewById(R.id.signupBack_Btn2);
+        backBtn_3 = findViewById(R.id.signupBack_Btn3);
+        id_Btn = findViewById(R.id.signup_Idbtn);
+        pw_Btn = findViewById(R.id.signup_Pwbtn);
+        nickname_Btn = findViewById(R.id.signup_Nicknamebtn);
+        photo_Btn = findViewById(R.id.signup_Photo);
+
+        userShared = getSharedPreferences("로그인 정보", MODE_PRIVATE);
+        userEditor = userShared.edit();
+
+        authShared = getSharedPreferences("휴대폰 인증", MODE_PRIVATE);
+        authEditor = authShared.edit();
+
+        phoneCountText = findViewById(R.id.signUp_sendPhoneText);
+        phoneCount = authShared.getInt("남은 횟수", 0);
+        phoneCountText.setText("남은 인증 횟수 : " + String.valueOf(phoneCount));
+        if (phoneCount == 0) {
+            smsSend_Btn.setVisibility(View.INVISIBLE);
+        }
+
+        left_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_leftout);
+        left_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_leftin);
+        right_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_rightout);
+        right_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_rightin);
+        appear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_appear);
+        disappear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_disappear);
+
+        id_Using = findViewById(R.id.id_Using);
+        id_Error = findViewById(R.id.id_Error);
+        id_Useable = findViewById(R.id.id_Useable);
+        pw_Error = findViewById(R.id.pw_Error);
+        pw_Useable = findViewById(R.id.pw_Useable);
+        pwCheck_Error = findViewById(R.id.pwCheck_Error);
+        pwCheck_Useable = findViewById(R.id.pwCheck_Useable);
+        phone_Send = findViewById(R.id.smsSend_Text);
+        phone_SmsOk = findViewById(R.id.smsOk_Text);
+        phone_SmsTime = findViewById(R.id.smsTime_Text);
+        phone_SmsError = findViewById(R.id.smsError_Text);
+        phone_NumberError = findViewById(R.id.numberError_Text);
+        phone_SmsTimeout = findViewById(R.id.smsTimeout_Text);
+        smsSend_Btn = findViewById(R.id.smsSend_button);
+        smsCheck_Btn = findViewById(R.id.smsCheck_button);
+        smsSend_Block = findViewById(R.id.smsSend_Block);
+        smsCheck_Block = findViewById(R.id.smsCheck_Block);
+        phone_SmsEmpty = findViewById(R.id.smsEmpty_Text);
+        nickname_Using = findViewById(R.id.nickname_Using);
+        nickname_Useable = findViewById(R.id.nickname_Useable);
+        nickname_Error = findViewById(R.id.nickname_Error);
+
+        idThread = new IdinfoThread();
+        pwThread = new PwinfoThread();
+        nicknameThread = new NicknameinfoThread();
+
+        handler = new Handler();
+
+    }  // setVariable()
+
+
+    /*
+    클릭 리스너 세팅
+     */
+    public void setListener() {
 
         // ▼ 아이디 텍스트 변경 시 이벤트 처리 ▼
         signup_id.addTextChangedListener(new TextWatcher() {
@@ -604,6 +541,8 @@ public class Signup extends AppCompatActivity {
                 frameLayout_3.startAnimation(left_in);
                 frameLayout_3.setVisibility(View.VISIBLE);
 
+                verifyStoragePermissions(Signup.this);
+
             }
         });
 
@@ -870,9 +809,91 @@ public class Signup extends AppCompatActivity {
                     }
                 });
 
+    } // setListener()
 
-    } // onStart()
 
+    /*
+    권한 확인
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+
+        int WRITE_PERMISSION = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int READ_PERMISSION = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (WRITE_PERMISSION != PackageManager.PERMISSION_GRANTED
+                || READ_PERMISSION != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+        }
+
+    } // verifyStoragePermissions()
+
+
+    /*
+    휴대폰 인증 문자 전송
+     */
+    public void sendSms(String phoneNumber) {
+
+        auth = FirebaseAuth.getInstance();
+
+        PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+            // 인증 성공 시 처리
+            @Override
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+
+                Log.d(TAG, "onVerificationCompleted: " + phoneAuthCredential.getSmsCode());
+                smsCode = phoneAuthCredential.getSmsCode();
+
+            }
+
+            // 인증 실패 시 처리
+            @Override
+            public void onVerificationFailed(@NonNull FirebaseException e) {
+
+                Log.d(TAG, "onVerificationFailed: " + e);
+
+                if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    Log.d(TAG, "onVerificationFailed : 잘못된 요청");
+                } else if (e instanceof FirebaseTooManyRequestsException) {
+                    Log.d(TAG, "onVerificationFailed : sms 할당량 초과");
+                } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
+                    Log.d(TAG, "onVerificationFailed : 확인된 reCAPTCHA 없음");
+                }
+
+            }
+
+            // 인증 번호 전송 시 처리
+            @Override
+            public void onCodeSent(@NonNull String verificationId,
+                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
+
+                Log.d(TAG, "onCodeSent:" + verificationId);
+
+                String mResendToken = token.toString();
+
+                Log.d(TAG, "onCodeSent - token : " + mResendToken);
+            }
+
+        };
+
+        auth = FirebaseAuth.getInstance();
+        auth.setLanguageCode("ko");
+
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(auth)
+                        .setPhoneNumber(phoneNumber)
+                        .setTimeout(120L, TimeUnit.SECONDS)
+                        .setActivity(this)
+                        .setCallbacks(callbacks)
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+
+    } // smsSend()
+
+
+    /*
+    인증 번호 클릭 시 동작
+     */
     public void phoneCheckOnClick() {
 
         smsTimeThread = new SmsTimeThread();
@@ -903,11 +924,14 @@ public class Signup extends AppCompatActivity {
 
         sendSms(phoneNum);
 
-    }
+    } // phoneCheckOnClick()
 
 
-    //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
+    /*
+    Uri -- > 절대경로로 바꿔서 리턴
+     */
     String getRealPathFromUri(Uri uri) {
+
         String[] proj = {MediaStore.Images.Media.DATA};
         CursorLoader loader = new CursorLoader(this, uri, proj, null, null, null);
         Cursor cursor = loader.loadInBackground();
@@ -915,12 +939,17 @@ public class Signup extends AppCompatActivity {
         cursor.moveToFirst();
         String result = cursor.getString(column_index);
         cursor.close();
+
         return result;
-    }
+
+    } // getRealPathFromUri()
 
 
-    // ▼ 소셜 로그인으로 진입 시 안내 문구 다이얼로그 ▼
+    /*
+    소셜 로그인으로 진입 시 안내 문구 다이얼로그
+     */
     public void infoDlg() {
+
         AlertDialog.Builder reset = new AlertDialog.Builder(Signup.this);
         reset.setTitle("추가 정보 수집");
         reset.setMessage("본 앱에서는 한 사용자의 다중 계정 사용 방지를 위해 휴대폰 인증을 진행합니다.");
@@ -931,7 +960,8 @@ public class Signup extends AppCompatActivity {
 
         AlertDialog resetDlg = reset.create();
         resetDlg.show();
-    }
+
+    } // infoDlg()
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -939,7 +969,9 @@ public class Signup extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    // ▼ SMS 인증 남은 시간 스레드 ▼
+    /*
+    SMS 인증 남은 시간 스레드
+     */
     public class SmsTimeThread extends Thread {
 
         public void run() {
@@ -995,10 +1027,12 @@ public class Signup extends AppCompatActivity {
 
         }
 
-    }
+    } // SmsTimeThread
 
 
-    // ▼ 아이디 입력 안내 스레드 ▼
+    /*
+    아이디 입력 안내 스레드
+     */
     private class IdinfoThread extends Thread {
 
         public void run() {
@@ -1032,10 +1066,12 @@ public class Signup extends AppCompatActivity {
 
         }
 
-    }
+    } // IdinfoThread
 
 
-    // ▼ 비밀번호 입력 안내 스레드 ▼
+    /*
+    비밀번호 입력 안내 스레드
+     */
     public class PwinfoThread extends Thread {
 
         public void run() {
@@ -1069,10 +1105,12 @@ public class Signup extends AppCompatActivity {
 
         }
 
-    }
+    } // PwinfoThread
 
 
-    // ▼ 닉네임 입력 안내 스레드 ▼
+    /*
+    닉네임 입력 안내 스레드
+     */
     public class NicknameinfoThread extends Thread {
 
         public void run() {
@@ -1106,7 +1144,7 @@ public class Signup extends AppCompatActivity {
 
         }
 
-    }
+    } // NicknameinfoThread
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1114,6 +1152,9 @@ public class Signup extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+    /*
+    회원가입 완료 버튼 클릭 시 동작
+     */
     public void Signup(File file, HashMap map) {
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -1146,6 +1187,7 @@ public class Signup extends AppCompatActivity {
                         startActivity(intent);
                         finish();
 
+
                         ((Login) Login.context).finish();
                         ((Start) Start.context).finish();
 
@@ -1164,10 +1206,12 @@ public class Signup extends AppCompatActivity {
             }
         });
 
-    }
+    } // Signup()
 
 
-    // ▼ 아이디 중복 검사 ▼
+    /*
+    아이디 중복 검사
+     */
     public void idCheck(String id) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -1218,7 +1262,9 @@ public class Signup extends AppCompatActivity {
     }  // idCheck()
 
 
-    // ▼ 닉네임 중복 검사 ▼
+    /*
+    닉네임 중복 검사
+     */
     public void nicknameCheck(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -1260,7 +1306,10 @@ public class Signup extends AppCompatActivity {
 
     }  // nicknameCheck()
 
-    // ▼ 핸드폰 중복 검사 ▼
+
+    /*
+    핸드폰 중복 검사
+     */
     public void phoneCheck(String phone) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<String> call = apiInterface.getPhoneCheck(phone);
@@ -1308,6 +1357,10 @@ public class Signup extends AppCompatActivity {
 
     } // phoneCheck()
 
+
+    /*
+    휴대폰 번호 중복 시 안내 다이얼로그
+     */
     public void phoneDlg(String loginType) {
 
         String message;
@@ -1331,7 +1384,7 @@ public class Signup extends AppCompatActivity {
                 .create()
                 .show();
 
-    }
+    } // phoneDlg()
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1339,7 +1392,9 @@ public class Signup extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    // ▼ 3페이지의 submit 시, 마지막 정규식 점검 ▼
+    /*
+    3페이지의 submit 시, 마지막 정규식 점검
+     */
     private boolean signupCheck() {
 
         idRule = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\\.[a-zA-Z]{2,3}$";
@@ -1390,7 +1445,9 @@ public class Signup extends AppCompatActivity {
     }  // signupCheck()
 
 
-    // ▼ 소셜 로그인 회원가입 절차의 정규식 점검 ▼
+    /*
+    소셜 로그인 회원가입 절차의 정규식 점검
+     */
     private boolean signupCheck2() {
 
         phoneRule = "^\\d{10,11}$";
@@ -1414,10 +1471,12 @@ public class Signup extends AppCompatActivity {
             return true;
         }
 
-    }
+    } // signupCheck2()
 
 
-    // ▼ 아이디 정규식 점검 ▼
+    /*
+    아이디 정규식 점검
+     */
     private boolean idRuleCheck2() {
         idRule = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\\.[a-zA-Z]{2,3}$";
         pattern_id = Pattern.compile(idRule);
@@ -1434,14 +1493,17 @@ public class Signup extends AppCompatActivity {
             nextBlock_1.setVisibility(View.VISIBLE);
 
             return false;
-        } else {
 
+        } else {
             return true;
         }
-    }
+
+    } // idRuleCheck2()
 
 
-    // ▼ 비밀번호 정규식 점검 ▼
+    /*
+    비밀번호 정규식 점검
+     */
     private boolean pwRuleCheck() {
         pwRule = "^.*(?=^.{8,12}$)(\\w)(?=.*[!@#$%^&+=]).*$";
         pattern_pw = Pattern.compile(pwRule);
@@ -1456,14 +1518,17 @@ public class Signup extends AppCompatActivity {
             nextBlock_1.setVisibility(View.VISIBLE);
 
             return false;
+
         } else {
             return true;
         }
 
-    }
+    } // pwRuleCheck()
 
 
-    // ▼ 비밀번호확인 점검 ▼
+    /*
+    비밀번호확인 점검
+     */
     private boolean pwCheckRuleCheck() {
         edit_pw = signup_pw.getText().toString();
         edit_pwCheck = signup_pwCheck.getText().toString();
@@ -1474,14 +1539,17 @@ public class Signup extends AppCompatActivity {
             nextBlock_1.setVisibility(View.VISIBLE);
 
             return false;
+
         } else {
             return true;
         }
 
-    }
+    } // pwCheckRuleCheck()
 
 
-    // ▼ 닉네임 정규식 점검 ▼
+    /*
+    닉네임 정규식 점검
+     */
     private boolean nicknameRuleCheck() {
         nicknameRule = "^\\w{2,12}$";
         pattern_nick = Pattern.compile(nicknameRule);
@@ -1501,8 +1569,13 @@ public class Signup extends AppCompatActivity {
         } else {
             return true;
         }
-    }
 
+    } // nicknameRuleCheck()
+
+
+    /*
+    휴대폰 번호 정규식 점검
+     */
     private boolean phoneRuleCheck() {
 
         phoneRule = "^\\d{10,11}$";
@@ -1515,9 +1588,12 @@ public class Signup extends AppCompatActivity {
             return true;
         }
 
-    }
+    } // phoneRuleCheck()
 
 
+    /*
+    로그인 타입 확인
+     */
     public void checkLoginType() {
 
         // ▼ 일반 회원가입 or 소셜 로그인 경로의 회원가입 구분 ▼
@@ -1538,7 +1614,6 @@ public class Signup extends AppCompatActivity {
                     .load(kakaoImage)
                     .into(photo_Btn);
 
-//            imagePath = getRealPathFromUri(Uri.parse(kakaoImage));
             imagePath = kakaoImage;
             edit_id = kakaoId;
 
@@ -1577,118 +1652,5 @@ public class Signup extends AppCompatActivity {
 
     } // checkLoginType()
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop() 호출됨");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart() 호출됨");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy() 호출됨");
-    }
-
-    // ▼ 뷰 세팅 ▼
-    public void setView() {
-
-        frameLayout_1 = findViewById(R.id.signup_frameLayout1);
-        frameLayout_2 = findViewById(R.id.signup_frameLayout2);
-        frameLayout_3 = findViewById(R.id.signup_frameLayout3);
-        id_Info = findViewById(R.id.signup_idInfo);
-        pw_Info = findViewById(R.id.signup_pwInfo);
-        nickname_Info = findViewById(R.id.signup_nicknameInfo);
-
-        signup_id = findViewById(R.id.signup_id);
-        signup_pw = findViewById(R.id.signup_pw);
-        signup_pwCheck = findViewById(R.id.signup_pwCheck);
-        signup_phone = findViewById(R.id.signup_phone);
-        signup_phoneCheck = findViewById(R.id.signup_CheckNum);
-        signup_nickname = findViewById(R.id.signup_nickname);
-
-        nextBtn_1 = findViewById(R.id.signupNext1_button);
-        nextBtn_2 = findViewById(R.id.signupNext2_button);
-        submitBtn = findViewById(R.id.signupSubmit_button);
-
-        nextBlock_1 = findViewById(R.id.signupNext1_Block);
-        nextBlock_2 = findViewById(R.id.signupNext2_Block);
-        submitBlock = findViewById(R.id.signupSubmit_Block);
-
-        backBtn_1 = findViewById(R.id.signupBack_Btn);
-        backBtn_2 = findViewById(R.id.signupBack_Btn2);
-        backBtn_3 = findViewById(R.id.signupBack_Btn3);
-        id_Btn = findViewById(R.id.signup_Idbtn);
-        pw_Btn = findViewById(R.id.signup_Pwbtn);
-        nickname_Btn = findViewById(R.id.signup_Nicknamebtn);
-        photo_Btn = findViewById(R.id.signup_Photo);
-
-        userShared = getSharedPreferences("로그인 정보", MODE_PRIVATE);
-        userEditor = userShared.edit();
-
-        authShared = getSharedPreferences("휴대폰 인증", MODE_PRIVATE);
-        authEditor = authShared.edit();
-
-        phoneCountText = findViewById(R.id.signUp_sendPhoneText);
-        phoneCount = authShared.getInt("남은 횟수", 0);
-        phoneCountText.setText("남은 인증 횟수 : " + String.valueOf(phoneCount));
-        if (phoneCount == 0) {
-            smsSend_Btn.setVisibility(View.INVISIBLE);
-        }
-
-        left_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_leftout);
-        left_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_leftin);
-        right_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_rightout);
-        right_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_rightin);
-        appear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_appear);
-        disappear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.frame_disappear);
-
-        id_Using = findViewById(R.id.id_Using);
-        id_Error = findViewById(R.id.id_Error);
-        id_Useable = findViewById(R.id.id_Useable);
-        pw_Error = findViewById(R.id.pw_Error);
-        pw_Useable = findViewById(R.id.pw_Useable);
-        pwCheck_Error = findViewById(R.id.pwCheck_Error);
-        pwCheck_Useable = findViewById(R.id.pwCheck_Useable);
-        phone_Send = findViewById(R.id.smsSend_Text);
-        phone_SmsOk = findViewById(R.id.smsOk_Text);
-        phone_SmsTime = findViewById(R.id.smsTime_Text);
-        phone_SmsError = findViewById(R.id.smsError_Text);
-        phone_NumberError = findViewById(R.id.numberError_Text);
-        phone_SmsTimeout = findViewById(R.id.smsTimeout_Text);
-        smsSend_Btn = findViewById(R.id.smsSend_button);
-        smsCheck_Btn = findViewById(R.id.smsCheck_button);
-        smsSend_Block = findViewById(R.id.smsSend_Block);
-        smsCheck_Block = findViewById(R.id.smsCheck_Block);
-        phone_SmsEmpty = findViewById(R.id.smsEmpty_Text);
-        nickname_Using = findViewById(R.id.nickname_Using);
-        nickname_Useable = findViewById(R.id.nickname_Useable);
-        nickname_Error = findViewById(R.id.nickname_Error);
-
-        idThread = new IdinfoThread();
-        pwThread = new PwinfoThread();
-        nicknameThread = new NicknameinfoThread();
-
-        handler = new Handler();
-
-    }  // setView()
 
 }

@@ -40,39 +40,39 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
         ChatRoom_Adapter.ViewHolder viewHolder = new ChatRoom_Adapter.ViewHolder(view);
 
         return viewHolder;
-    }
+
+    } // onCreateViewHolder()
+
 
     @Override
     public void onBindViewHolder(@NonNull ChatRoom_Adapter.ViewHolder holder,int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
+
         holder.onBind(arrayList.get(holder.getAdapterPosition()));
-    }
+
+    } // onBindViewHolder()
+
 
     public void setItemChatRoom(ArrayList<Chat> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
         this.arrayList = list;
-
         notifyDataSetChanged();
-    }
+
+    } // setItemChatRoom()
+
 
     @Override
     public int getItemCount() {
-//        Log.d(TAG, "getItemCount() 호출됨");
-//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
-
         return arrayList.size();
+    } // getItemCount()
 
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout chatRoomLayout;
         ImageView profileImage;
-        TextView nicknameText;
-        TextView messageText;
-        TextView dateText;
-        TextView notReadText;
+        TextView nicknameText, messageText, dateText, notReadText;
 
         boolean userStatus = false;
 
@@ -119,8 +119,6 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
 
                 Glide.with(context)
                         .load(ApiClient.serverProfileImagePath + item.getSenderImage())
-//                        .transition(withCrossFade(factory))
-//                        .placeholder(R.drawable.loading2)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(profileImage);
@@ -177,8 +175,6 @@ public class ChatRoom_Adapter extends RecyclerView.Adapter<ChatRoom_Adapter.View
             });
 
         } // onBind
-
-//
 
     } // ViewHolder
 

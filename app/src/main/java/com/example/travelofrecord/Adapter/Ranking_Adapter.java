@@ -44,29 +44,32 @@ public class Ranking_Adapter extends RecyclerView.Adapter<Ranking_Adapter.ViewHo
         Ranking_Adapter.ViewHolder viewHolder = new Ranking_Adapter.ViewHolder(view);
 
         return viewHolder;
-    }
+
+    } // onCreateViewHolder()
+
 
     @Override
     public void onBindViewHolder(@NonNull Ranking_Adapter.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
         holder.onBind(postData.get(holder.getAdapterPosition()));
-    }
+    } // onBindViewHolder()
 
-    // 뷰와 데이터를 연결해줌
+
     public void setRankItem(ArrayList<PostData> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
         this.postData = list;
         notifyDataSetChanged();
-    }
+
+    } // setRankItem()
 
     @Override
     public int getItemCount() {
         return postData.size();
-    }
+    } // getItemCount()
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView rankText;
         TextView nickname;

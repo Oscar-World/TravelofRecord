@@ -2,7 +2,6 @@ package com.example.travelofrecord.Fragment;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -17,14 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.travelofrecord.Activity.DirectMessage;
-import com.example.travelofrecord.Activity.Home;
 import com.example.travelofrecord.Adapter.ChatRoom_Adapter;
 import com.example.travelofrecord.Data.Chat;
 import com.example.travelofrecord.Function.GetTime;
@@ -39,8 +35,6 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,8 +43,11 @@ import retrofit2.Response;
 public class Fragment_Dm extends Fragment {
 
     String TAG = "채팅 프래그먼트";
+    String currentNickname, roomName, message, dateMessage;
+    int notReadMessage;
+    String ip = "3.34.246.77";
+    int port = 8888;
     View v;
-
     TextView noChatRoomText;
     ImageView chatRoomLoadingIv;
     Animation rotate;
@@ -58,45 +55,25 @@ public class Fragment_Dm extends Fragment {
     ImageButton addChatBtn;
     ChatRoom_Adapter adapter;
     ArrayList<Chat> arrayList;
-
     GetTime getTime;
-
     SharedPreferences sharedPreferences;
-    String currentNickname;
-
-    Bundle bundle;
-    String postNickname;
-
     Handler handler;
     Socket socket;
     PrintWriter printWriter;
-    String ip = "3.34.246.77";
-    int port = 8888;
-
-    String roomName;
-    String message;
-    String dateMessage;
-    int notReadMessage;
     Chat chat;
 
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.d(TAG, "onAttach() 호출");
-    }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate() 호출");
-    }
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         Log.d(TAG, "onCreateView() 호출");
         v = inflater.inflate(R.layout.fragment_dm, container, false);
         return v;
-    }
+
+    } // onCreateView()
+
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -105,28 +82,22 @@ public class Fragment_Dm extends Fragment {
         setVariable();
         setView();
 
+    } // onViewCreated()
 
-    }
+
     @Override
     public void onStart() {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
+
         getRoom(currentNickname);
         SocketThread thread = new SocketThread();
         thread.start();
         deleteNoti();
-    }
-    @Override
-    public void onResume() {
-        Log.d(TAG, "onResume() 호출");
-        super.onResume();
-    }
-    @Override
-    public void onPause() {
-        Log.d(TAG, "onPause() 호출");
-        super.onPause();
 
-    }
+    } // onStart()(
+
+
     @Override
     public void onStop() {
         Log.d(TAG, "onStop() 호출");
@@ -135,18 +106,12 @@ public class Fragment_Dm extends Fragment {
         LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
         thread.start();
 
-    }
-    @Override
-    public void onDestroyView() {
-        Log.d(TAG, "onDestroyView() 호출");
-        super.onDestroyView();
-    }
-    @Override
-    public void onDetach() {
-        Log.d(TAG, "onDetach() 호출");
-        super.onDetach();
-    }
+    } // onStop()
 
+
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         noChatRoomText = v.findViewById(R.id.noChatRoom_Text);
@@ -167,32 +132,17 @@ public class Fragment_Dm extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         currentNickname = sharedPreferences.getString("nickname", "");
 
-//        bundle = getArguments();
-
-//        try {
-//
-//            if (bundle.getString("postNickname") != null) {
-//                Log.d(TAG, "getArguments : " + bundle.getString("postNickname"));
-//                postNickname = bundle.getString("postNickname");
-//            } else {
-//                Log.d(TAG, "getArguments : null");
-//            }
-//
-//        } catch (NullPointerException e) {
-//            Log.d(TAG, "NullPointerException : " + e);
-//            Log.d(TAG, "getArguments : null");
-//        }
-
         handler = new Handler();
 
 
     } // setVariable()
 
 
-
+    /*
+    뷰 초기화
+     */
     public void setView() {
 
-// 채팅 상대 검색하는 액티비티 추가 예정.
         addChatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -208,6 +158,10 @@ public class Fragment_Dm extends Fragment {
 
     // --------------------------------------------------------------------------------------
 
+
+    /*
+    소켓 통신 스레드
+     */
     class SocketThread extends Thread {
 
         public void run() {
@@ -243,6 +197,9 @@ public class Fragment_Dm extends Fragment {
     } // SocketThread
 
 
+    /*
+    채팅 응답 시 관련 뷰 업데이트
+     */
     class messageUpdate implements Runnable {
 
         String message;
@@ -262,8 +219,13 @@ public class Fragment_Dm extends Fragment {
             getRoom(currentNickname);
 
         }
-    }
 
+    } // messageUpdate
+
+
+    /*
+    채팅방 목록 진입 내역 입력
+     */
     class LoginPrintWriterThread extends Thread {
 
         @Override
@@ -278,8 +240,12 @@ public class Fragment_Dm extends Fragment {
             }
         }
 
-    }
+    } // LoginPrintWriterThread
 
+
+    /*
+    채팅방 목록 퇴장 내역 입력
+     */
     class LogoutPrintWriterThread extends Thread {
 
         @Override
@@ -299,12 +265,15 @@ public class Fragment_Dm extends Fragment {
             }
         }
 
-    }
+    } // LogoutPrintWriterThread
 
 
     // --------------------------------------------------------------------------------------
 
 
+    /*
+    채팅방 목록 데이터 불러오기
+     */
     public void getRoom(String nickname) {
 
         arrayList.clear();
@@ -363,21 +332,6 @@ public class Fragment_Dm extends Fragment {
 
                     }
 
-//                    if (postNickname != null) {
-//                        Log.d(TAG, "postNickname : " + postNickname);
-//
-//                        Intent i = new Intent(getActivity(), DirectMessage.class);
-//                        i.putExtra("postNickname", postNickname);
-//                        startActivity(i);
-//
-//                        bundle = null;
-//
-//                    } else {
-//                        Log.d(TAG, "postNickname is null");
-//                    }
-
-
-
                 } else {
                     Log.d(TAG, "getRoom - onResponse isFailure");
                 }
@@ -392,13 +346,16 @@ public class Fragment_Dm extends Fragment {
 
     } // getRoom()
 
+
+    /*
+    채팅방 알림 삭제
+     */
     public void deleteNoti() {
 
         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
-//        notificationManager.cancel(0);
 
-    }
+    } // deleteNoti()
 
 
 }

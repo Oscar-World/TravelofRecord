@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -32,18 +31,14 @@ import com.example.travelofrecord.R;
 public class Start extends AppCompatActivity {
 
     String TAG = "시작 액티비티";
-
     TextView title_Text;
     Button login_Btn;
     ImageView imageView;
-
     Handler handler;
-    Animation animation;
+    Animation animation, apperAnim;
     TextThread textThread;
     WaitThread waitThread;
     InThread inThread;
-    Animation apperAnim;
-
     SharedPreferences sharedPreferences;
     String shared;
     public static Context context;
@@ -60,12 +55,12 @@ public class Start extends AppCompatActivity {
         setVariable();
         setView();
 
-    }
+    } // onCreate()
 
 
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() 호출");
 
@@ -77,45 +72,32 @@ public class Start extends AppCompatActivity {
             waitThread.start();
         }
 
-    }
+    } // onStart()
+
 
     @Override
-    protected void onResume(){
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        Log.d(TAG, "onStop() 호출됨");
-    }
-
-    @Override
-    protected void onRestart(){
+    protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart() 호출됨");
+
         title_Text.setVisibility(View.GONE);
         login_Btn.setVisibility(View.GONE);
-    }
 
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        Log.d(TAG, "onDestroy() 호출됨");
-    }
+    } // onRestart()
 
+
+    /*
+    시스템 뒤로가기 버튼 클릭 이벤트
+     */
     @Override
     public void onBackPressed() {
         backBtn.onBackPressed();
-    }
+    } // onBackPressed()
 
+
+    /*
+    초기 변수 세팅
+     */
     public void setVariable() {
 
         title_Text = findViewById(R.id.Title_text);
@@ -128,8 +110,12 @@ public class Start extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("로그인 정보", MODE_PRIVATE);
         shared = sharedPreferences.getString("id", "");
 
-    }
+    } // setVariable()
 
+
+    /*
+    초기 뷰 세팅
+     */
     public void setView() {
 
         login_Btn.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +158,9 @@ public class Start extends AppCompatActivity {
     } // setView()
 
 
+    /*
+    타이틀 텍스트 애니메이션 처리 스레드
+     */
     public class TextThread extends Thread {
 
         public void run() {
@@ -197,6 +186,10 @@ public class Start extends AppCompatActivity {
 
     } // TextThread
 
+
+    /*
+    딜레이 스레드
+     */
     public class WaitThread extends Thread {
 
         public void run() {
@@ -224,6 +217,10 @@ public class Start extends AppCompatActivity {
 
     } // WaitThread
 
+
+    /*
+    딜레이 후 화면 전환 처리 스레드
+     */
     public class InThread extends Thread {
         public void run() {
 
@@ -237,7 +234,8 @@ public class Start extends AppCompatActivity {
             startActivity(i);
             finish();
         }
-    }
+
+    } // InThread
 
 
 }

@@ -69,7 +69,7 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return new AdViewHolder(view);
         }
 
-    }
+    } // onCreateViewHolder()
 
 
     @Override
@@ -81,56 +81,47 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((Home_Adapter.AdViewHolder) holder).onBind(postData.get(holder.getAdapterPosition()));
         }
 
-    }
+    } // onBindViewHolder()
 
 
     public void setItemPost(ArrayList<PostData> list) {
         this.postData = list;
         notifyDataSetChanged();
-    }
+    } // setItemPost()
 
 
     @Override
     public int getItemCount() {
         return postData.size();
-    }
+    } // getItemCount()
+
 
     @Override
     public int getItemViewType(int position) {
         return postData.get(position).getViewType();
-    }
+    } // getItemViewType()
+
 
     private OnItemLongClickListener itemLongClickListener;
     public interface OnItemLongClickListener {
         void onItemLongClick(int postNum);
     }
 
+
     public void setOnItemLongClickListener(OnItemLongClickListener listener) {
         this.itemLongClickListener = listener;
     }
 
+
     public class MainViewHolder extends RecyclerView.ViewHolder {
 
-        TextView post_Nickname;
-        ImageView post_ProfileImage;
-        TextView post_Location;
-        ImageView post_PostImage;
-        TextView post_DateCreated;
-        TextView post_Writing;
-        TextView post_SeeMore;
-        TextView post_Summary;
-        ImageView post_Heart;
-        ImageView post_HeartFull;
-        TextView post_HeartNum;
-        TextView post_CommentNum;
+        TextView post_Nickname, post_Location, post_DateCreated, post_Writing, post_SeeMore, post_Summary, post_HeartNum, post_CommentNum;
+        ImageView post_ProfileImage, post_PostImage, post_Heart, post_HeartFull;
+        LinearLayout linearLayout;
 
         SharedPreferences sharedPreferences;
         String nickname;
-
-        LinearLayout linearLayout;
-
         DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
-
         HeartEventBus heartEventBus;
         CommentNumAddEventBus commentNumAddEventBus;
         CommentNumDeleteEventBus commentNumDeleteEventBus;
@@ -163,7 +154,6 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             eventBusCommentNumDelete = EventBus.getDefault();
 
         }
-
 
         void onBind(PostData item) {
 
@@ -461,6 +451,7 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     } // MainViewHolder
 
+
     public class AdViewHolder extends RecyclerView.ViewHolder {
 
         TextView ad_NicknameText;
@@ -492,9 +483,9 @@ public class Home_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     .load(Integer.parseInt(item.getPostImage()))
                     .into(ad_PostImage);
 
-        }
+        } // onBind()
 
-    }
+    } // AdViewHolder
 
 
 } // Home_Adapter

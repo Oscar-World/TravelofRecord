@@ -1,6 +1,5 @@
 package com.example.travelofrecord.Adapter;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,22 +10,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Data.Chat;
-import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.R;
-
 import java.util.ArrayList;
+
 
 public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     String TAG = "채팅 어댑터";
     Context context;
     ArrayList<Chat> arrayList;
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,7 +41,8 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return new CenterViewHolder(view);
         }
 
-    }
+    } // onCreateViewHolder()
+
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder,int position) {
@@ -58,22 +55,26 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((CenterViewHolder) holder).onBind(arrayList.get(holder.getAdapterPosition()));
         }
 
-    }
+    } // onBindViewHolder()
+
 
     @Override
     public int getItemCount() {
         return arrayList.size();
-    }
+    } // getItemCount()
+
 
     @Override
     public int getItemViewType(int position) {
         return arrayList.get(position).getViewType();
-    }
+    } // getItemViewType()
+
 
     public void setItemChat(ArrayList<Chat> arrayList) {
         this.arrayList = arrayList;
         notifyDataSetChanged();
-    }
+    } // setItemChat()
+
 
     public class CenterViewHolder extends RecyclerView.ViewHolder {
 
@@ -90,8 +91,7 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
-    }
-
+    } // CenterViewHolder
 
 
     public class LeftViewHolder extends RecyclerView.ViewHolder {
@@ -100,7 +100,6 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView leftChatNicknameText;
         TextView leftChatMessageText;
         TextView leftChatDateText;
-
 
         public LeftViewHolder(View view) {
             super(view);
@@ -140,9 +139,10 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             }
 
-        }
+        } // onBind()
 
-    }
+    } // LeftViewHolder
+
 
     public class RightViewHolder extends RecyclerView.ViewHolder {
 
@@ -177,6 +177,6 @@ public class Chat_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
-    }
+    } // RightViewHolder
 
 }

@@ -9,7 +9,6 @@ import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -68,39 +67,23 @@ import ted.gun0912.clustering.naver.TedNaverClustering;
 public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
 
     String TAG = "하트 프래그먼트";
+    String post_Nickname, post_ProfileImage, post_Location, post_PostImage, post_Writing, post_DateCreated, post_WhoLike, addressHeart, nickname;
+    int itemSize, post_Num, post_Heart, post_CommentNum, networkStatus, putNum;
+    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
+    double latitude, longitude, currentLatitude, currentLongitude;
+    boolean heartStatus;
     View v;
     GetAddress getAddress = new GetAddress();
-
-    private Button photo_Btn;
-    private Button map_Btn;
-    private Button photo_Block;
-    private Button map_Block;
-
+    Button photo_Btn, map_Btn, photo_Block, map_Block;
     RecyclerView recyclerView;
-    TextView noHeartText;
-    ImageView loadingIv;
-    Animation rotate;
-
+    TextView noHeartText, mapDrawerText;
+    ImageView loadingIv, mapDrawerImage;
+    FrameLayout mapDrawer;
+    LinearLayout mapDrawerDown;
+    Animation rotate, appear, disappear;
     ArrayList<PostData> post_Data_ArrayList;
     Heart_Adapter adapter;
     ArrayList<PostData> data;
-
-    int itemSize;
-
-    int post_Num;
-    String post_Nickname;
-    String post_ProfileImage;
-    int post_Heart;
-    int post_CommentNum;
-    String post_Location;
-    String post_PostImage;
-    String post_Writing;
-    String post_DateCreated;
-    String post_WhoLike;
-    boolean heartStatus;
-
-    String nowAddr;
-    String addressHeart;
 
     // 위치 정보 권한 상수
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -109,57 +92,36 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
-    double latitude;
-    double longitude;
-    double currentLatitude;
-    double currentLongitude;
-
     SharedPreferences sharedPreferences;
-    String nickname;
-
     MapView mapView;
     NaverMap naverMap;
     private FusedLocationProviderClient fusedLocationClient;
-    int networkStatus;
-
     ArrayList<Markers> markerList;
     Markers markers;
-
-    FrameLayout mapDrawer;
-    LinearLayout mapDrawerDown;
-    ImageView mapDrawerImage;
-    TextView mapDrawerText;
-
-    Animation appear;
-    Animation disappear;
-
-    int putNum;
+    Marker marker;
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.d(TAG, "onAttach() 호출");
-    }
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate() 호출");
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() 호출");
         v = inflater.inflate(R.layout.fragment_heart, container, false);
         return v;
-    }
+
+    } // onCreateView()
+
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출");
+
         mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-    }
+
+    } // onViewCreated()
+
+
     @Override
     public void onStart() {
         Log.d(TAG, "onStart() 호출");
@@ -170,46 +132,57 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         setView();
         getHeart(nickname);
 
-    }
+    } // onStart()
+
+
     @Override public void onResume() {
         Log.d(TAG, "onResume() 호출");
         super.onResume();
         mapView.onResume();
-    }
+    } // onResume()
+
+
     @Override public void onPause() {
         Log.d(TAG, "onPause() 호출");
         super.onPause();
         mapView.onPause();
-    }
+    } // onPause()
+
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
-    }
+    } // onSaveInstanceState()
+
+
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출");
         super.onStop();
         mapView.onStop();
-    }
+    } // onStop()
+
+
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출");
         super.onDestroyView();
         mapView.onDestroy();
-    }
-    @Override public void onDetach() {
-        Log.d(TAG, "onDetach() 호출");
-        super.onDetach();
-    }
+    } // onDestroyView()
+
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
-    }
+    } // onLowMemory()
 
 
     // ----------------------------------------------------------------------------------------------------------
 
 
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
@@ -244,8 +217,12 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
         appear = AnimationUtils.loadAnimation(getActivity(), R.anim.mapdrawer_appear);
         disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.mapdrawer_disappear);
 
-    }
+    } // setVariable()
 
+
+    /*
+    뷰 초기화
+     */
     public void setView() {
 
         loadingIv.setVisibility(View.VISIBLE);
@@ -350,15 +327,15 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             }
         });
 
-
     } //setView()
 
 
     // -------------------------------------------------------------------------------------------------------
 
-    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
-    Marker marker;
 
+    /*
+    지도 준비 완료 시
+     */
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         Log.d(TAG, "onMapReady() 호출");
@@ -416,8 +393,12 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
             }
         });
 
-    }
+    } // onMapReady()
 
+
+    /*
+    마커 추가
+     */
     public void addMarker() {
 
         if (data.size() > 0) {
@@ -456,12 +437,6 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
                             return marker;
                         }
                     })
-//                    .clusterBackground(new Function1<Integer, Integer>() {
-//                        @Override
-//                        public Integer invoke(Integer integer) {
-//                            return R.color.lightGreen;
-//                        }
-//                    })
                     .markerClickListener(new Function1<TedClusterItem, Unit>() {
                         @Override
                         public Unit invoke(TedClusterItem tedClusterItem) {
@@ -531,7 +506,9 @@ public class Fragment_Heart extends Fragment implements OnMapReadyCallback {
     } // addMarker()
 
 
-
+    /*
+    좋아요 데이터 불러오기
+     */
     public void getHeart(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);

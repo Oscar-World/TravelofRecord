@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.travelofrecord.Data.User;
 import com.example.travelofrecord.Fragment.Fragment_Dm;
 import com.example.travelofrecord.Fragment.Fragment_Heart;
 import com.example.travelofrecord.Fragment.Fragment_Home;
@@ -28,7 +26,6 @@ import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Network.NetworkStatus;
 import com.example.travelofrecord.R;
-import com.google.android.gms.common.api.Api;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -39,28 +36,15 @@ import retrofit2.Response;
 public class Home extends AppCompatActivity {
 
     String TAG = "홈 액티비티";
-
-    ImageButton home_Btn;
-    ImageButton heart_Btn;
-    ImageButton add_Btn;
-    ImageButton dm_Btn;
-    ImageButton myProfile_Btn;
-
-    ImageButton homeFull_Btn;
-    ImageButton heartFull_Btn;
-    ImageButton addFull_Btn;
-    ImageButton dmFull_Btn;
-    ImageButton myProfileFull_Btn;
-    ImageButton dmRed_Btn;
-    ImageButton dmRedFull_Btn;
-
-    SharedPreferences sharedPreferences;
-    SharedPreferences sharedPreferences_Kakao;
-    SharedPreferences.Editor editor;
-    SharedPreferences.Editor editor_Kakao;
-    String sharedInfo;
-    String currentNickname;
-
+    String sharedInfo, currentNickname, fcmToken;
+    int networkStatus;
+    boolean messageStatus = false;
+    ImageButton home_Btn, heart_Btn, add_Btn, dm_Btn, myProfile_Btn, homeFull_Btn, heartFull_Btn, addFull_Btn, dmFull_Btn,
+            myProfileFull_Btn, dmRed_Btn, dmRedFull_Btn;
+    LinearLayout homeFootLayout;
+    FrameLayout homeBodyLayout;
+    SharedPreferences sharedPreferences, sharedPreferences_Kakao;
+    SharedPreferences.Editor editor, editor_Kakao;
     FragmentManager fragmentManager;
     FragmentTransaction transaction;
     Fragment_Home fragment_home;
@@ -68,48 +52,21 @@ public class Home extends AppCompatActivity {
     Fragment_add fragment_add;
     Fragment_Dm fragment_dm;
     Fragment_myProfile fragment_myProfile;
-
-    LinearLayout homeFootLayout;
-    FrameLayout homeBodyLayout;
-
     Bundle bundle;
-
-    int networkStatus;
-
-    String postNickname;
-    String fcmToken;
-
-    boolean messageStatus = false;
-
     BackBtn backBtn;
     OnBackPressedListener mBackListener;
-
     Handler handler;
 
-    public interface OnBackPressedListener {
-        void onBack();
-    }
 
-    public void setOnBackPressedListener(OnBackPressedListener listener) {
-        mBackListener = listener;
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        if (mBackListener != null) {
-            mBackListener.onBack();
-        }
-
-        backBtn.onBackPressed();
-
-    }
-
+    /*
+    인텐트 응답 대기
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         processIntent(intent);
         super.onNewIntent(intent);
-    }
+    } // onNewIntent()
+
     private void processIntent(Intent intent) {
         if (intent != null) {
 
@@ -138,7 +95,9 @@ public class Home extends AppCompatActivity {
             }
 
         }
-    }
+
+    } // processIntent()
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,66 +108,54 @@ public class Home extends AppCompatActivity {
         setVariable();
         setView();
 
-        Log.d(TAG, "쉐어드 정보 : " + sharedInfo);
         networkStatus = NetworkStatus.getConnectivityStatus(this);
 
-    }
+    } // onCreate()
+
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() 호출");
 
         getNoti(currentNickname);
 
-//        if (postNickname != null) {
-//            Log.d(TAG, "getIntent : " + postNickname);
-//            bundle.putString("postNickname", postNickname);
-//            fragment_dm.setArguments(bundle);
-//            fragmentChange(3);
-//
-//            postNickname = null;
-//
-//        } else {
-//            Log.d(TAG, "getIntent : null");
-//        }
+    } // onStart()
 
-    }
 
+    /*
+    시스템 뒤로가기 버튼 클릭 인터페이스
+     */
+    public interface OnBackPressedListener {
+        void onBack();
+    } // OnBackPressedListener
+
+    public void setOnBackPressedListener(OnBackPressedListener listener) {
+        mBackListener = listener;
+    } // setOnBackPressedListener
+
+    /*
+    시스템 뒤로가기 버튼 클릭 리스너
+     */
     @Override
-    protected void onResume(){
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
-    }
+    public void onBackPressed() {
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
-    }
+        if (mBackListener != null) {
+            mBackListener.onBack();
+        }
 
-    @Override
-    protected void onStop(){
-        super.onStop();
-        Log.d(TAG, "onStop() 호출됨");
-    }
+        backBtn.onBackPressed();
 
-    @Override
-    protected void onRestart(){
-        super.onRestart();
-        Log.d(TAG, "onRestart() 호출됨");
-    }
+    } // onBackPressed()
 
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        Log.d(TAG, "onDestroy() 호출됨");
-    }
 
 
     // --------------------------------------------------------------------------------------------
 
 
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         home_Btn = findViewById(R.id.home_Btn);
@@ -264,9 +211,6 @@ public class Home extends AppCompatActivity {
         homeFootLayout = findViewById(R.id.homeFoot_Layout);
         homeBodyLayout = findViewById(R.id.homeBody_Frame);
 
-//        Intent i = getIntent();
-//        postNickname = i.getStringExtra("postNickname");
-
         backBtn = new BackBtn(this, mBackListener);
 
         handler = new Handler();
@@ -274,6 +218,9 @@ public class Home extends AppCompatActivity {
     } // setvariable()
 
 
+    /*
+    뷰 초기화
+     */
     public void setView() {
 
         home_Btn.setOnClickListener(new View.OnClickListener() {
@@ -507,7 +454,9 @@ public class Home extends AppCompatActivity {
     // ----------------------------------------------------------------------------------------
 
 
-    // 일정 시간동안 버튼 안눌림 처리
+    /*
+    일정 시간동안 버튼 안눌림 처리 스레드
+     */
     public class ButtonThread extends Thread {
 
         public void run() {
@@ -548,10 +497,12 @@ public class Home extends AppCompatActivity {
 
         }
 
-    }
+    } // ButtonThread
 
 
-    // 프래그먼트 이동
+    /*
+    프래그먼트 이동
+     */
     public void fragmentChange(int index) {
 
         if (index == 0) {
@@ -566,9 +517,12 @@ public class Home extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.homeBody_Frame,fragment_myProfile).commitAllowingStateLoss();
         }
 
-    }
+    } // fragmentChange()
 
-    // 홈프래그먼트로 이동 + 번들 전달
+
+    /*
+    홈프래그먼트로 이동 + 번들 전달
+     */
     public void goHomeFragment(Bundle bundle) {
 
         fragment_home.setArguments(bundle);
@@ -585,8 +539,12 @@ public class Home extends AppCompatActivity {
         addFull_Btn.setVisibility(View.GONE);
         myProfileFull_Btn.setVisibility(View.GONE);
 
-    }
+    } // goHomeFragment()
 
+
+    /*
+    FCM 토큰 업데이트
+     */
     public void updateFcmToken(String nickname, String fcmToken) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -613,6 +571,10 @@ public class Home extends AppCompatActivity {
 
     } // updateFcmToken()
 
+
+    /*
+    안 읽은 메시지 확인
+     */
     public void getNoti(String currentNickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);

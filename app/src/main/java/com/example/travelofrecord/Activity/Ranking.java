@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.travelofrecord.Adapter.Ranking_Adapter;
 import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Function.GetTime;
@@ -38,45 +37,22 @@ import retrofit2.Response;
 public class Ranking extends AppCompatActivity {
 
     String TAG = "랭킹 액티비티";
-
-    ImageButton backBtn;
-    Button rankDayBtn;
-    Button rankDayBlock;
-    Button rankMonthBtn;
-    Button rankMonthBlock;
-    Button rankYearBtn;
-    Button rankYearBlock;
-
-    RecyclerView recyclerView;
-    ImageView loadingImage;
-
-    TextView userRankText;
-    ImageView userImage;
-    TextView userNicknameText;
-    TextView heartNumText;
-
-    LinearLayout userRankLayout;
-    LinearLayout noRankLayout;
-    FrameLayout noDataLayout;
-    TextView dateText;
-    TextView leftBtn;
-    TextView rightBtn;
-
-    ArrayList<PostData> arrayList;
-    Ranking_Adapter adapter;
-    ArrayList<PostData> data;
     String currentNickname;
-    ArrayList<PostData> monthList;
-    ArrayList<PostData> yearList;
-    ArrayList<PostData> dateList;
-
-    GetTime getTime;
-    Animation loading;
-    FrameLayout loadingLayout;
-
     boolean userDuplicate = false;
     int currentLocation = 0;
     int clickNum = 0;
+    ImageButton backBtn;
+    Button rankDayBtn, rankDayBlock, rankMonthBtn, rankMonthBlock, rankYearBtn, rankYearBlock;
+    RecyclerView recyclerView;
+    ImageView loadingImage, userImage;
+    TextView userRankText, userNicknameText, heartNumText, dateText, leftBtn, rightBtn;
+    LinearLayout userRankLayout, noRankLayout;
+    FrameLayout noDataLayout, loadingLayout;
+    ArrayList<PostData> arrayList, data, monthList, yearList, dateList;
+    Ranking_Adapter adapter;
+    GetTime getTime;
+    Animation loading;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,48 +60,15 @@ public class Ranking extends AppCompatActivity {
         setContentView(R.layout.activity_ranking);
 
         setVariable();
-        setView();
+        setListener();
         getRanking();
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart() 호출됨");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop() 호출됨");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart() 호출됨");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy() 호출됨");
-    }
+    } // onCreate()
 
 
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         backBtn = findViewById(R.id.rankingBack_Btn);
@@ -171,7 +114,10 @@ public class Ranking extends AppCompatActivity {
     } // setVariable()
 
 
-    public void setView() {
+    /*
+    클릭 리스너 세팅
+     */
+    public void setListener() {
 
         dateText.setText(getTime.getFormatTime44(getTime.getTime()));
         loadingImage.startAnimation(loading);
@@ -226,9 +172,12 @@ public class Ranking extends AppCompatActivity {
             }
         });
 
-    } // setView()
+    } // setListener()
 
 
+    /*
+    일자 클릭
+     */
     public void dayOnClick() {
 
         currentLocation = 0;
@@ -259,6 +208,9 @@ public class Ranking extends AppCompatActivity {
     } // dayOnClick()
 
 
+    /*
+    월 클릭
+     */
     public void monthOnClick() {
 
         currentLocation = 1;
@@ -289,6 +241,9 @@ public class Ranking extends AppCompatActivity {
     } // monthOnClick()
 
 
+    /*
+    년 클릭
+     */
     public void yearOnClick() {
 
         currentLocation = 2;
@@ -319,6 +274,10 @@ public class Ranking extends AppCompatActivity {
 
     } // yearOnClick()
 
+
+    /*
+    왼쪽 화살표 클릭
+     */
     public void leftOnClick() throws ParseException {
 
         dateList = new ArrayList<>();
@@ -427,6 +386,9 @@ public class Ranking extends AppCompatActivity {
     } // leftOnClick()
 
 
+    /*
+    오른쪽 화살표 클릭
+     */
     public void rightOnClick() throws ParseException {
 
         dateList = new ArrayList<>();
@@ -549,6 +511,9 @@ public class Ranking extends AppCompatActivity {
     } // rightOnClick()
 
 
+    /*
+    클래스 정렬 함수
+     */
     Comparator<PostData> sortByHeartNum = new Comparator<PostData>() {
         @Override
         public int compare(PostData postData, PostData t1) {
@@ -557,6 +522,9 @@ public class Ranking extends AppCompatActivity {
     };
 
 
+    /*
+    랭킹 데이터 불러오기
+     */
     public void getRanking() {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -645,6 +613,9 @@ public class Ranking extends AppCompatActivity {
     } // getRanking()
 
 
+    /*
+    리스트 정렬
+     */
     public void sortList(ArrayList<PostData> list) {
 
         Collections.sort(list, sortByHeartNum);
@@ -653,9 +624,12 @@ public class Ranking extends AppCompatActivity {
             list.set(i, new PostData(i + 1, list.get(i).getProfileImage(), list.get(i).getPostNickname(), list.get(i).getHeartNum()));
         }
 
-    } // setList()
+    } // sortList()
 
 
+    /*
+    사용자 랭킹 존재 여부
+     */
     public boolean userStatus(ArrayList<PostData> list) {
 
         for (int p = 0; p < list.size(); p++) {
@@ -682,6 +656,9 @@ public class Ranking extends AppCompatActivity {
     } // userStatus()
 
 
+    /*
+    랭킹 리스트 세팅
+     */
     public void setArrayList(ArrayList<PostData> list, int rank, String profileImage, String postNickname, int heartNum) {
 
         userDuplicate = false;
@@ -707,6 +684,9 @@ public class Ranking extends AppCompatActivity {
     } // setArrayList()
 
 
+    /*
+    랭킹 데이터 존재 여부
+     */
     public void listDataCheck(ArrayList<PostData> list) {
 
         if (list.size() == 0) {
@@ -720,6 +700,9 @@ public class Ranking extends AppCompatActivity {
     } // listDataCheck()
 
 
+    /*
+    랭킹 확인 버튼 클릭
+     */
     public void checkRightBtn() {
 
         String date = dateText.getText().toString();

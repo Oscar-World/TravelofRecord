@@ -34,6 +34,7 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
     SharedPreferences sharedPreferences;
     String currentNickname;
 
+
     @Override
     public Profile_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
@@ -43,29 +44,33 @@ public class Profile_Adapter extends RecyclerView.Adapter<Profile_Adapter.ViewHo
         Profile_Adapter.ViewHolder viewHolder = new Profile_Adapter.ViewHolder(view);
 
         return viewHolder;
-    }
+
+    } // onCreateViewHolder()
+
 
     @Override
     public void onBindViewHolder(@NonNull Profile_Adapter.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder() 호출됨");
         holder.onBind(postData.get(holder.getAdapterPosition()));
-    }
+    } // onBindViewHolder()
 
-    // 뷰와 데이터를 연결해줌
+
     public void setItemProfile(ArrayList<PostData> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
         this.postData = list;
         notifyDataSetChanged();
-    }
+
+    } // setItemProfile()
+
 
     @Override
     public int getItemCount() {
         return postData.size();
-    }
+    } // getItemCount()
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView proflie_PostImage;
         int networkStatus;

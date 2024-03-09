@@ -14,7 +14,6 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.PointF;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -55,9 +54,7 @@ import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
-import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
-import com.naver.maps.map.overlay.Overlay;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -75,75 +72,42 @@ import ted.gun0912.clustering.naver.TedNaverClustering;
 public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
     String TAG = "프로필 액티비티";
+    String getNickname, user_Nickname, user_ImagePath, user_Memo, post_Location, post_PostImage, post_Writing, post_DateCreated;
+    double latitude, longitude, currentLatitude, currentLongitude;
+    int networkStatus, post_Num, putNum;
+    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
     GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
-
     MapView mapView;
     NestedScrollView profileScrollView;
-    TextView profileNicknameText;
-    TextView profileMemoText;
-    Button profileInfoBtn;
-    Button profileInfoBlock;
-    Button profileMapBtn;
-    Button profileMapBlock;
-    ImageView profileImage;
-    ImageButton profileDmBtn;
-    ImageButton profileBackBtn;
-
-    FrameLayout loadingFrame;
-    ImageView loading_Iv;
-    Animation rotate;
-
-    String getNickname;
+    TextView profileNicknameText, profileMemoText, mapDrawerText, checkPositionText;
+    Button profileInfoBtn, profileInfoBlock, profileMapBtn, profileMapBlock;
+    ImageView profileImage, loading_Iv, mapDrawerImage;
+    ImageButton profileDmBtn, profileBackBtn;
+    FrameLayout loadingFrame, mapDrawer;
+    LinearLayout mapDrawerDown;
     ApiInterface apiInterface;
-
     RecyclerView profileRecyclerView;
     Profile_Adapter adapter;
-    ArrayList<PostData> postData_ArrayList;
-    ArrayList<PostData> data;
-
-    String user_Nickname;
-    String user_ImagePath;
-    String user_Memo;
-
+    ArrayList<PostData> postData_ArrayList, data;
     NaverMap naverMap;
-    double latitude;
-    double longitude;
+    ArrayList<Markers> markerList;
+    Markers markers;
+    Marker marker;
+    Animation appear, disappear, rotate;
+    EventBus eventBusPostDeleteProfile;
+    PostDeleteEventBusHome postDeleteEventBusProfile;
 
-    int networkStatus;
-
+    /*
+    권한 상수 초기화
+     */
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-
     private FusedLocationProviderClient fusedLocationClient;
-    double currentLatitude;
-    double currentLongitude;
 
-    int post_Num;
-    String post_Location;
-    String post_PostImage;
-    String post_Writing;
-    String post_DateCreated;
-
-    ArrayList<Markers> markerList;
-    Markers markers;
-
-    FrameLayout mapDrawer;
-    LinearLayout mapDrawerDown;
-    ImageView mapDrawerImage;
-    TextView mapDrawerText;
-    TextView checkPositionText;
-
-    Animation appear;
-    Animation disappear;
-
-    int putNum;
-
-    EventBus eventBusPostDeleteProfile;
-    PostDeleteEventBusHome postDeleteEventBusProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,9 +122,11 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         setView();
         checkUser(getNickname);
 
-    }
+    } // onCreate()
+
+
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() 호출됨");
         mapView.onStart();
@@ -178,27 +144,35 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             eventBusPostDeleteProfile.unregister(postDeleteEventBusProfile);
         }
 
-    }
+    } // onStart()
+
+
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() 호출됨");
         mapView.onResume();
-    }
+    } // onResume()
+
+
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() 호출됨");
         mapView.onPause();
-    }
+    } // onPause()
+
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "onSaveInstanceState() 호출됨");
         mapView.onSaveInstanceState(outState);
-    }
+    } // onSaveInstanceState()
+
+
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop() 호출됨");
         mapView.onStop();
@@ -207,14 +181,18 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             eventBusPostDeleteProfile.register(postDeleteEventBusProfile);
         }
 
-    }
+    } // onStop()
+
+
     @Override
-    protected void onRestart(){
+    protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart() 호출됨");
-    }
+    } // onRestart()
+
+
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy() 호출됨");
 
@@ -224,18 +202,23 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             eventBusPostDeleteProfile.unregister(postDeleteEventBusProfile);
         }
 
-    }
+    } // onDestroy()
+
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         Log.d(TAG, "onLowMemory() 호출됨");
         mapView.onLowMemory();
-    }
+    } // onLowMemory()
 
 
     // ---------------------------------------------------------------------------------------------------
 
 
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         loadingFrame = findViewById(R.id.profileLoading_Frame);
@@ -284,6 +267,9 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     } // setVariable()
 
 
+    /*
+    뷰 초기화
+     */
     public void setView() {
 
         loadingFrame.setVisibility(View.VISIBLE);
@@ -426,11 +412,13 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     } // setView()
 
 
+
     // ---------------------------------------------------------------------------------------------
 
-    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
-    Marker marker;
 
+    /*
+    네이버 지도 세팅 완료 시
+     */
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         Log.d(TAG, "onMapReady() 호출");
@@ -470,10 +458,12 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
             }
         });
 
+    } // onMapReady()
 
-    }
 
-
+    /*
+    마커 추가 작업
+     */
     public void addMarker() {
 
         if (data.size() > 0) {
@@ -508,12 +498,6 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                             return marker;
                         }
                     })
-//                    .clusterBackground(new Function1<Integer, Integer>() {
-//                        @Override
-//                        public Integer invoke(Integer integer) {
-//                            return R.color.lightGreen;
-//                        }
-//                    })
                     .markerClickListener(new Function1<TedClusterItem, Unit>() {
                         @Override
                         public Unit invoke(TedClusterItem tedClusterItem) {
@@ -583,57 +567,9 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
     } // addMarker()
 
 
-    public void setMarker(double lat, double lng, String addressHeart) {
-
-        Marker marker = new Marker();
-        marker.setPosition(new LatLng(lat,lng));
-        marker.setTag(addressHeart);
-
-        marker.setMap(naverMap);
-
-        setInfoWindow(marker);
-
-    } // setMarker()
-
-
-    public void setInfoWindow(Marker marker) {
-
-        InfoWindow infoWindow = new InfoWindow();
-        infoWindow.setAdapter(new InfoWindow.DefaultTextAdapter(this) {
-            @NonNull
-            @Override
-            public CharSequence getText(@NonNull InfoWindow infoWindow) {
-                return marker.getTag().toString();
-            }
-        });
-
-        marker.setOnClickListener(new Overlay.OnClickListener() {
-            @Override
-            public boolean onClick(@NonNull Overlay overlay) {
-                if (marker.getInfoWindow() == null) {
-                    // 현재 마커에 정보 창이 열려있지 않을 경우 엶
-                    infoWindow.open(marker);
-                } else {
-                    // 이미 현재 마커에 정보 창이 열려있을 경우 닫음
-                    infoWindow.close();
-                }
-
-                CameraPosition cameraPosition = new CameraPosition(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude), 12);
-                CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(cameraPosition).animate(CameraAnimation.Easing,2000);
-                naverMap.moveCamera(cameraUpdate);
-
-                return true;
-            }
-        });
-        naverMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(@NonNull PointF pointF, @NonNull LatLng latLng) {
-
-            }
-        });
-
-    } // setInfoWindow()
-
+    /*
+    탈퇴한 사용자 처리
+     */
     public void noDataDlg() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Profile.this);
@@ -648,9 +584,12 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
                 .create()
                 .show();
 
-    }
+    } // noDataDlg()
 
 
+    /*
+    프로필 불러오기
+     */
     public void getProfile(String nickname) {
 
         Call<ArrayList<PostData>> call = apiInterface.getProfile(nickname);
@@ -705,8 +644,6 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
                     Glide.with(getApplicationContext())
                             .load(ApiClient.serverProfileImagePath + user_ImagePath)
-//                            .transition(withCrossFade(factory))
-//                            .placeholder(R.drawable.loading2)
                             .skipMemoryCache(true)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(profileImage);
@@ -726,6 +663,10 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
 
     } // getProfile()
 
+
+    /*
+    유효한 사용자 체크
+     */
     public void checkUser(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -762,5 +703,6 @@ public class Profile extends AppCompatActivity implements OnMapReadyCallback {
         });
 
     } // checkUser()
+
 
 }

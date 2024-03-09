@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -23,7 +21,6 @@ import android.widget.Toast;
 
 import com.example.travelofrecord.Adapter.Chat_Adapter;
 import com.example.travelofrecord.Data.Chat;
-import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Function.BackBtn;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Network.ApiClient;
@@ -36,9 +33,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,47 +44,29 @@ import retrofit2.Response;
 public class DirectMessage extends AppCompatActivity {
 
     String TAG = "채팅액티비티";
-
-    ImageButton backBtn;
-    ImageButton sendBtn;
+    String currentNickname, currentImage, sendMessage, roomNum, getNickname, nicknameSum1, nicknameSum2, otherFcmToken, messageStatus, baseActivity;
+    int lastPosition, totalCount;
+    boolean userStatus;
+    String ip = "3.34.246.77";
+    String newChatDate = "";
+    int port = 8888;
+    boolean roomCheck = false;
+    boolean chatRoomStatus = false;
+    ImageButton backBtn, sendBtn;
     EditText chatEdit;
     TextView chatRoomText;
     LinearLayout newMessageLayout;
-
     RecyclerView chatRecyclerView;
     ArrayList<Chat> arrayList;
     Chat_Adapter adapter;
     SharedPreferences sharedPreferences;
-    String currentNickname;
-    String currentImage;
     HashMap<String, String> map;
-
     GetTime getTime;
-
     Handler handler;
     Socket socket;
     PrintWriter printWriter;
-    String ip = "3.34.246.77";
-    int port = 8888;
-
-    String sendMessage;
-    String roomNum;
-    boolean roomCheck = false;
-    String getNickname;
-    boolean userStatus;
-    String nicknameSum1;
-    String nicknameSum2;
-    String otherFcmToken;
-    boolean chatRoomStatus = false;
-    String messageStatus;
-
-    String newChatDate = "";
-
-    int lastPosition;
-    int totalCount;
-
     BackBtn back;
-    String baseActivity;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,38 +79,8 @@ public class DirectMessage extends AppCompatActivity {
         getRoomNum(nicknameSum1, nicknameSum2);
         getFcmToken(getNickname);
 
-    }
+    } // onCreate()
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart() 호출됨");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop() 호출됨");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart() 호출됨");
-    }
 
     @Override
     protected void onDestroy() {
@@ -141,16 +88,15 @@ public class DirectMessage extends AppCompatActivity {
         Log.d(TAG, "onDestroy() 호출됨");
         LogoutPrintWriterThread thread = new LogoutPrintWriterThread();
         thread.start();
-    }
 
+    } // onDestroy()
+
+
+    /*
+    시스템 뒤로가기 클릭 이벤트
+     */
     @Override
     public void onBackPressed() {
-
-//        if (path != null) {
-//            back.onBackPressedAtDm();
-//        } else {
-//            finish();
-//        }
 
         if (baseActivity.equals(".Activity.Home")) {
             Log.d(TAG, "onBackPressed : 내부 진입");
@@ -160,11 +106,15 @@ public class DirectMessage extends AppCompatActivity {
             back.onBackPressedAtDm();
         }
 
-    }
+    } // onBackPressed()
 
 
     // -------------------------------------------------------------------------------------------
 
+
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -214,6 +164,9 @@ public class DirectMessage extends AppCompatActivity {
     } // setVariable()
 
 
+    /*
+    뷰 초기화
+     */
     public void setView() {
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -287,6 +240,10 @@ public class DirectMessage extends AppCompatActivity {
 
     // ========================================================================================
 
+
+    /*
+    소켓 통신 스레드
+     */
     class SocketThread extends Thread {
 
         public void run() {
@@ -322,6 +279,9 @@ public class DirectMessage extends AppCompatActivity {
     } // SocketThread
 
 
+    /*
+    채팅 입력 스레드
+     */
     class PrintWriterThread extends Thread {
 
         @Override
@@ -340,8 +300,12 @@ public class DirectMessage extends AppCompatActivity {
             }
         }
 
-    }
+    } // PrintWriterThread
 
+
+    /*
+    채팅방 입장 알림 입력 스레드
+     */
     class LoginPrintWriterThread extends Thread {
 
         @Override
@@ -356,8 +320,12 @@ public class DirectMessage extends AppCompatActivity {
             }
         }
 
-    }
+    } // LoginPrintWriterThread
 
+
+    /*
+    채팅방 퇴장 알림 입력 스레드
+     */
     class LogoutPrintWriterThread extends Thread {
 
         @Override
@@ -377,8 +345,12 @@ public class DirectMessage extends AppCompatActivity {
             }
         }
 
-    }
+    } // LogoutPrintWriterThread
 
+
+    /*
+    채팅 응답 시 관련 뷰 업데이트
+     */
     class messageUpdate implements Runnable {
 
         String message;
@@ -446,9 +418,11 @@ public class DirectMessage extends AppCompatActivity {
 
                 }
 
-                if (time.equals(arrayList.get(arrayList.size() - 1).getDateMessage()) & nickname.equals(arrayList.get(arrayList.size() - 1).getSender())) {
-                    arrayList.set(arrayList.size() - 1, new Chat(array[0], arrayList.get(arrayList.size() - 1).getSender(), arrayList.get(arrayList.size() - 1).getSenderImage(),
-                            arrayList.get(arrayList.size() - 1).getMessage(), "", arrayList.get(arrayList.size() - 1).getViewType(), arrayList.get(arrayList.size() - 1).getMessageStatus()));
+                if (arrayList.size() > 0) {
+                    if (time.equals(arrayList.get(arrayList.size() - 1).getDateMessage()) & nickname.equals(arrayList.get(arrayList.size() - 1).getSender())) {
+                        arrayList.set(arrayList.size() - 1, new Chat(array[0], arrayList.get(arrayList.size() - 1).getSender(), arrayList.get(arrayList.size() - 1).getSenderImage(),
+                                arrayList.get(arrayList.size() - 1).getMessage(), "", arrayList.get(arrayList.size() - 1).getViewType(), arrayList.get(arrayList.size() - 1).getMessageStatus()));
+                    }
                 }
 
                 Chat chat = new Chat(array[0], nickname, senderImage, message, time, viewType, messageStatus);
@@ -477,6 +451,10 @@ public class DirectMessage extends AppCompatActivity {
 
     } // messageUpdate
 
+
+    /*
+    채팅방 번호 불러오기
+     */
     public void getRoomNum(String roomNum1, String roomNum2) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -519,6 +497,9 @@ public class DirectMessage extends AppCompatActivity {
     } // getRoomNum()
 
 
+    /*
+    기존 채팅 내역 불러오기
+     */
     public void getChatting(String roomNum, String sender) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -560,9 +541,6 @@ public class DirectMessage extends AppCompatActivity {
                                     Log.d(TAG, "oscar - index : " + i);
                                     Log.d(TAG, "oscar - time1 : " + time + " / time2 : " + String.valueOf(getTime.getFormatTime1(Long.valueOf(list.get(i).getDateMessage()))));
                                     Log.d(TAG, "oscar - sender1 : " + sender + " / sender2 : " + list.get(i).getSender());
-
-//                                    Chat chat = new Chat(list.get(i - 1).getRoomNum(), list.get(i - 1).getSender(), list.get(i - 1).getSenderImage(),
-//                                            list.get(i - 1).getMessage(), "", list.get(i - 1).getViewType(), list.get(i - 1).getMessageStatus(), list.get(i - 1).getDate());
 
                                     Chat chat = new Chat(arrayList.get(i-1+dateNum).getRoomNum(), arrayList.get(i-1+dateNum).getSender(), arrayList.get(i-1+dateNum).getSenderImage(),
                                             arrayList.get(i-1+dateNum).getMessage(), "", arrayList.get(i-1+dateNum).getViewType(), arrayList.get(i-1+dateNum).getMessageStatus(), arrayList.get(i-1+dateNum).getDate());
@@ -608,7 +586,6 @@ public class DirectMessage extends AppCompatActivity {
 
                         }
 
-//                        adapter.notifyItemRangeChanged(0, arrayList.size());
                         adapter.notifyDataSetChanged();
                         chatRecyclerView.scrollToPosition(arrayList.size() - 1);
 
@@ -632,6 +609,9 @@ public class DirectMessage extends AppCompatActivity {
     } // getChatting()
 
 
+    /*
+    채팅 내역 DB에 추가
+     */
     public void insertChat(String roomNum, String sender, String receiver, String senderImage, String message, String dateMessage, String messageStatus, String fcmToken) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -660,6 +640,10 @@ public class DirectMessage extends AppCompatActivity {
 
     } // insertChat()
 
+
+    /*
+    FCM 토큰 불러오기
+     */
     public void getFcmToken(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -686,6 +670,9 @@ public class DirectMessage extends AppCompatActivity {
     } // getFcmToken()
 
 
+    /*
+    채팅방 새로 생성
+     */
     public void insertChatRoom(String chatRoomNum, String chatRoomUser1, String chatRoomUser2, String chatRoomMessage, String chatRoomDateMessage) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -707,7 +694,7 @@ public class DirectMessage extends AppCompatActivity {
             }
         });
 
-    }
+    } // insertChatRoom()
 
 
 }

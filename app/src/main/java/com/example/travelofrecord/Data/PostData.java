@@ -1,5 +1,18 @@
 package com.example.travelofrecord.Data;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -188,7 +201,6 @@ public class PostData {
         this.dateCreated = dateCreated;
 
     }
-
 
     public String getNickname() { return nickname; }
     public String getImagePath() { return imagePath; }

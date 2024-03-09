@@ -1,6 +1,5 @@
 package com.example.travelofrecord.Adapter;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 import android.content.Context;
 import android.content.Intent;
@@ -42,10 +41,9 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
     ArrayList<PostData> postData;
     Context context;
-
     TextView commentNumText;
-    EventBus eventBusCommentDelete;
-    EventBus eventBusCommentNumDelete;
+    EventBus eventBusCommentDelete, eventBusCommentNumDelete;
+
 
     @Override
     public Comment_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -55,47 +53,44 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         Comment_Adapter.ViewHolder viewHolder = new Comment_Adapter.ViewHolder(view);
 
         return viewHolder;
-    }
+
+    } // onCreateViewHolder()
+
 
     @Override
     public void onBindViewHolder(@NonNull Comment_Adapter.ViewHolder holder,int position) {
+
         Log.d(TAG, "onBindViewHolder() 호출됨");
         holder.onBind(postData.get(holder.getAdapterPosition()));
-    }
+
+    } // onBindViewHolder()
+
 
     public void setItemComment(ArrayList<PostData> list, TextView commentNumText) {
 
         this.postData = list;
         this.commentNumText = commentNumText;
-        Log.d(TAG, "commentText2 : " + commentNumText);
-
         notifyDataSetChanged();
-    }
+
+    } // setItemComment()
+
 
     @Override
     public int getItemCount() {
-//        Log.d(TAG, "getItemCount() 호출됨");
-//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
-
         return postData.size();
+    } // getItemCount()
 
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView comment_ProfileImage;
-        TextView comment_NicknameText;
-        TextView comment_DateCreatedText;
-        TextView comment_CommentText;
+        TextView comment_NicknameText, comment_DateCreatedText, comment_CommentText;
         ImageButton comment_MenuBtn;
 
         ApiInterface apiInterface;
-
         SharedPreferences sharedPreferences = context.getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
         String currentNickname = sharedPreferences.getString("nickname","");
-
         GetTime getTime = new GetTime();
-
         CommentDeleteEventBus commentDeleteEventBus;
         CommentNumDeleteEventBus commentNumDeleteEventBus;
 
@@ -214,8 +209,6 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
                         String rpCode = response.body();
                         Log.d(TAG, "onResponse: " + rpCode + " / position : " + getAdapterPosition());
-//                        postData.remove(getAdapterPosition());
-//                        notifyDataSetChanged();
 
                         Log.d(TAG, "commentNum2 : " + commentNum);
                         int[] array = new int[4];
@@ -243,7 +236,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
                 }
             });
 
-        }
+        } // deleteComment()
 
     } // ViewHolder
 

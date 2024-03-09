@@ -3,10 +3,7 @@ package com.example.travelofrecord.Fragment;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -105,137 +102,54 @@ import ted.gun0912.clustering.naver.TedNaverClustering;
 public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     String TAG = "myProfile 프래그먼트";
+    String edit_memo, loginType, user_id, user_nickname, user_memo, user_image, post_Nickname, post_ProfileImage,
+            post_Location, post_PostImage, post_Writing, post_DateCreated, post_WhoLike, imageFileName;
+    int networkStatus, itemSize, post_Num, post_Heart, post_CommentNum, putNum;
+    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
+    double latitude, longitude, currentLatitude, currentLongitude;
+    boolean heartStatus, imageStatus;
     View v;
     GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
-
-    int networkStatus;
-
-    SharedPreferences sharedPreferences;
-    SharedPreferences sharedPreferences_Kakao;
-    SharedPreferences.Editor editor;
-    SharedPreferences.Editor editor_Kakao;
-
+    SharedPreferences sharedPreferences, sharedPreferences_Kakao;
+    SharedPreferences.Editor editor, editor_Kakao;
+    ImageView profile_Image, editProfile_Image, touchImage_Image, loading_Iv, mapDrawerImage;
+    FrameLayout mapDrawer, imageEditLayout;
+    TextView profile_Text, profile_memo, mapDrawerText, heartNumText, postNumText, dayHeartText, monthHeartText, yearHeartText;
+    LinearLayout mapDrawerDown, heartNumLayout, postNumLayout, basicLayout, heartListLayout, checkRankLayout, backBtnLayout, checkHeartLayout;
     ImageButton drawer_Btn;
-    Button logout_Btn;
-    Button userQuit_Btn;
-    Button editProfile_Btn;
-    Button editProfileSubmit_Btn;
-
-    ImageView profile_Image;
-    ImageView editProfile_Image;
-    ImageView touchImage_Image;
-    ImageView loading_Iv;
-    Animation rotate;
-
-    TextView profile_Text;
-    TextView profile_nickname;
-    TextView profile_memo;
-
+    Button photo_Btn, photo_Block, map_Btn, map_Block, logout_Btn, userQuit_Btn, editProfile_Btn, editProfileSubmit_Btn;
     EditText profile_Edit;
-
-    Button photo_Btn;
-    Button photo_Block;
-    Button map_Btn;
-    Button map_Block;
-
+    Animation rotate, appear, disappear, leftIn, leftOut, rightIn, rightOut;
     NestedScrollView scrollView;
-
-    String edit_memo;
-
-    String loginType;
-    String user_id;
-    String user_nickname;
-    String user_memo;
-    String user_image;
-
     DrawerLayout drawerLayout;
     View drawerView;
-
     Uri uri;
-
     ActivityResultLauncher<Intent> launcher;
-
     RecyclerView recyclerView;
     ArrayList<PostData> post_Data_ArrayList;
     MyProfile_Adapter adapter;
-    int itemSize;
     ArrayList<PostData> data;
-
-    int post_Num;
-    String post_Nickname;
-    String post_ProfileImage;
-    int post_Heart;
-    int post_CommentNum;
-    String post_Location;
-    String post_PostImage;
-    String post_Writing;
-    String post_DateCreated;
-    String post_WhoLike;
-    boolean heartStatus;
-
-    double latitude;
-    double longitude;
-
     Bundle bundle;
-
     MapView mapView;
     NaverMap naverMap;
-
     GoogleSignInOptions gso;
     GoogleSignInClient googleSignInClient;
+    ArrayList<Markers> markerList;
+    Markers markers;
+    Marker marker;
 
-    String imageFileName;
-    boolean imageStatus;
-
+    /*
+    권한 관련 상수 초기화
+     */
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-
     private FusedLocationProviderClient fusedLocationClient;
-    double currentLatitude;
-    double currentLongitude;
-
-    ArrayList<Markers> markerList;
-    Markers markers;
-
-    FrameLayout mapDrawer;
-    LinearLayout mapDrawerDown;
-    ImageView mapDrawerImage;
-    TextView mapDrawerText;
-
-    Animation appear;
-    Animation disappear;
-
-    int putNum;
-
-    FrameLayout imageEditLayout;
-    LinearLayout heartNumLayout;
-    LinearLayout postNumLayout;
-    TextView heartNumText;
-    TextView postNumText;
-    TextView dayHeartText;
-    TextView monthHeartText;
-    TextView yearHeartText;
-
-    LinearLayout basicLayout;
-    LinearLayout heartListLayout;
-    LinearLayout checkRankLayout;
-    LinearLayout backBtnLayout;
-    LinearLayout checkHeartLayout;
-
-    Animation leftIn;
-    Animation leftOut;
-    Animation rightIn;
-    Animation rightOut;
 
 
-    @Override public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.d(TAG, "onAttach() 호출");
-    }
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() 호출");
@@ -276,7 +190,7 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                     }
                 });
 
-    }
+    } // onCreate()
 
 
     @Override
@@ -292,7 +206,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         getHeartNum(user_nickname);
 
         return v;
-    }
+
+    } // onCreateView()
+
 
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -301,7 +217,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-    }
+    } // onViewCreated()
+
+
     @Override public void onStart() {
         Log.d(TAG, "onStart() 호출");
         super.onStart();
@@ -312,44 +230,55 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     } // onStart()
 
+
     @Override public void onResume() {
         Log.d(TAG, "onResume() 호출");
         super.onResume();
         mapView.onResume();
-    }
+    } // onResume()
+
+
     @Override public void onPause() {
         Log.d(TAG, "onPause() 호출");
         super.onPause();
         mapView.onPause();
-    }
+    } // onPause()
+
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
-    }
+    } // onSaveInstanceState()
+
+
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출");
         super.onStop();
         mapView.onStop();
-    }
+    } // onStop()
+
+
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출");
         super.onDestroyView();
         mapView.onDestroy();
-    }
-    @Override public void onDetach() {
-        Log.d(TAG, "onDetach() 호출");
-        super.onDetach();
-    }
+    } // onDestroyView()
+
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
-    }
+    } // onLowMemory()
+
 
     // ----------------------------------------------------------------------------------------------------------------
 
 
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         loading_Iv = v.findViewById(R.id.myProfile_Loading);
@@ -435,6 +364,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     } // setVariable()
 
 
+    /*
+    뷰 초기화
+     */
     public void setView() {
 
         loading_Iv.setVisibility(View.VISIBLE);
@@ -456,16 +388,12 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
         Glide.with(requireActivity())
                 .load(ApiClient.serverProfileImagePath + user_image)
-//                .transition(withCrossFade(factory))
-//                .placeholder(R.drawable.loading2)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(profile_Image);
 
         Glide.with(requireActivity())
                 .load(ApiClient.serverProfileImagePath + user_image)
-//                .transition(withCrossFade(factory))
-//                .placeholder(R.drawable.loading2)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(editProfile_Image);
@@ -869,9 +797,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     // ---------------------------------------------------------------------------------------------
 
-    int[] clusterBucket = {10, 20, 50, 100, 200, 500, 1000};
-    Marker marker;
 
+    /*
+    지도 준비 완료 시
+     */
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         Log.d(TAG, "onMapReady() 호출");
@@ -911,27 +840,12 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
 
-//        mapDrawerImage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent i = new Intent(getActivity(), Post.class);
-//                i.putExtra("num", putNum);
-//                startActivity(i);
-//            }
-//        });
-//
-//        mapDrawerText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent i = new Intent(getActivity(), Post.class);
-//                i.putExtra("num", putNum);
-//                startActivity(i);
-//            }
-//        });
-
-    }
+    } // onMapReady()
 
 
+    /*
+    마커 추가
+     */
     public void addMarker() {
 
         if (data.size() > 0) {
@@ -966,12 +880,6 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                             return marker;
                         }
                     })
-//                    .clusterBackground(new Function1<Integer, Integer>() {
-//                        @Override
-//                        public Integer invoke(Integer integer) {
-//                            return R.color.lightGreen;
-//                        }
-//                    })
                     .markerClickListener(new Function1<TedClusterItem, Unit>() {
                         @Override
                         public Unit invoke(TedClusterItem tedClusterItem) {
@@ -1041,6 +949,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     } // addMarker()
 
 
+    /*
+    내 프로필 데이터 불러오기
+     */
     public void getMyPost(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -1120,6 +1031,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     } // getMyPost()
 
+
+    /*
+    상태 메세지 업데이트
+     */
     public void updateMemo(HashMap map) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -1147,9 +1062,12 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
 
-    }
+    } // updateMemo()
 
-    // 상태 메시지, 프로필 사진 변경
+
+    /*
+    상태 메시지, 프로필 사진 변경
+     */
     public void updateProfile(File file, HashMap map) {
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -1191,7 +1109,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
     } //updateProfile()
 
 
-    // 회원 탈퇴
+    /*
+    회원 탈퇴
+     */
     public void deleteUser(String nickname) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<String> call = apiInterface.deleteUser(nickname);
@@ -1291,9 +1211,13 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                 Log.d(TAG, "onFailure: 에러!!! " + t.getMessage());
             }
         });
+
     }  // deleteUser()
 
 
+    /*
+    FCM 토큰 초기화
+     */
     public void updateToken(String nickname, String fcmToken) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -1325,6 +1249,10 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
     } // updateToken()
 
+
+    /*
+    좋아요 개수 불러오기
+     */
     public void getHeartNum(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -1377,8 +1305,6 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
 
                     }
 
-
-
                 } else {
                     Log.d(TAG, "getHeartNum - onResponse isFailure");
                 }
@@ -1391,9 +1317,12 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
             }
         });
 
-    }
+    } // getHeartNum()
 
 
+    /*
+    회원 탈퇴 안내 다이얼로그
+     */
     public void quitDialog(String user_Nickname) {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
@@ -1417,11 +1346,13 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
                 .create()
                 .show();
 
-    }
+    } // quitDialog()
 
 
-    //Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
-    String getRealPathFromUri(Uri uri){
+    /*
+    Uri -- > 절대경로로 바꿔서 리턴시켜주는 메소드
+     */
+    String getRealPathFromUri(Uri uri) {
         String[] proj= {MediaStore.Images.Media.DATA};
         CursorLoader loader= new CursorLoader(getActivity(), uri, proj, null, null, null);
         Cursor cursor= loader.loadInBackground();
@@ -1429,8 +1360,9 @@ public class Fragment_myProfile extends Fragment implements OnMapReadyCallback {
         cursor.moveToFirst();
         String result= cursor.getString(column_index);
         cursor.close();
-        return  result;
-    }
 
+        return  result;
+
+    } // getRealPathFromUri()
 
 }

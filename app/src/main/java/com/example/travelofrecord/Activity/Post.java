@@ -54,82 +54,36 @@ import retrofit2.Response;
 
 public class Post extends AppCompatActivity {
 
+    public static Context context;
     String TAG = "게시글 액티비티";
     GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
-
-    ImageButton back_Btn;
-    TextView post_Nickname_Text;
-    ImageView post_ProfileImage_Iv;
-    TextView post_Location_Text;
-    ImageView post_PostImage_Iv;
-    TextView post_DateCreated_Text;
-    TextView post_Writing_Text;
-    ImageButton post_Heart_Iv;
-    ImageButton post_HeartFull_Iv;
-    TextView post_HeartNum_Text;
-    ImageView post_Comment_Iv;
-    TextView post_CommentNum_Text;
-    EditText post_Comment_Edit;
-    ImageButton post_CommentAdd_Btn;
-    ImageButton post_Menu_Btn;
-
-    int getPosition;
-
-    int post_Num;
-    String post_Nickname;
-    String post_ProfileImage;
-    int post_Heart;
-    int post_CommentNum;
-    String post_Location;
-    String post_PostImage;
-    String post_Writing;
-    String post_DateCreated;
-    String post_WhoLike;
+    int getPosition, post_Num, post_Heart, post_CommentNum, networkStatus, listSize;
+    String post_Nickname, post_ProfileImage, post_Location, post_PostImage, post_Writing, post_DateCreated, post_WhoLike, post_EditDate, post_EditLocation,
+            addComment, accessNickname, accessProfileImage, addDateComment;
+    String[] heartEventArray, commentNumArray;
     boolean post_HeartStatus;
-
-    String post_EditDate;
-    String post_EditLocation;
-
-    String addComment;
-    String accessNickname;
-    String accessProfileImage;
-    String addDateComment;
-    SharedPreferences sharedPreferences;
-
-    Home home;
-
+    LinearLayout comment_Layout, post_TopLayout;
+    ImageButton back_Btn, post_Heart_Iv, post_HeartFull_Iv, post_CommentAdd_Btn, post_Menu_Btn;
+    TextView post_Nickname_Text, post_Location_Text, post_DateCreated_Text, post_Writing_Text, post_HeartNum_Text, post_CommentNum_Text;
+    ImageView post_ProfileImage_Iv, post_PostImage_Iv, post_Comment_Iv;
+    EditText post_Comment_Edit;
     NestedScrollView scrollView;
     RecyclerView recyclerView;
+    SharedPreferences sharedPreferences;
+    Home home;
     Comment_Adapter adapter;
     ArrayList<PostData> postDataArrayList;
-    int listSize;
-    LinearLayout comment_Layout;
-
     ApiInterface apiInterface;
-    LinearLayout post_TopLayout;
-
-    int networkStatus;
-
-    String[] heartEventArray;
-    String[] commentNumArray;
-
     HeartEventBus heartEventBus;
     CommentNumAddEventBus commentNumAddEventBus;
     CommentAddEventBus commentAddEventBus;
     CommentNumDeleteEventBus commentNumDeleteEventBus;
     PostDeleteEventBusPost postDeleteEventBusPost;
     PostDeleteEventBusHome postDeleteEventBusHome;
-
-    EventBus eventBusHeart;
-    EventBus eventBusCommentNum;
-    EventBus eventBusCommentAdd;
-    EventBus eventBusCommentNumDelete;
-    EventBus eventBusPostDeletePost;
-    EventBus eventBusPostDeleteHome;
-
+    EventBus eventBusHeart, eventBusCommentNum, eventBusCommentAdd, eventBusCommentNumDelete, eventBusPostDeletePost, eventBusPostDeleteHome;
     boolean eventBusAddStatus = false;
-    public static Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +97,8 @@ public class Post extends AppCompatActivity {
         getPost(accessNickname, post_Num);
         getComment(post_Num);
 
-    }
+    } // onCreate()
+
 
     @Override
     protected void onStart() {
@@ -176,19 +131,8 @@ public class Post extends AppCompatActivity {
             eventBusPostDeleteHome.unregister(postDeleteEventBusHome);
         }
 
-    }
+    } // onStart()
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
-    }
 
     @Override
     protected void onStop() {
@@ -214,13 +158,8 @@ public class Post extends AppCompatActivity {
             eventBusPostDeleteHome.register(postDeleteEventBusHome);
         }
 
-    }
+    } // onStop()
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart() 호출됨");
-    }
 
     @Override
     protected void onDestroy() {
@@ -247,12 +186,15 @@ public class Post extends AppCompatActivity {
             eventBusPostDeleteHome.unregister(postDeleteEventBusHome);
         }
 
-    }
+    } // onDestroy()
 
 
     // ---------------------------------------------------------------------------------------------
 
 
+    /*
+    변수 초기화 작업
+     */
     public void setVariable() {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -323,9 +265,12 @@ public class Post extends AppCompatActivity {
         eventBusPostDeleteHome = EventBus.getDefault();
         postDeleteEventBusHome = new PostDeleteEventBusHome(null, null);
 
-
     } // setVariable()
 
+
+    /*
+    뷰 초기화 작업
+     */
     public void setView() {
 
         post_Comment_Iv.setFocusableInTouchMode(true);
@@ -458,6 +403,9 @@ public class Post extends AppCompatActivity {
     } // setView()
 
 
+    /*
+    좋아요 클릭 이벤트
+     */
     public void setHeartOnClick() {
 
         post_Heart_Iv.setOnClickListener(new View.OnClickListener() {
@@ -491,6 +439,10 @@ public class Post extends AppCompatActivity {
 
     } // setHeartOnClick()
 
+
+    /*
+    좋아요 취소 클릭 이벤트
+     */
     public void setHeartFullOnClick() {
 
         post_HeartFull_Iv.setOnClickListener(new View.OnClickListener() {
@@ -524,6 +476,9 @@ public class Post extends AppCompatActivity {
     } // setHeartFullOnClick()
 
 
+    /*
+    게시글 삭제 확인 다이얼로그
+     */
     public void deleteDlg() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Post.this);
@@ -549,9 +504,12 @@ public class Post extends AppCompatActivity {
                 .create()
                 .show();
 
-    }
+    } // deleteDlg()
 
 
+    /*
+    삭제된 게시글 안내 다이얼로그
+     */
     public void noDataDlg() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Post.this);
@@ -569,8 +527,13 @@ public class Post extends AppCompatActivity {
     } // noDataDlg()
 
 
+
     // -------------------------------------------------------------------------------------------
 
+
+    /*
+    좋아요 내역 서버 전송
+     */
     public void insertWhoLike(int postNum, String whoLike, int heart, String time) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -607,6 +570,10 @@ public class Post extends AppCompatActivity {
 
     } // insertWhoLike
 
+
+    /*
+    좋아요 취소 내역 서버 전송
+     */
     public void deleteWhoLike(int postNum, String whoLike, int heart) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -643,6 +610,9 @@ public class Post extends AppCompatActivity {
     } // deleteWhoLike()
 
 
+    /*
+    댓글 추가
+     */
     public void addComment(int postNum, String profileImage, String whoComment, String dateComment, String comment, int commentNum) {
 
         Call<String> call = apiInterface.insertComment(postNum, profileImage, whoComment, dateComment, comment, commentNum);
@@ -684,6 +654,9 @@ public class Post extends AppCompatActivity {
     } // addComment()
 
 
+    /*
+    댓글 불러오기
+     */
     public void getComment(int num) {
 
         Call<ArrayList<PostData>> call = apiInterface.getComment(num);
@@ -739,6 +712,10 @@ public class Post extends AppCompatActivity {
 
     } // getComment()
 
+
+    /*
+    게시글 존재 여부 확인
+     */
     public void checkPostDelete(int postNum) {
 
         Log.d(TAG, "게시글삭제 확인됨4 : " + post_Menu_Btn.getVisibility());
@@ -770,6 +747,10 @@ public class Post extends AppCompatActivity {
 
     } // checkPostDelete()
 
+
+    /*
+    게시글 불러오기
+     */
     public void getPost(String currentNickname, int postNum) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -782,7 +763,6 @@ public class Post extends AppCompatActivity {
                     ArrayList<PostData> data = response.body();
 
                     if (data.size() > 0) {
-//                        Log.d(TAG, "data.size : " + data.size());
 
                         post_Num = data.get(0).getNum();
                         post_Nickname = data.get(0).getPostNickname();
@@ -831,8 +811,6 @@ public class Post extends AppCompatActivity {
 
                         Glide.with(getApplicationContext())
                                 .load(ApiClient.serverProfileImagePath + post_ProfileImage)
-//                                .transition(withCrossFade(factory))
-//                                .placeholder(R.drawable.loading2)
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .skipMemoryCache(true)
                                 .into(post_ProfileImage_Iv);
@@ -864,6 +842,10 @@ public class Post extends AppCompatActivity {
 
     } // getPost()
 
+
+    /*
+    게시글 삭제
+     */
     public void deletePost(int postNum) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -887,7 +869,7 @@ public class Post extends AppCompatActivity {
             }
         });
 
-    }
+    } // deletePost()
 
 
 }

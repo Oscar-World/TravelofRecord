@@ -12,8 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +24,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.loader.content.CursorLoader;
 
 import android.os.Environment;
 import android.os.Handler;
@@ -55,13 +52,11 @@ import com.example.travelofrecord.Network.ApiInterface;
 import com.example.travelofrecord.Other.BitmapConverter;
 import com.example.travelofrecord.Function.GetTime;
 import com.example.travelofrecord.Activity.Home;
-import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -78,52 +73,31 @@ import retrofit2.Response;
 public class Fragment_add extends Fragment {
 
     String TAG = "추가 프래그먼트";
-    View v;
-    GetTime getTime = new GetTime();
-
-    Button addUpload_Btn;
-    Button addUpload_Block;
-    EditText writing_Edit;
-    ImageView postImage_Iv;
-    FrameLayout writing_Layout;
-    TextView writingCount_Text;
-
-    ImageView helpImage;
-    TextView helpText;
-    Animation leftOut;
-    Animation rightIn;
-
-    Handler handler;
-    HelpInfoThread thread;
-
-    String nickname;
-    String profileImage;
+    String nickname, profileImage, currentLocation, postImage, writing, dateCreated, writeCount,
+            latitude, longitude, imageFileName, tempWrite, tempImage;
     int heart = 0;
     int commentNum = 0;
-    String currentLocation;
-    String postImage;
-    String writing;
-    String dateCreated;
-    String writeCount;
-
+    boolean tempStatus = true;
+    View v;
+    GetTime getTime = new GetTime();
+    Button addUpload_Btn, addUpload_Block;
+    EditText writing_Edit;
+    ImageView postImage_Iv, helpImage;
+    FrameLayout writing_Layout;
+    TextView writingCount_Text, helpText;
+    Animation leftOut, rightIn;
+    Handler handler;
+    HelpInfoThread thread;
     ActivityResultLauncher<Intent> launcher;
-
     Bundle sendData;
-
     Fragment_Home fragment_home;
     Home homeActivity;
-
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-
+    SharedPreferences sharedPreferences, writeShared;
+    SharedPreferences.Editor editor, writeEditor;
     BitmapConverter bitmapConverter;
-
     Uri photoUri;
     InputMethodManager imm;
     InputMethodManager immhide;
-
-    SharedPreferences writeShared;
-    SharedPreferences.Editor writeEditor;
 
     // 위치 정보 권한 상수
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -131,16 +105,8 @@ public class Fragment_add extends Fragment {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-
     private FusedLocationProviderClient fusedLocationClient;
 
-    String latitude; // 위도
-    String longitude; // 경도
-
-    String imageFileName;
-    String tempWrite;
-    String tempImage;
-    boolean tempStatus = true;
 
     @Override
     public void onAttach(Context context) {
@@ -149,7 +115,8 @@ public class Fragment_add extends Fragment {
 
         homeActivity = (Home) getActivity();
 
-    }
+    } // onAttach()
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -180,7 +147,6 @@ public class Fragment_add extends Fragment {
                     }
                 });
 
-
     } // onCreate()
 
 
@@ -193,14 +159,17 @@ public class Fragment_add extends Fragment {
         setView();
 
         return v;
-    }
+
+    } // onCreateView()
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출");
 
-    }
+    } // onViewCreated()
+
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
@@ -219,27 +188,8 @@ public class Fragment_add extends Fragment {
             tempDialog();
         }
 
-    }
+    } // onViewStateRestored()
 
-    @Override
-    public void onStart() {
-        Log.d(TAG, "onStart() 호출");
-        super.onStart();
-
-    } // onStart()
-
-
-    @Override
-    public void onResume() {
-        Log.d(TAG, "onResume() 호출");
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        Log.d(TAG, "onPause() 호출");
-        super.onPause();
-    }
 
     @Override
     public void onStop() {
@@ -250,7 +200,8 @@ public class Fragment_add extends Fragment {
             thread.interrupt();
         }
 
-    }
+    } // onStop()
+
 
     @Override
     public void onDestroyView() {
@@ -266,13 +217,13 @@ public class Fragment_add extends Fragment {
             if (tempImage != null | !tempWrite.equals("")) {
                 writeEditor.putString("image", tempImage);
                 writeEditor.putString("write", tempWrite);
-//                writeEditor.putString("location", tempLocation);
                 writeEditor.commit();
             }
 
         }
 
-    }
+    } // onDestroyView()
+
 
     @Override
     public void onDetach() {
@@ -281,12 +232,15 @@ public class Fragment_add extends Fragment {
 
         homeActivity = null;
 
-    }
+    } // onDetach()
 
 
     // --------------------------------------------------------------------------------------------
 
 
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         addUpload_Btn = v.findViewById(R.id.addUpload_Btn);
@@ -334,6 +288,10 @@ public class Fragment_add extends Fragment {
 
     } // setVariable()
 
+
+    /*
+    뷰 초기화
+     */
     public void setView() {
 
         if (Integer.parseInt(writeCount) <= 0) {
@@ -509,6 +467,9 @@ public class Fragment_add extends Fragment {
     // --------------------------------------------------------------------------------------------
 
 
+    /*
+    게시글 임시 저장 안내 다이얼로그
+     */
     public void tempDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -550,6 +511,10 @@ public class Fragment_add extends Fragment {
 
     } // tempDialog()
 
+
+    /*
+    게시글 작성 횟수 초과 안내 다이얼로그
+     */
     public void writeCountDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -565,9 +530,12 @@ public class Fragment_add extends Fragment {
                 .create()
                 .show();
 
-    }
+    } // writeCountDialog()
 
 
+    /*
+    게시글 작성 완료
+     */
     public void insertFeed(File file, HashMap map) {
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -616,12 +584,14 @@ public class Fragment_add extends Fragment {
             }
         });
 
-    }
+    } // insertFeed()
 
 
-    // ImageFile 생성 후, 경로를 가져올 메서드 선언
+    /*
+    ImageFile 생성 후, 경로를 가져올 메서드 선언
+     */
     private File createImageFile() throws IOException {
-        // 파일이름을 세팅 및 저장경로 세팅
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -635,8 +605,13 @@ public class Fragment_add extends Fragment {
         Log.d(TAG, "createImageFile: " + postImage);
 
         return image;
-    }
 
+    } // createImageFile()
+
+
+    /*
+    게시글 작성 남은 횟수 안내 스레드
+     */
     public class HelpInfoThread extends Thread {
 
         public void run() {
@@ -669,9 +644,7 @@ public class Fragment_add extends Fragment {
 
         }
 
-    }
-
-
+    } // HelpInfoThread
 
 
 }

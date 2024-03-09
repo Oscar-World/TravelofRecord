@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.util.Log;
@@ -53,89 +52,43 @@ import retrofit2.Response;
 public class Fragment_Home extends Fragment implements Home.OnBackPressedListener {
 
     String TAG = "홈 프래그먼트";
+    String nickname, profileImage, location, postImage, writing, dateCreated, whoLike, loginNickname, writeCount, pagingStatus, latStr, lngStr;
+    int itemSize, heart, commentNum, num, postNum, networkStatus, pageNum, lastPosition, totalCount, adListIndex, adListValue, dataSize;
+    double latitude, longitude;
+    int[] randomValueArray;
+    boolean heartStatus, receiverStatus;
+    int listSize = 0;
+    boolean requestStatus = true;
     View v;
     GetAddress getAddress = new GetAddress();
     GetTime getTime = new GetTime();
     RandomResult randomResult = new RandomResult();
-
     PullRefreshLayout swipeRefreshLayout;
-//    SwipeRefreshLayout swipeRefreshLayout;
-
     LinearLayoutManager linearLayoutManager;
-    RecyclerView recyclerView;
-    TextView internetText;
-
+    RecyclerView recyclerView, heartRecyclerView;
+    TextView internetText, checkPosition_Text;
+    ImageView heartListClose_Iv, loading_Iv, loadingImage;
+    Animation rotate, appear, disappear;
+    LinearLayout loadingLayout;
     FrameLayout heartLayout;
-    RecyclerView heartRecyclerView;
     ArrayList<User> heart_ArrayList;
     HomeHeartList_Adapter heartAdapter;
-    ImageView heartListClose_Iv;
-    TextView checkPosition_Text;
-
-    ImageView loading_Iv;
-    Animation rotate;
-    Animation appear;
-    Animation disappear;
-
     ArrayList<PostData> post_Data_ArrayList;
-    int itemSize;
     Home_Adapter adapter;
-
-    String nickname;
-    String profileImage;
-    int heart;
-    int commentNum;
-    String location;
-    String postImage;
-    String writing;
-    String dateCreated;
-    int num;
-    int postNum;
-    String whoLike;
-    boolean heartStatus;
-
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    String loginNickname;
-    String writeCount;
-
-    int networkStatus;
-
-    boolean receiverStatus;
-
-    int pageNum;
-    String pagingStatus;
-
-    int lastPosition;
-    int totalCount;
-
-    LinearLayout loadingLayout;
-    ImageView loadingImage;
     Handler handler;
-    int listSize = 0;
-    boolean requestStatus = true;
-
     ArrayList<Integer> adList;
-    int adListIndex;
-    int adListValue;
-    int dataSize;
-    int[] randomValueArray;
-
     EventBus eventBusPostDeleteHome;
     PostDeleteEventBusHome postDeleteEventBusHome;
-
-    String latStr;
-    String lngStr;
-    double latitude;
-    double longitude;
-
     Context context;
+
 
     @Override
     public void onBack() {
         Log.d(TAG, "onBack: ");
         recyclerView.smoothScrollToPosition(0);
-    }
+    } // onBack()
 
 
     @Override public void onAttach(Context context) {
@@ -143,13 +96,15 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         Log.d(TAG, "onAttach() 호출됨");
         this.context = context;
         ((Home)context).setOnBackPressedListener(this);
+    } // onAttach()
 
-    }
+
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() 호출됨");
         receiverStatus = false;
-    }
+    } // onCreate()
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -158,11 +113,11 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
         v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Log.d(TAG, "receiverStatus : " + receiverStatus);
         return v;
 
-    }
-    // oscar babo
+    } // onCreateView()
+
+
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() 호출됨");
@@ -180,8 +135,9 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             recyclerView.setVisibility(View.GONE);
         }
 
+    } // onViewCreated()
 
-    }
+
     @Override public void onStart() {
         Log.d(TAG, "onStart() 호출됨");
         super.onStart();
@@ -200,16 +156,7 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     } // onStart()
 
-    @Override public void onResume() {
-        Log.d(TAG, "onResume() 호출됨");
-        super.onResume();
 
-    }
-    @Override public void onPause() {
-        Log.d(TAG, "onPause() 호출됨");
-        super.onPause();
-
-    }
     @Override public void onStop() {
         Log.d(TAG, "onStop() 호출됨");
         super.onStop();
@@ -220,19 +167,196 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             eventBusPostDeleteHome.register(postDeleteEventBusHome);
         }
 
-    }
+    } // onStop()
+
+
     @Override public void onDestroyView() {
         Log.d(TAG, "onDestroyView() 호출됨");
         super.onDestroyView();
         if (eventBusPostDeleteHome.isRegistered(postDeleteEventBusHome)) {
             eventBusPostDeleteHome.unregister(postDeleteEventBusHome);
         }
-    }
-    @Override public void onDetach() {
-        Log.d(TAG, "onDetach() 호출됨");
-        super.onDetach();
-    }
+    } // onDestroyView()
 
+
+    /*
+    변수 초기화
+     */
+    public void setVariable() {
+
+        loading_Iv = v.findViewById(R.id.home_Loading);
+        rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
+        appear = AnimationUtils.loadAnimation(getActivity(),R.anim.loading_appear);
+        disappear = AnimationUtils.loadAnimation(getActivity(),R.anim.loading_disappear);
+
+        networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
+        swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);
+        internetText = v.findViewById(R.id.internetCheck_Text);
+        checkPosition_Text = v.findViewById(R.id.homeCheckPosition_Text);
+
+        recyclerView = v.findViewById(R.id.home_RecyclerView);
+        adapter = new Home_Adapter();
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        post_Data_ArrayList = new ArrayList<>();
+        adapter.setItemPost(post_Data_ArrayList);
+
+        heartRecyclerView = v.findViewById(R.id.home_HeartRecyclerView);
+        heartAdapter = new HomeHeartList_Adapter();
+        heart_ArrayList = new ArrayList<>();
+
+        heartRecyclerView.setAdapter(heartAdapter);
+        heartRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        heartAdapter.setItem(heart_ArrayList);
+
+        heartLayout = v.findViewById(R.id.home_HeartLayout);
+        heartListClose_Iv = v.findViewById(R.id.heartListClose_Image);
+
+        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        loginNickname = sharedPreferences.getString("nickname","");
+        writeCount = sharedPreferences.getString("writeCount", "");
+
+        pageNum = 1;
+        pagingStatus = "false";
+
+        loadingLayout = v.findViewById(R.id.postLoading_Layout);
+        loadingImage = v.findViewById(R.id.postLoading_Image);
+        handler = new Handler();
+
+        adList = new ArrayList<>();
+        Log.d(TAG, "initArrayList setVariable");
+        initArrayList();
+        dataSize = 0;
+        randomValueArray = new int[2];
+
+        DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
+        defaultItemAnimator.setRemoveDuration(500);
+        recyclerView.setItemAnimator(defaultItemAnimator);
+
+        eventBusPostDeleteHome = EventBus.getDefault();
+
+    } // setVariable()
+
+
+    /*
+    뷰 초기화
+     */
+    public void setView() {
+
+        swipeRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
+
+                    pageNum = 1;
+
+                    internetText.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+
+                    post_Data_ArrayList = new ArrayList<>();
+
+                    requestStatus = true;
+
+                    Log.d(TAG, "initArrayList swipe");
+                    initArrayList();
+
+                    getPost(loginNickname, pageNum);
+                }else {
+                    internetText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
+        recyclerView.setVisibility(View.GONE);
+        loading_Iv.setVisibility(View.VISIBLE);
+        loading_Iv.startAnimation(rotate);
+
+        adapter.setOnItemLongClickListener(new Home_Adapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(int postNum) {
+                Log.d(TAG, "onItemLongClick : " + postNum);
+                heartLayout.setVisibility(View.VISIBLE);
+
+                getHeartList(postNum);
+
+            }
+        });
+
+        heartListClose_Iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                heartLayout.setVisibility(View.GONE);
+
+                heart_ArrayList.clear();
+                heartAdapter.notifyDataSetChanged();
+
+                swipeRefreshLayout.setEnabled(true);
+
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "onScrollStateChanged : " + newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                totalCount = recyclerView.getAdapter().getItemCount();
+
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
+                    swipeRefreshLayout.setEnabled(true);
+                } else {
+                    swipeRefreshLayout.setEnabled(false);
+                }
+
+                if (lastPosition == totalCount -1 & pagingStatus.equals("true")) {
+
+                    recyclerView.scrollToPosition(post_Data_ArrayList.size()-1);
+                    loadingLayout.setVisibility(View.VISIBLE);
+                    loadingImage.setVisibility(View.VISIBLE);
+                    loadingLayout.startAnimation(appear);
+                    loadingImage.startAnimation(rotate);
+
+                    WaitPagingThread pagingThread = new WaitPagingThread();
+                    pagingThread.start();
+
+                }
+
+            }
+        });
+
+
+
+        heartLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                swipeRefreshLayout.setEnabled(false);
+                return true;
+            }
+        });
+
+    } // setView()
+
+
+    /*
+    좋아요 리스트 데이터 불러오기
+     */
     public void getHeartList(int postNum) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -286,6 +410,9 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
     } // getHeartList()
 
 
+    /*
+    게시글 데이터 불러오기
+     */
     public void getPost(String currentNickname, int pageNumber) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -401,10 +528,12 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
             }
         });
 
-
     } // getPost()
 
 
+    /*
+    광고 삽입할 리스트 초기화
+     */
     public void initArrayList() {
 
         adList = new ArrayList<>();
@@ -413,8 +542,12 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         }
         dataSize = 0;
 
-    }
+    } // initArrayList()
 
+
+    /*
+    게시글 작성 횟수 불러오기
+     */
     public void getWriteCount(String nickname) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -442,206 +575,10 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
 
     } // getWriteCount()
 
-    public void setVariable() {
 
-        loading_Iv = v.findViewById(R.id.home_Loading);
-        rotate = AnimationUtils.loadAnimation(getActivity(),R.anim.loading);
-        appear = AnimationUtils.loadAnimation(getActivity(),R.anim.loading_appear);
-        disappear = AnimationUtils.loadAnimation(getActivity(),R.anim.loading_disappear);
-
-        networkStatus = NetworkStatus.getConnectivityStatus(getActivity());
-        swipeRefreshLayout = v.findViewById(R.id.home_SwipeRefreshLayout);
-        internetText = v.findViewById(R.id.internetCheck_Text);
-        checkPosition_Text = v.findViewById(R.id.homeCheckPosition_Text);
-
-        recyclerView = v.findViewById(R.id.home_RecyclerView);
-        adapter = new Home_Adapter();
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        post_Data_ArrayList = new ArrayList<>();
-        adapter.setItemPost(post_Data_ArrayList);
-
-        heartRecyclerView = v.findViewById(R.id.home_HeartRecyclerView);
-        heartAdapter = new HomeHeartList_Adapter();
-        heart_ArrayList = new ArrayList<>();
-
-        heartRecyclerView.setAdapter(heartAdapter);
-        heartRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        heartAdapter.setItem(heart_ArrayList);
-
-        heartLayout = v.findViewById(R.id.home_HeartLayout);
-        heartListClose_Iv = v.findViewById(R.id.heartListClose_Image);
-
-        sharedPreferences = this.getActivity().getSharedPreferences("로그인 정보", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        loginNickname = sharedPreferences.getString("nickname","");
-        writeCount = sharedPreferences.getString("writeCount", "");
-
-        pageNum = 1;
-        pagingStatus = "false";
-
-        loadingLayout = v.findViewById(R.id.postLoading_Layout);
-        loadingImage = v.findViewById(R.id.postLoading_Image);
-        handler = new Handler();
-
-        adList = new ArrayList<>();
-        Log.d(TAG, "initArrayList setVariable");
-        initArrayList();
-        dataSize = 0;
-        randomValueArray = new int[2];
-
-        DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
-        defaultItemAnimator.setRemoveDuration(500);
-        recyclerView.setItemAnimator(defaultItemAnimator);
-
-        eventBusPostDeleteHome = EventBus.getDefault();
-
-    } // setVariable()
-
-
-    public void setView() {
-
-        swipeRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-
-                    pageNum = 1;
-
-                    internetText.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-
-//                    post_Data_ArrayList.clear();
-                    post_Data_ArrayList = new ArrayList<>();
-
-                    requestStatus = true;
-
-                    Log.d(TAG, "initArrayList swipe");
-                    initArrayList();
-
-                    getPost(loginNickname, pageNum);
-                }else {
-                    internetText.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
-
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//
-//                if(networkStatus == NetworkStatus.TYPE_MOBILE || networkStatus == NetworkStatus.TYPE_WIFI) {
-//
-//                    pageNum = 1;
-//
-//                    internetText.setVisibility(View.GONE);
-//                    recyclerView.setVisibility(View.VISIBLE);
-//
-////                    post_Data_ArrayList.clear();
-//                    post_Data_ArrayList = new ArrayList<>();
-//
-//                    requestStatus = true;
-//
-//                    Log.d(TAG, "initArrayList swipe");
-//                    initArrayList();
-//
-//                    getPost(loginNickname, pageNum);
-//                }else {
-//                    internetText.setVisibility(View.VISIBLE);
-//                    recyclerView.setVisibility(View.GONE);
-//                    Toast.makeText(getActivity(), "인터넷 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
-//                }
-//                swipeRefreshLayout.setRefreshing(false);
-//            }
-//        });
-
-        recyclerView.setVisibility(View.GONE);
-        loading_Iv.setVisibility(View.VISIBLE);
-        loading_Iv.startAnimation(rotate);
-
-
-        adapter.setOnItemLongClickListener(new Home_Adapter.OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(int postNum) {
-                Log.d(TAG, "onItemLongClick : " + postNum);
-                heartLayout.setVisibility(View.VISIBLE);
-
-                getHeartList(postNum);
-
-            }
-        });
-
-        heartListClose_Iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                heartLayout.setVisibility(View.GONE);
-
-                heart_ArrayList.clear();
-                heartAdapter.notifyDataSetChanged();
-
-                swipeRefreshLayout.setEnabled(true);
-
-            }
-        });
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                Log.d(TAG, "onScrollStateChanged : " + newState);
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-                totalCount = recyclerView.getAdapter().getItemCount();
-
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
-                    swipeRefreshLayout.setEnabled(true);
-                } else {
-                    swipeRefreshLayout.setEnabled(false);
-                }
-
-                if (lastPosition == totalCount -1 & pagingStatus.equals("true")) {
-
-                    recyclerView.scrollToPosition(post_Data_ArrayList.size()-1);
-                    loadingLayout.setVisibility(View.VISIBLE);
-                    loadingImage.setVisibility(View.VISIBLE);
-                    loadingLayout.startAnimation(appear);
-                    loadingImage.startAnimation(rotate);
-
-                    WaitPagingThread pagingThread = new WaitPagingThread();
-                    pagingThread.start();
-
-                }
-
-            }
-        });
-
-
-
-        heartLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                swipeRefreshLayout.setEnabled(false);
-                return true;
-            }
-        });
-
-    } // setView()
-
-
+    /*
+    리스트 페이징 스레드
+     */
     public class WaitPagingThread extends Thread {
 
         public void run() {
@@ -676,6 +613,5 @@ public class Fragment_Home extends Fragment implements Home.OnBackPressedListene
         }
 
     } // WaitPagingThread
-
 
 }

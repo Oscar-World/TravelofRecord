@@ -36,6 +36,12 @@ public interface ApiInterface {
             @Query("password") String password
     );
 
+    @GET("mysql_UserInfo_Login.php")
+    Call<User> getLoginInfo (
+            @Query("ati") int a,
+            @Query("bti") int b
+    );
+
     // 아이디 중복 확인
     @GET("mysql_UserInfo_IdCheck.php")
     Call<String> getIdCheck (

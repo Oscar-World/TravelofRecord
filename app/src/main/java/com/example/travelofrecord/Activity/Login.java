@@ -6,16 +6,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,12 +36,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.kakao.sdk.user.UserApiClient;
 import com.navercorp.nid.NaverIdLoginSDK;
 import com.navercorp.nid.oauth.NidOAuthLogin;
-import com.navercorp.nid.oauth.OAuthLoginCallback;
 import com.navercorp.nid.profile.NidProfileCallback;
 import com.navercorp.nid.profile.data.NidProfileResponse;
 
@@ -54,91 +49,28 @@ import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
 
-    String TAG = "로그인 액티비티";
-
-    Button login_Btn;
-    ImageButton back_Btn;
-    EditText login_id;
-    EditText login_pw;
-    ImageButton kakao_Btn;
-    ImageButton google_Btn;
-    ImageButton naver_Btn;
-    Button signup_Btn;
-    Button findInfo_Btn;
-
-    LinearLayout socialLogin_Layout;
-    LinearLayout socialLoginBtn_Layout;
-    ImageView dropDown_Btn;
-    ImageView dropUp_Btn;
-
-    String user_type;
-    String user_id;
-    String user_pw;
-    String user_phone;
-    String user_nickname;
-    String user_image;
-    String user_memo;
-    String user_writeCount;
-
-    String rp_code;
-    String edit_id;
-    String edit_pw;
-
-    String kakaoId;
-    String kakaoImage;
-
-    SharedPreferences userShared;
-    SharedPreferences.Editor editor;
-
-    SharedPreferences authShared;
-    SharedPreferences.Editor authEditor;
-
     public static Context context;
-
-    int networkStatus;
-
+    String TAG = "로그인 액티비티";
+    String user_type, user_id, user_pw, user_phone, user_nickname, user_image, user_memo, user_writeCount,
+            rp_code, edit_id, edit_pw, kakaoId, kakaoImage, googleEmail, naverEmail, savedTime, currentTime;
+    int networkStatus, socialLoginBtnStatus, phoneCount;
+    Button login_Btn, signup_Btn, findInfo_Btn;
+    EditText login_id, login_pw;
+    ImageButton kakao_Btn, naver_Btn, google_Btn, back_Btn;
+    LinearLayout socialLogin_Layout, socialLoginBtn_Layout;
+    ImageView dropDown_Btn, dropUp_Btn;
+    SharedPreferences userShared, authShared;
+    SharedPreferences.Editor editor, authEditor;
     ActivityResultLauncher<Intent> launcher_Google;
-
     GoogleSignInOptions gso;
     GoogleSignInClient googleSignInClient;
     GoogleSignInAccount account;
     Task<GoogleSignInAccount> task;
-    String googleEmail;
-    String naverEmail;
-
     ActivityResultLauncher<Intent> launcher_Naver;
     NaverIdLoginSDK naverLoginSDK;
     NidOAuthLogin nidOAuthLogin;
-
-    int socialLoginBtnStatus;
-
     GetTime getTime;
-    int phoneCount;
-    String savedTime;
-    String currentTime;
-
-    Animation appearAnim;
-    Animation disappearAnim;
-
-
-    // 갤러리 접근 권한
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-    };
-
-    public static void verifyStoragePermissions(Activity activity){
-
-        int WRITE_PERMISSION = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int READ_PERMISSION = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        if (WRITE_PERMISSION != PackageManager.PERMISSION_GRANTED
-        || READ_PERMISSION != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
-        }
-
-    }
+    Animation appearAnim, disappearAnim;
 
 
     @Override
@@ -150,84 +82,12 @@ public class Login extends AppCompatActivity {
         context = this;
 
         setVariable();
-        setView();
-
-        verifyStoragePermissions(Login.this);
-
-        launcher_Google = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Log.d(TAG, "googleLogin - onActivityResult : ok");
-                    task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-
-                    try {
-
-                        account = task.getResult(ApiException.class);
-                        googleEmail = account.getEmail();
-
-                        googleLogin(googleEmail, "");
-
-                    } catch (ApiException e) {
-                        Log.d(TAG, "googleLogin - onActivityResult Exception : " + e);
-                    }
-
-                } else {
-                    Log.d(TAG, "googleLogin - onActivityResult : fail");
-                }
-
-            }
-        });
-
-        launcher_Naver = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Log.d(TAG, "naverLogin - onActivityResult: ok");
-
-                    String naverToken = naverLoginSDK.getAccessToken();
-                    Log.d(TAG, "launcher naverToken : " + naverToken);
-
-                    nidOAuthLogin.callProfileApi(new NidProfileCallback<NidProfileResponse>() {
-                        @Override
-                        public void onSuccess(NidProfileResponse nidProfileResponse) {
-
-                            String email = nidProfileResponse.getProfile().getEmail();
-                            Log.d(TAG, "onSuccess : " + nidProfileResponse.getProfile().toString());
-
-                            naverEmail = email;
-
-                            naverLogin(naverEmail, "");
-
-                        }
-                        @Override
-                        public void onFailure(int i, @NonNull String s) {
-                            Log.d(TAG, "onFailure : " + i);
-                            Log.d(TAG, "onFailure : " + s);
-                        }
-                        @Override
-                        public void onError(int i, @NonNull String s) {
-
-                            Log.d(TAG, "onError : " + i);
-                            Log.d(TAG, "onError : " + s);
-                            onFailure(i, s);
-                        }
-                    });
+        setListener();
+        setLauncher();
 
 
-                } else {
-                    Log.d(TAG, "naverLogin - onActivityResult: fail");
-                    Log.d(TAG, "Error Code: " + naverLoginSDK.getLastErrorCode().toString());
-                    Log.d(TAG, "Error Description : " + naverLoginSDK.getLastErrorDescription());
-                }
+    } // onCreate()
 
-
-            }
-        });
-
-    }
 
     @Override
     protected void onStart(){
@@ -239,344 +99,9 @@ public class Login extends AppCompatActivity {
     }  // onStart()
 
 
-
-    public void kakao_Dialog() {
-
-        AlertDialog.Builder dlg = new AlertDialog.Builder(Login.this);
-        dlg.setTitle("로그인 방식을 선택하세요\n"); //제목
-        final String[] kakaoLogin_Array = new String[] {"카카오톡","카카오계정"};
-
-        dlg.setItems(kakaoLogin_Array, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                if (which == 0) { // 카카오톡 로그인
-
-                    UserApiClient.getInstance().loginWithKakaoTalk(Login.this,(oAuthToken, error) -> {
-                        if (error != null) {
-                            Log.d(TAG, "로그인 실패", error);
-                        } else if (oAuthToken != null) {
-                            Log.d(TAG, "로그인 성공(토큰) : " + oAuthToken.getAccessToken());
-
-                            UserApiClient.getInstance().me((user, meError) -> {
-                                if (meError != null) {
-                                    Log.d(TAG, "사용자 정보 요청 실패", meError);
-                                } else {
-                                    System.out.println("로그인 완료");
-                                    Log.d(TAG, user.toString());
-
-                                    Log.d(TAG, "사용자 정보 요청 성공" +
-                                                    "\n회원번호: " + user.getId() +
-                                                    "\n이메일: " + user.getKakaoAccount().getEmail() +
-                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
-                                    );
-
-                                    kakaoId = user.getKakaoAccount().getEmail();
-                                    kakaoImage = user.getKakaoAccount().getProfile().getProfileImageUrl();
-
-                                    getKakaoTest(kakaoId, "");
-
-                                }
-                                return null;
-                            });
-                        }
-                        return null;
-                    });
-
-                }
-                else if (which == 1) { // 카카오계정 로그인
-
-                    UserApiClient.getInstance().loginWithKakaoAccount(Login.this,(oAuthToken, error) -> {
-                        if (error != null) {
-                            Log.d(TAG, "로그인 실패", error);
-                        } else if (oAuthToken != null) {
-                            Log.d(TAG, "로그인 성공(토큰) : " + oAuthToken.getAccessToken());
-
-                            UserApiClient.getInstance().me((user, meError) -> {
-                                if (meError != null) {
-                                    Log.d(TAG, "사용자 정보 요청 실패", meError);
-                                } else {
-                                    System.out.println("로그인 완료");
-                                    Log.d(TAG, user.toString());
-
-                                    Log.d(TAG, "사용자 정보 요청 성공" +
-                                                    "\n회원번호: " + user.getId() +
-                                                    "\n이메일: " + user.getKakaoAccount().getEmail() +
-                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
-                                    );
-
-                                    kakaoId = user.getKakaoAccount().getEmail();
-                                    kakaoImage = user.getKakaoAccount().getProfile().getProfileImageUrl();
-
-                                    getKakaoTest(kakaoId, "");
-
-                                }
-                                return null;
-                            });
-                        }
-                        return null;
-                    });
-
-
-                }
-
-            }
-        });
-
-        dlg.setNegativeButton("취소",new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        dlg.show();
-
-    } // kakaoDialog()
-
-
-    public void googleLogin(String id, String pw) {
-
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.getLoginInfo(id,pw);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "googleLogin - onResponse isSuccessful");
-
-                    String rpCode = response.body().getResponse();
-
-                    if (rpCode.equals("noId")) {
-
-                        Intent i = new Intent(getApplicationContext(), Signup.class);
-                        i.putExtra("googleId", googleEmail);
-                        startActivity(i);
-
-                    } else if (rpCode.equals("ok")) {
-
-                        Toast.makeText(getApplicationContext(),"환영합니다!",Toast.LENGTH_SHORT).show();
-
-                        user_type = response.body().getType();
-                        user_id = response.body().getId();
-                        user_pw = response.body().getPw();
-                        user_phone = response.body().getPhone();
-                        user_nickname = response.body().getNickname();
-                        user_image = response.body().getImage();
-                        user_memo = response.body().getMemo();
-                        user_writeCount = response.body().getWriteCount();
-
-                        editor.putString("loginType", user_type);
-                        editor.putString("id", user_id);
-                        editor.putString("nickname", user_nickname);
-                        editor.putString("image", user_image);
-                        editor.putString("memo", user_memo);
-                        editor.putString("writeCount", user_writeCount);
-                        editor.commit();
-                        Intent i = new Intent(Login.this, Home.class);
-                        startActivity(i);
-                        ((Start)Start.context).finish();
-                        finish();
-
-                    }
-
-                } else {
-                    Log.d(TAG, "googleLogin - onResponse isFailure");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d(TAG, "googleLogin - onFailure");
-            }
-        });
-
-    } // googleLogin()
-
-    public void naverLogin(String id, String pw) {
-
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.getLoginInfo(id,pw);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "naverLogin - onResponse isSuccessful");
-
-                    String rpCode = response.body().getResponse();
-                    Log.d(TAG, "naverLogin - onResponse : " + rpCode);
-
-                    if (rpCode.equals("noId")) {
-
-                        Intent i = new Intent(getApplicationContext(), Signup.class);
-                        i.putExtra("naverId", naverEmail);
-                        startActivity(i);
-
-                    } else if (rpCode.equals("ok")) {
-
-                        Toast.makeText(getApplicationContext(),"환영합니다!",Toast.LENGTH_SHORT).show();
-
-                        user_type = response.body().getType();
-                        user_id = response.body().getId();
-                        user_pw = response.body().getPw();
-                        user_phone = response.body().getPhone();
-                        user_nickname = response.body().getNickname();
-                        user_image = response.body().getImage();
-                        user_memo = response.body().getMemo();
-                        user_writeCount = response.body().getWriteCount();
-
-                        editor.putString("loginType", user_type);
-                        editor.putString("id", user_id);
-                        editor.putString("nickname", user_nickname);
-                        editor.putString("image", user_image);
-                        editor.putString("memo", user_memo);
-                        editor.putString("writeCount", user_writeCount);
-                        editor.commit();
-                        Intent i = new Intent(Login.this, Home.class);
-                        startActivity(i);
-                        ((Start)Start.context).finish();
-                        finish();
-
-                    }
-
-                } else {
-                    Log.d(TAG, "naverLogin - onResponse isFailure");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d(TAG, "naverLogin - onFailure");
-            }
-        });
-
-    } // naverLogin()
-
-
-    // ▼ DB 로그인 정보 확인 ▼
-    public void getLogin(String id, String pw) {
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.getLoginInfo(id,pw);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                rp_code = response.body().getResponse();
-                Log.d(TAG, "응답 : " + rp_code);
-
-                if (rp_code.equals("noId")) {
-
-                    Toast t = Toast.makeText(login_Btn.getContext(),"아이디 또는 비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
-                    t.show();
-
-                } else if (rp_code.equals("noPw")) {
-                    Toast t = Toast.makeText(login_Btn.getContext(),"아이디 또는 비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
-                    t.show();
-
-                } else {
-                    Toast t = Toast.makeText(login_Btn.getContext(),"환영합니다!",Toast.LENGTH_SHORT);
-                    t.show();
-
-                    user_type = response.body().getType();
-                    user_id = response.body().getId();
-                    user_pw = response.body().getPw();
-                    user_phone = response.body().getPhone();
-                    user_nickname = response.body().getNickname();
-                    user_image = response.body().getImage();
-                    user_memo = response.body().getMemo();
-                    user_writeCount = response.body().getWriteCount();
-
-                    Log.d(TAG, "서버에서 전달 받은 코드 - 타입 : " + user_type + "\n아이디 : " + user_id + "\n비번 : "
-                            + user_pw + "\n전화번호 : " + user_phone + "\n닉네임 : " + user_nickname + "\n이미지 : " + user_image);
-
-                    editor.putString("loginType", user_type);
-                    editor.putString("id", user_id);
-                    editor.putString("nickname", user_nickname);
-                    editor.putString("image", user_image);
-                    editor.putString("memo", user_memo);
-                    editor.putString("writeCount", user_writeCount);
-                    editor.commit();
-                    Intent i = new Intent(Login.this, Home.class);
-                    startActivity(i);
-                    ((Start)Start.context).finish();
-                    finish();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
-            }
-        });
-
-    }  // getLogin()
-
-
-    // ▼ DB 카카오 계정 로그인 기록 확인 ▼
-    public void getKakaoTest(String id, String pw) {
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<User> call = apiInterface.getLoginInfo(id,pw);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                rp_code = response.body().getResponse();
-
-                Log.d(TAG, "카카오 - 아이디 조회 : " + rp_code);
-
-                if (response.isSuccessful()) {
-
-                    // 사용자의 가입 정보가 있으면 홈으로 이동
-                    // 사용자의 가입 정보가 없으면 회원가입 3페이지로 이동
-
-                    if (rp_code.equals("noId")) {
-
-                        Intent i = new Intent(Login.this, Signup.class);
-                        i.putExtra("kakaoId", kakaoId);
-                        i.putExtra("kakaoImage", kakaoImage);
-                        startActivity(i);
-
-                    } else {
-
-                        user_type = response.body().getType();
-                        user_id = response.body().getId();
-                        user_pw = response.body().getPw();
-                        user_phone = response.body().getPhone();
-                        user_nickname = response.body().getNickname();
-                        user_image = response.body().getImage();
-                        user_memo = response.body().getMemo();
-                        user_writeCount = response.body().getWriteCount();
-
-                        Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
-
-                        editor.putString("loginType", user_type);
-                        editor.putString("id", kakaoId);
-                        editor.putString("nickname", user_nickname);
-                        editor.putString("image", kakaoImage);
-                        editor.putString("memo", user_memo);
-                        editor.putString("writeCount", user_writeCount);
-                        editor.commit();
-
-                        Intent i = new Intent(Login.this, Home.class);
-                        startActivity(i);
-                        ((Start)Start.context).finish();
-                        finish();
-
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
-            }
-        });
-
-    }  // getKakaoTest()
-
-
+    /*
+    초기 변수 세팅
+     */
     public void setVariable() {
 
         networkStatus = NetworkStatus.getConnectivityStatus(getApplicationContext());
@@ -636,7 +161,10 @@ public class Login extends AppCompatActivity {
     }  // setVariable()
 
 
-    public void setView() {
+    /*
+    리스너 세팅
+     */
+    public void setListener() {
 
         login_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -778,37 +306,476 @@ public class Login extends AppCompatActivity {
             }
         });
 
-    } // setView()
+    } // setLisenter()
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
-    }
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
-    }
+    /*
+    ActivityResultLauncher 세팅
+     */
+    public void setLauncher() {
 
-    @Override
-    protected void onStop(){
-        super.onStop();
-        Log.d(TAG, "onStop() 호출됨");
-    }
+        launcher_Google = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
 
-    @Override
-    protected void onRestart(){
-        super.onRestart();
-        Log.d(TAG, "onRestart() 호출됨");
-    }
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Log.d(TAG, "googleLogin - onActivityResult : ok");
+                    task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
 
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        Log.d(TAG, "onDestroy() 호출됨");
-    }
+                    try {
+
+                        account = task.getResult(ApiException.class);
+                        googleEmail = account.getEmail();
+
+                        googleLogin(googleEmail, "");
+
+                    } catch (ApiException e) {
+                        Log.d(TAG, "googleLogin - onActivityResult Exception : " + e);
+                    }
+
+                } else {
+                    Log.d(TAG, "googleLogin - onActivityResult : fail");
+                }
+
+            }
+        });
+
+        launcher_Naver = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Log.d(TAG, "naverLogin - onActivityResult: ok");
+
+                    String naverToken = naverLoginSDK.getAccessToken();
+                    Log.d(TAG, "launcher naverToken : " + naverToken);
+
+                    nidOAuthLogin.callProfileApi(new NidProfileCallback<NidProfileResponse>() {
+                        @Override
+                        public void onSuccess(NidProfileResponse nidProfileResponse) {
+
+                            String email = nidProfileResponse.getProfile().getEmail();
+                            Log.d(TAG, "onSuccess : " + nidProfileResponse.getProfile().toString());
+
+                            naverEmail = email;
+
+                            naverLogin(naverEmail, "");
+
+                        }
+                        @Override
+                        public void onFailure(int i, @NonNull String s) {
+                            Log.d(TAG, "onFailure : " + i);
+                            Log.d(TAG, "onFailure : " + s);
+                        }
+                        @Override
+                        public void onError(int i, @NonNull String s) {
+                            Log.d(TAG, "onError : " + i);
+                            Log.d(TAG, "onError : " + s);
+                            onFailure(i, s);
+                        }
+                    });
+
+
+                } else {
+                    Log.d(TAG, "naverLogin - onActivityResult: fail");
+                    Log.d(TAG, "Error Code: " + naverLoginSDK.getLastErrorCode().toString());
+                    Log.d(TAG, "Error Description : " + naverLoginSDK.getLastErrorDescription());
+                }
+
+
+            }
+        });
+
+    } // setLauncher()
+
+
+    /*
+    카카오 로그인 방식 선택 다이얼로그
+     */
+    public void kakao_Dialog() {
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(Login.this);
+        dlg.setTitle("로그인 방식을 선택하세요\n"); //제목
+        final String[] kakaoLogin_Array = new String[] {"카카오톡","카카오계정"};
+
+        dlg.setItems(kakaoLogin_Array, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (which == 0) { // 카카오톡 로그인
+
+                    UserApiClient.getInstance().loginWithKakaoTalk(Login.this,(oAuthToken, error) -> {
+                        if (error != null) {
+                            Log.d(TAG, "로그인 실패", error);
+                        } else if (oAuthToken != null) {
+                            Log.d(TAG, "로그인 성공(토큰) : " + oAuthToken.getAccessToken());
+
+                            UserApiClient.getInstance().me((user, meError) -> {
+                                if (meError != null) {
+                                    Log.d(TAG, "사용자 정보 요청 실패", meError);
+                                } else {
+                                    System.out.println("로그인 완료");
+                                    Log.d(TAG, user.toString());
+
+                                    Log.d(TAG, "사용자 정보 요청 성공" +
+                                                    "\n회원번호: " + user.getId() +
+                                                    "\n이메일: " + user.getKakaoAccount().getEmail() +
+                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
+                                    );
+
+                                    kakaoId = user.getKakaoAccount().getEmail();
+                                    kakaoImage = user.getKakaoAccount().getProfile().getProfileImageUrl();
+
+                                    getKakaoTest(kakaoId, "");
+
+                                }
+                                return null;
+                            });
+                        }
+                        return null;
+                    });
+
+                }
+                else if (which == 1) { // 카카오계정 로그인
+
+                    UserApiClient.getInstance().loginWithKakaoAccount(Login.this,(oAuthToken, error) -> {
+                        if (error != null) {
+                            Log.d(TAG, "로그인 실패", error);
+                        } else if (oAuthToken != null) {
+                            Log.d(TAG, "로그인 성공(토큰) : " + oAuthToken.getAccessToken());
+
+                            UserApiClient.getInstance().me((user, meError) -> {
+                                if (meError != null) {
+                                    Log.d(TAG, "사용자 정보 요청 실패", meError);
+                                } else {
+                                    System.out.println("로그인 완료");
+                                    Log.d(TAG, user.toString());
+
+                                    Log.d(TAG, "사용자 정보 요청 성공" +
+                                                    "\n회원번호: " + user.getId() +
+                                                    "\n이메일: " + user.getKakaoAccount().getEmail() +
+                                        "\n프로필 사진: " + user.getKakaoAccount().getProfile().getProfileImageUrl()
+                                    );
+
+                                    kakaoId = user.getKakaoAccount().getEmail();
+                                    kakaoImage = user.getKakaoAccount().getProfile().getProfileImageUrl();
+
+                                    getKakaoTest(kakaoId, "");
+
+                                }
+                                return null;
+                            });
+                        }
+                        return null;
+                    });
+
+
+                }
+
+            }
+        });
+
+        dlg.setNegativeButton("취소",new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        dlg.show();
+
+    } // kakaoDialog()
+
+
+    /*
+    구글 로그인 진행
+     */
+    public void googleLogin(String id, String pw) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getLoginInfo(id,pw);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "googleLogin - onResponse isSuccessful");
+
+                    String rpCode = response.body().getResponse();
+                    String loginType = response.body().getType();
+
+                    if (rpCode.equals("noId")) {
+
+                        Intent i = new Intent(getApplicationContext(), Signup.class);
+                        i.putExtra("googleId", googleEmail);
+                        startActivity(i);
+
+                    } else if (rpCode.equals("ok")) {
+
+                        if (loginType.equals("Google")) {
+
+                            Toast.makeText(getApplicationContext(),"환영합니다!",Toast.LENGTH_SHORT).show();
+
+                            user_type = response.body().getType();
+                            user_id = response.body().getId();
+                            user_pw = response.body().getPw();
+                            user_phone = response.body().getPhone();
+                            user_nickname = response.body().getNickname();
+                            user_image = response.body().getImage();
+                            user_memo = response.body().getMemo();
+                            user_writeCount = response.body().getWriteCount();
+
+                            editor.putString("loginType", user_type);
+                            editor.putString("id", user_id);
+                            editor.putString("nickname", user_nickname);
+                            editor.putString("image", user_image);
+                            editor.putString("memo", user_memo);
+                            editor.putString("writeCount", user_writeCount);
+                            editor.commit();
+                            Intent i = new Intent(Login.this, Home.class);
+                            startActivity(i);
+                            ((Start)Start.context).finish();
+                            finish();
+
+                        } else if (loginType.equals("Kakao")) {
+
+
+
+                        } else if (loginType.equals("Naver")) {
+
+
+
+                        } else if (loginType.equals("Basic")) {
+
+
+
+                        }
+
+
+
+                    }
+
+                } else {
+                    Log.d(TAG, "googleLogin - onResponse isFailure");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "googleLogin - onFailure");
+            }
+        });
+
+    } // googleLogin()
+
+
+    /*
+    네이버 로그인 진행
+     */
+    public void naverLogin(String id, String pw) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getLoginInfo(id,pw);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "naverLogin - onResponse isSuccessful");
+
+                    String rpCode = response.body().getResponse();
+                    String loginType = response.body().getType();
+                    Log.d(TAG, "naverLogin - onResponse : " + rpCode);
+
+                    if (rpCode.equals("noId")) {
+
+                        Intent i = new Intent(getApplicationContext(), Signup.class);
+                        i.putExtra("naverId", naverEmail);
+                        startActivity(i);
+
+                    } else if (rpCode.equals("ok")) {
+
+                        if (loginType.equals("Naver")) {
+
+                            Toast.makeText(getApplicationContext(),"환영합니다!",Toast.LENGTH_SHORT).show();
+
+                            user_type = response.body().getType();
+                            user_id = response.body().getId();
+                            user_pw = response.body().getPw();
+                            user_phone = response.body().getPhone();
+                            user_nickname = response.body().getNickname();
+                            user_image = response.body().getImage();
+                            user_memo = response.body().getMemo();
+                            user_writeCount = response.body().getWriteCount();
+
+                            editor.putString("loginType", user_type);
+                            editor.putString("id", user_id);
+                            editor.putString("nickname", user_nickname);
+                            editor.putString("image", user_image);
+                            editor.putString("memo", user_memo);
+                            editor.putString("writeCount", user_writeCount);
+                            editor.commit();
+                            Intent i = new Intent(Login.this, Home.class);
+                            startActivity(i);
+                            ((Start)Start.context).finish();
+                            finish();
+
+                        } else if (loginType.equals("Kakao")) {
+
+
+
+                        } else if (loginType.equals("Google")) {
+
+
+
+                        } else if (loginType.equals("Basic")) {
+
+
+
+                        }
+
+
+
+                    }
+
+                } else {
+                    Log.d(TAG, "naverLogin - onResponse isFailure");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "naverLogin - onFailure");
+            }
+        });
+
+    } // naverLogin()
+
+
+    /*
+    DB 로그인 정보 확인
+     */
+    public void getLogin(String id, String pw) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getLoginInfo(id,pw);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                rp_code = response.body().getResponse();
+                Log.d(TAG, "응답 : " + rp_code);
+
+                if (rp_code.equals("noId")) {
+
+                    Toast t = Toast.makeText(login_Btn.getContext(),"아이디 또는 비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
+                    t.show();
+
+                } else if (rp_code.equals("noPw")) {
+                    Toast t = Toast.makeText(login_Btn.getContext(),"아이디 또는 비밀번호가 일치하지 않습니다.",Toast.LENGTH_SHORT);
+                    t.show();
+
+                } else {
+                    Toast t = Toast.makeText(login_Btn.getContext(),"환영합니다!",Toast.LENGTH_SHORT);
+                    t.show();
+
+                    user_type = response.body().getType();
+                    user_id = response.body().getId();
+                    user_pw = response.body().getPw();
+                    user_phone = response.body().getPhone();
+                    user_nickname = response.body().getNickname();
+                    user_image = response.body().getImage();
+                    user_memo = response.body().getMemo();
+                    user_writeCount = response.body().getWriteCount();
+
+                    Log.d(TAG, "서버에서 전달 받은 코드 - 타입 : " + user_type + "\n아이디 : " + user_id + "\n비번 : "
+                            + user_pw + "\n전화번호 : " + user_phone + "\n닉네임 : " + user_nickname + "\n이미지 : " + user_image);
+
+                    editor.putString("loginType", user_type);
+                    editor.putString("id", user_id);
+                    editor.putString("nickname", user_nickname);
+                    editor.putString("image", user_image);
+                    editor.putString("memo", user_memo);
+                    editor.putString("writeCount", user_writeCount);
+                    editor.commit();
+                    Intent i = new Intent(Login.this, Home.class);
+                    startActivity(i);
+                    ((Start)Start.context).finish();
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
+            }
+        });
+
+    }  // getLogin()
+
+
+    /*
+    DB 카카오 계정 로그인 기록 확인
+     */
+    public void getKakaoTest(String id, String pw) {
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<User> call = apiInterface.getLoginInfo(id,pw);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                rp_code = response.body().getResponse();
+
+                Log.d(TAG, "카카오 - 아이디 조회 : " + rp_code);
+
+                if (response.isSuccessful()) {
+
+                    // 사용자의 가입 정보가 있으면 홈으로 이동
+                    // 사용자의 가입 정보가 없으면 회원가입 3페이지로 이동
+
+                    if (rp_code.equals("noId")) {
+
+                        Intent i = new Intent(Login.this, Signup.class);
+                        i.putExtra("kakaoId", kakaoId);
+                        i.putExtra("kakaoImage", kakaoImage);
+                        startActivity(i);
+
+                    } else {
+
+                        user_type = response.body().getType();
+                        user_id = response.body().getId();
+                        user_pw = response.body().getPw();
+                        user_phone = response.body().getPhone();
+                        user_nickname = response.body().getNickname();
+                        user_image = response.body().getImage();
+                        user_memo = response.body().getMemo();
+                        user_writeCount = response.body().getWriteCount();
+
+                        Log.d(TAG, "서버에서 전달 받은 코드 : " + user_type + "\n" + user_id + "\n" + user_pw + "\n" + user_phone + "\n" + user_nickname + "\n" + user_image);
+
+                        editor.putString("loginType", user_type);
+                        editor.putString("id", kakaoId);
+                        editor.putString("nickname", user_nickname);
+                        editor.putString("image", kakaoImage);
+                        editor.putString("memo", user_memo);
+                        editor.putString("writeCount", user_writeCount);
+                        editor.commit();
+
+                        Intent i = new Intent(Login.this, Home.class);
+                        startActivity(i);
+                        ((Start)Start.context).finish();
+                        finish();
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "onFailure: 에러!! " + t.getMessage());
+            }
+        });
+
+    }  // getKakaoTest()
 
 
 }

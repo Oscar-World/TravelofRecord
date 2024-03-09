@@ -1,13 +1,11 @@
 package com.example.travelofrecord.Adapter;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,9 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.travelofrecord.Activity.Profile;
-import com.example.travelofrecord.Data.PostData;
 import com.example.travelofrecord.Data.User;
 import com.example.travelofrecord.Network.ApiClient;
 import com.example.travelofrecord.R;
@@ -41,23 +37,26 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
         HomeHeartList_Adapter.ViewHolder viewHolder = new HomeHeartList_Adapter.ViewHolder(view);
 
         return viewHolder;
-    }
+
+    } // onCreateViewHolder()
 
 
     @Override
     public void onBindViewHolder(@NonNull HomeHeartList_Adapter.ViewHolder holder, int position) {
         holder.onBind(data.get(holder.getAdapterPosition()));
-    }
+    } // onBindViewHolder()
+
 
     @Override
     public int getItemCount() {
         return data.size();
-    }
+    } // getItemCount()
+
 
     public void setItem(ArrayList<User> data) {
         this.data = data;
         notifyDataSetChanged();
-    }
+    } // setItem()
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -65,8 +64,6 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
         ImageView imageView;
         TextView textView;
         LinearLayout layout;
-
-//        DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,8 +80,6 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
 
                 Glide.with(context)
                         .load(ApiClient.serverProfileImagePath + item.getImage())
-//                        .transition(withCrossFade(factory))
-//                        .placeholder(R.drawable.loading2)
                         .skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
@@ -100,8 +95,8 @@ public class HomeHeartList_Adapter extends RecyclerView.Adapter<HomeHeartList_Ad
                     }
                 });
 
-        }
+        } // onBind()
 
-    }
+    } // ViewHolder
 
 }

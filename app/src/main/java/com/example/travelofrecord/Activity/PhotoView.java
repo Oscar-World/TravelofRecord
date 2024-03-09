@@ -1,6 +1,5 @@
 package com.example.travelofrecord.Activity;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,48 +31,16 @@ public class PhotoView extends AppCompatActivity {
         setVariable();
         setView();
 
-    }
+    } // onCreate()
 
-    @Override
-    protected void onStart(){
-        super.onStart();
-        Log.d(TAG, "onStart() 호출됨");
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        Log.d(TAG, "onResume() 호출됨");
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        Log.d(TAG, "onPause() 호출됨");
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        Log.d(TAG, "onStop() 호출됨");
-    }
-
-    @Override
-    protected void onRestart(){
-        super.onRestart();
-        Log.d(TAG, "onRestart() 호출됨");
-    }
-
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        Log.d(TAG, "onDestroy() 호출됨");
-    }
 
 
     // -------------------------------------------------------------------------------------------
 
 
+    /*
+    변수 초기화
+     */
     public void setVariable() {
 
         photoView = findViewById(R.id.photoView);
@@ -82,16 +49,18 @@ public class PhotoView extends AppCompatActivity {
         Intent i = getIntent();
         image = i.getStringExtra("image");
 
-    }
+    } // setVariable()
 
+
+    /*
+    뷰 초기화
+     */
     public void setView() {
 
         DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         Glide.with(this)
                 .load(image)
-//                .transition(withCrossFade(factory))
-//                .placeholder(R.drawable.loading2)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(photoView);
@@ -103,6 +72,6 @@ public class PhotoView extends AppCompatActivity {
             }
         });
 
-    }
+    } // setView()
 
 }

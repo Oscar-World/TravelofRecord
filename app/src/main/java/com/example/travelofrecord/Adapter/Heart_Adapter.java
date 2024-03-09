@@ -41,7 +41,6 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
     Bundle bundle;
 
 
-    // 레이아웃을 실체화 해줌 - inflate
     @Override
     public Heart_Adapter.ViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
@@ -52,38 +51,34 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
         Heart_Adapter.ViewHolder viewHolder = new Heart_Adapter.ViewHolder(view);
 
         return viewHolder;
-    }
+
+    } // onCreateViewHolder()
 
 
-    // 받아온 데이터를 바인딩해줌
     @Override
     public void onBindViewHolder(@NonNull Heart_Adapter.ViewHolder holder,int position) {
+
         Log.d(TAG, "onBindViewHolder() 호출됨");
         holder.onBind(postData.get(holder.getAdapterPosition()));
-    }
 
-    // 뷰와 데이터를 연결해줌
+    } // onBindViewHolder()
+
+
     public void setItemHeart(ArrayList<PostData> list) {
         Log.d(TAG, "setGameList() 호출됨");
 
         this.postData = list;
-        Log.d(TAG, "어댑터 리스트 : " + postData);
-
         notifyDataSetChanged();
-    }
 
-    // 리사이클러뷰 리스트 사이즈를 불러옴
+    } // setItemHeart()
+
+
     @Override
     public int getItemCount() {
-//        Log.d(TAG, "getItemCount() 호출됨");
-//        Log.d(TAG, "리스트 사이즈 : " + postData.size());
-
         return postData.size();
+    } // getItemCount()
 
-    }
 
-
-    // 뷰홀더 생성
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView heart_Location;
@@ -111,8 +106,6 @@ public class Heart_Adapter extends RecyclerView.Adapter<Heart_Adapter.ViewHolder
                     .load(ApiClient.serverPostImagePath + item.getPostImage())
                     .transition(withCrossFade(factory))
                     .placeholder(R.drawable.loading2)
-//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                    .skipMemoryCache(true)
                     .into(heart_PostImage);
 
             heart_PostImage.setOnClickListener(new View.OnClickListener() {
